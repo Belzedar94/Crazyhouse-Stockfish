@@ -1,0 +1,48 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum_id": "CRAZYHOUSE-OFFICIAL-STOCKFISH-SANITIZER-RUNTIME-V1-ADDENDUM-001",
+  "created_utc": "2026-08-22T23:35:00Z",
+  "parent": {
+    "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.json",
+    "bytes": 7180,
+    "sha256": "a8fc11270142c806834b90db40b808da253fd886d5412f0c11da116b9849f8d9"
+  },
+  "expected_red": {
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p5-sanitizer-build-preflight-e807acad-003",
+    "source_commit": "e807acad004ea92277d3c81fc3e9b220fec3d2fd",
+    "completion": {
+      "bytes": 6006,
+      "sha256": "0d1625bce8c7bee9bd170d1383fdf45890dc20ab8e16863d4a231cf2131a48ae"
+    },
+    "compiler_stdout": {
+      "bytes": 47092,
+      "sha256": "6ec214e4b94fd1a92581430eb3446a2febf37675fb45bf0f7c0968a396d72bc9"
+    },
+    "compiler_stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "classification": "MSVC source-portability and lane-configuration expected red; no sanitizer runtime, engine behavior or strength conclusion"
+  },
+  "contract_corrections": {
+    "remove_required_flag": "/DIS_64BIT",
+    "reason": "types.h derives IS_64BIT from the compiler-provided _WIN64 macro when no Makefile is used; predefining it creates C4005 and carries no additional architecture evidence",
+    "retain_required_flags": ["/std:c++17", "/Od", "/Zi", "/fsanitize=address", "/W4", "/WX"],
+    "allow_exact_warning_suppressions": ["/wd4141", "/wd4244", "/wd4324"],
+    "warning_scope": "MSVC-only diagnostics already present in the exact official-Stockfish descendant; every other warning remains fatal under /WX"
+  },
+  "single_source_change": {
+    "path": "src/uci.cpp",
+    "pre_change_sha256": "5e7912f87d0a690eca5ca8549f70ffc8e53289478e1ca9e97fbb60f6202f2f4d",
+    "predicate": "UCIEngine::format_score Tablebase visitor explicitly captures its local constexpr TB_CP by value",
+    "forbidden_changes": ["score formula", "score types", "route telemetry", "engine state", "search", "network loading", "tests or expected protocols"],
+    "required_controls": [
+      "fresh MSVC ASan full-product build",
+      "fresh GCC UBSan-trap full-product build",
+      "both incremental oracle replays",
+      "both Worker and routing replays",
+      "exact ASan standard-chess comparator control"
+    ]
+  },
+  "claim_boundary": "The correction can admit compiler portability only after the complete parent sanitizer matrix passes. It is not SIMD, timing, Elo, OpenBench, model-selection or release evidence."
+}

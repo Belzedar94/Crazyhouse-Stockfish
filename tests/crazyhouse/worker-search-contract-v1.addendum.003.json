@@ -1,0 +1,146 @@
+{
+  "schema": "crazyhouse-worker-search-contract-addendum/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-23T00:15:45.3707226Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Rebase only the fail-closed Worker source-provenance pin after the separately admitted one-line portable missing-file classification correction. Evaluator mode, search behavior, route telemetry, corpus and all strength boundaries remain unchanged.",
+  "pins": {
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "worker_search_addendum_001": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.001.json",
+      "bytes": 4690,
+      "sha256": "413107394ab2507f478a6c181b891a5250b2541db178202c593d224390bf2c54"
+    },
+    "worker_search_addendum_002": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.002.json",
+      "bytes": 4062,
+      "sha256": "fd0f2c182504cfc67d1ae647ba90b149d1de2451b188132ca78d6761de3c11f6"
+    },
+    "verifier_before_provenance_rebase_support": {
+      "path": "tests/crazyhouse_worker_search_verify.py",
+      "bytes": 13451,
+      "sha256": "68ffb7ed81325239091f8db251e60b6da5b74eec520d5236ec1e5adc9f47f659",
+      "git_blob": "dc04a9e53ac2c8346cec92b2ab9861e982558b2d"
+    },
+    "sanitizer_portability_addendum_004": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.004.json",
+      "bytes": 2666,
+      "sha256": "24f18035759269b14937dc671d5c7a6497493262942178b605813ef8d2eae2fc"
+    },
+    "portable_classification_red_end_receipt": {
+      "path": "../../../receipts/resources/p5-sanitizer-runtime-t1-end-226.json",
+      "bytes": 5984,
+      "sha256": "0edf8cf4401c40aaedd3f93a63b7d55a53d38b03d73f0fe638be61e58908f5b5"
+    },
+    "portable_classification_rejection_record": {
+      "path": "../../../receipts/private/p5-sanitizer-runtime-rejection-record-131.json",
+      "bytes": 1528,
+      "sha256": "d0c5e9d6a293eafb3cb19f55ba1e1f9023d93e0388cf58b42c000f103586cc76"
+    },
+    "stale_worker_pin_red_end_receipt": {
+      "path": "../../../receipts/resources/p5-sanitizer-runtime-t1-end-227.json",
+      "bytes": 6255,
+      "sha256": "a852ae0fb70bf63245a08f66f8cc94408b2f937828efeeb8e31d51d53d5273a0"
+    },
+    "stale_worker_pin_rejection_record": {
+      "path": "../../../receipts/private/p5-sanitizer-runtime-rejection-record-133.json",
+      "bytes": 1974,
+      "sha256": "1fe699f02b605214b0152c69ee607353665bc74f0c9a4a37f89f2c6de84a8199"
+    }
+  },
+  "inherited_incremental_implementation": {
+    "commit": "eb13ec473b6e5339ec914e6de36c0c640fb05b1b",
+    "tree": "43ee5becef2122f3eac7dfdc268ef945923c6c75",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "provenance_rebase": {
+    "descendant_commit": "33256716e894f08a75836f0745a6d74433a7df5d",
+    "descendant_tree": "7dba6bd6be7e0e50b2e303d6804508479db89ed7",
+    "changed_incremental_pin_count": 1,
+    "changed_incremental_pin_path": "src/nnue/crazyhouse_legacy_network.cpp",
+    "unchanged_incremental_pins": [
+      {
+        "path": "src/search.cpp",
+        "bytes": 95337,
+        "sha256": "8d6450b70c1290e0a6c87a93860a998315fef314dede8c9f548436dc121e83c4",
+        "git_blob": "df04f36f9e93b321622dff1cb54cc6fd1ec33576"
+      },
+      {
+        "path": "src/search.h",
+        "bytes": 15117,
+        "sha256": "a7363c2ef2ed9c0eff31226a38caa0fd1cf34777c6ac49ee755e0e2820377358",
+        "git_blob": "4c5a3fe7fe9adfa689f6ac72fe08e13ae3b1d369"
+      },
+      {
+        "path": "src/nnue/crazyhouse_legacy_network.h",
+        "bytes": 11039,
+        "sha256": "ba061b1aae750a8a1e19b1ef8f63816f135324e9c8b049c2b10ab76df12dce71",
+        "git_blob": "d6e3a8a128e71f06492ff73503dc5746ce645f35"
+      }
+    ],
+    "replaced_pin": {
+      "before": {
+        "path": "src/nnue/crazyhouse_legacy_network.cpp",
+        "bytes": 43945,
+        "sha256": "3f9ff68764fd2f19352c9480446bb96af7dc8b1e69c7e0d32ae7a9cb04aee1af",
+        "git_blob": "9f0a719b42f7f298fb6aaa2266d2296498915a74"
+      },
+      "after": {
+        "path": "src/nnue/crazyhouse_legacy_network.cpp",
+        "bytes": 43923,
+        "sha256": "454aaba18408929b9ab4a23b9c2ea8479803db51edb1d6849bd7c779399eb5c8",
+        "git_blob": "2d7f6e7af4f03cceed3667287afafb572530715c"
+      }
+    },
+    "exact_source_transition": {
+      "from": "error == std::make_error_code(std::errc::no_such_file_or_directory)",
+      "to": "error == std::errc::no_such_file_or_directory",
+      "purpose": "Use portable error-condition equivalence for missing-file classification under MSVC.",
+      "engine_behavior_scope": "loader error classification only",
+      "worker_evaluator_semantics_changed": false,
+      "search_semantics_changed": false,
+      "fallback_allowed": false,
+      "simd_claim": false
+    }
+  },
+  "single_variable_transition": {
+    "variable": "Worker source-provenance pin for the admitted portable loader correction",
+    "from": {
+      "worker_mode": "INCREMENTAL_SCALAR",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "source_pin": "3f9ff68764fd2f19352c9480446bb96af7dc8b1e69c7e0d32ae7a9cb04aee1af"
+    },
+    "to": {
+      "worker_mode": "INCREMENTAL_SCALAR",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "source_pin": "454aaba18408929b9ab4a23b9c2ea8479803db51edb1d6849bd7c779399eb5c8",
+      "fallback_allowed": false,
+      "simd_claim": false
+    }
+  },
+  "expected_red": {
+    "old_verifier_sha256": "68ffb7ed81325239091f8db251e60b6da5b74eec520d5236ec1e5adc9f47f659",
+    "required_failure": "Worker addendum number mismatch",
+    "engine_must_not_start": true
+  },
+  "runtime_replay": {
+    "base_cases_unchanged": true,
+    "case_count": 2,
+    "runs": 4,
+    "route_backend": "legacy-v1",
+    "route_identity_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "required_route_token": "evaluator=incremental-scalar",
+    "required_worker_summary": "PASS crazyhouse_worker_search cases=2 runs=4 backend=legacy-v1 evaluator=incremental-scalar route_telemetry=PASS worker_binding=PASS strength_claim=false",
+    "source_to_binary_binding_required": true,
+    "full_sanitizer_matrix_replay_required": true
+  },
+  "stopping_rule": "The old verifier must reject this addendum before engine launch. The revised verifier must authenticate the immutable base and both prior addenda, validate all unchanged pins and the one explicit replacement pin, fail on any corrupt or stale field, then replay the unchanged two-case/four-run Worker corpus inside both sanitizer lanes. Any mismatch rejects the slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,105 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum": 13,
+  "created_utc": "2026-08-23T11:43:43.4921003Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct only the sanitizer supervisor lifetime after lease 253 lost its launcher and controller process tree during the UBSan build without executing the controller finally block. Preserve source behavior, harness behavior, timeout scale, resources and every scientific predicate.",
+  "pins": {
+    "scale40_addendum_012": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.012.json",
+      "bytes": 4579,
+      "sha256": "1bc3e6424b499ee8572b82822f4d777bd76486778e624b999da105c636e597f9"
+    },
+    "lease253_start_receipt": {
+      "path": "../../../receipts/resources/p4-capability-sanitizer-t1-start-253.json",
+      "bytes": 5033,
+      "sha256": "e1e69d3dc6a418cd2e5b1f867c80d0efa3bc86c4bf6f1b45d0dbdf62edfa153a"
+    },
+    "lease253_end_receipt": {
+      "path": "../../../receipts/resources/p4-capability-sanitizer-t1-end-253.json",
+      "bytes": 4995,
+      "sha256": "88eb22f053a32430c29c7969df6b903e7d3c571bfbaf0bca31ee3a8eabfd0792"
+    },
+    "lease253_rejection_record": {
+      "path": "../../../receipts/private/p4-capability-sanitizer-supervisor-interruption-record-169.json",
+      "bytes": 4034,
+      "sha256": "f9ec3b5b56e18cb75a93d5cdb67aa12f1ba4f77d4e663fa6cbf3fbbd9c1bcc3d"
+    },
+    "lease253_asan_summary": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-253/asan-capability-handshake/summary.json",
+      "bytes": 4685,
+      "sha256": "7d33bc8537113ef95e00c654ab81df63de6dcb73f035e7e99771fe2783161a47"
+    }
+  },
+  "lease253_disposition": {
+    "result": "REJECTED_ORCHESTRATION_SUPERVISOR_TERMINATED_DURING_UBSAN_BUILD",
+    "asan_complete": true,
+    "asan_conservative_cases_passed": 10,
+    "asan_capability_cases_passed": 6,
+    "ubsan_build_started": true,
+    "ubsan_engine_created": false,
+    "completion_present": false,
+    "controller_exit_present": false,
+    "launcher_exit_present": false,
+    "compiler_failure_demonstrated": false,
+    "sanitizer_failure_demonstrated": false,
+    "engine_correctness_failure_demonstrated": false,
+    "gate_credit": false
+  },
+  "single_variable_transition": {
+    "variable": "task-owned supervisor lifetime",
+    "from": "interactive execution session owns the blocking launcher process",
+    "to": "detached hidden launcher process admitted by a PID-bound receipt before target creation and go",
+    "engine_source_changed": false,
+    "harness_source_changed": false,
+    "timeout_scale_changed": false,
+    "case_predicates_changed": false,
+    "resource_ceiling_changed": false,
+    "lane_order_changed": false
+  },
+  "detached_supervisor_contract": {
+    "window_style": "Hidden",
+    "shell": "pwsh -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass",
+    "launcher_requires_admission_receipt": true,
+    "admission_receipt_binds_launcher_pid": true,
+    "admission_receipt_must_precede_target_creation": true,
+    "postlaunch_liveness_probe_required": true,
+    "sanitized_command_required": true,
+    "completion_monitor_is_read_only": true,
+    "broad_process_name_actions_forbidden": true,
+    "foreign_process_actions_forbidden": true
+  },
+  "retry_preregistration": {
+    "fixture_parent_commit": "63a5f1e0d4bf0077233ed993fd3455f5b45aa3d2",
+    "fixture_parent_tree": "45859b58fea0cc31acefadda023cd45ae4b66d91",
+    "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "capability_behavior_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "harness_behavior_commit": "63a5f1e0d4bf0077233ed993fd3455f5b45aa3d2",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false,
+    "expected_git_blobs_each_after_fixture_commit": 294,
+    "fresh_lease": 254,
+    "fresh_namespace": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-254"
+  },
+  "preserved_full_matrix": {
+    "clean_exports": 2,
+    "sequential_one_thread_lanes": true,
+    "process_priority": "Normal",
+    "timeout_scale": 40,
+    "effective_timeouts_seconds": {"uci": 400, "ready": 800, "invalid_observation": 120},
+    "outer_step_timeout_seconds": 1800,
+    "asan_conservative_cases": 10,
+    "asan_capability_fixture_cases": 5,
+    "ubsan_conservative_cases": 10,
+    "ubsan_capability_fixture_cases": 5,
+    "fallback_allowed": false,
+    "stderr_bytes": 0,
+    "timeouts": 0,
+    "sanitizer_diagnostics": 0
+  },
+  "stopping_rule": "Commit this fixture as the only source-tree change. Create a fresh lease 254, bind the detached hidden launcher PID in an immutable admission receipt before target creation, prove the PID remains alive after the launching session exits, and run both complete lanes exactly once. Reject on any source, harness, timeout-scale or predicate drift; export mismatch; warning; sanitizer diagnostic; fallback; stderr; timeout; disk-floor breach; owned residual process; or foreign-process mutation.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,55 @@
+{
+  "schema": "crazyhouse-release-workflow-guard-launch-correction/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE_PRE_EXECUTION_CORRECTION",
+  "created_utc": "2026-08-25T01:38:00Z",
+  "status": "CORRECTED_BEFORE_PROCESS_START",
+  "incident": "CH-325",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-release-workflow-guard-v1.addendum.002.json",
+    "bytes": 4823,
+    "sha256": "f31cd048763a2c8959d9c806493f61edf42b9ba5550f127f887d5e21e0346f5c",
+    "lease": 358
+  },
+  "failed_launch": {
+    "api": "PowerShell Start-Process",
+    "unsupported_parameter": "-Priority",
+    "exact_error_class": "ParameterBindingException",
+    "process_created": false,
+    "target_created": false,
+    "stdout_log_created": false,
+    "stderr_log_created": false,
+    "ready_created": false,
+    "go_created": false,
+    "result_observed": false
+  },
+  "correction": {
+    "launch": "Start the hidden supervisor without the unsupported parameter and capture its exact PID.",
+    "priority": "Set PriorityClass=BelowNormal only on that captured owned PID, then read it back before accepting READY or issuing GO.",
+    "execution_boundary": "The controller performs no archive, extraction or verifier execution before GO, so all formal work remains BelowNormal.",
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-release-workflow-guard-358",
+    "fresh_target_still_available": true
+  },
+  "unchanged": [
+    "source implementation bytes",
+    "contract and expected-red",
+    "workflow, verifier and unit-suite bytes",
+    "controller and independent-verifier bytes",
+    "two clean exports and four profiles",
+    "mutation matrix",
+    "target namespace",
+    "resource ceilings and stopping rule",
+    "P7 preservation",
+    "zero network, GitHub, OpenBench and foreign-process mutation"
+  ],
+  "boundaries": {
+    "formal_execution_started": false,
+    "formal_result": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "release_credit": false,
+    "public_write_authorized": false,
+    "stable_publication_authorized": false
+  }
+}

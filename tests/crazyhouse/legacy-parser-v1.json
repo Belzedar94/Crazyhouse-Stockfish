@@ -1,0 +1,61 @@
+{
+  "schema": "crazyhouse-legacy-parser-fixture/v1",
+  "evidence_class": "E1_ENGINEERING",
+  "claim": "standalone bounded container parsing only",
+  "artifact": {
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "description": "Network trained with the https://github.com/glinscott/nnue-pytorch trainer."
+  },
+  "layout": {
+    "version": "0x7af32f20",
+    "network_hash": "0x3c103e72",
+    "description_length": 75,
+    "transformer_hash": "0x5f2348b8",
+    "feature_dimensions": 55296,
+    "transformer_dimensions": 512,
+    "psqt_buckets": 8,
+    "layer_stacks": 8,
+    "architecture_hash": "0x633376ca",
+    "transformer_section_bytes": 58393604,
+    "layer_parameter_bytes": 17636,
+    "layer_stack_bytes": 17640,
+    "architecture_hash_offsets": [
+      58393691,
+      58411331,
+      58428971,
+      58446611,
+      58464251,
+      58481891,
+      58499531,
+      58517171
+    ]
+  },
+  "positive": [
+    "exact registered file via path",
+    "exact registered bytes via in-memory alias",
+    "repeat exact load"
+  ],
+  "negative": [
+    {"mutation": "missing path", "status": "MissingFile"},
+    {"mutation": "one byte truncated", "status": "TruncatedFile"},
+    {"mutation": "one byte appended", "status": "OversizedFile"},
+    {"mutation": "version", "status": "VersionMismatch"},
+    {"mutation": "network hash", "status": "NetworkHashMismatch"},
+    {"mutation": "description length", "status": "DescriptionLengthMismatch"},
+    {"mutation": "description byte", "status": "DescriptionMismatch"},
+    {"mutation": "transformer hash", "status": "TransformerHashMismatch"},
+    {"mutation": "first architecture hash", "status": "ArchitectureHashMismatch"},
+    {"mutation": "last architecture hash", "status": "ArchitectureHashMismatch"},
+    {"mutation": "transformer parameter byte", "status": "DigestMismatch"}
+  ],
+  "failure_invariant": "every failed replacement leaves the backend unloaded",
+  "exclusions": [
+    "feature-index parity",
+    "numerical parity",
+    "incremental evaluation",
+    "UCI routing",
+    "search",
+    "strength"
+  ]
+}

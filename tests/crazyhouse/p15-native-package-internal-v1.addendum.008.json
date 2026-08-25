@@ -1,0 +1,110 @@
+{
+  "schema": "crazyhouse-p15-native-package-formal-fixture-result/v1",
+  "created_utc": "2026-08-24T20:59:52.6409204Z",
+  "status": "PASS_NATIVE_PACKAGE_FORMAL_FIXTURE",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.007.json",
+    "bytes": 5156,
+    "sha256": "6b4fcaa04d141ea3a57923c1ea5a14c95efcf3ceee72538c8afa2a23dfe162b5"
+  },
+  "lease": 347,
+  "source": {
+    "commit": "eafcb93891f64d3663cb966f421c4abd95460224",
+    "tree": "bcb7e4a7a3900668ea7e4ae69cf597a5d7bd21ad",
+    "src_tree": "fef67c6603c479439c33baaec496115dba293a0c",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 549
+  },
+  "formal_matrix": {
+    "clean_exports": 2,
+    "profiles": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "profiles_total": 4,
+    "positive_small_fixture_cases_per_profile": 4,
+    "negative_cases_per_profile": 72,
+    "case_executions_total": 304,
+    "all_exits_zero": true,
+    "all_stderr_empty": true,
+    "all_raw_transcripts_authenticated": true,
+    "all_normalized_summaries_byte_identical": true,
+    "real_network": false,
+    "full_engine": false
+  },
+  "determinism": {
+    "source_archive_bytes": 7290880,
+    "source_archive_sha256": "a3065b70f7515877e627a79a95c1fd5691fad0bdf16aa66db036aa6ab5a669c5",
+    "source_archives_byte_identical": true,
+    "normal_raw_stdout_bytes": 225,
+    "normal_raw_stdout_sha256": "3c200f0f09b020f49e0ef2a7fb23a3d81b4f091b99612b959fa25fbc99437f3a",
+    "optimized_raw_stdout_bytes": 228,
+    "optimized_raw_stdout_sha256": "75cbab4ae9c5183785d83bf9c369624e0d34a48101fda3e6e10a56e65877aa77",
+    "normalized_summary_bytes": 109,
+    "normalized_summary_sha256": "2f0dc802408e93b2857a631518fb7a59da93f3a63f47de1f03c662fdfba2da50"
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-native-package-formal-fixture-347/completion.json",
+    "bytes": 10606,
+    "sha256": "1fc6ba5fb6d06aa37a1f2c6f18d63819b93c532dc1ac6fac219565343b8fcbc4"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-native-package-formal-fixture-t1-end-347.json",
+    "bytes": 4951,
+    "sha256": "4dff4cc56e26ccbca2262dcb30383102dbba10624b720eac179bc5868f9eb324"
+  },
+  "incidents": [
+    {
+      "id": "CH-308",
+      "effect": "The first launcher never invoked the controller and created no namespace; the same lease remained unstarted.",
+      "prevention": "Quote every space-bearing Start-Process argument and require a controller-owned ready marker before PID binding."
+    },
+    {
+      "id": "CH-309",
+      "effect": "A PID-file hash placeholder was corrected by immutable addendum before GO; no parent receipt was rewritten.",
+      "prevention": "Create and hash the PID file before writing its binding receipt."
+    }
+  ],
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 1121,
+    "namespace_bytes": 28278024,
+    "namespace_ceiling_bytes": 536870912,
+    "scratch_files_after": 0,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_alive": true,
+    "p7_foreign_count": 5
+  },
+  "effect": "Qualifies deterministic small-fixture native ZIP assembly, independent verification, exact inventory and SPDX behavior from two clean exports and two interpreter profiles.",
+  "boundaries": {
+    "small_fixture_tooling_qualified": true,
+    "real_network_containment_verified": false,
+    "package_internal_layout_verified_for_release": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

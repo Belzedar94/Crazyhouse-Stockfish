@@ -1,0 +1,119 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum": 9,
+  "created_utc": "2026-08-23T10:14:00.0000000Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Preregister the affected-source sanitizer replay required by the Crazyhouse capability handshake. Preserve the admitted conservative-search matrix and add the exact five-case capability fixture to both fresh sanitizer lanes.",
+  "pins": {
+    "prior_sanitizer_addendum_008": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.008.json",
+      "bytes": 6542,
+      "sha256": "fe5ed502021c00acc339fb00980ae3c0a8177ae2fcb0687b3b42baea6528ce17"
+    },
+    "capability_fixture": {
+      "path": "tests/crazyhouse/capability-handshake-v1.json",
+      "bytes": 2741,
+      "sha256": "4b027bb4f0e632e298addcb37f18b2bd61c25fe4158f33d3293291a481feab6d"
+    },
+    "capability_verifier": {
+      "path": "tests/crazyhouse_capability_handshake.py",
+      "bytes": 12508,
+      "sha256": "feb94f9297e5da9594128ca43975133e7e1ccf1aea8e4b77faabb80e25793986"
+    },
+    "capability_adr": {
+      "path": "docs/crazyhouse/adr-0004-addendum-005-capability-handshake-integration.md",
+      "bytes": 3280,
+      "sha256": "7373405ba1d46bcce316d8de99617ea8d3b6571d94e635e0ae74fb3638d10a9d"
+    },
+    "capability_routing_addendum_012": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.012.json",
+      "bytes": 5420,
+      "sha256": "167f56f5ca915af3d45ad2de4282c166a64d3e43113f6fcf6c4062410b7be454"
+    },
+    "capability_expected_red_record": {
+      "path": "../../../receipts/private/p4-routing-capability-inventory-expected-red-record-165.json",
+      "bytes": 6923,
+      "sha256": "ca164776cd1f85fedd6e4ff7b7b935789e71f81f977417e284a36a8b3933d849"
+    },
+    "capability_engine_end_receipt": {
+      "path": "../../../receipts/resources/p4-engine-capability-green-t1-end-247.json",
+      "bytes": 4143,
+      "sha256": "250a3613df652fa664108b30bba2d55c7749f74e786450737f9881f872c02630"
+    }
+  },
+  "source_preregistration": {
+    "fixture_parent_commit": "aae0b4b367004ede0386d2d00ebf7c5cc075ad5c",
+    "fixture_parent_tree": "2accabd4ee094e6d4b6da312ae7d002478700681",
+    "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "capability_fixture_commit": "85010213175475176eb2d081e79c6f4a20d7da81",
+    "capability_behavior_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false,
+    "product_source_may_change_in_this_fixture_commit": false,
+    "expected_git_blobs_each_after_fixture_commit": 290
+  },
+  "build_matrix": {
+    "independent_clean_exports": 2,
+    "threads_per_build": 1,
+    "process_priority": "Normal",
+    "timing_evidence": false,
+    "asan": {
+      "compiler_family": "MSVC",
+      "instrumentation": "/fsanitize=address",
+      "warnings_as_errors": true,
+      "runtime_import_must_be_present": "clang_rt.asan_dynamic-x86_64.dll"
+    },
+    "ubsan": {
+      "compiler_family": "GCC",
+      "instrumentation": "-fsanitize=undefined -fsanitize-undefined-trap-on-error",
+      "warnings_as_errors": true,
+      "trap_instruction_count_min": 1
+    }
+  },
+  "runtime_matrix_each_lane": {
+    "conservative_search": {
+      "cases": 10,
+      "expected_result": "PASS_CONSERVATIVE_SEARCH_POLICY_GREEN",
+      "legacy_backend": "legacy-v1",
+      "legacy_evaluator": "incremental-scalar"
+    },
+    "capability_handshake": {
+      "fixture_cases": 5,
+      "expected_result": "PASS_ENGINE_CAPABILITY_HANDSHAKE_GREEN",
+      "required_inventory_count": 24,
+      "positive_order": [
+        "route_commit",
+        "capability_ack",
+        "readyok"
+      ],
+      "one_shot_ack": true,
+      "invalid_uppercase_nonce_fail_closed": true,
+      "missing_network_fail_closed": true,
+      "standard_control_has_no_ack": true
+    },
+    "legacy_network": {
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    },
+    "fallback_allowed": false,
+    "stderr_bytes": 0,
+    "timeouts": 0,
+    "sanitizer_diagnostics": 0
+  },
+  "operational_contract": {
+    "target_namespace_must_be_fresh": true,
+    "exact_export_blob_authentication": true,
+    "foreign_process_mutation": false,
+    "gpu_used": false,
+    "workers_used": false,
+    "network_used": false,
+    "disk_floors_required": true,
+    "owned_residual_processes": 0
+  },
+  "pass_rule": "Both independently exported sanitizer lanes must compile warning-clean, authenticate instrumentation and all Git blobs, pass the unchanged ten-case conservative-search matrix, and pass all five capability-handshake cases with zero stderr, timeout, crash, sanitizer diagnostic or fallback. Any failure rejects the affected-source sanitizer slice.",
+  "claim_boundary": "This is a fixture-first E1 sanitizer contract. It supplies no timing, Elo, model-selection, OpenBench, release or monitoring evidence.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

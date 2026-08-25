@@ -1,0 +1,92 @@
+{
+  "schema": "crazyhouse-local-strength-panel-addendum/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING_CORRECTION",
+  "created_utc": "2026-08-23T22:07:47.9850338Z",
+  "status": "ACCEPTED_PRE_STRENGTH_CORRECTION",
+  "incident": "CH-239",
+  "parent": {
+    "repository_commit": "b7b49ec72a92a76f1cef7fd42e21002d04d66b51",
+    "contract": {
+      "path": "tests/crazyhouse/p7-local-strength-panel-v2.json",
+      "bytes": 14124,
+      "sha256": "62aeb65e403f85cae5873b6686e89064fbeac52e727dbe593549703592a28914"
+    },
+    "preregistration_receipt": {
+      "path": "receipts/resources/p7-local-los-v2-preregistered-276.json",
+      "bytes": 5213,
+      "sha256": "2366bea4862ae4857e65197874f3034fcf6ffcf29564ef76edab616b42b1bc9c"
+    }
+  },
+  "trigger": {
+    "rejected_canary_receipt": {
+      "path": "receipts/resources/p7-local-plumbing-canary-t1-end-277.json",
+      "bytes": 3826,
+      "sha256": "0c6794be0e2b69c841c311101ae16b04d54379a1b6e0c7caa4565329a20f7d3c"
+    },
+    "result": "INVALID_PLUMBING_CANARY",
+    "gate_credit": false,
+    "observed_nonce_set_lines": 4,
+    "observed_nonce_ack_lines": 4,
+    "frozen_parser_matches": 0,
+    "cause": "The regexes used whole-string anchors without MULTILINE and did not admit cutechess-cli's numeric debug timestamp prefix."
+  },
+  "correction": {
+    "corrected_contract": {
+      "path": "tests/crazyhouse/p7-local-strength-panel-v2.json",
+      "bytes": 15372,
+      "sha256": "f1b9a25b38b5bcad4a4becc2257b0da8b9ae1b294010b85c8bfcc2216efcaabe"
+    },
+    "runner": {
+      "path": "tools/strength/run_crazyhouse_local_strength_panel.py",
+      "bytes": 50674,
+      "sha256": "9f571d235dda47f4c8cbf832eaba439a647396e2341a7490b74273a082d70350"
+    },
+    "independent_verifier": {
+      "path": "tools/strength/verify_crazyhouse_local_strength_panel.py",
+      "bytes": 42343,
+      "sha256": "becbf8c0ccc3e9d10d834396b3e95dd819492dc957d1bce55730aa49e1f8bb27"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_local_strength_panel_unit.py",
+      "bytes": 12205,
+      "sha256": "bac2931cdfab224227ed9893b329953e150475c14d68d9b7f64d72120234958a",
+      "tests_passed": 12,
+      "tests_failed": 0
+    },
+    "semantic_change": "Both independent nonce regexes use re.MULTILINE, accept an optional numeric timestamp and whitespace before the direction marker, and accept LF or CRLF line endings.",
+    "changed_scientific_variables": []
+  },
+  "immutability": {
+    "lease_277_reclassified": false,
+    "lease_277_gate_credit": false,
+    "fresh_namespace_required": true,
+    "prior_game_score_consumed": false,
+    "prior_game_score_changes_any_setting": false
+  },
+  "unchanged": [
+    "candidate executable",
+    "Fairy comparator adapter and raw executable",
+    "legacy network bytes",
+    "referee",
+    "rule profile",
+    "opening corpus and order",
+    "time controls",
+    "seeds",
+    "threads, hash and concurrency",
+    "adjudication and invalidation",
+    "statistics and stopping rule",
+    "adapter-overhead gate",
+    "host-clean gate",
+    "OpenBench prohibition"
+  ],
+  "verification": {
+    "prefixed_crlf_transcript_runner": "PASS",
+    "prefixed_crlf_transcript_independent_verifier": "PASS",
+    "unprefixed_lf_transcript_runner": "PASS",
+    "unprefixed_lf_transcript_independent_verifier": "PASS",
+    "lease_277_read_only_diagnostic_after_correction": "12/12 routing checks PASS; diagnostic only; no retroactive credit"
+  },
+  "effect": "One fresh two-game plumbing canary may be admitted. Adapter overhead, the strength ladder and OpenBench remain closed until their independent preconditions pass."
+}

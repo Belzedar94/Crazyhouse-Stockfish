@@ -1,0 +1,45 @@
+{
+  "schema": "crazyhouse-search-primitives-fixture/v1",
+  "profile": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "architecture": "ADR-0001 decisions 5, 6 and 9",
+  "scope": "origin-free drop consumers and conservative correctness routing only",
+  "contracts": {
+    "moved_piece": "a drop resolves to side-to-move plus dropped type without reading an origin square",
+    "speculative_prefetch": "returns no key for every Crazyhouse move; exact post-transition prefetch remains in Position::do_move",
+    "see": "disabled for all Crazyhouse moves until separately justified; returns pass",
+    "shuffling": "orthodox from-square shuffling detection is disabled for Crazyhouse",
+    "move_picker": "drops are scored and emitted without origin-square access",
+    "chess": "orthodox moved-piece, speculative-key, SEE and move-picker paths remain selected"
+  },
+  "cases": [
+    {
+      "id": "CH-SEARCH-MAX-PICKER",
+      "fen": "7k/8/8/8/8/8/4K3/8[PNBRQ] w - - 0 1",
+      "moves": 303,
+      "drops": 295,
+      "duplicates": 0
+    },
+    {
+      "id": "CH-SEARCH-DROP-EVASIONS",
+      "fen": "4r2k/8/8/8/8/8/8/4K3[N] w - - 0 1",
+      "drop_blocks": ["N@e2", "N@e3", "N@e4", "N@e5", "N@e6", "N@e7"]
+    },
+    {
+      "id": "CH-SEARCH-PREFETCH-NONE",
+      "drop_fen": "7k/8/8/8/8/8/8/K7[N] w - - 0 1",
+      "drop": "N@e4",
+      "board_fen": "7k/n7/8/8/8/8/R7/K7[] w - - 0 1",
+      "capture": "a2a7"
+    },
+    {
+      "id": "CH-SEARCH-SEE-CONSERVATIVE",
+      "policy": "all Crazyhouse moves pass SEE pruning regardless of threshold"
+    },
+    {
+      "id": "CHESS-SEARCH-CONTROL",
+      "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "moves": 20,
+      "speculative_prefetch": "present"
+    }
+  ]
+}

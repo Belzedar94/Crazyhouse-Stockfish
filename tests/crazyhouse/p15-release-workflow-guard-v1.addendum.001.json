@@ -1,0 +1,71 @@
+{
+  "schema": "crazyhouse-release-workflow-guard-result/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE_EXPECTED_RED",
+  "created_utc": "2026-08-25T01:34:00Z",
+  "status": "EXPECTED_RED_RELEASE_WORKFLOW_NOT_GUARDED",
+  "tested_source": {
+    "commit": "abb960575c3235b99123fff8cb597785adf79f54",
+    "tree": "5874fdc99c5da75e76348a1fbcd9cad28bf0cdfb",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "clean_before_and_after": true
+  },
+  "contract": {
+    "path": "tests/crazyhouse/p15-release-workflow-guard-v1.json",
+    "bytes": 3653,
+    "sha256": "14702b3cd16a840e0db255db133e0cfcf1fc2536e2ce2f29374e3ecea245d857"
+  },
+  "verifier": {
+    "path": "tools/release/verify_crazyhouse_release_workflow_guard.py",
+    "bytes": 4891,
+    "sha256": "9f982d904e0aec785cbafeb80cfdcdb81a9c7dd18534d2fef0466a9f71544afe",
+    "python": "3.12.0",
+    "optimized": false,
+    "returncode": 2,
+    "timed_out": false
+  },
+  "observed_workflow": {
+    "path": ".github/workflows/official_release.yml",
+    "bytes": 4448,
+    "sha256": "c3ecf4b40096d8b0f3af8555ffc0f261a783322105676759f97d2a366676a2ac",
+    "expected_guard_bytes": 498,
+    "expected_guard_sha256": "a0fabef4ce5ca8a745af8df861822ad9e45aa8378df3493dda55ca983bea4db7",
+    "forbidden_fragments_present": [
+      "contents: write",
+      "official-stockfish/Stockfish",
+      "refs/tags/",
+      "gh release",
+      "/git/refs",
+      "GITHUB_TOKEN",
+      "secrets.",
+      "uses:",
+      "UniversalCompilation",
+      "ARMCompilation",
+      "upload_binaries",
+      "sf_",
+      "master"
+    ]
+  },
+  "interpretation": {
+    "expected_red_matched": true,
+    "compiler_failure": false,
+    "engine_failure": false,
+    "timeout": false,
+    "outage": false,
+    "github_calls": 0,
+    "github_writes": 0,
+    "openbench_calls": 0,
+    "strength_credit": false,
+    "release_credit": false
+  },
+  "effect": {
+    "implementation_authorized": true,
+    "one_variable": "Replace only the inherited release workflow bytes with the preregistered canonical fail-closed guard.",
+    "fresh_positive_replay_required": true,
+    "G15": "UNCHANGED_OPEN",
+    "G16": "UNCHANGED_OPEN",
+    "public_write_authorized": false,
+    "stable_publication_authorized": false
+  }
+}

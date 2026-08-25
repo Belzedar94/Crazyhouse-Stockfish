@@ -1,0 +1,131 @@
+{
+  "schema": "crazyhouse-g4-participant-matrix/v1",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "evidence_class": "E1_ENGINEERING",
+  "contracts": {
+    "profile": {
+      "path": "tests/crazyhouse/g4-profile-v1.json",
+      "bytes": 5486,
+      "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+    },
+    "rule_core": {
+      "path": "tests/crazyhouse/reference-cases.json",
+      "bytes": 17810,
+      "sha256": "4a00bca20d3b149b5bbe3f4153a4a3ff5a20473126763c2d8125a4ba2d11742e",
+      "git_blob": "69ff656153aa7bb1847eca364ec14047267a6fab",
+      "cases": 48,
+      "portable_origin": "retired/fairy-stockfish-baseline-no-go",
+      "origin_role": "fixture provenance only; no donor engine evidence"
+    },
+    "capacity": {
+      "path": "tests/crazyhouse/max-moves-303.json",
+      "bytes": 4541,
+      "sha256": "3c77de3377d66feecdffd37459e31a1824424b3833a39e2272b4202d1c312e38",
+      "legal_moves": 303,
+      "drops": 295,
+      "non_drops": 8,
+      "complete_sorted_move_list": true,
+      "global_maximum_claim": false
+    },
+    "referee": {
+      "path": "tests/crazyhouse/g4-referee-cases-v1.json",
+      "bytes": 4572,
+      "sha256": "6768fa3fb0ff5f3128fe55e1e1beea96aa0e479adf6a8c774dc50b77839f5d7b",
+      "cases": 14
+    }
+  },
+  "participants": [
+    {
+      "id": "scalachess",
+      "role": "primary_rule_and_result_authority",
+      "commit": "cbffc9d7e2c6f8ba33381c5403e1b4f992199626",
+      "tree": "f5410eb2a6ddb6ef7092317533f704158c86a4fc",
+      "mandatory": ["rule_core:all", "capacity:all", "referee:rule_and_history_cases"],
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "lila",
+      "role": "product_profile_source_mapping",
+      "commit": "13895e5856db0f854f6ab76394fffce852ebd5c9",
+      "tree": "8a5f93aa0e88923781805a94d8e653fcf9a77975",
+      "mandatory": ["source_receipt:announced_profile_and_server_result_policy"],
+      "runtime_adapter_required": false
+    },
+    {
+      "id": "python-chess",
+      "role": "independent_reference",
+      "commit": "9c24454dcea4f8a30259d811a2f10b26e911deb4",
+      "tree": "33627273cd58c1a5a20c3132548e5df7b85ff9d6",
+      "mandatory": ["rule_core:all", "capacity:all", "referee:cross_library_cases"],
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "chessops",
+      "role": "independent_reference",
+      "commit": "736c40ced7130d453d85e7979c360b797474c9a7",
+      "tree": "d555da3d103eef217c7a894e7a994c4f55313a42",
+      "mandatory": ["rule_core:all", "capacity:all", "referee:cross_library_cases"],
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "official_base_engine_direct",
+      "role": "target_engine_rule_path",
+      "mandatory_ancestor": "5062aee519a1ba262d472d8ab139851ced56573e",
+      "mandatory": ["rule_core:all", "capacity:all", "referee:rule_and_history_cases", "standard_chess_control"],
+      "runtime_skips_allowed": false,
+      "crazyhouse_search_must_remain": "disabled"
+    },
+    {
+      "id": "official_base_engine_uci",
+      "role": "target_engine_production_protocol_path",
+      "mandatory": ["rule_core:all", "capacity:all", "routing:all_negative_and_persistence_cases", "standard_chess_control"],
+      "runtime_skips_allowed": false,
+      "standard_chess_fallback_allowed": false,
+      "crazyhouse_search_must_remain": "disabled"
+    },
+    {
+      "id": "exact_referee_probe",
+      "role": "actual_match_executable_embedded_conformance_path",
+      "mandatory": ["rule_core:all", "capacity:all", "referee:all"],
+      "runtime_skips_allowed": false,
+      "separate_test_rule_implementation_allowed": false
+    },
+    {
+      "id": "exact_referee_match",
+      "role": "actual_match_execution_path",
+      "mandatory": [
+        "rule_core:all_terminal_result_and_notation_families",
+        "referee:all",
+        "pgn_and_raw_log_replay",
+        "sequential_and_concurrent_isolation"
+      ],
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "retired_fairy_and_pyffish",
+      "role": "correlated_optional_non_voting_projection",
+      "mandatory": [],
+      "may_generate_expectations": false,
+      "may_resolve_disagreement": false,
+      "may_enter_engine_or_referee_dependency_graph": false
+    }
+  ],
+  "current_referee_negative_baseline": {
+    "path": "C:\\Users\\djime\\Documents\\Chess_variants\\Codex\\Fairy-Stockfish organization\\openbench-spell\\Client\\cutechess-ob.exe",
+    "version": "cutechess-cli 1.3.0-beta4; Qt 5.15.19",
+    "bytes": 7511040,
+    "sha256": "1c0bbab69e15a277c0b68bf032848b513f706749999cd5f6d09a1fb60f05b8a6",
+    "source_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "status": "KNOWN_NONCONFORMING",
+    "known_failures": [
+      "inherits orthodox insufficient-material terminal policy",
+      "inherits orthodox halfmove terminal policy",
+      "does not require the exact Crazyhouse profile contract"
+    ]
+  },
+  "gate_status": "OPEN",
+  "strongest_preproduction_status": "G4-LOCAL-CERTIFIED-REFEREE-CANDIDATE",
+  "full_certification_requires": "owner-authorized two-game non-strength canary with exact deployed referee bytes on https://belzedar.duckdns.org",
+  "strength_claim": false,
+  "release_claim": false
+}

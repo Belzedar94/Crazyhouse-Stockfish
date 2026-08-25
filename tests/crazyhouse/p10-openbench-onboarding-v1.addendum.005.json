@@ -1,0 +1,123 @@
+{
+  "schema": "crazyhouse-openbench-onboarding-bench-signature/v1",
+  "created_utc": "2026-08-24T03:44:56.5028905Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P10",
+  "gate": "G10",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "PASS_ENGINE_BUILD_SIGNATURE_FROZEN_AFTER_TWO_CLEAN_EXPORTS",
+  "parent": {
+    "path": "tests/crazyhouse/p10-openbench-onboarding-v1.addendum.004.json",
+    "bytes": 3275,
+    "sha256": "832d60daf8cbbdee8752a1bc96a3b615bf624b5874bc31d8258757aaf656106f",
+    "commit": "05fa91a422d5c17b1c32fb64c817c4ef796c5007",
+    "tree": "3a8c526868096b9c1cad27ab1c97a116c17d5952"
+  },
+  "qualified_source": {
+    "commit": "05fa91a422d5c17b1c32fb64c817c4ef796c5007",
+    "tree": "3a8c526868096b9c1cad27ab1c97a116c17d5952",
+    "src_tree": "74b74e4adbd01f8bc46c0597fb64b30733a1506b",
+    "clean_before_export": true,
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "formal_evidence": {
+    "lease": 286,
+    "producer_result": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-engine-clean-286/result.json",
+      "bytes": 21205,
+      "sha256": "8ed0cec83ba74aa83a857a140d0606c5c60b92cae7c0dea5c186022cbbd53b9f",
+      "status": "PASS_TWO_CLEAN_OPENBENCH_ENGINE_EXPORTS"
+    },
+    "independent_verification": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-engine-clean-286/independent-verification.json",
+      "bytes": 1644,
+      "sha256": "fde2aebe79bf1a00f11b6779e26bd8abb6b4ee26ae1c94f0ed2c38f92a3b96db",
+      "status": "PASS_INDEPENDENT_TWO_CLEAN_OPENBENCH_ENGINE_EXPORTS"
+    },
+    "start_receipt": {
+      "path": "receipts/resources/p10-openbench-engine-clean-t1-start-286.json",
+      "bytes": 5340,
+      "sha256": "7639dc0c1cddc34236d3259a41db30212e65e4c906debea9cd2ce3abbce1a97a"
+    },
+    "end_receipt": {
+      "path": "receipts/resources/p10-openbench-engine-clean-t1-end-286.json",
+      "bytes": 940,
+      "sha256": "9b335cd3447068782f0b830806655450c63d26982f653aa002523088647466dc"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-engine-clean-286/completion.json",
+      "bytes": 1013,
+      "sha256": "181b40a3be75a41c115c165fa67e29f296894ec7216914aa7da0f76e640d9c3a"
+    },
+    "source_manifest": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-engine-clean-286/source-manifest.json",
+      "bytes": 71072,
+      "sha256": "c3eb531100995e7780cd7c5ae246641e5d09079b957bf06dbafb1c69180c1409",
+      "tracked_files": 397
+    },
+    "source_archives": [
+      {
+        "id": "a",
+        "bytes": 5580800,
+        "sha256": "bfd5730f4cf89314221b3644f6b39593f30a9d87aed9599582befef25c2b601f"
+      },
+      {
+        "id": "b",
+        "bytes": 5580800,
+        "sha256": "bfd5730f4cf89314221b3644f6b39593f30a9d87aed9599582befef25c2b601f"
+      }
+    ]
+  },
+  "benchmark": {
+    "variant": "crazyhouse",
+    "rule_profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "rule_profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "arch": "x86-64",
+    "legacy_evaluator": "scalar",
+    "threads": 1,
+    "hash_mib": 16,
+    "limit_type": "depth",
+    "limit": 4,
+    "positions": 12,
+    "runs_per_export": 2,
+    "clean_exports": 2,
+    "observed_nodes": [113485, 113485, 113485, 113485],
+    "expected_nodes": 113485,
+    "deterministic": true,
+    "nps_is_timing_evidence": false,
+    "strength_claim": false
+  },
+  "executables": [
+    {
+      "id": "a",
+      "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-engine-clean-286/export-a/src/crazyhouse-openbench-a.exe",
+      "bytes": 63050751,
+      "sha256": "8a8212e192f1c5a27232ba575ec1b8a1385b034fa2fb35d658856007b2068667"
+    },
+    {
+      "id": "b",
+      "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-engine-clean-286/export-b/src/crazyhouse-openbench-b.exe",
+      "bytes": 63050751,
+      "sha256": "8a8212e192f1c5a27232ba575ec1b8a1385b034fa2fb35d658856007b2068667"
+    }
+  ],
+  "acceptance": {
+    "source_archives_byte_identical": true,
+    "executables_byte_identical": true,
+    "compile_units_each": 29,
+    "compiler_diagnostics": 0,
+    "runtime_fallbacks": 0,
+    "timeouts": 0,
+    "foreign_processes_mutated": false,
+    "bench_commit_message_required": "Bench: 113485"
+  },
+  "claim_boundary": {
+    "engine_openbench_build_contract": "PASS",
+    "openbench_server_onboarding": false,
+    "official_openbench_canary": false,
+    "local_strength_gate": false,
+    "publication": false,
+    "release": false
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "crazyhouse-g4-bestmove-capability-focused-build-target-correction/v1",
+  "created_utc": "2026-08-23T16:28:00.0000000Z",
+  "evidence_class": "E1_ENGINEERING",
+  "effect": "strictly_additive_before_execution",
+  "purpose": "Correct the CMake logical target label in addendum 007 without changing the required executable, source, tests, outcomes or resource bounds.",
+  "parent_addendum": {
+    "path": "tests/crazyhouse/g4-referee-current-qualification-v1.addendum.007.json",
+    "commit": "bf31cc9697e1b9a5357a9ce9a8b823667169471e",
+    "git_blob": "5f9b824289a8a9e960aee5d1cd0e7ad2acbcd71e",
+    "bytes": 5999,
+    "sha256": "6e113908023b90f93459f5a811ddfd8681d7f507ad866bdef6a5ecd8fbb80d9f"
+  },
+  "single_correction": {
+    "superseded_label": "cutechess-cli",
+    "cmake_logical_target": "cli",
+    "required_materialized_artifact": "cutechess-cli.exe",
+    "evidence": "The configured Ninja graph maps cutechess-cli.exe to the CMake target cli."
+  },
+  "corrected_required_targets": [
+    "cli",
+    "test_crazyhousebestmovecontract",
+    "test_crazyhousecapabilitycontract",
+    "test_crazyhouseclicontract"
+  ],
+  "unchanged": [
+    "fresh namespace 259",
+    "single-use execution",
+    "corrected referee source commit and tree must be pinned by the start receipt",
+    "Release configuration and one build job",
+    "GCC stringop-overflow warning-as-error",
+    "bestmove 14/14, capability 14/14 and unchanged CLI contract requirements",
+    "artifact and process closure",
+    "zero gate, timing, strength, OpenBench and release credit for the focused preflight"
+  ],
+  "receipt_rewrite_allowed": false,
+  "source_change_allowed": false,
+  "fixture_change_allowed": false,
+  "gate_credit": false,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

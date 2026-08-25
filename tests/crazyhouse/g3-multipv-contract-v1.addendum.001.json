@@ -1,0 +1,83 @@
+{
+  "schema": "crazyhouse-g3-multipv-contract-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-23T05:27:59.5437621Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Admit the independently selected single-inventory MultiPV architecture after the owner waived Oracle and the immutable expected-red lease demonstrated the exact current protocol-range gap. This addendum authorizes only the frozen engineering correction and makes no strength or release claim.",
+  "pins": {
+    "base_contract": {
+      "path": "tests/crazyhouse/g3-multipv-contract-v1.json",
+      "bytes": 4329,
+      "sha256": "f2779ae3a3e313bc89d639833a1ae96a6b2b787d55852908d4fa20c976a03ddb"
+    },
+    "architecture_addendum": {
+      "path": "docs/crazyhouse/adr-0001-addendum-004-crazyhouse-multipv-protocol.md",
+      "bytes": 4642,
+      "sha256": "95b056836472c1415e555107300d2f79ada6792adb60828c854048fc90f3a58b"
+    },
+    "verifier": {
+      "path": "tests/crazyhouse_multipv_verify.py",
+      "bytes": 19379,
+      "sha256": "2354c1f56c8fd4f8419816ae3205821eab9946b45491d8e9c26c757432a0502a"
+    },
+    "expected_red_record": {
+      "path": "../../../receipts/private/p3-multipv-expected-red-record-150.json",
+      "bytes": 3898,
+      "sha256": "3fcaac55e2927d7666f49a9d9e9c305d4c3df942ac8094da1f00115b0edb8672"
+    }
+  },
+  "oracle_boundary": {
+    "original_requirement": true,
+    "owner_waiver_active": true,
+    "browser_oracle_used_for_this_decision": false,
+    "api_or_credits_used": false,
+    "fallback_used": false,
+    "implementation_decision_owner": "Crazyhouse-Stockfish operational owner"
+  },
+  "expected_red": {
+    "lease": 234,
+    "result": "PASS_EXPECTED_RED_PROTOCOL_RANGE_GAP",
+    "known_root_count": 303,
+    "extended_option_absent": true,
+    "extended_option_unknown": true,
+    "orthodox_out_of_range_assignment_ignored": true,
+    "observed_depth_one_multipv_rows": 1,
+    "stderr_bytes": 0,
+    "timeout": false,
+    "fallback": false
+  },
+  "implementation_scope": {
+    "single_scientific_variable": "variant-specific MultiPV protocol range and its fail-closed assignment boundary",
+    "allowed_source_surfaces": [
+      "src/ucioption.h",
+      "src/ucioption.cpp",
+      "src/engine.h",
+      "src/engine.cpp",
+      "src/engine_routing.h",
+      "src/engine_routing.cpp",
+      "src/uci.cpp",
+      "src/search.cpp"
+    ],
+    "orthodox_multipv_inventory_change_allowed": false,
+    "generic_spin_semantics_change_allowed": false,
+    "fixed_crazyhouse_legal_move_ceiling_allowed": false,
+    "strength_tuning_allowed": false,
+    "fairy_stockfish_source_allowed": false
+  },
+  "required_transition": {
+    "inventory": "add CrazyhouseMultiPV default 0 min 0 max INT_MAX exactly once",
+    "compatibility": "zero inherits the unchanged orthodox MultiPV value",
+    "selection": "committed root position ruleset selects the effective request",
+    "capacity": "effective request clamps only to complete dynamic rootMoves.size()",
+    "invalid_assignment": "emit exact telemetry and block only evaluator-backed Crazyhouse search until a valid assignment",
+    "rule_only_boundary": "isready, position and perft remain available",
+    "chess_boundary": "Crazyhouse override and its invalid state do not change chess search",
+    "recovery": "any valid CrazyhouseMultiPV assignment clears the sticky invalid state"
+  },
+  "stopping_rule": "Implement only the admitted surfaces, first run syntax/static checks, then build from a clean committed export. Require the unchanged frozen verifier in green mode, exact standard chess control, warning-clean build, zero stderr, no timeout, no fallback and no residual owned process. Any fixture or expectation correction requires another hash-pinned addendum and a new lease.",
+  "source_change_allowed": true,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

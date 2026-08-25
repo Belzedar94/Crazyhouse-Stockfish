@@ -1,0 +1,121 @@
+{
+  "schema": "crazyhouse-g3-multipv-contract-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-23T05:30:30.6617302Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Bind the frozen MultiPV protocol contract and expected red to the single-variable behavior implementation before any green build or runtime observation.",
+  "pins": {
+    "architecture_and_expected_red_addendum": {
+      "path": "tests/crazyhouse/g3-multipv-contract-v1.addendum.001.json",
+      "bytes": 3894,
+      "sha256": "9cef33aed0d70d45a485d8c82cf48ddad821c212a77dad82c1e1d636f8ab50f0"
+    },
+    "expected_red_record": {
+      "path": "../../../receipts/private/p3-multipv-expected-red-record-150.json",
+      "bytes": 3898,
+      "sha256": "3fcaac55e2927d7666f49a9d9e9c305d4c3df942ac8094da1f00115b0edb8672"
+    }
+  },
+  "behavior_commit": {
+    "commit": "51ff97d0108dfaa516853ed671d80471ec823290",
+    "tree": "fd86418b4d5965dacffb415ade3df1d5a79a750c",
+    "parent": "8ce8d3d7ebee7e9922ae2eb060e6a581db71ac3d",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "changed_source_paths": [
+      "src/engine.cpp",
+      "src/engine.h",
+      "src/engine_routing.cpp",
+      "src/engine_routing.h",
+      "src/search.cpp",
+      "src/uci.cpp",
+      "src/ucioption.cpp",
+      "src/ucioption.h"
+    ]
+  },
+  "source_pins": [
+    {
+      "path": "src/engine.cpp",
+      "bytes": 26768,
+      "sha256": "9243d46de722b567a5d3d1ef1fa93edfb9b242cf91835d0ae4f70261b147e5fa",
+      "git_blob": "8ce0ac500198abfcc41dae3f3a5d7cfc948e7b46"
+    },
+    {
+      "path": "src/engine.h",
+      "bytes": 7102,
+      "sha256": "3adc19050518248efed268ba61fa23f310c75f6b9e26c11dc5ea6b83251f8591",
+      "git_blob": "866e237c5fb1a610e1bc87fd6d23ecf175e22071"
+    },
+    {
+      "path": "src/engine_routing.cpp",
+      "bytes": 12615,
+      "sha256": "e1e87a3386ab367acf936fecb8bdad3b96b27f832ac5c91626077754b50b7d91",
+      "git_blob": "d4afc6ee192e976b5f37349b66b38c92beb33e98"
+    },
+    {
+      "path": "src/engine_routing.h",
+      "bytes": 4186,
+      "sha256": "c4a27d9eda7093c3702867f6b5ede5ca9cf77f6116249a872699c5764b702f8c",
+      "git_blob": "257ab07ef586f42054b535efcad17874a6f006c9"
+    },
+    {
+      "path": "src/search.cpp",
+      "bytes": 95678,
+      "sha256": "98733f9c291d6fbaaf9fca4c03bf53157cff9007515f6acf0749777135378bb4",
+      "git_blob": "05ad71892b5188ce4f6d22dc3ca568a31bc4244b"
+    },
+    {
+      "path": "src/uci.cpp",
+      "bytes": 32364,
+      "sha256": "79664aba0af116cad39347c7b03a41e4162dba966854cacbd96020d65d324859",
+      "git_blob": "c2b3b0efadcf22596386ef4fa75b6f4b6ede1690"
+    },
+    {
+      "path": "src/ucioption.cpp",
+      "bytes": 6708,
+      "sha256": "eeb1f66b425a5348bbd203226db9182da649a38398f159248e1e914f5c063482",
+      "git_blob": "391bd43391cf2edcffb278b2632278c835bb42d1"
+    },
+    {
+      "path": "src/ucioption.h",
+      "bytes": 3340,
+      "sha256": "1626ddc3928976ea179a1ca3cda626a7db373ac9344182d4d03cfc56466df6a7",
+      "git_blob": "8c0a9363ce6ef12d186d2bbfc8606576e076e560"
+    }
+  ],
+  "implemented_boundary": {
+    "orthodox_option_unchanged": true,
+    "crazyhouse_option": "default 0 min 0 max INT_MAX",
+    "zero_inherits_orthodox": true,
+    "positive_override": true,
+    "selection_owner": "root Position::ruleset()",
+    "dynamic_root_clamp": true,
+    "invalid_callback_is_option_specific": true,
+    "generic_spin_semantics_changed": false,
+    "sticky_invalid_state": true,
+    "crazyhouse_search_refusal": "crazyhouse_multipv_invalid",
+    "rule_only_operations_blocked": false,
+    "chess_search_blocked": false,
+    "direct_engine_bypass": "abort before search",
+    "fixed_crazyhouse_legal_ceiling_added": false
+  },
+  "formal_green_required": {
+    "clean_export": true,
+    "warning_strict_build": true,
+    "verifier_mode": "green",
+    "known_303_complete": true,
+    "dynamic_clamps": true,
+    "invalid_and_recovery": true,
+    "variant_persistence": true,
+    "exact_standard_control": true,
+    "stderr_bytes": 0,
+    "timeout": false,
+    "residual_owned_processes": 0
+  },
+  "stopping_rule": "The next observation must build an immutable clean export containing this addendum and the behavior ancestor. It may not patch source, tests or expectations in place. A compiler failure is classified only after process and artifact inspection. Any failed green predicate requires a new incident entry and additive correction commit; no expected-red receipt may be rewritten.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

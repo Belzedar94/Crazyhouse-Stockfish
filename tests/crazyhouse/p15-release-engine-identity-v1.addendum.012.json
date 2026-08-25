@@ -1,0 +1,147 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-short-scratch-formal-result/v1",
+  "created_utc": "2026-08-25T00:24:11.7487557Z",
+  "status": "PASS_RELEASE_ENGINE_IDENTITY_TOOLING_FORMAL",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.009.json",
+    "bytes": 5151,
+    "sha256": "758f1f2f0fde8c8b4fb158e051c955ab716f90a07bdffbe23f4ea1e3536a0b55"
+  },
+  "path_budget_correction": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.011.json",
+    "bytes": 2805,
+    "sha256": "135b89965043d0756e63ca85a660488224733ce2397ac6e35cc04721273bd7be"
+  },
+  "lease": 355,
+  "source": {
+    "commit": "f734bd5d9dbd6a4e9088da0f2da26f9e67c51d9b",
+    "tree": "66bef116713e447851aa99bc8a2b3cd316df7088",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "p7_ancestor": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 587
+  },
+  "formal_matrix": {
+    "clean_exports": 2,
+    "profiles_per_export": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "profiles_total": 4,
+    "positive_cases_per_profile": 3,
+    "negative_cases_per_profile": 25,
+    "positive_cases_total": 12,
+    "negative_cases_total": 100,
+    "returncodes_zero": 4,
+    "timeouts": 0,
+    "stderr_bytes_total": 0,
+    "summary": "PASS_RELEASE_ENGINE_IDENTITY_FIXTURES positive=3 negative=25 proposed=true tagged=true public_mutation=false",
+    "normalized_summary_bytes": 109,
+    "normalized_summary_sha256": "ca8a3e3d882330b12430251236c11e1fc6357dbea1bbb1abce4b8eae1c899c0f",
+    "all_normalized_summaries_byte_identical": true,
+    "normal_elapsed_ms": [
+      330266,
+      381829
+    ],
+    "optimized_elapsed_ms": [
+      382125,
+      137125
+    ]
+  },
+  "path_budget": {
+    "method": "Harness AST negative labels plus positive repositories crossed with exact Git-tracked paths and all four scratch roots.",
+    "negative_labels": 25,
+    "repository_cases": 27,
+    "tracked_paths": 587,
+    "maximum_characters": 205,
+    "ceiling_characters": 239,
+    "margin_characters": 34,
+    "longest_case": "negative-missing-upstream-attribution",
+    "longest_tracked_path": "tests/crazyhouse/p12-nnue-v2-productive-scalar-trainer-v1.result.001.addendum.001.json"
+  },
+  "source_archives": {
+    "copies": 2,
+    "bytes_each": 7598080,
+    "sha256_each": "c28963d2ca96b4a04ccfc2eb2be397aeaaa9b53aaf9f16d2c800c307f20af712",
+    "byte_identical": true
+  },
+  "artifacts": {
+    "allowed_generated_paths_per_export": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "compiler_linker_engine_or_bytecode_artifacts": 0,
+    "short_scratch_roots": 4,
+    "short_scratch_entries_after": 0,
+    "short_scratch_bytes_after": 0
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-release-engine-identity-short-scratch-formal-355/completion.json",
+    "bytes": 16659,
+    "sha256": "a5ad4e6f4c065486f33f13f98d62e204bfa59a00813101568dbecf55930878fc"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-release-engine-identity-short-scratch-formal-t1-end-355.json",
+    "bytes": 5363,
+    "sha256": "832d0a8178b3d0f4ba6c0878ebdab0fc14116a00b1bb935cf033d2bd1f69ef0d"
+  },
+  "independent_verification": {
+    "status": "PASS_INDEPENDENT_RELEASE_ENGINE_IDENTITY_TOOLING_FORMAL",
+    "path": "receipts/verification/p15-release-engine-identity-short-scratch-formal-355.json",
+    "bytes": 2047,
+    "sha256": "848101b7ba638aca463b6df59dba15ae0e9bffe02ea62e2165dd41fd13d86200",
+    "duplicate_key_safe": true,
+    "raw_streams_and_archives_rehashed": true,
+    "path_budget_recomputed_from_ast_and_git": true,
+    "export_inventories_recomputed": true,
+    "scratch_resource_and_process_restoration_recomputed": true
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "combined_peak_bytes": 166365627,
+    "combined_ceiling_bytes": 268435456,
+    "target_files": 1197,
+    "target_bytes": 29453567,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_stage": "WAITING_HOST_TIMING_CLEAN",
+    "p7_foreign_count": 3,
+    "p7_crazyhouse_count": 0
+  },
+  "incidents_closed": [
+    "CH-318",
+    "CH-319",
+    "CH-320"
+  ],
+  "effect": "Qualifies the synthetic development/proposed/annotated-tag release engine-identity tooling only. It does not authenticate stable runtime UCI output, compile a full engine, prove real package bytes, select a champion, grant strength or OpenBench credit, create a draft or tag, authorize G15, or establish G16/release monitoring.",
+  "boundaries": {
+    "synthetic_identity_tooling_qualified": true,
+    "development_source_only": true,
+    "stable_runtime_identity_authenticated": false,
+    "full_engine_builds_executed": false,
+    "final_p14_panel_executed": false,
+    "release_artifacts_built": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

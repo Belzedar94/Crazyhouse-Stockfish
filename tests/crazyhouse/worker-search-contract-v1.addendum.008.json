@@ -1,0 +1,106 @@
+{
+  "schema": "crazyhouse-worker-search-contract-addendum/v1",
+  "addendum": 8,
+  "created_utc": "2026-08-23T04:43:48.6809642Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct the failed-evaluator command boundary after the immutable routing corpus proved that position parsing and perft are rule-only operations. Search remains fail-closed with the stored activeError, the ordinary scalar Worker behavior is unchanged, and no fallback or strength claim is admitted.",
+  "pins": {
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "worker_search_addendum_007": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.007.json",
+      "bytes": 5267,
+      "sha256": "e8c5ae2afec63ff4f1f30017334bf5338267b219bdefb91ff7676689802d6b91"
+    },
+    "rule_only_expected_red_record": {
+      "path": "../../../receipts/private/p5-worker-simd-rule-only-failed-backend-expected-red-record-148.json",
+      "bytes": 4140,
+      "sha256": "794c8c2e90a2c93b1021b9bfe9e4aafd43e2eeec9c98e4c2aaf4a03bb326a1fa"
+    }
+  },
+  "source_rebase": {
+    "descendant_commit": "2e64efd6c32abaa6740494d48d80c9c85534afa7",
+    "descendant_tree": "239371fd309e04ffa2aabd7d79cf010e15438e3d",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "changed_source_pin_count": 1,
+    "changed_source_pin_path": "src/uci.cpp",
+    "replaced_pin": {
+      "before": {
+        "path": "src/uci.cpp",
+        "bytes": 32817,
+        "sha256": "be7d4ea879db4ebfbddcf59ade101a32ed73327315ce943835f66ab7107bddf6",
+        "git_blob": "a758bdec1e63c6d83514b49ac46d3875f456635c"
+      },
+      "after": {
+        "path": "src/uci.cpp",
+        "bytes": 32195,
+        "sha256": "2201bd326f8bf6662d862babe7ff2355dff4f4a99a7815a13aa1f66fd385d675",
+        "git_blob": "4dfd591e6b42742a45e2d85333f40695649e1897"
+      }
+    },
+    "exact_behavior_correction": {
+      "preserved_no_active_route_position_error": "position_requires_committed_route",
+      "active_failed_backend_position_semantics": "rule-only route admitted",
+      "active_failed_backend_perft_semantics": "rule-only perft admitted",
+      "active_failed_backend_search_error": "stored activeError",
+      "required_unavailable_simd_error": "legacy_simd_unavailable",
+      "isready_retry_semantics_changed": false,
+      "worker_evaluator_semantics_changed": false,
+      "worker_search_semantics_changed": false,
+      "routing_success_digest_changed": false,
+      "fallback_allowed": false,
+      "strength_claim": false
+    }
+  },
+  "single_variable_transition": {
+    "variable": "UCI failed-evaluator boundary while preserving the authenticated default-scalar Worker",
+    "from": {
+      "worker_mode": "INCREMENTAL_SCALAR",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "uci_source_sha256": "be7d4ea879db4ebfbddcf59ade101a32ed73327315ce943835f66ab7107bddf6",
+      "failed_evaluator_rule_only_operations": "rejected"
+    },
+    "to": {
+      "worker_mode": "INCREMENTAL_SCALAR",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "uci_source_sha256": "2201bd326f8bf6662d862babe7ff2355dff4f4a99a7815a13aa1f66fd385d675",
+      "failed_evaluator_rule_only_operations": "position and perft admitted",
+      "failed_evaluator_search": "stored activeError",
+      "build_selector_supplied": false,
+      "make_default": "CRAZYHOUSE_LEGACY_BACKEND=scalar",
+      "fallback_allowed": false,
+      "strength_claim": false
+    }
+  },
+  "expected_red": {
+    "record": 148,
+    "required_failure": "rule-only position was refused after unavailable SIMD",
+    "rule_only_perft_allowed": false,
+    "search_error_preserved": true,
+    "engine_started": true
+  },
+  "runtime_replay": {
+    "base_cases_unchanged": true,
+    "case_count": 2,
+    "runs": 4,
+    "route_backend": "legacy-v1",
+    "route_identity_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "required_route_token": "evaluator=incremental-scalar",
+    "forbidden_route_tokens": ["evaluator=incremental-simd", "simd_backend="],
+    "required_worker_summary": "PASS crazyhouse_worker_search cases=2 runs=4 backend=legacy-v1 evaluator=incremental-scalar route_telemetry=PASS worker_binding=PASS scalar_default_unchanged=true strength_claim=false",
+    "source_to_binary_binding_required": true,
+    "same_target_routing_correction_required": true,
+    "unavailable_simd_negative_required": true,
+    "exact_standard_control_required": true
+  },
+  "stopping_rule": "Require expected-red record 148 to authenticate the overbroad rule-only rejection. Then authenticate addendum 007, preserve every non-UCI source pin, replace only src/uci.cpp, require the corrected unavailable-SIMD negative to allow exactly the rule-only perft while refusing search with legacy_simd_unavailable, require all four unchanged default-scalar Worker runs and the unchanged routing digest, and require exact official standard control. Any other source drift, fallback, search admission, digest drift, stderr, crash or timeout rejects the slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

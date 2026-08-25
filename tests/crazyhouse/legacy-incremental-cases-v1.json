@@ -1,0 +1,197 @@
+{
+  "schema": "crazyhouse-legacy-incremental-cases/v1",
+  "evidence_class": "E1_ENGINEERING",
+  "official_source_commit": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+  "network": {
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+  },
+  "bound_authorities": {
+    "numeric_goldens": {
+      "path": "tests/crazyhouse/legacy-numeric-goldens-v1.json",
+      "sha256": "53866d1139a85ac5e982e6ffd74ce6d0c154abdc7ea46b68fe238aa4ea822eb6"
+    },
+    "rule_fixture": {
+      "path": "tests/crazyhouse/reference-cases.json",
+      "sha256": "4a00bca20d3b149b5bbe3f4153a4a3ff5a20473126763c2d8125a4ba2d11742e"
+    }
+  },
+  "counter_contract": {
+    "walk": "full_refreshes=1, delta_updates=move_count, same_frame_reuses=move_count, max_source_distance=1",
+    "lazy": "full_refreshes=1, delta_updates=move_count, same_frame_reuses=1, max_source_distance=move_count",
+    "null": "full_refreshes=1, delta_updates=0, same_frame_reuses=2, max_source_distance=0",
+    "unsynchronized": "full_refreshes=1, delta_updates=0, same_frame_reuses=1, max_source_distance=0"
+  },
+  "cases": [
+    {
+      "id": "CH-INCR-QUIET",
+      "mode": "walk",
+      "fen": "7k/8/8/8/8/8/P7/K7[] w - - 0 1",
+      "moves": ["a2a3"],
+      "expected_final_fen": "7k/8/8/8/8/P7/8/K7[] b - - 0 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-KING",
+      "mode": "walk",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "moves": ["a1b1"],
+      "expected_final_fen": "7k/8/8/8/8/8/8/1K6[] b - - 1 1",
+      "expected_king_refreshes": 1
+    },
+    {
+      "id": "CH-INCR-CAPTURE-POCKET",
+      "mode": "walk",
+      "reference_case": "CH-REF-CAP-N",
+      "fen": "7k/8/8/8/8/8/N6r/K7[] b - - 0 1",
+      "moves": ["h2a2"],
+      "expected_final_fen": "7k/8/8/8/8/8/r7/K7[n] w - - 0 2",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-PROMOTED-CAPTURE",
+      "mode": "walk",
+      "reference_case": "CH-REF-PROV-002",
+      "fen": "7k/8/8/8/8/8/Q~6r/K7[] b - - 0 1",
+      "moves": ["h2a2"],
+      "expected_final_fen": "7k/8/8/8/8/8/r7/K7[p] w - - 0 2",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-DROP-P",
+      "mode": "walk",
+      "fen": "7k/8/8/8/8/8/8/K7[P] w - - 0 1",
+      "moves": ["P@e4"],
+      "expected_final_fen": "7k/8/8/8/4P3/8/8/K7[] b - - 0 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-DROP-N",
+      "mode": "walk",
+      "fen": "7k/8/8/8/8/8/8/K7[N] w - - 0 1",
+      "moves": ["N@e4"],
+      "expected_final_fen": "7k/8/8/8/4N3/8/8/K7[] b - - 1 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-DROP-B",
+      "mode": "walk",
+      "fen": "7k/8/8/8/8/8/8/K7[B] w - - 0 1",
+      "moves": ["B@d4"],
+      "expected_final_fen": "7k/8/8/8/3B4/8/8/K7[] b - - 1 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-DROP-R",
+      "mode": "walk",
+      "fen": "7k/8/8/8/8/8/8/K7[R] w - - 0 1",
+      "moves": ["R@a8"],
+      "expected_final_fen": "R6k/8/8/8/8/8/8/K7[] b - - 1 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-DROP-Q",
+      "mode": "walk",
+      "fen": "7k/8/8/8/8/8/8/K7[Q] w - - 0 1",
+      "moves": ["Q@e4"],
+      "expected_final_fen": "7k/8/8/8/4Q3/8/8/K7[] b - - 1 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-POCKET-SUCCESSIVE",
+      "mode": "walk",
+      "fen": "7k/7p/8/8/8/8/8/K7[NN] w - - 0 1",
+      "moves": ["N@c3", "h7h6", "N@e4"],
+      "expected_final_fen": "7k/8/7p/8/4N3/2N5/8/K7[] b - - 1 2",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-PAWN-DROP-DOUBLE",
+      "mode": "walk",
+      "reference_case": "CH-REF-DROP-PAWN-DOUBLE",
+      "fen": "7k/8/8/8/8/8/8/K7[P] w - - 0 1",
+      "moves": ["P@e2", "h8h7", "e2e4"],
+      "expected_final_fen": "8/7k/8/8/4P3/8/8/K7[] b - - 0 2",
+      "expected_king_refreshes": 1
+    },
+    {
+      "id": "CH-INCR-EN-PASSANT",
+      "mode": "walk",
+      "reference_case": "CH-REF-EP-001",
+      "fen": "7k/3p4/8/4P3/8/8/8/K7[] b - - 0 1",
+      "moves": ["d7d5", "e5d6"],
+      "expected_final_fen": "7k/8/3P4/8/8/8/8/K7[P] b - - 0 2",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-PROMOTION-Q",
+      "mode": "walk",
+      "reference_case": "CH-REF-PROV-004",
+      "fen": "7k/P7/8/8/8/8/8/K7[] w - - 0 1",
+      "moves": ["a7a8q"],
+      "expected_final_fen": "Q~6k/8/8/8/8/8/8/K7[] b - - 0 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-PROMOTION-N",
+      "mode": "walk",
+      "reference_case": "CH-REF-PROV-005",
+      "fen": "7k/P7/8/8/8/8/8/K7[] w - - 0 1",
+      "moves": ["a7a8n"],
+      "expected_final_fen": "N~6k/8/8/8/8/8/8/K7[] b - - 0 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-PROMOTED-MOVE",
+      "mode": "walk",
+      "reference_case": "CH-REF-PROV-003",
+      "fen": "7k/8/8/8/8/8/Q~7/K7[] w - - 0 1",
+      "moves": ["a2b2"],
+      "expected_final_fen": "7k/8/8/8/8/8/1Q~6/K7[] b - - 1 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-CASTLING",
+      "mode": "walk",
+      "reference_case": "CH-REF-CASTLE-002",
+      "fen": "r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1",
+      "moves": ["e1g1"],
+      "expected_final_fen": "r3k2r/8/8/8/8/8/8/R4RK1[] b kq - 1 1",
+      "expected_king_refreshes": 1
+    },
+    {
+      "id": "CH-INCR-CAPTURE-DROP-CHAIN",
+      "mode": "walk",
+      "reference_case": "CH-REF-CAP-DROP-CHAIN",
+      "fen": "6k1/8/8/8/8/8/n6R/K7[] w - - 0 1",
+      "moves": ["h2a2", "g8g7", "N@c3"],
+      "expected_final_fen": "8/6k1/8/8/8/2N5/R7/K7[] b - - 2 2",
+      "expected_king_refreshes": 1
+    },
+    {
+      "id": "CH-INCR-LAZY-THREE-PLY",
+      "mode": "lazy",
+      "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1",
+      "moves": ["e2e4", "e7e5", "g1f3"],
+      "expected_final_fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R[] b KQkq - 1 2",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-NULL",
+      "mode": "null",
+      "fen": "7k/8/8/8/8/8/P7/K7[] b - - 7 1",
+      "moves": [],
+      "expected_final_fen": "7k/8/8/8/8/8/P7/K7[] b - - 7 1",
+      "expected_king_refreshes": 0
+    },
+    {
+      "id": "CH-INCR-UNSYNCHRONIZED",
+      "mode": "unsynchronized",
+      "fen": "7k/8/8/8/8/8/P7/K7[] w - - 0 1",
+      "moves": ["a2a3"],
+      "expected_final_fen": "7k/8/8/8/8/P7/8/K7[] b - - 0 1",
+      "expected_king_refreshes": 0
+    }
+  ],
+  "stopping_rule": "Any parse, identity, move, final-FEN, raw bucket, adapter, make, undo, null, lazy-distance, counter, network-boundary, same-frame, stderr, exit, or determinism mismatch rejects the implementation. No case or expectation may be changed after the expected-red observation; corrections require a hash-pinned addendum."
+}

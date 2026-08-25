@@ -1,0 +1,151 @@
+{
+  "schema": "crazyhouse-p15-development-engine-identity-runtime-addendum/v1",
+  "created_utc": "2026-08-25T01:01:03Z",
+  "status": "PREREGISTERED_FRESH_REPLAY_CORRECTION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "base_preregistration": {
+    "path": "tests/crazyhouse/p15-development-engine-identity-runtime-v1.json",
+    "commit": "2419d478f0558e21ee3a4e9b9799b1115096034e",
+    "bytes": 10385,
+    "sha256": "1fb8ed2269185be2dc044f5120010b067fe72d6d40635c8c027fca170c6b2f4a",
+    "rewritten": false
+  },
+  "inherited_pre_execution_correction": {
+    "path": "tests/crazyhouse/p15-development-engine-identity-runtime-v1.addendum.001.json",
+    "commit": "156e8674238de7b7e0071370e69962bfa3205a81",
+    "bytes": 4171,
+    "sha256": "a9af800c2222bba4950d51edecb1da3c049fa1cf55a3ffbba0c6ee44be18f0b7",
+    "effect_preserved": "P7 exact psutil name remains python.exe."
+  },
+  "failed_formal_lease": {
+    "lease": 356,
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-development-identity-runtime-356",
+    "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+    "source_commit": "156e8674238de7b7e0071370e69962bfa3205a81",
+    "source_tree": "f03f706b3e07531923706b5e579b4a9bf64b584d",
+    "source_src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "failure": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p15-development-identity-runtime-356/failure.json",
+      "bytes": 29325,
+      "sha256": "2e62c1b2338b008a01039007304c026ed09441cc9ab023307332f2771d9f17f1"
+    },
+    "end_receipt": {
+      "path": "receipts/resources/p15-development-identity-runtime-t1-end-356.json",
+      "bytes": 5021,
+      "sha256": "c5ba98c839a0f9561d4747d5227463ca388c68b78440cc55abf9c8bcd4f2751a"
+    },
+    "source_archive": {
+      "bytes": 7618560,
+      "sha256": "0fb097eb1e0c1e84c3b56b3aa871e2e165b8422493b75b165866aa41b37dbbff"
+    },
+    "clean_export_authenticated_files": 591,
+    "build": {
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_ms": 316672,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "engine_bytes": 103072105,
+      "engine_sha256": "e36798c69d3d79964aba5a55cbf3910311ec74a543c5a48bbfba1881fcc305c5",
+      "engine_pe_coff_timestamp": 0,
+      "compiler_failure": false
+    },
+    "failed_step": {
+      "id": "development-source-verifier",
+      "returncode": 2,
+      "timed_out": false,
+      "stderr_bytes": 59,
+      "stderr_sha256": "3c24e84486c37500256320dc69b1b5b80168dda2cc66aec655a6a539b5c8fd0f",
+      "exact_error": "ERROR: development-source mode takes no release arguments"
+    },
+    "uci_identity_executed": false,
+    "capability_handshake_executed": false,
+    "engine_failure": false,
+    "outage": false,
+    "owned_processes_surviving": 0,
+    "p7_preserved": true,
+    "foreign_processes_mutated": false,
+    "network_calls": 0,
+    "openbench_calls": 0
+  },
+  "cause": {
+    "incident": "CH-322",
+    "false_inference_rejected": "A nonzero source-verifier step after a successful build is an engine or source-identity failure.",
+    "root_cause": "The controller passed --output together with --development-source. The verifier defines --output as a release-mode argument and intentionally rejects the mixed CLI before validating any source file.",
+    "compiler_failure": false,
+    "engine_failure": false,
+    "source_identity_failure": false,
+    "timeout": false,
+    "outage": false
+  },
+  "diagnostic": {
+    "path": "receipts/verification/p15-development-source-verifier-cli-diagnostic-356.json",
+    "bytes": 1865,
+    "sha256": "190fc3aa08e1e90a6a1b88b3049dbdd704986bc50e66b0ca1e07b7748c6ee5b6",
+    "single_variable": "Remove --output and consume canonical stdout.",
+    "returncode": 0,
+    "stdout_bytes": 102,
+    "stdout_sha256": "1023dba4b1b29722a8ccfda2607d4770fb7e41c7b8c2e497583aebfac8afae00",
+    "stderr_bytes": 0,
+    "result": "PASS_DIAGNOSTIC_CORRECT_DEVELOPMENT_SOURCE_CLI_SHAPE",
+    "formal_credit": false
+  },
+  "single_correction": {
+    "description": "Invoke development-source mode with only --development-source, parse the canonical stdout log as the source-verification artifact, and change no other scientific, build, runtime, resource or timeout input.",
+    "build_recipe_changed": false,
+    "source_src_tree_changed": false,
+    "toolchain_changed": false,
+    "network_inputs_changed": false,
+    "uci_expectations_changed": false,
+    "capability_matrix_changed": false,
+    "resource_boundary_changed": false,
+    "timeout_changed": false
+  },
+  "source_boundary": {
+    "base_failed_source_commit": "156e8674238de7b7e0071370e69962bfa3205a81",
+    "base_failed_source_tree": "f03f706b3e07531923706b5e579b4a9bf64b584d",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "formal_source_commit": "SEALED_AFTER_THIS_CORRECTION_COMMIT_IN_THE_IMMUTABLE_START_RECEIPT_AND_CONTROLLER_ARGUMENTS",
+    "formal_source_must_have_exact_parent": "156e8674238de7b7e0071370e69962bfa3205a81",
+    "formal_source_must_preserve_src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "corrected_controller": {
+    "path": "control/p15-development-identity-runtime-357-controller.py",
+    "bytes": 38496,
+    "sha256": "57cf3e4defaf5fc7039a33a0f65c28f10fd376d0ee580aaa0e94c25686057914"
+  },
+  "corrected_independent_verifier": {
+    "path": "control/p15-development-identity-runtime-357-independent-verifier.py",
+    "bytes": 15951,
+    "sha256": "382f64a5cac3649a376d8fda1198f08cc8a919c2c59042a5d4570e3451fee91e"
+  },
+  "fresh_replay": {
+    "lease": 357,
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-development-identity-runtime-357",
+    "target_must_be_absent": true,
+    "T": 1,
+    "N": "one clean-export AVX2 build; five real engine launches",
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench_calls": 0,
+    "namespace_ceiling_bytes": 1073741824,
+    "connection": "none",
+    "sanitized_command": "python -B control/p15-development-identity-runtime-357-controller.py --expected-source <full-commit> --expected-tree <full-tree> --expected-prereg-sha256 <sha256> --expected-correction-sha256 <sha256> --expected-start-receipt-sha256 <sha256> --expected-controller-sha256 <sha256>"
+  },
+  "stopping_rule": "Lease 356 remains immutable and receives no formal runtime credit. Lease 357 may start only from the clean commit containing this addendum, with exact parent 156e8674238de7b7e0071370e69962bfa3205a81 and unchanged src tree. PASS still requires every original build, UCI, capability, process and independent-verification condition. Any further mismatch stops the fresh namespace without repair in place.",
+  "boundaries": {
+    "failed_namespace_reused": false,
+    "failure_rewritten": false,
+    "strength_claim": false,
+    "timing_evidence": false,
+    "stable_runtime_authenticated": false,
+    "openbench_evidence": false,
+    "public_mutation": false,
+    "release_claim": false
+  }
+}

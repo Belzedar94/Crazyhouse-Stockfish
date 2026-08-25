@@ -1,0 +1,169 @@
+{
+  "schema": "crazyhouse-g15-publisher-formal-preregistration/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE",
+  "created_utc": "2026-08-25T03:03:43.6796440Z",
+  "status": "PREREGISTERED_FORMAL_NOT_EXECUTED",
+  "source_parent": {
+    "commit": "722c799c228cf0c3a88d4433b4f6406eaca36190",
+    "tree": "2b7e40625c5984d8a091726c11d9c3e7fabbeac0",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "inputs": {
+    "contract": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.json",
+      "bytes": 6979,
+      "sha256": "35e8462357ae2e4014853cdff132c01361b2120d0af0b6b12ea5ac0187b5f0b5"
+    },
+    "expected_red": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.001.json",
+      "bytes": 3969,
+      "sha256": "3a1c787065a93192488b066e0f7d7ab9871dc8835c3d4d5ae10f990db76fae3e"
+    },
+    "preimplementation_hardening": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.002.json",
+      "bytes": 6288,
+      "sha256": "69fbb15e68d4c4d5bf7459b00c5a2502d18e1d57e8150ae4cb012b907ab5eef8"
+    },
+    "download_authority_correction": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.003.json",
+      "bytes": 4660,
+      "sha256": "70ff2396a5a93f76253f941d39eb8ad12c59558a8b678b4e8c9d5e9fa5fed117"
+    },
+    "adr": {
+      "path": "docs/crazyhouse/adr-0022-post-g15-publisher-v1.md",
+      "bytes": 5705,
+      "sha256": "a25f05c9daa8e689a671a8dfb81245beaeceb44af0f7407406970947b4d9de11"
+    },
+    "publisher": {
+      "path": "tools/release/crazyhouse_g15_publisher.py",
+      "bytes": 41192,
+      "sha256": "f984016ef12c57263994dacd3f1765bb352fda46fe7334bb94817353f45ff2e0"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_g15_publisher.py",
+      "bytes": 30535,
+      "sha256": "9612e15552223d126b8f098556940f51fada57d352dc28820da084d43c878a77"
+    },
+    "independent_release_download_verifier": {
+      "path": "tools/release/verify_crazyhouse_release_download.py",
+      "bytes": 12362,
+      "sha256": "ec3e225149873e4720910094dbd53f0ff97266b45602366696d9070bdee9366b"
+    },
+    "controller": {
+      "path": "control/p15-g15-publisher-formal-360-controller.py",
+      "bytes": 23842,
+      "sha256": "3a9a165a546299c439e8ee85b4415cac96c62a1c31da63f19599da359f135b83"
+    },
+    "independent_formal_verifier": {
+      "path": "control/p15-g15-publisher-formal-360-independent-verifier.py",
+      "bytes": 12582,
+      "sha256": "ca8cf2a16bf725277de13510db252322873dec47b6a5dfca65aa4f539025cf57"
+    }
+  },
+  "effective_contract": {
+    "base_contract_remains_immutable": true,
+    "addendum_002_remains_immutable": true,
+    "addendum_003_supersedes_only_tag_based_draft_download": true,
+    "draft_download_identity": "authenticated unique positive GitHub asset ID",
+    "download_endpoint": "GET /repos/Belzedar94/Crazyhouse-Stockfish/releases/assets/<asset_id>",
+    "download_accept": "application/octet-stream",
+    "tag_based_draft_download_forbidden": true
+  },
+  "runtime": {
+    "python": {
+      "path": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+      "version": "3.12.0",
+      "bytes": 103192,
+      "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"
+    },
+    "psutil": {
+      "version": "7.2.2",
+      "module_bytes": 92363,
+      "module_sha256": "7b6a0675824eb1fa2ff0cb1eb36e358dc454703e51dfa4e9a0e6ccd26a159f0c"
+    },
+    "git": {
+      "path": "C:/Program Files/Git/cmd/git.exe",
+      "version": "2.49.0.windows.1",
+      "bytes": 46464,
+      "sha256": "fec691d80fccc35fcc309fbc9f720536c1d795b8a562ec169f28c9923da9600f"
+    }
+  },
+  "formal_matrix": {
+    "lease": 360,
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-g15-publisher-formal-360",
+    "target_must_be_absent": true,
+    "clean_exports": 2,
+    "source_archives_byte_identical": true,
+    "profiles_per_export": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "profile_executions": 4,
+    "unit_tests_per_profile": 11,
+    "positive_cases_per_profile": 3,
+    "negative_cases_per_profile": 89,
+    "canonical_profile_summaries_byte_identical": true,
+    "export_manifest_unchanged_after_every_profile": true,
+    "timeouts_allowed": false,
+    "nonzero_exits_allowed": false,
+    "compiler_runs": 0,
+    "engine_runs": 0,
+    "openbench_calls": 0
+  },
+  "transport_audit": {
+    "publisher_transport": "deterministic in-process fake only",
+    "sitecustomize_generated_by_hash_pinned_controller": true,
+    "audit_events_blocked": [
+      "subprocess.Popen",
+      "os.system",
+      "socket.connect",
+      "socket.getaddrinfo",
+      "socket.gethostbyname",
+      "socket.gethostbyaddr"
+    ],
+    "empty_path_for_profile_processes": true,
+    "configured_GitHub_and_proxy_credentials_removed": true,
+    "positive_control_requires_subprocess_and_socket_blocks": true,
+    "every_profile_requires_audit_active_marker": true,
+    "publisher_real_subprocesses": 0,
+    "network_calls": 0,
+    "github_writes": 0,
+    "git_remote_writes": 0
+  },
+  "resource_contract": {
+    "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+    "cpu_threads": 1,
+    "controller_priority": "BelowNormal",
+    "controller_affinity_threads": 1,
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "target_ceiling_bytes": 67108864,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_create_time": 1787528195.4198363,
+    "p7_priority": 32,
+    "p7_must_be_preserved": true
+  },
+  "stopping_rule": "Stop and preserve lease 360 on any source, input, ready/GO, audit-hook, archive, extraction, manifest, profile, summary, process, resource or P7 mismatch. Never repair or rerun the namespace in place; any correction requires a new additive incident and a fresh lease.",
+  "pass_effect": "Qualifies only the offline fail-closed post-G15 publisher tooling from two clean exports. It cannot record the owner decision, create or push a tag, create a draft, publish a release, authorize G15, grant strength credit or close G15/G16.",
+  "boundaries": {
+    "formal_executed": false,
+    "publisher_tooling_qualified": false,
+    "owner_decision_recorded": false,
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_published": false,
+    "G15": "OPEN",
+    "G16": "OPEN",
+    "timing_evidence": false,
+    "strength_credit": false,
+    "release_credit": false,
+    "openbench_used": false,
+    "released_monitored": false
+  }
+}

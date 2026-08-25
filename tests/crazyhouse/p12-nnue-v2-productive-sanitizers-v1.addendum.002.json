@@ -1,0 +1,48 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-preregistration-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-24T13:59:49.481Z",
+  "status": "PREREGISTERED_SOURCE_ADMISSION_CORRECTION_BEFORE_LEASE_322",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Correct only the formal-source admission base after the incident ledger and lease-322 operational addendum were committed together. Preserve every scientific, sanitizer, resource, stopping and claim field.",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.001.json",
+    "commit": "c9aa1b02e72d7264f2efbb8feac1559f7fb16f92",
+    "bytes": 2749,
+    "sha256": "d45a5a5656706e55a48c87760b1c13d7e5deff14480fc04c879cabe22de4d4e4"
+  },
+  "correction": {
+    "superseded_base_commit": "c77b66249c9b44ce635171014a4e26ce7e96fcb9",
+    "effective_base_commit": "c9aa1b02e72d7264f2efbb8feac1559f7fb16f92",
+    "reason": "The effective base already contains the immutable CH-292 incident row and addendum 001; neither changes product source or the sanitizer matrix.",
+    "permitted_difference_from_effective_base": [
+      "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.002.json"
+    ],
+    "exact_src_tree_required": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "clean_worktree_required": true
+  },
+  "preserved": {
+    "lease": 322,
+    "target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-322",
+    "hypothesis": true,
+    "single_variable": true,
+    "frozen_inputs": true,
+    "toolchains": true,
+    "resource_contract": true,
+    "sanitizer_lanes": true,
+    "runtime_matrix": true,
+    "stopping_rule": true,
+    "pass_effect": true,
+    "boundaries": true
+  },
+  "boundaries": {
+    "sanitizer_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

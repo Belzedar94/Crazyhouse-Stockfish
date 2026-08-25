@@ -1,0 +1,83 @@
+{
+  "schema": "crazyhouse-g3-multipv-contract-addendum/v1",
+  "addendum": 6,
+  "created_utc": "2026-08-23T07:16:53.6230924Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct only the missing supervisor-PID provenance demonstrated by rejected lease 241 while preserving every source, engine, protocol, resource and stopping predicate from addendum 005.",
+  "pins": {
+    "current_source_replay_addendum_005": {
+      "path": "tests/crazyhouse/g3-multipv-contract-v1.addendum.005.json",
+      "bytes": 4520,
+      "sha256": "c7479cab61ea495245fd8b305fb9fb25220291c54b98faa4a77a3da9ddd5693b",
+      "git_blob": "b5732a8e1f1347b24ec3aa39380111fde4ffeccd",
+      "commit": "6ea15667e46e30ee7691cc60bcc85cb57e428317"
+    },
+    "lease_241_original_end_receipt": {
+      "path": "../../../receipts/resources/p3-current-source-multipv-replay-t1-end-241.json",
+      "bytes": 5751,
+      "sha256": "5dca21899c0bc64820300a310e998bb9b2671af795415e064c157fc09f915e1f"
+    },
+    "lease_241_end_receipt_addendum_001": {
+      "path": "../../../receipts/resources/p3-current-source-multipv-replay-t1-end-241.addendum.001.json",
+      "bytes": 2162,
+      "sha256": "03c7447aa9bad23cc67fc41f8b5576ee613d43b07afad9990b80fab5a3daf536"
+    },
+    "lease_241_rejection_record": {
+      "path": "../../../receipts/private/p3-current-source-multipv-replay-rejection-record-157.json",
+      "bytes": 3544,
+      "sha256": "74408ff5eccdcaf2346540bd19ff3a85721f61914b99bbd9dbc21cfb6a44534d"
+    },
+    "lease_241_completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p3-current-source-multipv-replay-241/completion.json",
+      "bytes": 7183,
+      "sha256": "a7fb14273cecdc46b36cc205018557a28ab65ac97e4d110707f3ecf7318875e1"
+    }
+  },
+  "rejected_boundary": {
+    "lease": 241,
+    "completion_result_before_external_audit": "PASS_CRAZYHOUSE_MULTIPV_CURRENT_SOURCE_REPLAY",
+    "protocol_observation_result": "PASS_CRAZYHOUSE_MULTIPV_PROTOCOL_BOUNDARY",
+    "product_failure": false,
+    "protocol_failure": false,
+    "recorded_verifier_pid": 30072,
+    "recorded_supervisor_pid": null,
+    "gate_credit": false
+  },
+  "demonstrated_defect": {
+    "incident": "CH-204",
+    "requirement": "Every resource handoff records the supervisor PID.",
+    "cause": "The synchronous controller did not serialize its own PowerShell $PID and no separate launcher record captured it.",
+    "unrecoverable_field": "lease-241 supervisor PID",
+    "receipt_rewrite_allowed": false
+  },
+  "orchestration_correction": {
+    "controller_self_pid_field": "supervisor_pid",
+    "go_marker_required": true,
+    "completion_required": true,
+    "same_value_required_in_go_and_completion": true,
+    "independent_postexit_absence_check_required": true,
+    "tracked_verifier_and_exact_engine_absence_checks_required": true,
+    "scientific_predicates_changed": false,
+    "engine_changed": false,
+    "verifier_changed": false,
+    "fixture_changed": false,
+    "base_contract_changed": false,
+    "network_changed": false
+  },
+  "fresh_retry": {
+    "lease": 242,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p3-current-source-multipv-replay-242",
+    "reuse_lease_241_output": false,
+    "reuse_lease_241_namespace": false,
+    "single_correction_only_retry": true,
+    "validation_source": "a clean committed descendant containing this addendum and no product-src change after 4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+    "expected_protocol_result": "PASS_CRAZYHOUSE_MULTIPV_PROTOCOL_BOUNDARY",
+    "expected_completion_result": "PASS_CRAZYHOUSE_MULTIPV_CURRENT_SOURCE_REPLAY"
+  },
+  "stopping_rule": "Authenticate this addendum and every pinned rejection artifact, use fresh lease 242, persist controller self PID in GO and completion, and apply every unchanged predicate from addendum 005. Reject any other change, namespace reuse, missing PID identity, nonzero exit, stderr, timeout, fallback, residual process, foreign-process mutation or crossed disk floor.",
+  "claim_boundary": "This correction changes orchestration provenance only. The replay remains deterministic E1 protocol correctness evidence, not timing, Elo, OpenBench, model-selection or release evidence.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

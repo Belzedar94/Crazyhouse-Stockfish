@@ -1,0 +1,36 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum_id": "CRAZYHOUSE-OFFICIAL-STOCKFISH-SANITIZER-RUNTIME-V1-ADDENDUM-003",
+  "created_utc": "2026-08-22T23:42:00Z",
+  "parent": {
+    "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.002.json",
+    "bytes": 1798,
+    "sha256": "580db0d31ad3dea9ba22c1fd71a47b5071098cf60f8d0d3f6bbe84a310574dd8"
+  },
+  "expected_red": {
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p5-sanitizer-build-preflight-04dea13b-005",
+    "source_commit": "04dea13b157fced8f2768bddfbefdab072323e73",
+    "completion": {
+      "bytes": 6005,
+      "sha256": "62166fc468fac31ebf5b54acb357678de3858558dbcdd6beb6dd37d0184d7794"
+    },
+    "linker_stdout": {
+      "bytes": 1093,
+      "sha256": "c3af992549c74298cc8ef7ee80b1300ef43ca1288d32f90b2f9093a84b8b145a"
+    },
+    "linker_stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnostic": "LNK2019 unresolved __imp_CommandLineToArgvW from Stockfish::CommandLine, followed by LNK1120",
+    "compile_warning_count": 0
+  },
+  "contract_correction": {
+    "append_exact_msvc_link_input": "Shell32.lib",
+    "reason": "The Windows CommandLineToArgvW import used by misc.cpp is provided by Shell32; Makefile-based MinGW links it through its platform libraries while the direct MSVC lane must name it explicitly.",
+    "source_mutation": false,
+    "sanitizer_claim": false
+  },
+  "required_next_observation": "A fresh clean export must compile and link all three MSVC ASan binaries with zero unapproved warnings before runtime evidence begins.",
+  "claim_boundary": "This addendum only completes the direct MSVC link recipe. It is not a sanitizer PASS, SIMD, timing, Elo, OpenBench or release claim."
+}

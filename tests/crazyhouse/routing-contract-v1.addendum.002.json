@@ -1,0 +1,69 @@
+{
+  "schema": "crazyhouse-worker-search-routing-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-22T20:55:19.3480240Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Replay the immutable transactional UCI routing corpus after the separately preregistered worker-search contract admits exactly bounded Crazyhouse go through the authenticated legacy-v1 full-refresh evaluator.",
+  "pins": {
+    "routing_contract_v1": {
+      "path": "tests/crazyhouse/routing-contract-v1.json",
+      "bytes": 6646,
+      "sha256": "f98828dcf79211bc8f547b1562cea2f282adc71669256383309ba43f85b69dfd"
+    },
+    "routing_addendum_001": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.001.json",
+      "bytes": 4023,
+      "sha256": "569ef378350be65fddac2a2897f30fd7587eed2fc88e6cc6728fc1bab8f67fd6"
+    },
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "verifier_before_addendum_support": {
+      "path": "tests/crazyhouse_uci_routing_verify.py",
+      "bytes": 24799,
+      "sha256": "d64264ef5444d795776a1222bde80a15629f497ddc3170a816281175ce61a5b7",
+      "git_blob": "212217a61d0f8fd025704aa21f1483ace04cf8c8"
+    },
+    "worker_search_implementation": {
+      "commit": "bdfbe64585e4f84e5404fef5d271a53f3e9cfb32",
+      "tree": "26a82855334554db3ec230d13faf2d4e5bd1d382"
+    }
+  },
+  "single_variable_transition": {
+    "variable": "Crazyhouse go admission and worker evaluator binding",
+    "from": {
+      "crazyhouse_search": "DISABLED",
+      "expected_code": "crazyhouse_search_not_bound"
+    },
+    "to": {
+      "crazyhouse_search": "BOUND_LEGACY_V1_FULL_REFRESH",
+      "required_ruleset": "crazyhouse",
+      "required_profile": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "required_backend": "legacy-v1",
+      "required_backend_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "fallback_allowed": false,
+      "incremental_or_simd_claim": false
+    }
+  },
+  "replayed_scenario": {
+    "id": "crazyhouse_rule_route_and_command_refusals",
+    "unchanged_perft": "go perft 1 from Crazyhouse startpos must return 20 nodes",
+    "changed_command": "go depth 1",
+    "expected_search_case": "STARTPOS_DEPTH_1 from the pinned worker-search contract",
+    "remaining_scenario_count": 10,
+    "remaining_scenario_semantics": "unchanged"
+  },
+  "unchanged_command_refusals": {
+    "eval": "crazyhouse_eval_not_bound",
+    "bench": "crazyhouse_bench_not_bound",
+    "speedtest": "crazyhouse_speedtest_not_bound",
+    "export_net": "crazyhouse_export_net_not_bound"
+  },
+  "stopping_rule": "Run all 11 routing scenarios once. The Crazyhouse rule-route scenario must produce a legal bounded depth-1 bestmove and preserve all four non-search refusal codes. Every other identity, inventory, readiness, persistence, transaction, perft and standard-chess assertion remains unchanged. Any mismatch rejects the slice; no source, fixture or bound is edited inside the lease.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

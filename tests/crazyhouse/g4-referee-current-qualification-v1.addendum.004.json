@@ -1,0 +1,176 @@
+{
+  "schema": "crazyhouse-g4-current-referee-qualification-replay-addendum/v1",
+  "created_utc": "2026-08-23T15:08:14.3714224Z",
+  "lease": 256,
+  "evidence_class": "E1_ENGINEERING",
+  "effect": "strictly_additive_before_execution",
+  "purpose": "Pin every input to the one permitted formal replay after the immutable namespace-255 rejection and the successful isolated GCC 16 correction preflight.",
+  "supersession_semantics": {
+    "unchanged_requirements": [
+      "Every correctness, conformance, capability, artifact, resource and closure predicate frozen by the base matrix and addendum 001 remains mandatory.",
+      "The current referee source must still be an authenticated descendant of the same clean root.",
+      "The exact official-Stockfish-based candidate and exact legacy network remain the only real-join inputs.",
+      "A passing replay remains engineering evidence only."
+    ],
+    "explicit_corrections": [
+      "The rejected source and single-use namespace 255 are historical evidence and are never reused.",
+      "The corrected referee commit and fresh namespace 256 below replace only those two execution identities.",
+      "The C translation unit is compiled with stringop-overflow promoted to an error."
+    ],
+    "receipt_rewrite_allowed": false
+  },
+  "prior_public_preregistration": [
+    {
+      "path": "tests/crazyhouse/g4-referee-current-qualification-v1.json",
+      "git_blob": "66b8509bc938277d926b59190160a7084dd971ba",
+      "bytes": 8451,
+      "sha256": "92b6e914dc9bab213d0adb63c872a7d14f1fc2d8fc2ce79fd4cfc9acff3dac89"
+    },
+    {
+      "path": "tests/crazyhouse/g4-referee-current-qualification-v1.addendum.001.json",
+      "git_blob": "c5acc2dd7bcce0646dbda86bc5ae3cf27aa10cab",
+      "bytes": 5083,
+      "sha256": "bc577e3a1275caaf1ae0bea9bd734928179bcad3bf346eb480ba34520f75e66e"
+    },
+    {
+      "path": "tests/crazyhouse/g4-referee-current-qualification-v1.addendum.002.json",
+      "git_blob": "c5e03445cbd1c115cca92b8294b844fda13ae9db",
+      "bytes": 6066,
+      "sha256": "cf144c25ebe6444ab4bf9017e2c4c5ffddb75f5c5d9160dc3d6a1f88acb9a3c8"
+    },
+    {
+      "path": "tests/crazyhouse/g4-referee-current-qualification-v1.addendum.003.json",
+      "git_blob": "6b6b7c37ab1311ba1963c6904587a89f85ce39ce",
+      "bytes": 6061,
+      "sha256": "2118f00944d659a5d7978fd841a62bdb7a472b58b00242235cb2567bbfb7934e"
+    }
+  ],
+  "product_anchor_before_this_addendum": {
+    "commit": "56deb45e83a843f8ecb14bccaa3cda297593604d",
+    "tree": "123905e18905d8fe1f24e2a6c5c0993d2ab37435",
+    "status_lines": 0,
+    "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377"
+  },
+  "corrected_referee": {
+    "canonical_worktree": "D:/Crazyhouse-Stockfish/referee/cutechess-24d430-clean",
+    "branch": "crazyhouse/combined-capability-integration",
+    "commit": "6c6ccdd2cecec53db4ec55cef97d63964ea9cee3",
+    "tree": "6e2ca65b9b1187c8b2a4a923f50cf122cd18f8ec",
+    "parent": "048751bc170a667adcf8653f179adc33d696a2ab",
+    "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "clean_root_tree": "289867c000147a84b2a48eff5ce1aa2fbd85e168",
+    "commits_above_clean_root": 33,
+    "tracked_files": 494,
+    "status_lines": 0,
+    "single_changed_file_from_parent": {
+      "path": "projects/lib/3rdparty/fathom/src/tbcore.c",
+      "git_blob": "2b21f6cf2471b7267c3c7c6291e4bc9ef05c6711",
+      "bytes": 46736,
+      "sha256": "f4bf7e5fb7caadefba70bcd7a2318cb111ef1645c1f9b71dcd3005a157627c26"
+    },
+    "change_shape": {
+      "retained_fail_closed_guards": 4,
+      "redundant_static_loop_bounds": 6,
+      "admitted_input_behavior_change": false,
+      "crazyhouse_behavior_change": false
+    }
+  },
+  "preflight_receipt": {
+    "path": "../../../receipts/private/p4-referee-fathom-preflight-004-pass-173.json",
+    "bytes": 4270,
+    "sha256": "58acf1c49e19bccd277bb5ca0c0bc49566b288b8742495441465e9f3fbed8215",
+    "result": "PASS_ISOLATED_FATHOM_GCC16_STATIC_BOUND_PREFLIGHT",
+    "gate_credit": false,
+    "object": {
+      "path": "D:/Crazyhouse-Stockfish/preflights/p4-referee-fathom-6c6ccdd2-004.obj",
+      "bytes": 63582,
+      "sha256": "44d4fb87c1d9da89c6ff9bb16b2c311c0691d8a510a9918d231d3bc7b838adbd"
+    }
+  },
+  "execution_artifacts": {
+    "controller": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/control/p4-referee-current-qualification-256-controller.ps1",
+      "bytes": 44724,
+      "sha256": "fd7bfa5578ebcb7fabedaba17046d2fb8c3197b3dd51757c5a44d0eb4bd13fec",
+      "powershell_parser_errors": 0
+    },
+    "launcher": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/control/p4-referee-current-qualification-256-launcher.ps1",
+      "bytes": 8241,
+      "sha256": "07dd52f5fcf23ce0b33e66ddab133e561602973ff32a85f59f44de345c75d911",
+      "powershell_parser_errors": 0
+    },
+    "detached_start_coordinator": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/control/p4-referee-current-qualification-256-detached-start.ps1",
+      "bytes": 6510,
+      "sha256": "666354e502caade09a07923028e854aeecb6438ec6df327d5e25a3f1415380fa",
+      "powershell_parser_errors": 0
+    }
+  },
+  "candidate": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p4-engine-capability-green-247/source/src/stockfish.exe",
+    "bytes": 103068074,
+    "sha256": "aef7a64760c9f4f23cb15b4402130dd6a51c0843a3f8cb00af76e90bb813004b",
+    "source_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false
+  },
+  "legacy_network": {
+    "path": "C:/Users/djime/Documents/Chess_variants/Match script/crazyhouse_run15rl_e190_l03.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+  },
+  "toolchain": {
+    "git": {"path":"C:/Program Files/Git/cmd/git.exe","bytes":46464,"sha256":"fec691d80fccc35fcc309fbc9f720536c1d795b8a562ec169f28c9923da9600f"},
+    "cmake": {"path":"C:/msys64/mingw64/bin/cmake.exe","bytes":15083627,"sha256":"b51912b4ab9b17734ee21b2bfb905df427fb22b5ebc929837f7ded143572a64b"},
+    "ctest": {"path":"C:/msys64/mingw64/bin/ctest.exe","bytes":16615495,"sha256":"4c88c476e0f829f0909bd2788c8350ec6b504623b704699258d41c68e0ac7c23"},
+    "ninja": {"path":"C:/msys64/mingw64/bin/ninja.exe","bytes":419376,"sha256":"51c23d2b9fb6dfffbe36dd22d5b31a78ef8b957943d9380be91da92ad8730fe0"},
+    "gcc": {"path":"C:/msys64/mingw64/bin/gcc.exe","bytes":3310404,"sha256":"d38d4dd6bea387499487881383e644ab7c193ac8f8364dc4252d6e6cc09700e2"},
+    "gxx": {"path":"C:/msys64/mingw64/bin/g++.exe","bytes":3312964,"sha256":"c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb"},
+    "qt5_qmake": {"path":"C:/msys64/mingw64/bin/qmake-qt5.exe","bytes":4353536,"sha256":"d018b0ead28e2f5d724f14e1b15ef4e097486bfadfa2a181867c273ee766e914"},
+    "powershell": {"path":"C:/Users/djime/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe","bytes":301368,"sha256":"db6dd81183fe57d22e03b911ec9a30a2fd7c40542e97743615355a6fb44f458f"},
+    "required_c_flag": "-Werror=stringop-overflow"
+  },
+  "formal_replay": {
+    "execution_namespace": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256",
+    "namespace_must_not_preexist": true,
+    "single_use": true,
+    "build_jobs": 1,
+    "match_concurrency": 1,
+    "process_priority": "Normal",
+    "network_used_for_build": false,
+    "required_public_preregistration_count": 5,
+    "requirements": [
+      "all 494 tracked files match their Git blobs",
+      "the Release C translation unit uses -Werror=stringop-overflow",
+      "the complete target build exits zero with empty stderr and no warning or error diagnostic",
+      "CTest inventory is exactly 14 and all 13 non-Grid tests pass",
+      "the full chessboard control remains 274 pass, one known Grid failure and zero skipped",
+      "the selected Crazyhouse board control remains 9/9",
+      "the direct combined capability suite remains 18/18",
+      "conformance identity and ordinary version controls pass",
+      "the exact candidate/referee two-process join produces two games, four exact acknowledgements, four unique nonces, empty engine stderr and two valid Crazyhouse PGNs",
+      "source and artifact inventories remain stable and all owned processes exit"
+    ]
+  },
+  "resource_admission_snapshot": {
+    "observed_utc": "2026-08-23T15:06:34.8951977Z",
+    "c_free_bytes": 8011534336,
+    "d_free_bytes": 1292385681408,
+    "c_free_floor_bytes": 5368709120,
+    "d_free_floor_bytes": 1099511627776,
+    "known_foreign_processes_alive_normal": [36984, 23492, 16852, 23580],
+    "foreign_process_mutation_allowed": false,
+    "gpu_used": false,
+    "workers_used": false,
+    "openbench_submission_authorized": false
+  },
+  "execution_namespace": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256",
+  "stopping_rule": "Namespace 256 is consumed exactly once after this addendum is committed and the immutable start receipt pins the resulting product commit, all five public preregistrations, the three execution scripts, corrected referee, preflight receipt, candidate, network, tools and resource handoff. Any drift, diagnostic, test mismatch, join defect, artifact drift, disk-floor breach, owned residual process or foreign-priority mutation rejects the replay and preserves the namespace.",
+  "gate_effect_on_pass": "A pass qualifies only this corrected referee build and exact real candidate capability join as E1 engineering evidence. It does not itself close G4, authorize OpenBench, prove timing or Elo, or select a release.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

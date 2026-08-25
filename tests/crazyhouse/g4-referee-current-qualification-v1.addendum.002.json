@@ -1,0 +1,111 @@
+{
+  "schema": "crazyhouse-g4-current-referee-qualification-correction/v1",
+  "created_utc": "2026-08-23T14:38:26.9278607Z",
+  "evidence_class": "E1_ENGINEERING",
+  "effect": "strictly_additive_after_rejected_namespace_255_and_before_source_correction",
+  "purpose": "Freeze the only admissible correction for the GCC 16 Fathom piece-array diagnostics observed in namespace 255, without granting that rejected run any test, join, timing, or strength credit.",
+  "rejected_run": {
+    "end_receipt": {
+      "path": "../../../receipts/resources/p4-referee-current-qualification-t1-end-255.json",
+      "bytes": 6861,
+      "sha256": "335909af17c5225c4f772e5e771b82365e3844175102ed765ea8535bff178135"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-255/completion.json",
+      "bytes": 10804,
+      "sha256": "26ef5adda2aef9d0f1152693c6cd0863fe76e07dfb327878d519511e8c87e8f7",
+      "result": "REJECTED_CURRENT_REFEREE_QUALIFICATION",
+      "failure": "build warning or error diagnostic observed"
+    },
+    "namespace_reused": false,
+    "gate_credit": false,
+    "tests_observed": false,
+    "real_join_observed": false
+  },
+  "diagnostic": {
+    "compiler": "GCC 16.1.0 Rev5",
+    "warning": "-Wstringop-overflow",
+    "message": "writing 1 byte into a region of size 0",
+    "count": 6,
+    "translation_unit": "projects/lib/3rdparty/fathom/src/tbprobe.c",
+    "included_source": "projects/lib/3rdparty/fathom/src/tbcore.c",
+    "source_lines": [1234, 1241, 1201, 1207, 1255, 1219],
+    "affected_functions": [
+      "setup_pieces_piece",
+      "setup_pieces_piece_dtz",
+      "setup_pieces_pawn",
+      "setup_pieces_pawn_dtz"
+    ],
+    "destination_bound": "TBPIECES=6",
+    "closed_world_source_fact": "tb_init enumerates only three- through six-piece table names before init_tb derives entry->num; the compiler cannot carry that bound through the stored entry and later setup calls."
+  },
+  "vendor_provenance": {
+    "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "candidate_commit": "7dc4995cc83c68c858fe5144e5edf21ed96f466f",
+    "files_identical_between_clean_root_and_candidate": [
+      {
+        "path": "projects/lib/3rdparty/fathom/src/tbcore.c",
+        "blob": "eed96fef46d9356af3df43909db9a5bd5c1e0b67"
+      },
+      {
+        "path": "projects/lib/3rdparty/fathom/src/tbcore.h",
+        "blob": "9b0b679238c47f01373d2a391444dc0ad1303a73"
+      },
+      {
+        "path": "projects/lib/3rdparty/fathom/src/tbprobe.c",
+        "blob": "a2e672c8b614c4cff9a17f35319ea309e97a92cb"
+      }
+    ],
+    "classification": "inherited vendored-source warning exposed by the pinned current compiler; not a Crazyhouse rules failure, test failure, timeout, or outage"
+  },
+  "single_allowed_source_variable": {
+    "path": "projects/lib/3rdparty/fathom/src/tbcore.c",
+    "allowed_change": "At the entry of each affected setup function, reject ptr->num greater than TBPIECES with a deterministic stderr diagnostic and EXIT_FAILURE before any array access.",
+    "required_guard_count": 4,
+    "required_predicate": "ptr->num > TBPIECES",
+    "required_failure_semantics": "fail closed before every affected pieces or norm array access",
+    "forbidden": [
+      "warning suppression",
+      "loop truncation",
+      "array enlargement without format proof",
+      "Fathom vendor replacement",
+      "tablebase behavior change for admitted three- through six-piece inputs",
+      "Crazyhouse rule, clock, PGN, capability, bestmove, or match-path change"
+    ]
+  },
+  "preflight": {
+    "source": "fresh authenticated export of the corrected referee commit",
+    "build_jobs": 1,
+    "process_priority": "Normal",
+    "required_c_flag": "-Werror=stringop-overflow",
+    "required_result": "the same Release target set builds with exit zero, empty stderr, and no warning or error diagnostic",
+    "credit": false,
+    "purpose": "Reject an ineffective guard before consuming the full formal replay."
+  },
+  "formal_replay": {
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256",
+    "namespace_must_not_preexist": true,
+    "source_identity": "to be pinned by a further pre-execution addendum after the single allowed source commit exists",
+    "base_matrix": "tests/crazyhouse/g4-referee-current-qualification-v1.json",
+    "execution_matrix": "tests/crazyhouse/g4-referee-current-qualification-v1.addendum.001.json",
+    "requirements": [
+      "all tracked source files match their Git blobs",
+      "Release build exits zero with empty stderr and no warning or error diagnostic",
+      "the C translation unit treats -Wstringop-overflow as an error",
+      "CTest inventory is exactly 14",
+      "all 13 non-Grid CTests pass",
+      "the full chessboard control remains 274 pass, one known Grid failure, zero skipped",
+      "the selected Crazyhouse board control remains 9/9",
+      "the direct combined capability suite remains 18/18",
+      "conformance identity and ordinary version controls pass",
+      "the exact candidate/referee two-process join produces two games, four exact acknowledgements, four unique nonces, empty engine stderr, and two valid Crazyhouse PGNs",
+      "source and artifact inventories remain stable and all owned processes exit"
+    ]
+  },
+  "stopping_rule": "Namespace 255 remains rejected and immutable. An ineffective or broader correction is rejected before formal replay. Namespace 256 runs exactly once after its source, scripts, tools, candidate, network, referee and receipts are hash-pinned; any diagnostic, test drift, join defect, artifact drift, resource-floor breach, owned residual process or foreign-priority mutation rejects it.",
+  "gate_effect_on_pass": "A pass only restores eligibility of the exact corrected referee for the separately frozen local comparator and paired-strength work. It does not itself close G4, authorize OpenBench, prove timing or Elo, or select a release.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

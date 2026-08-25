@@ -1,0 +1,179 @@
+{
+  "schema": "crazyhouse-baseline-manifest-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-23T07:35:22.9736423Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P2",
+  "gate": "G2",
+  "evidence_class": "D0_DISCOVERY",
+  "purpose": "Supersede the stale source-head and compatibility-pending fields of the frozen baseline manifest after the exact official-Stockfish upstream integration and every affected replay required for G2 completed.",
+  "pins": {
+    "original_baseline_manifest": {
+      "path": "docs/crazyhouse/baseline-manifest.json",
+      "bytes": 13751,
+      "sha256": "5b91d5462d54c5af202e55908a1ffaac04df9f83a973513d9d8c96d17985c28c",
+      "git_blob": "8549e40ac875e6758eeb7126a5691e75532e7640"
+    },
+    "authority_resolution": {
+      "path": "docs/crazyhouse/authority-resolution.md",
+      "bytes": 11125,
+      "sha256": "647f78ce9a2af85d7a4478cd871c167f0f5d3b0a203a2c0186bf3a5ce202c198",
+      "git_blob": "e17e259ae9baa160e6773a07bb47a808888e7e67"
+    },
+    "owner_oracle_waiver": {
+      "path": "../../../receipts/private/project-owner-waiver-oracle-resume-082.json",
+      "bytes": 3452,
+      "sha256": "8a104134932f1c7959109349c0076439f10066e5ab526cd3a1d77a672e585d97",
+      "oracle_used": false,
+      "api_or_credits_used": false,
+      "fallback_used": false
+    },
+    "official_upstream_merge": {
+      "path": "../../../receipts/private/p2-official-upstream-sync-merge-086.json",
+      "bytes": 3257,
+      "sha256": "eb6c43f889d9b1c7bbcc3aebf1de28563ebf8c9b705ab9b1dafbef617c3433d6"
+    }
+  },
+  "effective_source_baseline": {
+    "repository": "https://github.com/official-stockfish/Stockfish.git",
+    "branch": "master",
+    "commit": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "tree": "11ff8e5aeaa5c0d19c085cdd92b5c8f9321199e6",
+    "commit_date": "2026-08-19T18:48:49+02:00",
+    "license_spdx": "GPL-3.0-or-later",
+    "license_path": "Copying.txt",
+    "license_blob": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+    "license_bytes": 35149,
+    "license_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "integration_policy": "EXACT_NON_FAST_FORWARD_MERGE",
+    "merge_commit": "da6e27295f0eb4b3bc57d1a3852010880996febc",
+    "current_product_commit_at_reconciliation": "fcb0ad2eef7eab880dc7ab4f694da6f02f7c08db",
+    "current_product_tree_at_reconciliation": "4799f269bbc9c140ee964c2bc86c5f134f7fdeb3",
+    "current_product_src_tree": "4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+    "official_commit_is_ancestor": true,
+    "fairy_stockfish_source_allowed": false
+  },
+  "frozen_rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "dialect": "Lichess Crazyhouse",
+    "normative_authority": "lichess-org/scalachess@cbffc9d7e2c6f8ba33381c5403e1b4f992199626",
+    "product_context": "lichess-org/lila@13895e5856db0f854f6ab76394fffce852ebd5c9",
+    "profile_changed_by_upstream_sync": false
+  },
+  "evaluator": {
+    "role": "mandatory legacy production compatibility control",
+    "canonical_internal_name": "crazyhouse-8ebf84784ad2.nnue",
+    "candidate_public_alias": "Crazyhouse_v1.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "feature_family": "HalfKAv2Variants",
+    "byte_authority": "lichess-org/lila@13895e5856db0f854f6ab76394fffce852ebd5c9:public/lifat/nnue/crazyhouse-8ebf84784ad2.nnue",
+    "byte_authority_blob": "ad269c33db13ecae295ec66ee9f438462498c623",
+    "license_spdx": "CC0-1.0",
+    "license_authority_path": "public/lifat/README.md",
+    "license_authority_blob": "c94bf53d0cd54599d899a51f0aa4c1e01e4f0b94",
+    "license_authority_sha256": "7b5b99be0c1d59844126a75829dedaea1333b20a9bbd575089f047cf217d3a1f",
+    "official_base_runtime_compatibility": "PASS_CURRENT_SOURCE_INCREMENTAL_SCALAR_SEARCH_UNDER_ASAN_AND_UBSAN_TRAP",
+    "fallback_allowed": false,
+    "alias_byte_identity_required": true
+  },
+  "referee_boundary": {
+    "repository": "https://github.com/AndyGrant/cutechess.git",
+    "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "candidate_commit": "cd40f3cd327d3104051afcbd544444a9a4718657",
+    "candidate_tree": "d986de2de95ee496f50d0389c47694a238ef4fd4",
+    "local_qualification": "PASS",
+    "g2_current_referee_replay": "PASS",
+    "selected_for_official_matches": false,
+    "official_two_game_canary_authorized": false,
+    "official_canary_gate": "G4",
+    "referee_is_rule_authority": false,
+    "receipt": {
+      "path": "../../../receipts/private/p4-referee-local-qualification-gate-record-117.json",
+      "bytes": 5966,
+      "sha256": "1e46b46c4b7744f97aa304c76efa0874b6cbb104618a233d3ff9a2a2c4178649"
+    }
+  },
+  "book_decision": {
+    "selected": false,
+    "baseline": "none",
+    "quarantined_candidate_sha256": "1371e87ce3bdb875d922ad0061c96c4a123bc571daf4ae2bff24e5176287f0fa",
+    "quarantined_candidate_origin": null,
+    "quarantined_candidate_license": null,
+    "quarantined_candidate_allowed_use": "forensic inspection only"
+  },
+  "affected_replay_matrix": {
+    "exact_official_standard_control": {
+      "status": "PASS",
+      "lease": 172,
+      "receipt": "../../../receipts/resources/p2-upstream-sync-standard-t1-end-172.json",
+      "receipt_bytes": 8596,
+      "receipt_sha256": "2e0154e04322499b9b06fcef8c70d036fcba257d47e711102a66b06f6abda6c8"
+    },
+    "core_rule_replay": {
+      "status": "PASS",
+      "lease": 179,
+      "receipt": "../../../receipts/resources/p2-upstream-sync-core-t1-end-179.json",
+      "receipt_bytes": 6405,
+      "receipt_sha256": "8030f44e05b533880d1d7873fa2bc2f52202749b9d6d3c88cafee84207ff3505"
+    },
+    "differential_and_round_trip": {
+      "status": "PASS",
+      "lease": 180,
+      "receipt": "../../../receipts/resources/p2-upstream-sync-projection-t1-end-180.json",
+      "receipt_bytes": 9094,
+      "receipt_sha256": "8db5dae33e97dec10f8b50967ef2f2851a97d9dce1d0f0c10d10bbe2f89dff9b"
+    },
+    "uci_routing_and_option_persistence": {
+      "status": "PASS",
+      "lease": 182,
+      "receipt": "../../../receipts/resources/p2-upstream-sync-routing-t1-end-182.json",
+      "receipt_bytes": 6767,
+      "receipt_sha256": "810add5878c230f077c645a0fac0e886582febc8700a3e583477047a64c4c102"
+    },
+    "real_referee_path": {
+      "status": "PASS_LOCAL_G2_REPLAY",
+      "receipt": "../../../receipts/private/p4-referee-local-qualification-gate-record-117.json",
+      "receipt_bytes": 5966,
+      "receipt_sha256": "1e46b46c4b7744f97aa304c76efa0874b6cbb104618a233d3ff9a2a2c4178649"
+    },
+    "current_source_legacy_evaluator_and_sanitizers": {
+      "status": "PASS_ASAN_UBSAN_TRAP_INCREMENTAL_SCALAR_SPECIAL_STATE_SEARCH",
+      "lease": 240,
+      "source_commit": "272cd4ede68f4dc6583e390f5517e400994eda2c",
+      "source_tree": "42f835d7db0709a41227417aefa5e465bccd7037",
+      "product_src_tree": "4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+      "receipt": "../../../receipts/resources/p3-current-source-sanitizer-t1-end-240.json",
+      "receipt_bytes": 7593,
+      "receipt_sha256": "bcaa3b548615a9f47b6ca5d6337f6ecd4f16f306faf9369ec4441fcb170c5cc5",
+      "private_record": "../../../receipts/private/p3-current-source-sanitizer-green-record-156.json",
+      "private_record_bytes": 8436,
+      "private_record_sha256": "8e8b0ac6222eeedaa5cb16808cd17291cd693185f4da4e0fc57b1277a3e5257d",
+      "legacy_route": "legacy-v1",
+      "legacy_evaluator": "incremental-scalar",
+      "legacy_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "asan_cases": 10,
+      "ubsan_cases": 10,
+      "fallback_observed": false
+    },
+    "whole_current_engineering_baseline": {
+      "status": "PASS_G3_ENGINEERING_BASELINE",
+      "receipt": "../../../receipts/private/p3-g3-engineering-green-record-159.json",
+      "receipt_bytes": 9097,
+      "receipt_sha256": "0203edc33eb0a5e7c71aee48c9ba773b0d7ca722b4127ea3554d61f53f87a6bb"
+    }
+  },
+  "result": "PASS_G2_DISCOVERY_BASELINE_CURRENT_OFFICIAL",
+  "gate_effect": "G2 may transition from IN_PROGRESS to PASS. The source baseline is the pinned official Stockfish development commit, all G2 affected replays are complete, the evaluator identity and CC0 license are frozen, the referee boundary is locally authenticated, and no opening book is selected.",
+  "claim_boundary": {
+    "discovery_baseline": true,
+    "engineering_strength": false,
+    "official_referee_canary": false,
+    "openbench_evidence": false,
+    "strength_claim": false,
+    "model_selection_claim": false,
+    "release_claim": false,
+    "stable_publication_authorized": false
+  },
+  "stopping_rule": "Any later official-source update, rule-profile change, evaluator byte change, referee selection, or book selection reopens the affected G2 boundary. Corrections to this addendum must be additive and hash-pinned."
+}

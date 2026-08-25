@@ -1,0 +1,79 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-simd-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-24T11:36:00.8490299Z",
+  "status": "EXPECTED_RED_AUTHENTICATED_IMPLEMENTATION_AUTHORIZED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Authenticate that the dedicated productive SIMD target was absent at the frozen preregistration commit before implementing the single preregistered transformer-backend variable.",
+  "pins": {
+    "preregistration": {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-simd-v1.json",
+      "commit": "6bfad71e7c74a9efded34417e79544029b7d91a2",
+      "bytes": 6541,
+      "sha256": "eadefcd84b1e873600433e08e55723e296177edb6f2de72dc94d156d0b825020"
+    },
+    "frozen_source": {
+      "commit": "6bfad71e7c74a9efded34417e79544029b7d91a2",
+      "tree": "3a1edd8aabb1c28ac6d9db4c5a090390c6046bd3",
+      "src_tree": "fe8eb2a71df570bf30e5bcdd70fc565a914bd801",
+      "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+    },
+    "expected_red_start": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-simd-expected-red-t1-start-312.json",
+      "bytes": 4296,
+      "sha256": "efe0e11a101948504230313d1937d266c9534c550ba49b92ea462cdaa4b88afb"
+    },
+    "expected_red_pid_binding": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-simd-expected-red-t1-start-312.addendum.001.json",
+      "bytes": 1676,
+      "sha256": "f95ca796be373cf0fb51a4020af34f8ea248d5126c64ea0c9b45b533c9d4c32e"
+    },
+    "expected_red_completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-simd-expected-red-312/completion.json",
+      "bytes": 3310,
+      "sha256": "03b99d97f937575862cfd1373de92510538cd00066ccff5b0a1ace346510d5fc"
+    },
+    "expected_red_end": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-simd-expected-red-t1-end-312.json",
+      "bytes": 3075,
+      "sha256": "23c9d2c64f007006d762826655dfedcb23e313bd91a1e0b34cf941eb1b08e81a"
+    }
+  },
+  "authenticated_observation": {
+    "clean_export": true,
+    "target": "crazyhouse_v2_productive_simd_test",
+    "exit_code": 2,
+    "stdout_bytes": 0,
+    "stderr_exact_line": "make: *** No rule to make target 'crazyhouse_v2_productive_simd_test'.  Stop.",
+    "other_errors": 0,
+    "compiler_artifacts": 0,
+    "source_clean_before": true,
+    "source_clean_after": true,
+    "owned_processes_remaining": 0
+  },
+  "implementation_transition": {
+    "expected_red_credit": true,
+    "implementation_may_begin": true,
+    "single_variable": "productive transformer accumulation backend: scalar to explicit SSE2 x8 int16-to-int32 blocks",
+    "incremental_changes_allowed": false,
+    "container_changes_allowed": false,
+    "architecture_changes_allowed": false,
+    "quantization_changes_allowed": false,
+    "trainer_changes_allowed": false,
+    "normal_engine_routing_changes_allowed": false,
+    "legacy_default_changes_allowed": false
+  },
+  "boundaries": {
+    "formal_productive_simd_credit": false,
+    "incremental_productive_proven": false,
+    "training_admissible": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

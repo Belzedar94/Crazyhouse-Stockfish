@@ -1,0 +1,136 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum": 14,
+  "created_utc": "2026-08-23T12:50:28.8450400Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Admit the complete detached-supervisor ASan/UBSan replay for the exact current source after independently authenticating every persisted step record, both clean exports, both sanitizer runtimes, all special-state searches, all capability cases and process restoration.",
+  "pins": {
+    "detached_supervisor_preregistration": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.013.json",
+      "bytes": 5143,
+      "sha256": "cf476e4e92497df326191251cc572a678e236346be8dd6488e11e255c96c9e7e"
+    },
+    "lease254_start_receipt": {
+      "path": "../../../receipts/resources/p4-capability-sanitizer-t1-start-254.json",
+      "bytes": 5565,
+      "sha256": "2fda2a62b06496ab21f5038f0717ad9ec5ad650d831d2445a56c2ff322613e45"
+    },
+    "lease254_admission_receipt": {
+      "path": "../../../receipts/resources/p4-capability-sanitizer-detached-admission-254.json",
+      "bytes": 1667,
+      "sha256": "315b5d6dd8beb7478b90cedd833b0b7d65cbde0d47c60b43f3e964c7d5c78543"
+    },
+    "lease254_liveness_receipt": {
+      "path": "../../../receipts/resources/p4-capability-sanitizer-detached-liveness-254.json",
+      "bytes": 758,
+      "sha256": "2715326aafa8770d726afeea3139dc3b37b68473dd268ec06e1cd42ffb4b2807"
+    },
+    "lease254_end_receipt": {
+      "path": "../../../receipts/resources/p4-capability-sanitizer-t1-end-254.json",
+      "bytes": 9202,
+      "sha256": "7defca78c8f41e611ad390d1438971c299a0a435a74e0378f1d9babef3796d6c"
+    },
+    "private_green_record_170": {
+      "path": "../../../receipts/private/p4-capability-sanitizer-green-record-170.json",
+      "bytes": 5185,
+      "sha256": "b50aed2b1c9b069abd287b2d2694a2608f15520f4928a3b6a070bff14a8a6850"
+    },
+    "controller_completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-254/completion.json",
+      "bytes": 30710,
+      "sha256": "2a0b1f6f14f553041fd7d5b0ab2b7b4e979156610cbec5f522cb5d3408b46580"
+    },
+    "detached_launcher_exit": {
+      "path": "../../../control/p4-capability-sanitizer-green-254.launcher-exit.json",
+      "bytes": 1778,
+      "sha256": "2169b1e7c0d2d47476c7888da9b13db00bc954ab0be80f8a82a7e67aff0341ab"
+    },
+    "asan_observation": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-254/asan-observation.json",
+      "bytes": 4697,
+      "sha256": "ad5622aaacade55878fabb222a567000ac479460fc75b64534eeb37242de75a4"
+    },
+    "asan_capability_summary": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-254/asan-capability-handshake/summary.json",
+      "bytes": 4685,
+      "sha256": "647c38ff0f8667f64b38db810b1a78123f1304937d29b4dc709afcf29ddbe88d"
+    },
+    "ubsan_observation": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-254/ubsan-observation.json",
+      "bytes": 4701,
+      "sha256": "6babcd16120bbfcdd207d1af03df0c2c3b07e0d06e057b05fdbf9cbb34d918b3"
+    },
+    "ubsan_capability_summary": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-254/ubsan-capability-handshake/summary.json",
+      "bytes": 4690,
+      "sha256": "99dcb8af9aaf77676f5c8f7309919220222aba464664333519d42ca3cd2931e4"
+    }
+  },
+  "source_identity": {
+    "commit": "7ce99273cbbeaaf8ba6d8428198f174763db3ca7",
+    "tree": "cb0bfccb4201ff51629a9dbbce45c33ffdac803e",
+    "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "capability_behavior_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "harness_behavior_commit": "63a5f1e0d4bf0077233ed993fd3455f5b45aa3d2",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false
+  },
+  "export_authentication": {
+    "clean_exports": 2,
+    "files_each": 294,
+    "git_blobs_each": 294,
+    "git_blob_mismatches": 0,
+    "size_or_sha256_mismatches": 0,
+    "archive_bytes_each": 3143680,
+    "archive_sha256_each": "883ce9ead89cf8a41aeb751ce870255342a4f5e876fb82150850d7de84126687"
+  },
+  "asan_result": {
+    "warning_clean_build": true,
+    "runtime_import_authenticated": true,
+    "engine_bytes": 4994560,
+    "engine_sha256": "528075cfdfdcdd104c09c59284b31d43beca1abcd41e075a433a1a5d43c5a1d3",
+    "special_state_search": "10/10",
+    "capability_handshake": "6/6",
+    "sanitizer_diagnostics": 0,
+    "stderr_bytes": 0,
+    "timeouts": 0
+  },
+  "ubsan_result": {
+    "warning_clean_build": true,
+    "trap_instrumentation_sites": 71020,
+    "engine_bytes": 186482624,
+    "engine_sha256": "172320e0c886d862f8406e4bdbc256aa0fa1f6145a11365ddd0469940ec4a0ca",
+    "special_state_search": "10/10",
+    "capability_handshake": "6/6",
+    "sanitizer_diagnostics": 0,
+    "stderr_bytes": 0,
+    "timeouts": 0
+  },
+  "shared_runtime_contract": {
+    "legacy_network_bytes": 58534811,
+    "legacy_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "timeout_scale": 40,
+    "positive_route_bound": true,
+    "one_shot_ack": true,
+    "invalid_nonce_fail_closed": true,
+    "missing_network_fail_closed": true,
+    "standard_control": true,
+    "fallback_observed": false
+  },
+  "postcondition": {
+    "controller_exit_code": 0,
+    "launcher_stdout_bytes": 0,
+    "launcher_stderr_bytes": 0,
+    "owned_residual_processes": 0,
+    "foreign_processes_mutated": false,
+    "disk_floors_preserved": true,
+    "repository_clean_after": true
+  },
+  "gate_effect": "PASS the affected current-source sanitizer slice of G4. This addendum makes no timing, strength, OpenBench or release claim. G4 remains open until the exact current candidate and authenticated referee pass their two-process pre-game capability join.",
+  "next_safe_action": "Build and authenticate the exact current referee, execute its complete current-source conformance suites, and then prove the candidate/referee pre-game capability join before freezing the local strength panel.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

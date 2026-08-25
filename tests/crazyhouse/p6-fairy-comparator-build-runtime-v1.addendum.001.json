@@ -1,0 +1,90 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-build-runtime-addendum/v1",
+  "created_utc": "2026-08-23T18:07:57.8765802Z",
+  "incident": "CH-223",
+  "supersedes": {
+    "scope": "perft-mode evaluator-marker expectation only",
+    "fixture": {
+      "path": "tests/crazyhouse/p6-fairy-comparator-build-runtime-v1.json",
+      "bytes": 12519,
+      "sha256": "5c9682f9cb45851a6a944bafcb82341a14da1914587b148597dd3318a1e38e76",
+      "git_blob": "e4b69f425c63369caa3505307991d0aa1e06601a",
+      "commit": "cf22a31090d6484b56e776744cd1643fe188ff59"
+    },
+    "frozen_harness": {
+      "path": "../../../control/fairy-comparator-build-runtime-harness-v1.py",
+      "bytes": 29476,
+      "sha256": "da86de118054361cfb19861b089afd1d6704960ec7bef286ca1b3bedb49fcaad"
+    }
+  },
+  "static_source_proof": {
+    "repository": "https://github.com/fairy-stockfish/Fairy-Stockfish.git",
+    "commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "tree": "aa4112ea6784cef03fb9b5f87bba632de6168faa",
+    "search_cpp": {
+      "path": "src/search.cpp",
+      "bytes": 81839,
+      "sha256": "02f1a8002cfd945f18b70582740139311c61dcb9805315f735bde4ad5b5be01a",
+      "git_blob": "651f6bd9ef094bff36f246fee12568250f055492",
+      "lines": "180-191",
+      "fact": "The perft branch prints Nodes searched and returns before Eval::NNUE::verify."
+    },
+    "evaluate_cpp": {
+      "path": "src/evaluate.cpp",
+      "bytes": 71928,
+      "sha256": "d0900ccf0e6a82c802c9967d3a1abbbc60c6460eea46ecc60ebcad22a43230c7",
+      "git_blob": "ce30aa0453b05428b0ce12f42901139d7cc49869",
+      "lines": "165-170",
+      "fact": "Evaluator-selection markers are emitted by Eval::NNUE::verify."
+    }
+  },
+  "lease_264": {
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-build-runtime-264",
+    "controller_started": false,
+    "build_started": false,
+    "engine_started": false,
+    "runtime_cases_started": 0,
+    "target_created": false,
+    "gate_credit": false,
+    "result": "NOT_EXECUTED_STATIC_CONTRACT_DEFECT",
+    "end_receipt": {
+      "path": "../../../receipts/resources/p6-fairy-comparator-build-runtime-t1-end-264.json",
+      "bytes": 4138,
+      "sha256": "9d18945f15cbe2af48814ff63216e06d26c6863869f05f4167970afb2b2b8f04"
+    }
+  },
+  "correction": {
+    "wrapper": {
+      "path": "../../../control/fairy-comparator-build-runtime-harness-v2.py",
+      "bytes": 4498,
+      "sha256": "c306320ff6302045fd1ff39440117489662a302555b4ab82f832be6d9c18906e",
+      "frozen_base_sha256": "da86de118054361cfb19861b089afd1d6704960ec7bef286ca1b3bedb49fcaad"
+    },
+    "affected_process_cases": 15,
+    "affected_case_classes": ["perft", "legal_move_perft"],
+    "new_obligation": "Require exact node/legal-move results, no bestmove, and no evaluator-selection marker because go perft does not invoke evaluator selection in the pinned source.",
+    "preserved_obligations": [
+      "39 total fresh processes",
+      "exact source, toolchain and network identities",
+      "positive legacy-network fixed-node search with exact NNUE marker",
+      "missing, corrupt and incompatible fail-closed controls",
+      "wrong-basename and Use NNUE=false expected-red controls",
+      "all authority perfts, transition, legal-move and terminal fixtures",
+      "paired deterministic fixed-node signatures",
+      "artifact and input reauthentication",
+      "no raw match admission"
+    ]
+  },
+  "successor": {
+    "lease": 265,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-build-runtime-265",
+    "authorization": "A separately hash-pinned controller and start receipt are required before execution."
+  },
+  "interpretation": "Perft remains rule evidence only. Legacy-network binding is proven only by real search cases that reach Eval::NNUE::verify. No engine output was observed before this correction.",
+  "gate_credit": false,
+  "raw_match_admission": false,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

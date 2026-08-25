@@ -1,0 +1,96 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-decoder-scalar-preregistration/v1",
+  "created_utc": "2026-08-24T06:47:29.6708360Z",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "source_base": {
+    "commit": "24ffe45e9426c0a0f378c604d026e7482314b2cb",
+    "tree": "86f1feb87d5576088af4aba1cc389ac2dde83111",
+    "src_tree": "834827c801093b49bc1616a866757de5a994a06a",
+    "branch": "engineering/nnue-v2-decoder-scalar-v1",
+    "implementation_identity": null,
+    "implementation_identity_policy": "Pin the implementation commit/tree/src-tree with an additive preregistration addendum before the formal run."
+  },
+  "inputs": {
+    "physical_schema": {
+      "path": "schemas/crazyhouse-physical-v1.schema.json",
+      "bytes": 18729,
+      "sha256": "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55"
+    },
+    "reference_codec": {
+      "path": "tools/datagen/crazyhouse_physical_v1.py",
+      "bytes": 66451,
+      "sha256": "04876106c165f29ab6ee511fc02a3b2790cf9030bdfb216dbe7cafc44ce54d98"
+    },
+    "golden_manifest": {
+      "path": "tests/crazyhouse/data/crazyhouse-physical-v1-goldens.json",
+      "bytes": 8383,
+      "sha256": "94cd50961d8e51478e55a82cd4e0770d418a30483b3c5d120a470f7eb2efccac",
+      "records": 42,
+      "trajectories": 11,
+      "training_admissible": false
+    }
+  },
+  "feature_inventory": {
+    "perspectives": 2,
+    "board_rows": 768,
+    "pocket_rows": 70,
+    "promoted_rows": 64,
+    "total_rows": 902,
+    "maximum_active_rows": 138,
+    "board_order": "physical a1-through-h8; type-major P-through-K; relative owner then opponent; rank-flip orientation for Black",
+    "pocket_order": "P,N,B,R,Q; relative owner then opponent; exact count including zero",
+    "promoted_order": "physical a1-through-h8 with perspective rank orientation",
+    "topology_frozen": false,
+    "container_frozen": false,
+    "quantization_frozen": false
+  },
+  "required_checks": [
+    "all-42-records-decode",
+    "independent-84-ordered-feature-lists",
+    "decoded-record-equals-live-position-full-refresh",
+    "board-identical-pocket-state-does-not-collide",
+    "board-identical-promoted-state-does-not-collide",
+    "rank-reflection-color-swap-perspective-parity",
+    "named-adversarial-fail-closed-matrix",
+    "release-build",
+    "assertion-enabled-build",
+    "admitted-sanitizer-clean",
+    "normal-engine-legacy-default-and-bench-113485"
+  ],
+  "negative_classes": [
+    "record-size",
+    "magic-version",
+    "crc32c",
+    "reserved-bytes",
+    "zero-identities",
+    "unknown-flags",
+    "board-piece-code",
+    "king-count",
+    "pawn-promotion-rank",
+    "promoted-mask",
+    "pocket-bounds",
+    "side-castling-ep",
+    "repetition-claim-terminal-enums",
+    "move-wire-and-position-coherence",
+    "result-perspective",
+    "teacher-framing",
+    "position-identity-sha256"
+  ],
+  "observation_rule": "All dimensions, corpus identities, expected invariants and failure classes are frozen before implementation. Corrections require a new additive addendum before another formal run.",
+  "boundaries": {
+    "normal_engine_links_v2": false,
+    "legacy_v1_remains_default": true,
+    "training_authorized": false,
+    "openbench_authorized": false,
+    "g12_closure_claimed": false,
+    "strength_claimed": false,
+    "release_claimed": false
+  }
+}

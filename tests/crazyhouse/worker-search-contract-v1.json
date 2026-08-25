@@ -1,0 +1,74 @@
+{
+  "schema": "crazyhouse-worker-search-contract/v1",
+  "project": "Crazyhouse-Stockfish",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Freeze the first bounded full-refresh worker-search admission after parser, scalar, adapter, transactional routing and local referee qualification passed.",
+  "ruleset": "crazyhouse",
+  "profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "token": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "legacy_network": {
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "required_backend": "legacy-v1",
+    "fallback_allowed": false
+  },
+  "fixed_options": {
+    "Threads": 1,
+    "Hash": 16,
+    "MultiPV": 1,
+    "UCI_Chess960": false
+  },
+  "cases": [
+    {
+      "id": "STARTPOS_DEPTH_1",
+      "position_command": "position startpos",
+      "go_command": "go depth 1",
+      "repetitions": 2,
+      "require_same_bestmove": true,
+      "allowed_bestmoves": [
+        "a2a3", "a2a4", "b2b3", "b2b4", "c2c3", "c2c4", "d2d3", "d2d4",
+        "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4", "h2h3", "h2h4",
+        "b1a3", "b1c3", "g1f3", "g1h3"
+      ]
+    },
+    {
+      "id": "FORCED_CHECK_BLOCK_DROP_DEPTH_1",
+      "position_command": "position fen 4r2k/8/8/8/8/8/8/4K3[N] w - - 0 1",
+      "go_command": "go depth 1 searchmoves N@e2",
+      "repetitions": 2,
+      "require_same_bestmove": true,
+      "allowed_bestmoves": ["N@e2"]
+    }
+  ],
+  "required_observations": [
+    "route_commit status=ok ruleset=crazyhouse with exact profile and legacy digest identity",
+    "readyok after the exact route commits",
+    "at least one depth-1 search information line",
+    "one non-sentinel legal root bestmove per run",
+    "byte-stable engine and legacy network before and after all runs",
+    "zero engine stderr and normal process exit"
+  ],
+  "expected_preimplementation_failure": {
+    "boundary": "go admission",
+    "code": "crazyhouse_search_not_bound",
+    "bestmove_allowed": false
+  },
+  "fail_closed": [
+    "a route, profile, backend, identity or position-epoch mismatch must not search",
+    "a missing, corrupt, incompatible or stale legacy backend must not search",
+    "the worker must abort rather than use official NNUE, classical evaluation or a stale legacy backend when Crazyhouse evaluation fails"
+  ],
+  "controls": {
+    "existing_transactional_routing_replay_required": true,
+    "exact_standard_chess_control_required": true,
+    "incremental_or_simd_claim": false,
+    "timing_evidence": false,
+    "strength_claim": false,
+    "openbench_evidence": false,
+    "release_claim": false
+  },
+  "stopping_rule": "Any fixture, load, route, search, drop, determinism, stderr, exit, artifact-identity or standard-control mismatch rejects the implementation. No result-dependent fixture changes are allowed after the red observation."
+}

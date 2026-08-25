@@ -1,0 +1,122 @@
+{
+  "schema": "crazyhouse-p15-native-package-corrected-diagnostic-preregistration/v1",
+  "created_utc": "2026-08-24T20:24:41.7097244Z",
+  "status": "PREREGISTERED_CORRECTED_DIRTY_SOURCE_DIAGNOSTIC_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.002.json",
+    "bytes": 4006,
+    "sha256": "b5f42e53289b66dc0c34a0239ca9c1c7fce34d08c15248bacca8fc3c37a9bdd6"
+  },
+  "rejected_lease": {
+    "lease": 343,
+    "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+    "failure_bytes": 2312,
+    "failure_sha256": "4666b718f6cf6575895e09d9c466e60f3e66c3676da3da56a3d3c68a326c0886",
+    "end_receipt_bytes": 3191,
+    "end_receipt_sha256": "f08d0d04191534e59c41ad3cad922f27214175c1d2b5de22970bec55bc454cdf",
+    "namespace_reused": false
+  },
+  "incident": {
+    "id": "CH-305",
+    "ledger_path": "docs/crazyhouse/incident-ledger.md",
+    "ledger_commit": "761fe23a4d83d795dafe8fd810fd9a1053511c04",
+    "symptom": "The backslash member-path negative was accepted.",
+    "cause": "ZipInfo normalized the attempted backslash to a forward slash before serialization, so the intended mutant was never present."
+  },
+  "source_base": {
+    "commit": "761fe23a4d83d795dafe8fd810fd9a1053511c04",
+    "tree": "68c9c93e56f1c0052d5a1e9340beeca2b8b1ca73",
+    "src_tree": "1058720318d4e0ad9c3f61e6ee48675f2dd13b6b",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "single_correction": {
+    "harness": "Mutate the equal-length separator byte in both local and central filenames after ZIP serialization and assert both raw headers contain the backslash.",
+    "verifier": "Reject any member whose orig_filename differs from the normalized filename before path safety checks.",
+    "unchanged": [
+      "package layout",
+      "inventory schema",
+      "SPDX schema",
+      "network policies",
+      "assembler behavior",
+      "other 71 negatives",
+      "four positive fixtures",
+      "stopping rule",
+      "resource boundary"
+    ]
+  },
+  "exact_overlays": [
+    {
+      "path": "src/Makefile",
+      "bytes": 61826,
+      "sha256": "f49c3b889680692923c702f071a3c51cd2bd67702f473d3e44e58339a3a8e092"
+    },
+    {
+      "path": "tools/release/crazyhouse_release_native_package.py",
+      "bytes": 23223,
+      "sha256": "355615ac2419583275c97e7e13a38bc26693b08cecd545b88e9fa3736f79fb87"
+    },
+    {
+      "path": "tools/release/verify_crazyhouse_native_package.py",
+      "bytes": 25590,
+      "sha256": "63fc4afde5322f9410d7aa489832160c795ec73130cf0122b7eceea858b2f9b0"
+    },
+    {
+      "path": "tests/crazyhouse_release_native_package.py",
+      "bytes": 43410,
+      "sha256": "ed39a3509cef426bde8a6320b93d7346c59d9a15aaea7481ab1edc01f668841c"
+    }
+  ],
+  "replay_matrix": {
+    "clean_base_export": 1,
+    "python_profiles": [
+      "normal"
+    ],
+    "make_target": "crazyhouse_release_native_package_contract_test",
+    "required_summary": "PASS_NATIVE_PACKAGE_FIXTURES positive=4 negative=72 real_network=false full_engine=false release_claim=false",
+    "full_replay_from_case_one": true,
+    "positive_small_fixture_cases": 4,
+    "negative_cases": 72,
+    "real_network": false,
+    "full_engine": false,
+    "compiler_linker_or_bytecode_artifacts": 0,
+    "nonzero_exits_allowed": false,
+    "timeouts_allowed": false
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 536870912,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_has_priority": true
+  },
+  "stopping_rule": "Replay the complete matrix in a fresh namespace. Stop and preserve it on any source, overlay, mutation-presence assertion, test, process, P7 identity or resource mismatch.",
+  "pass_effect": "A pass remains dirty-source diagnostic evidence only and permits review plus an exact implementation commit. It grants no formal package, real-network, candidate, strength, OpenBench, draft, G15 or release credit.",
+  "boundaries": {
+    "dirty_source_diagnostic_only": true,
+    "formal_credit": false,
+    "real_network_containment_verified": false,
+    "package_internal_layout_verified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

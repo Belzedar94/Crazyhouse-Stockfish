@@ -33,6 +33,7 @@
 #include <vector>
 
 #include "benchmark.h"
+#include "crazyhouse_move_codec.h"
 #include "engine.h"
 #include "memory.h"
 #include "movegen.h"
@@ -48,6 +49,14 @@ using Time = std::chrono::steady_clock;
 using ms   = std::chrono::milliseconds;
 
 constexpr auto BenchmarkCommand = "speedtest";
+
+constexpr Engine::LegacyExecutionBackend configured_legacy_execution_backend() noexcept {
+#ifdef CRAZYHOUSE_LEGACY_BACKEND_SIMD
+    return Engine::LegacyExecutionBackend::Simd;
+#else
+    return Engine::LegacyExecutionBackend::Scalar;
+#endif
+}
 
 template<typename... Ts>
 struct overload: Ts... {
@@ -70,7 +79,8 @@ void UCIEngine::print_info_string(std::string_view str) {
 }
 
 UCIEngine::UCIEngine(CommandLine cli_) :
-    engine(cli_.argc > 0 ? std::optional{path_from_utf8(cli_.argv[0])} : std::nullopt),
+    engine(cli_.argc > 0 ? std::optional{path_from_utf8(cli_.argv[0])} : std::nullopt,
+           configured_legacy_execution_backend()),
     cli(std::move(cli_)) {
 
     engine.get_options().add_info_listener([](const std::optional<std::string>& str) {
@@ -142,7 +152,13 @@ void UCIEngine::loop() {
         else if (token == "ucinewgame")
             engine.search_clear();
         else if (token == "isready")
-            sync_cout << "readyok" << sync_endl;
+        {
+            if (apply_route_for_command("isready", true))
+            {
+                if (!crazyhouseCapabilityPending || acknowledge_crazyhouse_capability())
+                    sync_cout << "readyok" << sync_endl;
+            }
+        }
 
         // Add custom non-UCI commands, mainly for debugging purposes.
         else if (token == "flip")
@@ -153,24 +169,38 @@ void UCIEngine::loop() {
             }
         }
         else if (token == "bench")
-            bench(is);
+        {
+            if (admit_bench_command())
+                bench(is);
+        }
         else if (token == BenchmarkCommand)
-            benchmark(is);
+        {
+            if (admit_chess_command("speedtest",
+                                    EngineRouting::ErrorCode::CrazyhouseSpeedtestNotBound, false))
+                benchmark(is);
+        }
         else if (token == "d")
             sync_cout << engine.visualize() << sync_endl;
         else if (token == "eval")
-            engine.trace_eval();
+        {
+            if (admit_chess_command("eval", EngineRouting::ErrorCode::CrazyhouseEvalNotBound, true))
+                engine.trace_eval();
+        }
         else if (token == "compiler")
             sync_cout << compiler_info() << sync_endl;
         else if (token == "export_net")
         {
-            std::optional<std::filesystem::path> file;
-            std::string                          filename;
+            if (admit_chess_command("export_net",
+                                    EngineRouting::ErrorCode::CrazyhouseExportNetNotBound, false))
+            {
+                std::optional<std::filesystem::path> file;
+                std::string                          filename;
 
-            if (is >> filename)
-                file = path_from_utf8(filename);
+                if (is >> filename)
+                    file = path_from_utf8(filename);
 
-            engine.save_network(file);
+                engine.save_network(file);
+            }
         }
         else if (token == "--help" || token == "help" || token == "--license" || token == "license")
             sync_cout
@@ -241,7 +271,7 @@ void UCIEngine::go(std::istringstream& is) {
 
     if (limits.perft)
         perft(limits);
-    else
+    else if (admit_search_command())
         engine.go(limits);
 }
 
@@ -256,7 +286,11 @@ void UCIEngine::bench(std::istream& args) {
         on_update_full(i, options["UCI_ShowWDL"]);
     });
 
-    std::vector<std::string> list = Benchmark::setup_bench(engine.fen(), args);
+    const auto& snapshot = engine.routing_snapshot();
+    if (!snapshot.active.has_value())
+        std::abort();
+    std::vector<std::string> list =
+      Benchmark::setup_bench(engine.fen(), snapshot.active->ruleset, args);
 
     num = count_if(list.begin(), list.end(),
                    [](const std::string& s) { return s.find("go ") == 0 || s.find("eval") == 0; });
@@ -291,9 +325,17 @@ void UCIEngine::bench(std::istream& args) {
                 engine.trace_eval();
         }
         else if (token == "setoption")
+        {
             setoption(is);
+            if (!apply_route_for_command("bench", false))
+                return;
+        }
         else if (token == "position")
+        {
             position(is);
+            if (!EngineRouting::rule_position_ready(engine.routing_snapshot()))
+                return;
+        }
         else if (token == "ucinewgame")
         {
             engine.search_clear();  // search_clear may take a while
@@ -340,6 +382,8 @@ void UCIEngine::benchmark(std::istream& args) {
     setoption(ss);
     ss = std::istringstream("name UCI_Chess960 value false");
     setoption(ss);
+    if (!apply_route_for_command("speedtest", false))
+        return;
 
     // Warmup
     for (const auto& cmd : setup.commands)
@@ -482,13 +526,289 @@ void UCIEngine::benchmark(std::istream& args) {
 
 void UCIEngine::setoption(std::istringstream& is) {
     engine.wait_for_search_finished();
+
+    std::istringstream preview(is.str());
+    std::string        token, name, value;
+    preview >> token;
+    if (token == "setoption")
+        preview >> token;
+    if (token == "name")
+    {
+        while (preview >> token && token != "value")
+            name += (name.empty() ? "" : " ") + token;
+        while (preview >> token)
+            value += (value.empty() ? "" : " ") + token;
+    }
+
+    if (to_lower(name) == "uci_variant")
+        engine.stage_ruleset(to_lower(value));
+
+    if (to_lower(name) == "crazyhousecapabilitynonce")
+    {
+        crazyhouseCapabilityNonce   = value;
+        crazyhouseCapabilityPending = true;
+    }
+
     engine.get_options().setoption(is);
 }
 
+bool UCIEngine::acknowledge_crazyhouse_capability() {
+    const auto validHex = [](char c) { return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'); };
+
+    if (crazyhouseCapabilityNonce.size() != 32
+        || !std::all_of(crazyhouseCapabilityNonce.begin(), crazyhouseCapabilityNonce.end(),
+                        validHex))
+    {
+        sync_cout << "info string ERROR isready code=crazyhouse_capability_nonce_invalid"
+                  << sync_endl;
+        return false;
+    }
+
+    const auto& snapshot = engine.routing_snapshot();
+    if (!snapshot.active.has_value() || snapshot.active->ruleset != Ruleset::CRAZYHOUSE
+        || snapshot.backend.kind != EngineRouting::BackendKind::LegacyCrazyhouseV1
+        || snapshot.backend.readiness != EngineRouting::BackendReadiness::Ready
+        || !engine.has_routed_legacy_network())
+    {
+        sync_cout << "info string ERROR isready code=crazyhouse_capability_route_invalid"
+                  << sync_endl;
+        return false;
+    }
+
+    sync_cout << "info string crazyhouse_capability_ack status=ok profile=" << CrazyhouseProfile::Id
+              << " profile_sha256=" << CrazyhouseProfile::Sha256
+              << " nonce=" << crazyhouseCapabilityNonce << sync_endl;
+    crazyhouseCapabilityPending = false;
+    return true;
+}
+
+void UCIEngine::report_route_error(std::string_view           command,
+                                   EngineRouting::ErrorCode   error,
+                                   std::optional<std::size_t> moveIndex,
+                                   std::string_view           token) {
+    const auto& snapshot = engine.routing_snapshot();
+    const auto  ruleset =
+      snapshot.active.has_value() ? snapshot.active->ruleset : snapshot.pending.ruleset;
+
+    std::ostringstream message;
+    message << "info string ERROR " << command << " code=" << EngineRouting::error_code_name(error)
+            << " ruleset=" << ruleset_name(ruleset) << " epoch=" << snapshot.configEpoch
+            << " backend=" << EngineRouting::backend_kind_name(snapshot.backend.kind)
+            << " position=" << (EngineRouting::rule_position_ready(snapshot) ? "valid" : "invalid");
+    if (moveIndex.has_value())
+        message << " move_index=" << *moveIndex;
+    if (!token.empty())
+        message << " token=" << token;
+    sync_cout << message.str() << sync_endl;
+}
+
+bool UCIEngine::apply_route_for_command(std::string_view command, bool retryFailed) {
+    const auto& before = engine.routing_snapshot();
+    if (!retryFailed && !before.pendingDirty && !before.pendingError.has_value())
+        return true;
+
+    const auto  result   = engine.apply_pending_route();
+    const auto& snapshot = engine.routing_snapshot();
+    if (result.ready)
+    {
+        if (!snapshot.active.has_value())
+            std::abort();
+        const bool         crazyhouse = snapshot.active->ruleset == Ruleset::CRAZYHOUSE;
+        std::ostringstream routeCommit;
+        routeCommit << "info string route_commit status=ok ruleset="
+                    << ruleset_name(snapshot.active->ruleset) << " profile="
+                    << (crazyhouse ? CrazyhouseProfile::Id : std::string_view{"none"})
+                    << " profile_sha256="
+                    << (crazyhouse ? CrazyhouseProfile::Sha256 : std::string_view{"none"})
+                    << " epoch=" << snapshot.configEpoch
+                    << " backend=" << EngineRouting::backend_kind_name(snapshot.backend.kind)
+                    << " identity=" << snapshot.backend.identity;
+        if (crazyhouse)
+        {
+            const std::string_view evaluator = engine.routed_legacy_evaluator_mode();
+            if (evaluator == "none")
+                std::abort();
+            routeCommit << " evaluator=" << evaluator;
+            if (evaluator == "incremental-simd")
+            {
+                const std::string_view simdBackend = engine.routed_legacy_simd_backend();
+                if (simdBackend == "none")
+                    std::abort();
+                routeCommit << " simd_backend=" << simdBackend;
+            }
+        }
+        sync_cout << routeCommit.str() << sync_endl;
+        return true;
+    }
+
+    report_route_error(command, result.error);
+    const auto ruleset =
+      snapshot.active.has_value() ? snapshot.active->ruleset : snapshot.pending.ruleset;
+    sync_cout << "info string READY state=failed code="
+              << EngineRouting::error_code_name(result.error)
+              << " ruleset=" << ruleset_name(ruleset) << " epoch=" << snapshot.configEpoch
+              << " backend=" << EngineRouting::backend_kind_name(snapshot.backend.kind)
+              << " position="
+              << (EngineRouting::rule_position_ready(snapshot) ? "valid" : "invalid")
+              << " readyok_withheld=1" << sync_endl;
+    return false;
+}
+
+bool UCIEngine::admit_chess_command(std::string_view         command,
+                                    EngineRouting::ErrorCode crazyhouseError,
+                                    bool                     requirePosition) {
+    using namespace EngineRouting;
+
+    if (!apply_route_for_command(command, false))
+        return false;
+
+    const auto& snapshot = engine.routing_snapshot();
+    if (!snapshot.active.has_value())
+    {
+        report_route_error(command, ErrorCode::PositionRequiresCommittedRoute);
+        return false;
+    }
+    if (snapshot.active->ruleset == Ruleset::CRAZYHOUSE)
+    {
+        report_route_error(command, crazyhouseError);
+        return false;
+    }
+    if (snapshot.backend.readiness != BackendReadiness::Ready)
+    {
+        report_route_error(command, ErrorCode::BackendNotReady);
+        return false;
+    }
+    if (!backend_matches_epoch(snapshot) || snapshot.backend.kind != BackendKind::OfficialChess)
+    {
+        report_route_error(command, ErrorCode::BackendRouteMismatch);
+        return false;
+    }
+    if (requirePosition && !rule_position_ready(snapshot))
+    {
+        report_route_error(command, ErrorCode::PositionEpochInvalid);
+        return false;
+    }
+    return true;
+}
+
+bool UCIEngine::admit_bench_command() {
+    using namespace EngineRouting;
+
+    if (!apply_route_for_command("bench", false))
+        return false;
+
+    const auto& snapshot = engine.routing_snapshot();
+    if (!snapshot.active.has_value())
+    {
+        report_route_error("bench", ErrorCode::PositionRequiresCommittedRoute);
+        return false;
+    }
+    if (snapshot.backend.readiness != BackendReadiness::Ready)
+    {
+        report_route_error("bench", ErrorCode::BackendNotReady);
+        return false;
+    }
+    if (!backend_matches_epoch(snapshot))
+    {
+        report_route_error("bench", ErrorCode::BackendRouteMismatch);
+        return false;
+    }
+
+    if (snapshot.active->ruleset == Ruleset::CRAZYHOUSE)
+    {
+        if (snapshot.active->chess960
+            || snapshot.backend.kind != BackendKind::LegacyCrazyhouseV1
+            || snapshot.backend.identity
+                 != Eval::NNUE::LegacyCrazyhouseNetworkV1::RegisteredSha256
+            || !engine.has_routed_legacy_network()
+            || !engine.crazyhouse_multipv_valid())
+        {
+            report_route_error("bench", ErrorCode::CrazyhouseBenchNotBound);
+            return false;
+        }
+        return true;
+    }
+
+    if (snapshot.backend.kind != BackendKind::OfficialChess
+        || !engine.has_routed_official_network())
+    {
+        report_route_error("bench", ErrorCode::BackendRouteMismatch);
+        return false;
+    }
+    return true;
+}
+
+bool UCIEngine::admit_search_command() {
+    using namespace EngineRouting;
+
+    if (!apply_route_for_command("go", false))
+        return false;
+
+    const auto& snapshot = engine.routing_snapshot();
+    if (!snapshot.active.has_value())
+    {
+        report_route_error("go", ErrorCode::PositionRequiresCommittedRoute);
+        return false;
+    }
+    if (snapshot.backend.readiness == BackendReadiness::Failed)
+    {
+        if (!snapshot.activeError.has_value())
+            std::abort();
+        report_route_error("go", *snapshot.activeError);
+        return false;
+    }
+    if (snapshot.backend.readiness != BackendReadiness::Ready)
+    {
+        report_route_error("go", ErrorCode::BackendNotReady);
+        return false;
+    }
+    if (!rule_position_ready(snapshot))
+    {
+        report_route_error("go", ErrorCode::PositionEpochInvalid);
+        return false;
+    }
+
+    if (snapshot.active->ruleset == Ruleset::CRAZYHOUSE)
+    {
+        if (!backend_matches_epoch(snapshot)
+            || snapshot.backend.kind != BackendKind::LegacyCrazyhouseV1
+            || !engine.has_routed_legacy_network())
+        {
+            report_route_error("go", ErrorCode::BackendRouteMismatch);
+            return false;
+        }
+        if (!crazyhouse_search_ready(snapshot))
+        {
+            report_route_error("go", ErrorCode::CrazyhouseSearchNotBound);
+            return false;
+        }
+        if (!engine.crazyhouse_multipv_valid())
+        {
+            report_route_error("go", ErrorCode::CrazyhouseMultiPVInvalid);
+            return false;
+        }
+        return true;
+    }
+
+    if (!backend_matches_epoch(snapshot) || snapshot.backend.kind != BackendKind::OfficialChess
+        || !engine.has_routed_official_network())
+    {
+        report_route_error("go", ErrorCode::BackendRouteMismatch);
+        return false;
+    }
+    return true;
+}
+
 u64 UCIEngine::perft(const Search::LimitsType& limits) {
-    auto result = engine.perft(engine.fen(), limits.perft, engine.get_options()["UCI_Chess960"]);
-    if (auto err = std::get_if<PositionSetError>(&result))
-        terminate_on_critical_error(err->what());
+    if (!apply_route_for_command("go", false))
+        return 0;
+
+    auto result = engine.routed_perft(limits.perft);
+    if (auto error = std::get_if<EngineRouting::ErrorCode>(&result))
+    {
+        report_route_error("go", *error);
+        return 0;
+    }
 
     auto nodes = std::get<u64>(result);
     sync_cout << "\nNodes searched: " << nodes << "\n" << sync_endl;
@@ -496,22 +816,44 @@ u64 UCIEngine::perft(const Search::LimitsType& limits) {
 }
 
 void UCIEngine::position(std::istringstream& is) {
-    const std::string fullCommand = is.str();
-
     std::string token, fen;
 
-    is >> token;
+    if (!(is >> token))
+    {
+        engine.invalidate_routed_position();
+        report_route_error("position", EngineRouting::ErrorCode::MalformedPosition);
+        return;
+    }
 
+    const auto& snapshot = engine.routing_snapshot();
+    if (!snapshot.active.has_value())
+    {
+        engine.invalidate_routed_position();
+        report_route_error("position", EngineRouting::ErrorCode::PositionRequiresCommittedRoute);
+        return;
+    }
     if (token == "startpos")
     {
-        fen = StartFEN;
-        is >> token;  // Consume the "moves" token, if any
+        fen = EngineRouting::start_fen(snapshot.active->ruleset);
+        if (is >> token)
+        {
+            if (token != "moves")
+            {
+                engine.invalidate_routed_position();
+                report_route_error("position", EngineRouting::ErrorCode::MalformedPosition);
+                return;
+            }
+        }
     }
     else if (token == "fen")
         while (is >> token && token != "moves")
             fen += token + " ";
     else
+    {
+        engine.invalidate_routed_position();
+        report_route_error("position", EngineRouting::ErrorCode::MalformedPosition);
         return;
+    }
 
     std::vector<std::string> moves;
 
@@ -520,11 +862,9 @@ void UCIEngine::position(std::istringstream& is) {
         moves.push_back(token);
     }
 
-    auto err = engine.set_position(fen, moves);
-    if (err.has_value())
-    {
-        terminate_on_critical_error(err->what());
-    }
+    const auto result = engine.set_routed_position(fen, moves);
+    if (!result.committed)
+        report_route_error("position", result.error, result.moveIndex, result.token);
 }
 
 namespace {
@@ -570,7 +910,7 @@ std::string UCIEngine::format_score(const Score& s) {
                    auto m = (mate.plies > 0 ? (mate.plies + 1) : mate.plies) / 2;
                    return std::string("mate ") + std::to_string(m);
                },
-               [](Score::Tablebase tb) -> std::string {
+               [TB_CP](Score::Tablebase tb) -> std::string {
                    return std::string("cp ") + std::to_string((tb.win ? TB_CP : -TB_CP) - tb.plies);
                },
                [](Score::InternalUnits units) -> std::string {
@@ -615,6 +955,9 @@ std::string UCIEngine::move(Move m, bool chess960) {
     if (m == Move::null())
         return "0000";
 
+    if (m.is_drop())
+        return format_drop_uci(m);
+
     Square from = m.from_sq();
     Square to   = m.to_sq();
 
@@ -638,6 +981,19 @@ std::string UCIEngine::to_lower(std::string str) {
 }
 
 Move UCIEngine::to_move(const Position& pos, std::string str) {
+    if (str.find('@') != std::string::npos)
+    {
+        const auto parsed = parse_drop_uci(str);
+        if (!parsed)
+            return Move::none();
+
+        for (const auto& move : MoveList<LEGAL>(pos))
+            if (move == *parsed)
+                return move;
+
+        return Move::none();
+    }
+
     str = to_lower(str);
 
     for (const auto& m : MoveList<LEGAL>(pos))

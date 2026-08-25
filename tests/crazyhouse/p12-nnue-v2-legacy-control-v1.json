@@ -1,0 +1,248 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-legacy-control-preregistration/v1",
+  "created_utc": "2026-08-24T15:56:17.8372253Z",
+  "status": "PREREGISTERED_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "hypothesis": "The exact authenticated legacy V1 tensor values can be transported in a purpose-marked Crazyhouse control container and reproduced by independent Python and C++ parsers and integer executors without using the registered legacy parser or propagation implementation and without entering the normal engine.",
+  "single_variable": "legacy tensor framing and executor: registered legacy file/parser/propagator to frozen V2 control container plus independent control parser/executor",
+  "frozen_source": {
+    "commit": "455df26087ea86056fd21e5efb81a76fcbbfb21b",
+    "tree": "d4edf9c0e1a0680cf4b2936305430de4655d3f12",
+    "src_tree": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_except_preregistered_contract_files": true
+  },
+  "external_review": {
+    "required": false,
+    "reason": "owner explicitly waived Oracle for this continuation",
+    "api_or_credits_used": false,
+    "fallback_used": false
+  },
+  "frozen_container_contract": {
+    "path": "schemas/crazyhouse-nnue-v2-legacy-control-container-v1.json",
+    "bytes": 13923,
+    "sha256": "1d738d8c956c9d15a74f44dcf145d33aa72579da83d8be7421ca29050ad04759",
+    "magic_ascii": "CHNNUEV2LC1",
+    "purpose": "LEGACY_V1_CONTROL",
+    "origin_kind": "AUTHENTICATED_LEGACY_V1",
+    "header_bytes": 1024,
+    "payload_bytes": 58534688,
+    "file_bytes": 58535712,
+    "directory_entries": 9,
+    "header_coverage_validated": true,
+    "directory_entry_coverage_validated": true,
+    "section_shape_bytes_and_contiguity_validated": true
+  },
+  "authenticated_origin": {
+    "basename": "crazyhouse_run15rl_e190_l03.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "license_spdx": "CC0-1.0",
+    "version_hex": "7af32f20",
+    "network_hash_hex": "3c103e72",
+    "transformer_hash_hex": "5f2348b8",
+    "architecture_hash_hex": "633376ca",
+    "authentication_before_tensor_access": true,
+    "redistribution_authority": "UNRESOLVED_NOT_REQUIRED_FOR_LOCAL_CONTROL"
+  },
+  "frozen_inputs": [
+    {
+      "path": "tests/crazyhouse/legacy-parser-v1.json",
+      "bytes": 2121,
+      "sha256": "82b4b5dafa9e280479ea47057da88625d2bdfa40801e5dcd51ba861a52c30f00"
+    },
+    {
+      "path": "tests/crazyhouse/legacy-numeric-goldens-v1.json",
+      "bytes": 58102,
+      "sha256": "53866d1139a85ac5e982e6ffd74ce6d0c154abdc7ea46b68fe238aa4ea822eb6"
+    },
+    {
+      "path": "tests/crazyhouse/legacy-numeric-cases-v2-overlay.json",
+      "bytes": 2268,
+      "sha256": "229159ce02be0bc0cf318c07a2285bf9cdd7b2bf041d70b21fcf0483e805f6f7"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-incremental-v1.result.001.json",
+      "bytes": 8386,
+      "sha256": "1bc17bd29a913887afe51063537e03405ee3eaf845f5a952b6342dd039cdcf8f"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.result.001.json",
+      "bytes": 6460,
+      "sha256": "7fbb91c868f7394393278d0cced961b4e5f7308f4962ba9d66537f3dad04428e"
+    }
+  ],
+  "frozen_implementation_inputs": [
+    {
+      "path": "src/nnue/crazyhouse_legacy_features.h",
+      "bytes": 2760,
+      "sha256": "bbef8d698b08dd68792ec6394b2bd69aa4e90e268983f1e6a113fa67d5129021"
+    },
+    {
+      "path": "src/nnue/crazyhouse_legacy_features.cpp",
+      "bytes": 6170,
+      "sha256": "6e13805bf8400322c6957f778bb7d8b31fbd3a96ea5d01d22a6d4bb791c27027"
+    },
+    {
+      "path": "src/nnue/crazyhouse_legacy_network.h",
+      "bytes": 11615,
+      "sha256": "c4ce5922870062cf0451bbddfca9d69f2334b608e23d0d199e9e5a25e3ee55ab"
+    },
+    {
+      "path": "src/nnue/crazyhouse_legacy_network.cpp",
+      "bytes": 57432,
+      "sha256": "0057d9c4e64fff604ae1babb60d934d914f25f9beae80166197307a1ef3ad2a7"
+    },
+    {
+      "path": "tools/nnue/crazyhouse_v2_productive_reference.py",
+      "bytes": 30244,
+      "sha256": "6436fb5363264936b91d4436d32c9059555893cfe6cecdfe1fbfcc0e8f6d379e"
+    },
+    {
+      "path": "src/Makefile",
+      "bytes": 59361,
+      "sha256": "1f2fe55034fd218f2e0ee4e4a47e6ea980837c1e71602d55e6e8a786744dd6b6"
+    }
+  ],
+  "reference_inspection": {
+    "threecheck_stockfish": {
+      "commit": "4f7944cb1068aec17185cf4b6cf59453bf351366",
+      "tree": "8041b46d2a7cec657c6dfba8351ddaaa4a2876a5",
+      "status": "clean",
+      "use": "origin authentication, explicit legacy-control purpose, fail-closed container parsing, and registered-evaluator comparison method only",
+      "inapplicable_method": "zero-extending compatible board rows",
+      "inapplicable_reason": "Crazyhouse legacy and productive V2 feature coordinates, PSQT branch, material stacks, dense topology, and arithmetic differ"
+    },
+    "atomic_stockfish": {
+      "commit": "13a1cf845c51eee3507ed6baa080895014de9e8b",
+      "use": "independent control and fail-closed verification method only"
+    },
+    "horde_stockfish": {
+      "commit": "83521c3b9ff2c9e195b8fe75c3b8ec4917bd0e02",
+      "use": "independent control and immutable receipt method only"
+    },
+    "fairy_stockfish_source_allowed": false,
+    "inheritance": "none"
+  },
+  "expected_red": {
+    "make_target": "crazyhouse_v2_legacy_control_test",
+    "required_observation": "No rule to make target",
+    "compiler_children": 0,
+    "formal_credit": false,
+    "fresh_resource_lease_required": true
+  },
+  "implementation_contract": {
+    "python_converter": "tools/nnue/crazyhouse_v2_legacy_control.py",
+    "cpp_loader_header": "src/nnue/crazyhouse_v2_legacy_control.h",
+    "cpp_loader_source": "src/nnue/crazyhouse_v2_legacy_control.cpp",
+    "cpp_verifier": "tests/crazyhouse_v2_legacy_control.cpp",
+    "python_verifier": "tests/crazyhouse_v2_legacy_control_verify.py",
+    "legacy_origin_authenticated_before_tensor_access": true,
+    "tensor_values_changed": false,
+    "legacy_framing_words_copied": false,
+    "output_create_mode": "exclusive",
+    "transaction": "container and receipt both complete or container is removed",
+    "source_commit_and_tree_required_clean": true,
+    "converter_self_sha256_bound": true,
+    "cpp_uses_registered_legacy_parser_or_propagator": false,
+    "shared_certified_component": "LegacyCrazyhouseFeaturesV1::Result only",
+    "normal_engine_sources_changed": false,
+    "legacy_default_changed": false
+  },
+  "oracle_matrix": {
+    "cases": 43,
+    "perspectives": 86,
+    "buckets_per_case": 8,
+    "raw_component_pairs": 344,
+    "required_cpp_comparators": [
+      "new control scalar executor versus frozen raw oracle",
+      "registered legacy evaluator versus frozen raw oracle",
+      "new control scalar executor versus registered legacy evaluator"
+    ],
+    "required_python_comparators": [
+      "control parser to exact reserialized container bytes",
+      "independent Python scalar trace versus frozen raw oracle",
+      "two deterministic Python trace replays"
+    ],
+    "trace_fields": [
+      "feature rows by perspective",
+      "selected material bucket",
+      "transformer wrapping accumulators",
+      "PSQT wrapping accumulators",
+      "clipped network input",
+      "dense0 affine and activation",
+      "dense1 affine and activation",
+      "output affine",
+      "all eight raw PSQT and positional outputs"
+    ]
+  },
+  "negative_matrix": {
+    "minimum_named_cases": 62,
+    "required_classes": [
+      "missing path and non-regular path",
+      "one-byte truncation and extension",
+      "magic and magic padding",
+      "endianness, versions, sizes, committed flag, purpose, origin, and dirty source",
+      "every architecture and arithmetic fixed-field class",
+      "each required SHA-256 identity and each Git identity",
+      "each reserved-zero range",
+      "section id, dtype, rank, offset, bytes, each shape dimension, and section digest",
+      "payload digest, payload byte, and header CRC32C",
+      "ordinary productive V2 artifact, registered legacy artifact, and unrelated bytes",
+      "failed replacement unloads the prior control without fallback or partial tensors"
+    ]
+  },
+  "formal_replay": {
+    "clean_exports": 2,
+    "profiles": [
+      "release",
+      "debug-assertions"
+    ],
+    "warning_hits_allowed": 0,
+    "converter_replays_per_export": 2,
+    "container_cross_export_byte_equal": true,
+    "receipt_normalized_cross_export_equal": true,
+    "python_parse_reserialize_byte_equal": true,
+    "python_trace_cross_replay_byte_equal": true,
+    "cpp_trace_cross_profile_byte_equal": true,
+    "existing_legacy_scalar_regression_required": true,
+    "existing_productive_scalar_simd_incremental_regressions_required": true,
+    "normal_engine_control": {
+      "backend": "legacy-v1",
+      "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "bench_nodes": 113485,
+      "legacy_control_magic_hits": 0
+    }
+  },
+  "resource_boundary": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "ports": 0,
+    "bulk_output_drive": "D:",
+    "formal_namespace_ceiling_bytes": 2147483648,
+    "foreign_processes_must_not_be_mutated": true,
+    "p7_supervisor_pid_44764_must_not_be_mutated": true
+  },
+  "stopping_rule": "Stop at the first source, identity, expected-red, conversion, transactional-write, compile, warning, parser, reserialization, trace, raw-oracle, registered-evaluator, negative, deterministic-replay, clean-export, normal-engine-isolation, resource, or provenance failure. A failed namespace is never repaired or reinterpreted in place.",
+  "boundaries": {
+    "productive_v2_representation_proven": false,
+    "legacy_control_proven": false,
+    "training_admissible": false,
+    "production_training_authorized": false,
+    "model_selected": false,
+    "timing_evidence": false,
+    "strength_claimed": false,
+    "fairy_stockfish_beaten": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

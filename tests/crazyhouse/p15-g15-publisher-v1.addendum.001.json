@@ -1,0 +1,95 @@
+{
+  "schema": "crazyhouse-g15-publisher-expected-red-result/v1",
+  "created_utc": "2026-08-25T02:30:07.8335068Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE",
+  "status": "PASS_EXPECTED_RED_G15_PUBLISHER_MISSING",
+  "parent": {
+    "path": "tests/crazyhouse/p15-g15-publisher-v1.json",
+    "bytes": 6979,
+    "sha256": "35e8462357ae2e4014853cdff132c01361b2120d0af0b6b12ea5ac0187b5f0b5"
+  },
+  "source": {
+    "commit": "7596c95d248b2b49ba1dc401a6b7867c52182db3",
+    "tree": "c5edd10b2ff8735a23c7ddf38e20fe7a87528064",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "lease": {
+    "number": 359,
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-g15-publisher-expected-red-359",
+    "start": {
+      "path": "../../../receipts/resources/p15-g15-publisher-expected-red-t1-start-359.json",
+      "bytes": 3443,
+      "sha256": "a7b1fb7ac98903ccd5dcac02e120a6a14188e2825f60950e42d843cfcdce42e8"
+    },
+    "launcher_correction": {
+      "path": "../../../receipts/resources/p15-g15-publisher-expected-red-t1-start-359.addendum.001.json",
+      "bytes": 3104,
+      "sha256": "5d838a06d2938063cdaf041dfb7281cacb15ab6d7b6e394427a858bdb80e6439",
+      "incident": "CH-327"
+    },
+    "pid_binding": {
+      "path": "../../../receipts/resources/p15-g15-publisher-expected-red-t1-start-359.addendum.002.json",
+      "bytes": 1825,
+      "sha256": "0c24e5aa53b93045ed3b01c391de65d888e628c163ef10f10ef513972192db7e",
+      "pid": 26572,
+      "priority": "BelowNormal"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p15-g15-publisher-expected-red-359/completion.json",
+      "bytes": 1803,
+      "sha256": "816ad30e70ecadc8b5bd7975ac51e51eb02ee8e0d373932bfdb054aece07cfdb"
+    },
+    "independent_verification": {
+      "path": "../../../receipts/verification/p15-g15-publisher-expected-red-independent-359.json",
+      "bytes": 1906,
+      "sha256": "2e480bb3b2562e09389939c5d32be1689e5ac5db378172c28918f21af30aa75a"
+    },
+    "end": {
+      "path": "../../../receipts/resources/p15-g15-publisher-expected-red-t1-end-359.json",
+      "bytes": 3995,
+      "sha256": "6440157ab8b73275d30a5c63ae516c05ca6dd72b2a61258a6feb9d17368beb21"
+    }
+  },
+  "observed": {
+    "result": "EXPECTED_RED_G15_PUBLISHER_MISSING",
+    "clean_exports": 1,
+    "clean_export_files": 607,
+    "source_archive_bytes": 7720960,
+    "source_archive_sha256": "1c0a4a05bac5bae2e0ec6c121afe1cdc98a8de5bb79f4fe1495f1d579122671e",
+    "implementation_paths_absent": [
+      "tools/release/crazyhouse_g15_publisher.py",
+      "tests/crazyhouse_g15_publisher.py"
+    ],
+    "compiler_runs": 0,
+    "engine_runs": 0,
+    "network_calls": 0,
+    "github_writes": 0,
+    "git_remote_writes": 0,
+    "openbench_calls": 0,
+    "owned_processes_remaining": 0,
+    "p7_supervisor_unchanged": true
+  },
+  "incident": {
+    "id": "CH-327",
+    "symptom": "The first launcher exited before READY with ModuleNotFoundError for psutil.",
+    "false_inference": "The ordinary project virtual environment necessarily contains the lifecycle dependencies used by every formal controller.",
+    "cause": "The pinned virtual environment lacked psutil; controller main, target creation and GO were never reached.",
+    "prevention": "Probe and pin every imported runtime dependency with the exact interpreter before issuing a start receipt; correct only through an additive pre-GO runtime pin.",
+    "gate": "P15/formal controller runtime admission",
+    "scientific_input_changed": false
+  },
+  "next": "Implementation may begin only from a new clean source commit while preserving this expected-red namespace and all receipts.",
+  "claim_boundary": {
+    "publisher_implemented": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_published": false,
+    "G15": "UNCHANGED_OPEN",
+    "G16": "UNCHANGED_OPEN",
+    "strength_credit": false,
+    "openbench_used": false
+  }
+}

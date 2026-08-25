@@ -1,0 +1,210 @@
+{
+  "schema": "crazyhouse-openbench-onboarding-preregistration/v1",
+  "created_utc": "2026-08-24T02:37:38.6111294Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P10",
+  "gate": "G10",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "PREREGISTERED_BEFORE_IMPLEMENTATION",
+  "owner_boundaries": {
+    "oracle": "WAIVED_BY_OWNER",
+    "fairy_stockfish_source": "NO_GO",
+    "stockfish_dev_source": "MANDATORY",
+    "openbench_before_local_strength_gate": false,
+    "public_repository_creation_or_publication_authorized": false,
+    "official_openbench_canary_authorized": false,
+    "stable_release_authorized": false
+  },
+  "source_before_implementation": {
+    "commit": "1f221f7677348f6bc7ef86335993c34d427f8035",
+    "tree": "a71f5934455999c1ef1e9f6456632e086b6f8daa",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "branch": "engineering/openbench-onboarding-v1",
+    "worktree_clean": true
+  },
+  "openbench_before_implementation": {
+    "repository": "https://github.com/Belzedar94/OpenBench",
+    "branch": "spell-runner",
+    "commit": "e20f0d9432f88fed1706d83fc93469be1a2a2cec",
+    "tree": "91a766a2659751bfd4099b700e8e102e67ec4a45",
+    "client_version": 45,
+    "client_repo_ref": "18d1df6bdb9ff8f9609e319cf6f7b3a486daa4f8",
+    "production": "https://belzedar.duckdns.org",
+    "production_http_probe": 200,
+    "crazyhouse_configured": false,
+    "local_branch": "agent/crazyhouse-onboarding-v1"
+  },
+  "rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "legacy_network": {
+    "registered_name": "crazyhouse-8ebf84784ad2.nnue",
+    "candidate_public_alias": "Crazyhouse_v1.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "license_spdx": "CC0-1.0",
+    "embedded_only_for_openbench_play_build": true,
+    "parser": "LegacyCrazyhouseNetworkV1::load_bytes",
+    "fallback_allowed": false
+  },
+  "opening_book": {
+    "source_path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.epd",
+    "candidate_public_name": "CRAZYHOUSE_openings_v1.epd",
+    "bytes": 100204,
+    "raw_sha256": "a8976a380a6cc4b3a1a6aae3bf14249b2ab6d1bac6cf4a2715625d7c01747603",
+    "lf_normalized_sha256": "a8976a380a6cc4b3a1a6aae3bf14249b2ab6d1bac6cf4a2715625d7c01747603",
+    "roots": 1024,
+    "byte_identical_alias_required": true,
+    "engine_selected": false,
+    "match_result_selected": false
+  },
+  "referee": {
+    "clean_upstream_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "candidate_commit": "d25294c1b1084f8854c0dc026ca3b150c911b4ee",
+    "candidate_tree": "208335f2040d7aac3e5c3b869cadf46b18fb5503",
+    "forbidden_horde_commit": "12fe19fb52646b48e626690a744c0cb2f177177c",
+    "forbidden_horde_ancestry_allowed": false,
+    "windows": {
+      "local_qualified_only": true,
+      "bytes": 2293660,
+      "sha256": "f465025b2ad21526e2cbab2b7da1a231ff3d64f6e8a01a0be5963f525a0bddae"
+    },
+    "linux": {
+      "qualified": false,
+      "bytes": null,
+      "sha256": null,
+      "policy": "FAIL_CLOSED"
+    },
+    "shared_horde_cutechess_allowed": false,
+    "capability_handshake_required": true
+  },
+  "openbench_build_contract": {
+    "public_play_invocation": "make -j EXE=<requested-name> GIT_SHA_FULL=<40-hex-commit> EVALFILE=<exact-network-path>",
+    "public_datagen_invocation": "make -j EXE=<requested-name> GIT_SHA_FULL=<40-hex-commit> OPENBENCH_DATAGEN=1",
+    "default_goal_selected_only_by_full_openbench_identity": true,
+    "requested_executable_name_required": true,
+    "play_and_datagen_artifacts_distinct": true,
+    "normal_developer_build_behavior_preserved": true,
+    "target_scope": ["windows-x86-64", "linux-x86-64"],
+    "universal_release_builds_in_scope": false
+  },
+  "benchmark": {
+    "variant": "crazyhouse",
+    "threads": 1,
+    "hash_mib": 16,
+    "limit_type": "depth",
+    "limit": 6,
+    "position_count": 12,
+    "expected_nodes": null,
+    "expected_nodes_freeze_policy": "Record only in a hash-pinned addendum after two clean exports agree; implementation commit message must include Bench: <nodes>.",
+    "positions": [
+      {
+        "id": "start",
+        "source": "canonical Crazyhouse start",
+        "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1"
+      },
+      {
+        "id": "opening_black_pocket",
+        "source": "CHLG-0010",
+        "fen": "rnb1k1nr/3p1ppp/ppp5/4p3/Pb5q/2P3PN/RP1PPP2/1NBQKB1R[p] b Kkq - 0 7"
+      },
+      {
+        "id": "opening_white_pocket",
+        "source": "CHLG-0021",
+        "fen": "rnbqkb2/1ppppp1r/1p5p/p5P1/1P6/6nN/P1PPPKP1/RNBQ1B1R[P] w q - 0 9"
+      },
+      {
+        "id": "legacy_numeric_white",
+        "source": "legacy-numeric-cases-v1",
+        "fen": "4k3/2p2n2/8/3P4/4B3/8/1R3P2/4K3[PNq] w - - 0 1"
+      },
+      {
+        "id": "legacy_numeric_black",
+        "source": "legacy-numeric-cases-v1",
+        "fen": "4k3/1r3p2/8/4b3/3p4/8/2P2N2/4K3[Qpn] b - - 0 1"
+      },
+      {
+        "id": "forced_drop_evasion",
+        "source": "g3-conservative-search-current-map-v1",
+        "fen": "4r2k/8/8/8/8/8/8/4K3[N] w - - 0 1"
+      },
+      {
+        "id": "promoted_capture_provenance",
+        "source": "g3-conservative-search-current-map-v1",
+        "fen": "7k/8/8/8/8/8/Q~6r/K7[] b - - 0 1"
+      },
+      {
+        "id": "legal_en_passant",
+        "source": "g3-conservative-search-current-map-v1",
+        "fen": "7k/8/8/3pP3/8/8/8/K7[] w - d6 0 2"
+      },
+      {
+        "id": "promotion_provenance",
+        "source": "g3-conservative-search-current-map-v1",
+        "fen": "7k/P7/8/8/8/8/8/K7[] w - - 0 1"
+      },
+      {
+        "id": "castling_rights",
+        "source": "g3-conservative-search-current-map-v1",
+        "fen": "r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1"
+      },
+      {
+        "id": "rich_two_sided_pockets",
+        "source": "CH-REF-PERFT-002",
+        "fen": "2k5/8/8/8/8/8/8/4K3[QRBNPqrbnp] w - - 0 1"
+      },
+      {
+        "id": "pocket_prevents_stalemate",
+        "source": "g3-conservative-search-current-map-v1",
+        "fen": "k7/2Q5/2K5/8/8/8/8/8[n] b - - 0 1"
+      }
+    ],
+    "orthodox_benchmark_changed": false,
+    "strength_claim": false
+  },
+  "negative_matrix": [
+    "missing_or_invalid_GIT_SHA_FULL_rejected",
+    "missing_EVALFILE_rejected_for_play",
+    "missing_network_file_rejected",
+    "truncated_network_rejected",
+    "oversized_network_rejected",
+    "wrong_same_size_network_rejected",
+    "runtime_embedded_digest_rechecked",
+    "ordinary_nonembedded_build_keeps_empty_CrazyhouseEvalFile",
+    "datagen_role_cannot_emit_or_reuse_match_engine",
+    "unknown_or_missing_Crazyhouse_contract_cannot_fall_through_to_standard",
+    "wrong_or_missing_contract_referee_rejected",
+    "Linux_Crazyhouse_referee_absence_rejected",
+    "shared_Horde_referee_rejected_for_Crazyhouse",
+    "inactive_draft_config_cannot_be_scheduled"
+  ],
+  "acceptance": {
+    "engine_clean_exports_required": 2,
+    "engine_executable_byte_reproducibility_required": false,
+    "engine_bench_equality_required": true,
+    "runtime_route_marker_required": true,
+    "runtime_identity_must_equal_legacy_sha256": true,
+    "openbench_server_and_client_unit_tests_required": true,
+    "openbench_disposable_local_smoke_required": true,
+    "production_canary_required": true,
+    "production_canary_requires_owner_resource_authorization": true,
+    "local_strength_gate_must_pass_first": true,
+    "public_repository_and_assets_must_exist_and_reauthenticate": true
+  },
+  "known_access_gaps": [
+    "https://github.com/Belzedar94/Crazyhouse-Stockfish returned 404",
+    "no qualified Linux Crazyhouse referee artifact",
+    "no public Crazyhouse source, referee or book publication authorization",
+    "no official OpenBench canary resource authorization",
+    "P7 local same-network strength ladder has not executed because the host is timing-dirty"
+  ],
+  "claims": {
+    "openbench_onboarded": false,
+    "official_canary": false,
+    "datagen": false,
+    "strength": false,
+    "release": false
+  }
+}

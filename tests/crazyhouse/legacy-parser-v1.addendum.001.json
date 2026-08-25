@@ -1,0 +1,121 @@
+{
+  "schema": "crazyhouse-legacy-parser-fixture-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-23T07:41:53.0948818Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P5",
+  "gate": "G5",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Preregister a bounded current-source runtime proof that an on-disk candidate public alias named Crazyhouse_v1.nnue is byte-identical to the registered legacy evaluator and is accepted by the production Crazyhouse Worker route without fallback.",
+  "base_contract": {
+    "path": "tests/crazyhouse/legacy-parser-v1.json",
+    "bytes": 2121,
+    "sha256": "82b4b5dafa9e280479ea47057da88625d2bdfa40801e5dcd51ba861a52c30f00",
+    "git_blob": "a752741be396c1518627860fcb1b2c4526bfe27e"
+  },
+  "frozen_product": {
+    "current_repository_commit": "67e6641f658549588b2ee99858075bc8c3b769da",
+    "current_product_src_tree": "4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+    "clean_build_source_commit": "f3c470280c231b433383c64ae1897a67b9ac04bd",
+    "clean_build_source_tree": "483726407c6e154b07a82bb6b7967c327b7f7787",
+    "clean_build_product_src_tree": "4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "engine": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p3-conservative-search-green-238/source/src/stockfish.exe",
+      "bytes": 103064599,
+      "sha256": "831470300476aaa8501d9bd7e698176b238ca7bb47c98b898a8f023251ba5c22"
+    },
+    "verifier": {
+      "path": "tests/crazyhouse_conservative_search_verify.py",
+      "bytes": 17722,
+      "sha256": "0bf13e4fbe42385c5157bf9263cf400b49fb4b4392e9a9d39f9471fbd4652cbc",
+      "git_blob": "71e063449773b09f96342473ea963be5b92b48b0"
+    }
+  },
+  "registered_network": {
+    "source_basename": "crazyhouse_run15rl_e190_l03.nnue",
+    "candidate_public_alias": "Crazyhouse_v1.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "license_spdx": "CC0-1.0",
+    "alias_may_differ": false,
+    "source_reauthentication_receipt": {
+      "path": "../../../receipts/private/p5-legacy-artifact-reauth-064.json",
+      "bytes": 4213,
+      "sha256": "5b8d95eb9958feb2acf6b104dbd20419065ec837cc0759ade0417dae47057096"
+    }
+  },
+  "negative_and_fail_closed_preconditions": {
+    "standalone_negative_cases": 11,
+    "missing_truncated_oversized_version_hash_description_transformer_architecture_and_digest_rejections": true,
+    "failed_replacement_unloads_backend": true,
+    "parser_receipts": [
+      {
+        "path": "../../../receipts/resources/p5-legacy-parser-t1-end-112.json",
+        "bytes": 2736,
+        "sha256": "76ceebef5d8de29959c34892e09ba152294e039d1ae18027ef08dcc2852618ec"
+      },
+      {
+        "path": "../../../receipts/resources/p5-legacy-parser-build-t1-end-113.json",
+        "bytes": 2297,
+        "sha256": "0708a1f511632f3d8c7e855f708dd8cbc8956fdaebc83ebca226c0bff0352a90"
+      },
+      {
+        "path": "../../../receipts/resources/p5-legacy-parser-runtime-t1-end-115.json",
+        "bytes": 2644,
+        "sha256": "2e939292c8f108053eaf86c7dbfc1276c8c7f6898427a07d983e7e70420831e3"
+      }
+    ],
+    "current_worker_fail_closed_receipt": {
+      "path": "../../../receipts/resources/p5-worker-simd-integration-t1-end-233.json",
+      "bytes": 7744,
+      "sha256": "6d34665b197ce04fa3a652840374dfec1b5075e0baeb03ce9db247424c1361a0",
+      "result": "PASS_LEGACY_V1_SIMD_SCALAR_WORKER_ROUTING_FAIL_CLOSED_AND_STANDARD_CONTROL"
+    }
+  },
+  "resource_contract": {
+    "lease": 243,
+    "target": "D:/Crazyhouse-Stockfish/leases/p5-public-alias-current-source-243",
+    "target_must_not_preexist": true,
+    "threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu_used": false,
+    "workers_used": false,
+    "network_used": false,
+    "c_floor_bytes": 5368709120,
+    "d_floor_bytes": 1099511627776,
+    "observed_c_free_bytes": 5658853376,
+    "observed_d_free_bytes": 1294862434304,
+    "foreign_processes_must_not_be_mutated": true
+  },
+  "procedure": [
+    "Abort before target creation if the target already exists or either disk floor is violated.",
+    "Create the unique D-drive lease target and copy the registered network bytes to the exact basename Crazyhouse_v1.nnue.",
+    "Rehash the source and alias independently and abort before engine launch unless byte counts and SHA-256 identities are exact.",
+    "Run the authenticated current-product verifier twice against the authenticated clean-build engine while passing the on-disk alias as the legacy network.",
+    "Require both runs to complete the same ten special-state searches through backend legacy-v1 and evaluator incremental-scalar with zero stderr, zero timeout, zero fallback and exit code zero.",
+    "Compare a timing-independent semantic projection across the two observations and require exact equality.",
+    "Rehash the engine, verifier, alias, observations and process logs after exit; verify no owned process remains and no foreign process was mutated."
+  ],
+  "acceptance": {
+    "alias_basename_exact": "Crazyhouse_v1.nnue",
+    "alias_bytes": 58534811,
+    "alias_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "runs": 2,
+    "result_each": "PASS_CONSERVATIVE_SEARCH_POLICY_GREEN",
+    "runtime_status_each": "PASS_SPECIAL_STATE_SEARCH_MATRIX",
+    "special_state_cases_each": 10,
+    "backend_each": "legacy-v1",
+    "evaluator_each": "incremental-scalar",
+    "fallback_observed": false,
+    "semantic_projection_equal": true,
+    "stderr_bytes_total": 0,
+    "timeouts": 0,
+    "nonzero_exits": 0,
+    "owned_residual_processes": 0
+  },
+  "stopping_rule": "Any identity mismatch, target collision, disk-floor violation, engine failure, route mismatch, semantic mismatch, stderr, timeout, fallback or foreign-process mutation rejects lease 243 without partial G5 credit. No retry may reuse the target.",
+  "claim_boundary": "This is a bounded E1 file-alias and current Worker-route correctness check. It is not timing, strength, OpenBench, model-selection, release, packaging reproducibility or monitoring evidence. The release alias must be materialized and reauthenticated again inside the eventual release export."
+}

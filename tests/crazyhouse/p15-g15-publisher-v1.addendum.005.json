@@ -1,0 +1,134 @@
+{
+  "schema": "crazyhouse-g15-publisher-formal-result/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE",
+  "created_utc": "2026-08-25T03:13:43.9978559Z",
+  "status": "PASS_G15_PUBLISHER_FORMAL_TOOLING",
+  "qualified_source": {
+    "commit": "780b1da3b902bd6bcf666a50e43f92a5f79f2c19",
+    "tree": "864258df83095f7b82b0eed2a1b4864e24f9cf05",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "parents": {
+    "preregistration": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.004.json",
+      "bytes": 6518,
+      "sha256": "1857e67210f9b627678d8db93bffc839e061914351e00edb99d1433b8b843c2f"
+    },
+    "download_authority_correction": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.003.json",
+      "bytes": 4660,
+      "sha256": "70ff2396a5a93f76253f941d39eb8ad12c59558a8b678b4e8c9d5e9fa5fed117",
+      "incident": "CH-328"
+    },
+    "publisher": {
+      "path": "tools/release/crazyhouse_g15_publisher.py",
+      "bytes": 41192,
+      "sha256": "f984016ef12c57263994dacd3f1765bb352fda46fe7334bb94817353f45ff2e0"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_g15_publisher.py",
+      "bytes": 30535,
+      "sha256": "9612e15552223d126b8f098556940f51fada57d352dc28820da084d43c878a77"
+    },
+    "formal_result_adr": {
+      "path": "docs/crazyhouse/adr-0022-addendum-001-formal-result.md",
+      "bytes": 2850,
+      "sha256": "02fe38df52cf5cfda452ece38db9f44db5c2d8f9050f1de74a8d8b947eabcfc5"
+    }
+  },
+  "formal_lease": {
+    "lease": 360,
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-g15-publisher-formal-360",
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p15-g15-publisher-formal-360/completion.json",
+      "bytes": 9716,
+      "sha256": "f369af903e3603bc265580ed53039d2830986caea85bdd5dbf6602f6ec8cf433",
+      "status": "PASS_G15_PUBLISHER_FORMAL_TOOLING"
+    },
+    "independent_verification": {
+      "project_relative_path": "receipts/verification/p15-g15-publisher-formal-independent-360.json",
+      "absolute_verification_path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/receipts/verification/p15-g15-publisher-formal-independent-360.json",
+      "bytes": 973,
+      "sha256": "8fff2316114f3a2092ceabfa46ae42fdd826663245c4fd876501e449969dd4b2",
+      "status": "INDEPENDENT_G15_PUBLISHER_FORMAL_OK"
+    },
+    "start_receipt": {
+      "project_relative_path": "receipts/resources/p15-g15-publisher-formal-t1-start-360.json",
+      "bytes": 3669,
+      "sha256": "c91d43e9ae01c879cb6fa3995d353b52b084b91b464b1586fd8ed45ea90494ba"
+    },
+    "start_addendum": {
+      "project_relative_path": "receipts/resources/p15-g15-publisher-formal-t1-start-360.addendum.001.json",
+      "bytes": 1916,
+      "sha256": "ccee24d590c26ad341c00d816c68b00785230a8379203404b779dd583b225996"
+    },
+    "end_receipt": {
+      "project_relative_path": "receipts/resources/p15-g15-publisher-formal-t1-end-360.json",
+      "bytes": 4113,
+      "sha256": "506e67c7e536b3c5b1301de95ef9bed48ffbb4ff5cc81e4b8d97270ba920fee7"
+    }
+  },
+  "matrix": {
+    "clean_exports": 2,
+    "profiles": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "profile_executions": 4,
+    "unit_tests_per_profile": 11,
+    "positive_cases_per_profile": 3,
+    "negative_cases_per_profile": 89,
+    "source_archive_bytes": 7813120,
+    "source_archive_sha256": "0eecb7baf761b5e8ace3046376f0741f765f9440ab4b652a51c34748b6f3d6ab",
+    "source_archives_byte_identical": true,
+    "export_manifests_byte_identical": true,
+    "export_manifests_unchanged_after_each_profile": true,
+    "canonical_profile_summary_sha256": "4455c3607b128684ab5eaba439699c055a0a7cddfea895083f2c8248beddd9c8",
+    "canonical_profile_summaries_byte_identical": true
+  },
+  "transport_audit": {
+    "sitecustomize_hash_authenticated": true,
+    "empty_executable_path": true,
+    "configured_GitHub_and_proxy_credentials_removed": true,
+    "positive_control": "PASS_SUBPROCESS_AND_SOCKET_BLOCKED",
+    "every_profile_audit_active": true,
+    "publisher_transport": "deterministic in-process fake only",
+    "publisher_real_subprocesses": 0,
+    "network_calls": 0,
+    "github_writes": 0,
+    "git_remote_writes": 0,
+    "openbench_calls": 0
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "controller_priority": "BelowNormal",
+    "controller_affinity_threads": 1,
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "target_files": 1246,
+    "target_bytes": 30293156,
+    "target_ceiling_bytes": 67108864,
+    "p7_supervisor_pid": 44764,
+    "p7_preserved": true,
+    "foreign_processes_mutated": false
+  },
+  "gate_effect": {
+    "publisher_tooling_qualified": true,
+    "owner_decision_recorded": false,
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_published": false,
+    "G15": "OPEN",
+    "G16": "OPEN",
+    "timing_evidence": false,
+    "strength_credit": false,
+    "release_credit": false,
+    "openbench_used": false,
+    "released_monitored": false
+  }
+}

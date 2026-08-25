@@ -1,0 +1,236 @@
+{
+  "schema": "crazyhouse-g15-publisher/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE",
+  "status": "PREREGISTERED_EXPECTED_RED",
+  "frozen_utc": "2026-08-25T02:21:06.4310711Z",
+  "authority": {
+    "oracle_review": "WAIVED_BY_OWNER",
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "g15_decision_recorded": false,
+    "qualification_network_calls": 0,
+    "qualification_public_writes": 0
+  },
+  "source": {
+    "decision_parent": "a26900dd30479679d5eccc6b16ad9d30c26a7062",
+    "decision_tree": "52da2b0971c95b2050b39f9c6dce10b5faac1b03",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "adr": {
+    "path": "docs/crazyhouse/adr-0022-post-g15-publisher-v1.md",
+    "bytes": 5705,
+    "sha256": "a25f05c9daa8e689a671a8dfb81245beaeceb44af0f7407406970947b4d9de11"
+  },
+  "implementation_expected_red": {
+    "publisher": "tools/release/crazyhouse_g15_publisher.py",
+    "unit_suite": "tests/crazyhouse_g15_publisher.py",
+    "publisher_present_at_freeze": false,
+    "unit_suite_present_at_freeze": false,
+    "required_result": "EXPECTED_RED_G15_PUBLISHER_MISSING",
+    "compiler_or_engine_execution": false
+  },
+  "release": {
+    "repository": "Belzedar94/Crazyhouse-Stockfish",
+    "remote": "origin",
+    "admitted_branch": "main",
+    "version": "1.0.0",
+    "tag": "v1.0.0",
+    "title": "Crazyhouse-Stockfish 1.0.0",
+    "draft": true,
+    "prerelease": false,
+    "latest_after_publication": true,
+    "immutable_tag_required": true,
+    "annotated_tag_required": true,
+    "tag_message": "Crazyhouse-Stockfish 1.0.0",
+    "assets": [
+      "crazyhouse-stockfish-1.0.0-windows-x86-64.zip",
+      "crazyhouse-stockfish-1.0.0-windows-x86-64-avx2.zip",
+      "crazyhouse-stockfish-1.0.0-source.tar.xz",
+      "crazyhouse-stockfish-release-manifest.json",
+      "SHA256SUMS"
+    ],
+    "release_notes_name": "RELEASE_NOTES.md"
+  },
+  "decision_record": {
+    "schema": "crazyhouse-g15-owner-decision/v1",
+    "exact_keys": [
+      "schema",
+      "project",
+      "decision",
+      "decided_utc",
+      "owner",
+      "repository",
+      "version",
+      "tag",
+      "candidate_commit",
+      "candidate_tree",
+      "tag_target_commit",
+      "tag_target_tree",
+      "origin_main_commit",
+      "draft_verification_receipt",
+      "release_notes",
+      "assets",
+      "tagger",
+      "tag_message",
+      "release_title",
+      "monitor_owner"
+    ],
+    "decision": "AUTHORIZE_STABLE_PUBLICATION",
+    "project": "Crazyhouse-Stockfish",
+    "repository": "Belzedar94/Crazyhouse-Stockfish",
+    "version": "1.0.0",
+    "tag": "v1.0.0",
+    "release_title": "Crazyhouse-Stockfish 1.0.0",
+    "tag_message": "Crazyhouse-Stockfish 1.0.0",
+    "full_git_object_ids": true,
+    "lowercase_sha256": true,
+    "strict_utc": true,
+    "assets_exact_order": true,
+    "duplicate_json_keys_rejected": true,
+    "regular_unlinked_file_required": true,
+    "decision_receipt_self_reference_forbidden": true
+  },
+  "preflight": {
+    "mode": "READ_ONLY",
+    "repository_clean": true,
+    "head_equals_tag_target_commit": true,
+    "head_tree_equals_tag_target_tree": true,
+    "candidate_is_ancestor_of_tag_target": true,
+    "tag_target_equals_origin_main_commit": true,
+    "remote_origin_url_matches_repository": true,
+    "origin_main_read_from_remote": true,
+    "local_tag_absent": true,
+    "remote_tag_absent": true,
+    "remote_peeled_tag_absent": true,
+    "github_release_absent": true,
+    "draft_receipt_authenticated": true,
+    "release_notes_authenticated": true,
+    "five_local_assets_authenticated": true,
+    "fresh_local_copy_independently_verified": true,
+    "result_before_mutation": "PASS_G15_PUBLISHER_READ_ONLY_PLAN"
+  },
+  "transaction": {
+    "journal_schema": "crazyhouse-g15-publisher-journal/v1",
+    "result_schema": "crazyhouse-g15-publisher-result/v1",
+    "journal_canonical_jsonl": true,
+    "journal_hash_chain": true,
+    "journal_path_must_be_absent": true,
+    "download_path_must_be_absent": true,
+    "stages": [
+      "PREFLIGHT_AUTHENTICATED",
+      "LOCAL_ANNOTATED_TAG_CREATED",
+      "REMOTE_TAG_PUSHED_AND_REAUTHENTICATED",
+      "REMOTE_DRAFT_CREATED",
+      "REMOTE_DRAFT_DOWNLOADED_AND_REAUTHENTICATED",
+      "STABLE_RELEASE_PUBLISHED",
+      "T0_MONITOR_HANDOFF_EMITTED"
+    ],
+    "public_mutations": [
+      "push exact new annotated tag ref",
+      "create one draft release with exact assets",
+      "publish that exact draft once"
+    ],
+    "forbidden_mutations": [
+      "force push",
+      "tag update",
+      "tag deletion",
+      "release deletion",
+      "asset deletion",
+      "asset overwrite or clobber",
+      "release recreation",
+      "automatic rollback",
+      "generated release notes",
+      "glob asset selection"
+    ],
+    "partial_failure_result": "PARTIAL_PUBLICATION_REQUIRES_ADDITIVE_RECOVERY",
+    "success_result": "PASS_STABLE_PUBLICATION_TRANSACTION_MONITOR_T0_PENDING",
+    "automatic_retry": false
+  },
+  "command_plan": {
+    "tag_ref": "refs/tags/v1.0.0",
+    "push": [
+      "git",
+      "push",
+      "origin",
+      "refs/tags/v1.0.0:refs/tags/v1.0.0"
+    ],
+    "create_draft_prefix": [
+      "gh",
+      "release",
+      "create",
+      "v1.0.0"
+    ],
+    "create_draft_required_flags": [
+      "--draft",
+      "--verify-tag",
+      "--latest=false",
+      "--repo",
+      "Belzedar94/Crazyhouse-Stockfish",
+      "--title",
+      "Crazyhouse-Stockfish 1.0.0",
+      "--notes-file"
+    ],
+    "download_prefix": [
+      "gh",
+      "release",
+      "download",
+      "v1.0.0",
+      "--repo",
+      "Belzedar94/Crazyhouse-Stockfish",
+      "--dir"
+    ],
+    "publish": [
+      "gh",
+      "release",
+      "edit",
+      "v1.0.0",
+      "--repo",
+      "Belzedar94/Crazyhouse-Stockfish",
+      "--draft=false",
+      "--latest",
+      "--verify-tag"
+    ],
+    "forbidden_tokens": [
+      "--force",
+      "--force-with-lease",
+      "--clobber",
+      "--cleanup-tag",
+      "delete",
+      "delete-asset",
+      "--generate-notes",
+      "--prerelease"
+    ]
+  },
+  "qualification": {
+    "expected_red_first": true,
+    "required_clean_exports": 2,
+    "profiles_per_export": [
+      "normal",
+      "python_optimized"
+    ],
+    "transport": "deterministic in-process fake only",
+    "minimum_positive_cases_per_profile": 3,
+    "minimum_negative_cases_per_profile": 30,
+    "normal_optimized_summary_byte_equal": true,
+    "source_archives_byte_equal": true,
+    "network_calls": 0,
+    "github_writes": 0,
+    "git_remote_writes": 0,
+    "engine_execution": false,
+    "openbench_calls": 0,
+    "p7_supervisor_must_remain_unchanged": true
+  },
+  "gate_effect": {
+    "G15": "UNCHANGED_OPEN",
+    "G16": "UNCHANGED_OPEN",
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_published": false,
+    "strength_credit": false,
+    "release_credit": false
+  }
+}

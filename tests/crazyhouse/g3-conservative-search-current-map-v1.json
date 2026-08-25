@@ -1,0 +1,200 @@
+{
+  "schema": "crazyhouse-g3-conservative-search-current-map/v1",
+  "created_utc": "2026-08-23T05:58:36.1178640Z",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "PASS_READ_ONLY_MAP_POLICY_GAPS_FOUND",
+  "lineage": {
+    "branch": "sync/official-229f6339",
+    "commit": "507e581d0e06a5a0edb6ab3eb491ebf7e037b63a",
+    "tree": "2d7872f0ecfedec15cc39e93a659fb03bf245c97",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "oracle_waiver_receipt": "../../../receipts/private/project-owner-waiver-oracle-resume-082.json"
+  },
+  "source_pins": [
+    {
+      "path": "src/search.cpp",
+      "bytes": 95678,
+      "sha256": "98733f9c291d6fbaaf9fca4c03bf53157cff9007515f6acf0749777135378bb4",
+      "git_blob": "05ad71892b5188ce4f6d22dc3ca568a31bc4244b"
+    },
+    {
+      "path": "src/movepick.cpp",
+      "bytes": 12430,
+      "sha256": "43ce4f20bb79a94ef9ab0fe20254a57137a44c01f06feeeb8dd1da97deb6f351",
+      "git_blob": "837d76f0952d40722fad21a4515921b5a195ea36"
+    },
+    {
+      "path": "src/position.cpp",
+      "bytes": 78018,
+      "sha256": "97dcbf7780c11f744f207836da2f1e4e18bda2cd3b20be5eb728986d41356a8e",
+      "git_blob": "3cab43a54916f6ec232c0059fbef437809433d51"
+    },
+    {
+      "path": "src/position.h",
+      "bytes": 17185,
+      "sha256": "1ef3c93700e805bf64444fcb02461c37618f0f19ba7a20ecc1b9fc6d345a5d8e",
+      "git_blob": "579e32ce97c2048d67c207f91dd3a239eecefc1a"
+    },
+    {
+      "path": "src/thread.cpp",
+      "bytes": 16166,
+      "sha256": "3ffe9c6dc14ba1e6ffd261d5c30848fd896d6b8441b75d312451cb5fa6c1028a",
+      "git_blob": "e203bdebf7fc5990b82de4c9bfd0bf41f963c98a"
+    }
+  ],
+  "governing_pins": [
+    {
+      "path": "docs/crazyhouse/adr-0001-official-specialization-architecture.md",
+      "bytes": 15177,
+      "sha256": "520718d15043df7f9f2fb99ba9c890e691fba9ed81312ef3801235f38bd48c73",
+      "git_blob": "51b953321b4320a37c10821cb753a4c2c168a051",
+      "decision": 9
+    },
+    {
+      "path": "tests/crazyhouse/search-primitives-v1.json",
+      "bytes": 1723,
+      "sha256": "7ee83f598a942e11fc8242985eb2fccf17ea815e2a863e3677e04fd90755ae77",
+      "git_blob": "423a3ef5d5430a4d6cf49cb61995fae55c81b374"
+    },
+    {
+      "path": "tests/crazyhouse/repetition-terminal-v1.json",
+      "bytes": 2440,
+      "sha256": "fd423ef46b0c4451b5482e844b0fe609a019e1b7857d64686dbda99c9542521a",
+      "git_blob": "6a35946057c8e5d1e2b32ecfd8bf1a601b0b4889"
+    }
+  ],
+  "mapped_boundaries": [
+    {
+      "id": "raw_tt_key",
+      "source": ["src/position.h:382-388", "src/position.cpp:1414-1417"],
+      "status": "PASS_ALREADY_VARIANT_GUARDED",
+      "classification": "rule_correctness",
+      "fact": "Crazyhouse probes and exact post-transition prefetches use the complete raw key without rule50 key adjustment."
+    },
+    {
+      "id": "upcoming_repetition",
+      "source": ["src/position.cpp:2002-2005", "src/search.cpp:767-773", "src/search.cpp:1685-1691"],
+      "status": "PASS_ALREADY_DISABLED",
+      "classification": "rule_correctness",
+      "fact": "The orthodox cuckoo upcoming-cycle shortcut returns false for every Crazyhouse position."
+    },
+    {
+      "id": "syzygy",
+      "source": ["src/thread.cpp:315-317", "src/search.cpp:952-1003", "src/search.cpp:2165-2171"],
+      "status": "PASS_ALREADY_VARIANT_GUARDED",
+      "classification": "rule_correctness",
+      "fact": "Root ranking, interior probes and PV extension are unreachable for Crazyhouse."
+    },
+    {
+      "id": "orthodox_shuffling",
+      "source": ["src/search.cpp:161-171"],
+      "status": "PASS_ALREADY_DISABLED",
+      "classification": "origin_free_search_safety",
+      "fact": "Crazyhouse returns false before any from-square shuffling inspection."
+    },
+    {
+      "id": "rule50_tt_value_decode",
+      "source": ["src/search.cpp:853", "src/search.cpp:1729", "src/search.cpp:1945-1984"],
+      "status": "FAIL_POLICY_GAP",
+      "classification": "rule_correctness",
+      "fact": "Both full search and qsearch pass the persisted Crazyhouse halfmove counter into orthodox mate/TB downgrade logic.",
+      "required_change": "Pass an explicit typed rule50-policy flag and skip every 100-minus-counter downgrade for Crazyhouse; passing counter zero is insufficient because mates longer than 100 plies would still be downgraded."
+    },
+    {
+      "id": "rule50_tt_cutoff_suppression",
+      "source": ["src/search.cpp:922-943"],
+      "status": "FAIL_POLICY_GAP",
+      "classification": "rule_correctness_and_search_policy",
+      "fact": "A Crazyhouse halfmove counter of 96 or more suppresses an otherwise admissible TT cutoff despite the profile having no 50-move result.",
+      "required_change": "Apply the high-counter suppression to orthodox chess only."
+    },
+    {
+      "id": "see_negative_pruning",
+      "source": ["src/position.cpp:1806-1814", "src/search.cpp:1224-1229", "src/search.cpp:1261-1265", "src/search.cpp:1831-1837", "src/search.cpp:1844-1846"],
+      "status": "PASS_CONSERVATIVE_NEGATIVE_POLARITY",
+      "classification": "search_policy",
+      "fact": "Position::see_ge returns true in Crazyhouse, so every caller written as if-not-see-then-prune retains the move."
+    },
+    {
+      "id": "see_ordering_positive_polarity",
+      "source": ["src/movepick.cpp:241-242", "src/movepick.cpp:318-326"],
+      "status": "DEFER_P7_ORDERING_ONLY",
+      "classification": "strength_only",
+      "fact": "The pass result grants the checking-quiet bonus and classifies captures as good, but these two uses only order moves and do not prune them."
+    },
+    {
+      "id": "see_probcut_positive_polarity",
+      "source": ["src/movepick.cpp:180-190", "src/movepick.cpp:394-395", "src/search.cpp:1084-1130"],
+      "status": "FAIL_CONSERVATIVE_POLICY_GAP",
+      "classification": "selective_search_policy",
+      "fact": "The same true result has opposite polarity in the ProbCut MovePicker and admits every Crazyhouse capture to a selective cutoff.",
+      "required_change": "Do not enter full ProbCut for Crazyhouse until a separately justified exchange policy exists."
+    },
+    {
+      "id": "null_move_board_material_gate",
+      "source": ["src/search.cpp:1041-1074"],
+      "status": "FAIL_CONSERVATIVE_POLICY_GAP",
+      "classification": "selective_search_policy",
+      "fact": "Null-move pruning remains active whenever orthodox on-board non-pawn material is nonzero; pockets and Crazyhouse zugzwang/checking-drop dynamics are outside that predicate.",
+      "required_change": "Disable null-move pruning for Crazyhouse and leave restoration to a one-variable P7 experiment."
+    },
+    {
+      "id": "shallow_board_material_pruning",
+      "source": ["src/search.cpp:1198-1267"],
+      "status": "FAIL_CONSERVATIVE_POLICY_GAP",
+      "classification": "selective_search_policy",
+      "fact": "Move-count, capture futility, continuation-history, parent futility and SEE pruning share an orthodox on-board non-pawn-material admission gate.",
+      "required_change": "Skip this complete shared block for Crazyhouse; later restorations must be separated by hypothesis."
+    },
+    {
+      "id": "qsearch_drop_boundary",
+      "source": ["src/movepick.cpp:303-315", "src/movepick.cpp:377-395", "src/search.cpp:1791-1853"],
+      "status": "PASS_FROZEN_INITIAL_POLICY",
+      "classification": "strength_only",
+      "fact": "Out of check qsearch generates captures only, while in-check qsearch generates all evasions including blocking drops. Checking drops outside check remain intentionally absent until P7."
+    },
+    {
+      "id": "qsearch_stalemate_probe",
+      "source": ["src/search.cpp:1877-1893"],
+      "status": "PASS_RULE_SAFE_FULL_LEGAL_CONFIRMATION",
+      "classification": "rule_correctness",
+      "fact": "The orthodox material shortcut cannot declare a Crazyhouse stalemate without a complete MoveList<LEGAL> confirmation, which includes pocket drops."
+    },
+    {
+      "id": "correction_and_drop_histories",
+      "source": ["src/search.cpp:95-140", "src/movepick.cpp:226-263", "src/search.cpp:1231-1245"],
+      "status": "DEFER_P7_STRENGTH_POLICY",
+      "classification": "strength_only",
+      "fact": "Generic correction/history tables may alias pocket or provenance states, while raw drop moves and moved_piece are origin-free. No rule result depends on these tables; topology or tuning changes require one-variable experiments."
+    }
+  ],
+  "selected_minimal_boundary": {
+    "change_rule50_tt_decode": true,
+    "change_high_rule50_tt_cutoff_policy": true,
+    "disable_crazyhouse_null_move_pruning": true,
+    "disable_crazyhouse_full_probcut": true,
+    "disable_crazyhouse_shared_shallow_pruning_block": true,
+    "change_generic_razoring_or_child_futility": false,
+    "change_qsearch_move_generation": false,
+    "change_ordering_or_histories": false,
+    "change_chess_behavior": false
+  },
+  "runtime_special_state_matrix": [
+    {"id": "root_checkmate", "fen": "k7/1Q6/2K5/8/8/8/8/8[] b - - 0 1", "go": "go depth 2", "bestmove": "(none)", "score": "mate 0"},
+    {"id": "root_stalemate", "fen": "k7/2Q5/2K5/8/8/8/8/8[] b - - 0 1", "go": "go depth 2", "bestmove": "(none)", "score": "cp 0"},
+    {"id": "pocket_prevents_stalemate", "fen": "k7/2Q5/2K5/8/8/8/8/8[n] b - - 0 1", "go": "go depth 2 searchmoves N@a1", "bestmove": "N@a1"},
+    {"id": "forced_drop_evasion", "fen": "4r2k/8/8/8/8/8/8/4K3[N] w - - 0 1", "go": "go depth 2 searchmoves N@e2", "bestmove": "N@e2"},
+    {"id": "no_fifty_move_result", "fen": "7k/8/8/8/8/8/8/K7[] w - - 100 1", "go": "go depth 2", "bestmove_set": ["a1a2", "a1b1", "a1b2"]},
+    {"id": "promoted_capture_demotes_to_pawn", "fen": "7k/8/8/8/8/8/Q~6r/K7[] b - - 0 1", "go": "go depth 2 searchmoves h2a2", "bestmove": "h2a2"},
+    {"id": "en_passant_capture", "fen": "7k/8/8/3pP3/8/8/8/K7[] w - d6 0 2", "go": "go depth 2 searchmoves e5d6", "bestmove": "e5d6"},
+    {"id": "promotion_provenance", "fen": "7k/P7/8/8/8/8/8/K7[] w - - 0 1", "go": "go depth 2 searchmoves a7a8q", "bestmove": "a7a8q"},
+    {"id": "castling", "fen": "r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1", "go": "go depth 2 searchmoves e1g1", "bestmove": "e1g1"},
+    {"id": "high_halfmove_tt_mate_reuse", "fen": "k7/2Q5/2K5/8/8/8/8/8[] w - - 100 1", "go": "go depth 3", "runs_without_hash_clear": 2, "bestmove": "c7b7", "score": "mate 1"}
+  ],
+  "method_reference_policy": "Atomic-Stockfish and Horde-Stockfish are not used for rules, code, values or search policy in this boundary. The decision is derived from the frozen Crazyhouse profile and the current official-Stockfish descendant.",
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

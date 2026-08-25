@@ -1,0 +1,80 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-legacy-control-preregistration-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-24T16:08:58.1272228Z",
+  "status": "PREREGISTERED_ARCHIVE_DIALECT_CORRECTION_BEFORE_RETRY",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_addendum": {
+    "path": "tests/crazyhouse/p12-nnue-v2-legacy-control-v1.addendum.001.json",
+    "commit": "0bb6a52710767fb7502ab2df4358025899f79cbc",
+    "bytes": 4256,
+    "sha256": "4a1c399e5f34687f98cfdbf1e1f31d4210742b05fc509fe21125a321f9546563"
+  },
+  "rejected_observation": {
+    "lease": 329,
+    "status": "REJECTED_ENGINEERING_OR_ORCHESTRATION",
+    "incident": "CH-299",
+    "repeats_prior_incident": "CH-281",
+    "start_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-expected-red-t1-start-329.json",
+      "bytes": 4776,
+      "sha256": "a0a8ff045c58b6aba5fbda78046e8b96dfc8d75924f9f3588a8d121b574324a6"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-expected-red-t1-end-329.json",
+      "bytes": 3096,
+      "sha256": "4fa7113368e715def82166d403ff7da0720528a497be85a503089f1bd8d6ab6e"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-legacy-control-expected-red-329/completion.json",
+      "bytes": 3672,
+      "sha256": "3498a19b21396a78f358807ba3f789f009f490993f07976d61cd08f3e477511e"
+    },
+    "exact_make_environment_preflight_passed": true,
+    "archive_created": true,
+    "archive_bytes": 6625280,
+    "archive_sha256": "2b3148d6ecac467275202eed17561fee7e78e7090992e509abba5b6447df7ff7",
+    "tar_exit_code": 128,
+    "tar_error": "/usr/bin/tar: Cannot connect to D: resolve failed",
+    "make_started": false,
+    "formal_expected_red_credit": false
+  },
+  "demonstrated_cause": "The controller prepended C:/msys64/usr/bin to its own PATH and later invoked tar without an absolute path. Resolution changed from the Windows tar used during planning to GNU tar, whose remote-archive grammar interpreted the colon in the absolute D: archive path as a host separator. This exactly repeats CH-281 and also prevented the supervisor PID from being emitted before the failure.",
+  "corrected_archive_admission": {
+    "git": {
+      "path": "C:/Program Files/Git/cmd/git.exe",
+      "bytes": 46464,
+      "sha256": "fec691d80fccc35fcc309fbc9f720536c1d795b8a562ec169f28c9923da9600f"
+    },
+    "gnu_tar": {
+      "path": "C:/msys64/usr/bin/tar.exe",
+      "bytes": 511486,
+      "sha256": "df0582941d1f451a76337863ba1dc8d8986ad0faf44f0e5f5c34afeb43c36453"
+    },
+    "working_directory": "fresh lease namespace",
+    "list_arguments": ["-tf", "source.tar"],
+    "extract_arguments": ["-xf", "source.tar", "-C", "source"],
+    "absolute_drive_letter_argument_allowed": false,
+    "relative_list_exit_zero_required_before_extraction": true,
+    "relative_list_file_count_required": 494,
+    "supervisor_pid_must_be_emitted_before_namespace_creation": true,
+    "parent_path_must_be_restored_in_finally": true,
+    "retry_lease": 330,
+    "retry_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-legacy-control-expected-red-330"
+  },
+  "stopping_rule": "Lease 329 remains rejected with zero gate credit. Lease 330 may run only after Git and GNU tar identities match, the supervisor PID is recorded before namespace creation, GNU tar receives only relative lease-local paths, and tar -tf lists the exact committed file count. Any source, archive, path dialect, process-provenance, utility, transcript or target drift rejects the fresh lease without reuse.",
+  "boundaries": {
+    "expected_red_proven": false,
+    "legacy_control_proven": false,
+    "training_admissible": false,
+    "model_selection_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

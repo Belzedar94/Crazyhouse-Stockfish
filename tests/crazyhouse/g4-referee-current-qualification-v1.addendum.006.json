@@ -1,0 +1,126 @@
+{
+  "schema": "crazyhouse-g4-current-referee-qualification-diagnostic-correction/v1",
+  "created_utc": "2026-08-23T16:13:59.0243377Z",
+  "diagnostic_lease": 258,
+  "evidence_class": "E1_ENGINEERING",
+  "effect": "strictly_additive_before_corrected_diagnostic_execution",
+  "purpose": "Correct only the diagnostic orchestration defects that consumed namespace 257 without executing a test row, then classify the original formal-replay-256 bestmove liveness failure with the same frozen binaries and corpus.",
+  "supersession_semantics": {
+    "formal_replay_256_status": "REJECTED_CURRENT_REFEREE_QUALIFICATION",
+    "diagnostic_257_status": "REJECTED_DIAGNOSTIC_ORCHESTRATION",
+    "namespace_256_reusable": false,
+    "namespace_257_reusable": false,
+    "partial_credit_allowed": false,
+    "receipt_rewrite_allowed": false,
+    "referee_source_change_allowed": false,
+    "fixture_change_allowed": false
+  },
+  "prior_diagnostic_preregistration": {
+    "path": "tests/crazyhouse/g4-referee-current-qualification-v1.addendum.005.json",
+    "commit": "842dec24a120ef60a31e20d26ee7dfda03e6009f",
+    "git_blob": "c1384e46f13f0e5b1bc6df205eb7202c712d05c5",
+    "bytes": 7294,
+    "sha256": "fdd6c04aad1fd29f04271bf4edc8b9f5af8da8618d89ccf1631c16280afdeab4"
+  },
+  "rejected_diagnostic_257": {
+    "rejection_record": {
+      "path": "../../../receipts/private/p4-referee-bestmove-diagnostic-rejection-record-174.json",
+      "bytes": 4146,
+      "sha256": "698825712d40a2372851b0578b6ae2a0c75268583938ecdc23dd81aa155eca3f"
+    },
+    "end_receipt": {
+      "path": "../../../receipts/resources/p4-referee-bestmove-diagnostic-t1-end-257.json",
+      "bytes": 1961,
+      "sha256": "708d75749ec583481b1d8fb664690bd06857acf0bd171485e6219f8534777062"
+    },
+    "namespace": "D:/Crazyhouse-Stockfish/diagnostics/p4-referee-bestmove-256-diagnostic-257",
+    "case_directories": 0,
+    "artifact_files": 0,
+    "completion_exists": false,
+    "classification_effect": "none"
+  },
+  "incident_ledger": {
+    "path": "../../../LESSONS_LEARNED.md",
+    "bytes": 55054,
+    "sha256": "f5ff65b4158e219823999aba9a12881f0613dfb82c6384ef0ad8b7f5e0079d00",
+    "incident": "CH-215"
+  },
+  "frozen_inputs_unchanged": [
+    {
+      "role": "test_executable",
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256/build/test_crazyhousebestmovecontract.exe",
+      "bytes": 218115,
+      "sha256": "59caadf0b42b5476467f4da0c8f5331b43e8cdf31096fcee7ed429347ba0d69c"
+    },
+    {
+      "role": "referee_executable",
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256/build/cutechess-cli.exe",
+      "bytes": 2293660,
+      "sha256": "6442a62bd9a37a6b51344ff168fa8cd22225b3d34b271be2a9e6654ea07819ed"
+    },
+    {
+      "role": "fixture",
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256/source/tests/crazyhouse/g4-referee-bestmove-contract-v3.json",
+      "bytes": 8221,
+      "sha256": "14d0fde2c281753a9417546e47a23ece6e357be8bbebf3a0e0d13ae18fe4683a"
+    }
+  ],
+  "corrected_controller": {
+    "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/control/p4-referee-bestmove-diagnostic-258.ps1",
+    "bytes": 10980,
+    "sha256": "d93fa0b36ec9f182ec06d1a8499053acdd070c5d657b142ef1c5580aaa13a868",
+    "powershell_parser_errors": 0,
+    "corrections": [
+      "Create only the single-use namespace parent and require artifact_root itself to remain absent for the harness consumer.",
+      "Request an explicit QTest text report with -o before relying on redirected console streams.",
+      "Write process-observation.json immediately after child exit and before artifact aggregation.",
+      "Accumulate artifact bytes explicitly from an array so zero files is a defined result.",
+      "Emit completion.json on both an observed test pass and an observed test failure."
+    ]
+  },
+  "corrected_diagnostic_execution": {
+    "namespace": "D:/Crazyhouse-Stockfish/diagnostics/p4-referee-bestmove-256-diagnostic-258",
+    "namespace_must_not_preexist": true,
+    "single_use": true,
+    "artifact_root": "D:/Crazyhouse-Stockfish/diagnostics/p4-referee-bestmove-256-diagnostic-258/artifacts",
+    "artifact_root_must_not_preexist_at_child_start": true,
+    "qtest_report": "D:/Crazyhouse-Stockfish/diagnostics/p4-referee-bestmove-256-diagnostic-258/qtest-report.txt",
+    "working_directory": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256/build",
+    "arguments": [
+      "--cli",
+      "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256/build/cutechess-cli.exe",
+      "--fixture",
+      "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-256/source/tests/crazyhouse/g4-referee-bestmove-contract-v3.json",
+      "--artifact-root",
+      "D:/Crazyhouse-Stockfish/diagnostics/p4-referee-bestmove-256-diagnostic-258/artifacts",
+      "-o",
+      "D:/Crazyhouse-Stockfish/diagnostics/p4-referee-bestmove-256-diagnostic-258/qtest-report.txt,txt",
+      "-v2"
+    ],
+    "outer_timeout_ms": 180000,
+    "process_priority": "Normal",
+    "diagnostic_repetitions": 1,
+    "network_used": false,
+    "openbench_used": false
+  },
+  "classification_rules": {
+    "exit_zero_14_pass_0_fail_and_12_complete_case_directories": "TRANSIENT_OR_ENVIRONMENTAL_LIVENESS_SUPPORTED_NOT_PROVEN; replay 256 remains rejected and a fresh complete formal replay is required.",
+    "observation_timed_out_with_actor_or_cli_artifacts": "CLASSIFY_FROM_THE_LAST_COMPLETE_ACTOR_AND_CLI_EVENTS; no source correction or formal replay may begin until those artifacts are hash-pinned.",
+    "non_timeout_assertion_failure": "FUNCTIONAL_OR_HARNESS_DEFECT; preregister an expected-red correction before source edits.",
+    "owned_crash_or_missing_runtime_dependency": "BUILD_OR_RUNTIME_QUALIFICATION_DEFECT; formal replay remains blocked.",
+    "controller_failure_outer_timeout_or_residual_owned_process": "DIAGNOSTIC_REJECTED; preserve namespace 258 and do not retry without another additive preregistration."
+  },
+  "resource_boundary": {
+    "thread_ceiling": 1,
+    "gpu_used": false,
+    "workers_used": false,
+    "timing_evidence": false,
+    "known_foreign_pids_read_only": [36984, 23492, 16852, 23580],
+    "foreign_process_mutation_allowed": false,
+    "openbench_submission_authorized": false
+  },
+  "stopping_rule": "Execute the corrected controller exactly once after this addendum is committed and an immutable start receipt pins its hash. The diagnostic result cannot rehabilitate replay 256, grant G4 credit, authorize OpenBench, prove strength or select a release.",
+  "gate_credit": false,
+  "strength_claim": false,
+  "release_claim": false
+}

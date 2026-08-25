@@ -1,0 +1,206 @@
+{
+  "schema": "crazyhouse-p15-development-engine-identity-runtime/v1",
+  "created_utc": "2026-08-25T00:46:00Z",
+  "status": "PREREGISTERED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Compile the integrated development identity from one authenticated Git-free clean export and prove the real Windows AVX2 executable reports the Crazyhouse-Stockfish development identity while preserving the admitted Crazyhouse legacy-network route.",
+  "authority": {
+    "oracle_review": "WAIVED_BY_OWNER",
+    "stable_publication_authorized": false,
+    "openbench_authorized": false,
+    "local_non_timing_engineering_authorized": true
+  },
+  "source_boundary": {
+    "preregistration_parent": "3bfcde1d38ba5d4fc794ef470e31e2d93e1eb802",
+    "parent_tree": "b1e5251c70494eb096d1afd39531b000ac82c67e",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "p7_candidate": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "identity_implementation": "4c515136488ce0c17bf4ff47a68bf1142b9e8768",
+    "formal_source_commit": "SEALED_AFTER_THIS_PREREGISTRATION_COMMIT_IN_THE_IMMUTABLE_START_RECEIPT_AND_CONTROLLER_ARGUMENTS",
+    "formal_source_must_have_exact_parent": "3bfcde1d38ba5d4fc794ef470e31e2d93e1eb802",
+    "formal_source_must_preserve_src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "clean_worktree_required_before_and_after": true,
+    "fairy_stockfish_product_ancestry": false
+  },
+  "implementation_inputs": {
+    "makefile": {
+      "path": "src/Makefile",
+      "bytes": 62118,
+      "sha256": "77b83838bafd42eed52439fe8eb0623eac9faf321b1f0edd2f02604ca5ed67a4"
+    },
+    "version_authority": {
+      "path": "src/crazyhouse_version.h",
+      "bytes": 678,
+      "sha256": "c412cd4e11ae1c30ee84015d8cf7b9420bc5b629a1c5d9ec6fdd0f2c4d050a31",
+      "required_values": "0.0.0/dev"
+    },
+    "identity_source": {
+      "path": "src/misc.cpp",
+      "bytes": 16430,
+      "sha256": "1a171083cf92e53c2c7e6704e45828b473cf526f0a1fe1d1550d7aca81e74f57"
+    },
+    "authors": {
+      "path": "AUTHORS",
+      "bytes": 7048,
+      "sha256": "fa2148b9a64ec5bd1b347951bbf0fd902e475fc74d8e71a253532cfab81852c4"
+    },
+    "source_verifier": {
+      "path": "tools/release/verify_crazyhouse_engine_identity.py",
+      "bytes": 30605,
+      "sha256": "1e5d340ba64a18ff6fa3ea8da052c55e38a6f0e5a242ce7cced7d3a4d6b10cc8"
+    },
+    "capability_harness": {
+      "path": "tests/crazyhouse_capability_handshake.py",
+      "bytes": 13351,
+      "sha256": "995118d9ca31f356e4765f0f824d3f3ad219219d61f7c4b6dc5c4ef9d77fd1a4"
+    },
+    "capability_fixture": {
+      "path": "tests/crazyhouse/capability-handshake-v1.json",
+      "bytes": 2741,
+      "sha256": "4b027bb4f0e632e298addcb37f18b2bd61c25fe4158f33d3293291a481feab6d"
+    }
+  },
+  "controllers": {
+    "formal": {
+      "path": "control/p15-development-identity-runtime-356-controller.py",
+      "bytes": 36859,
+      "sha256": "946e82770c845997a8a0d7dc24525e47510d42eded10b21382adcf5ff6150a5a"
+    },
+    "independent_verifier": {
+      "path": "control/p15-development-identity-runtime-356-independent-verifier.py",
+      "bytes": 15716,
+      "sha256": "81b0e0345981d3c984861d4b710b5ed4fb1cd767e2c0aeea7ce9194383ed6e5d"
+    },
+    "controller_self_hash_required": true,
+    "start_receipt_hash_required": true,
+    "go_marker_required": true
+  },
+  "toolchain": {
+    "git": {
+      "path": "C:/Program Files/Git/cmd/git.exe",
+      "bytes": 46464,
+      "sha256": "fec691d80fccc35fcc309fbc9f720536c1d795b8a562ec169f28c9923da9600f"
+    },
+    "tar": {
+      "path": "C:/Program Files/Git/usr/bin/tar.exe",
+      "bytes": 497189,
+      "sha256": "bb89375a830ac0986f2cfe9c7a71cc44d8e646c4fbfbd14545918a759e96887a"
+    },
+    "make": {
+      "path": "C:/msys64/usr/bin/make.exe",
+      "version": "4.4.1",
+      "bytes": 229856,
+      "sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22"
+    },
+    "compiler": {
+      "path": "C:/msys64/mingw64/bin/g++.exe",
+      "version": "16.1.0",
+      "dumpmachine": "x86_64-w64-mingw32",
+      "bytes": 3312964,
+      "sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb"
+    },
+    "linker": {
+      "path": "C:/msys64/mingw64/bin/ld.exe",
+      "version": "GNU Binutils 2.45",
+      "bytes": 1935014,
+      "sha256": "8f68b5189a1a66058be0fb0c773e0b33bcc0cc7c9f02607c5fe817879212848a"
+    },
+    "python": {
+      "path": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+      "version": "3.12.0",
+      "psutil_version": "7.2.2",
+      "bytes": 103192,
+      "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"
+    }
+  },
+  "network_inputs": {
+    "official_standard_build_input": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-engine-capability-green-247/source/src/nn-1a298aa575a0.nnue",
+      "target_filename": "nn-1a298aa575a0.nnue",
+      "bytes": 98511183,
+      "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+      "role": "authenticated local linker input for the orthodox evaluator; no download is permitted"
+    },
+    "crazyhouse_legacy_runtime_input": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Match script/crazyhouse_run15rl_e190_l03.nnue",
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "role": "external Crazyhouse legacy V1 evaluator used by the capability handshake"
+    },
+    "same_legacy_bytes_as_p7_gate": true,
+    "network_calls_allowed": 0
+  },
+  "build_contract": {
+    "clean_exports": 1,
+    "target_id": "windows-x86-64-avx2",
+    "architecture": "x86-64-avx2",
+    "backend": "unchanged default scalar Crazyhouse legacy backend",
+    "backend_assignment_present": false,
+    "network_validation_recipe": "make -j1 net ARCH=x86-64-avx2 COMP=gcc",
+    "build_recipe": "make -j1 build ARCH=x86-64-avx2 COMP=gcc OS=Windows_NT EXTRACXXFLAGS=-Werror mingw_reproducible=yes COMPILER_DATE=<formal-commit-YYYYMMDD>",
+    "compiler_date_rule": "The deterministic development date equals the authenticated formal commit date; it does not override the native dev version authority.",
+    "source_date_epoch_rule": "The environment value equals the authenticated formal commit timestamp.",
+    "threads": 1,
+    "warning_strict": true,
+    "pe_coff_timestamp_required": 0,
+    "two_export_reproducibility_claim": false,
+    "release_build_claim": false
+  },
+  "runtime_contract": {
+    "expected_startup_pattern": "Crazyhouse-Stockfish dev-<formal-commit-YYYYMMDD>-nogit by the Crazyhouse-Stockfish developers (see AUTHORS file)",
+    "expected_uci_name_pattern": "id name Crazyhouse-Stockfish dev-<formal-commit-YYYYMMDD>-nogit",
+    "expected_uci_author": "id author the Crazyhouse-Stockfish developers (see AUTHORS file)",
+    "expected_uciok_count": 1,
+    "forbidden_identity_prefixes": [
+      "Stockfish ",
+      "id name Stockfish "
+    ],
+    "exact_option_inventory_lines": 24,
+    "exact_option_inventory_sha256": "9b4c3b172aeef57e9f7f0b4e8737f6bd71f314db5d2bd4cf497907bb7e3fa03b",
+    "capability_transcripts": 4,
+    "required_capability_result": "passed=true and failures=[]",
+    "required_route": "ruleset=crazyhouse backend=legacy-v1 identity=8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43 evaluator=incremental-scalar",
+    "missing_network_negative_required": true,
+    "invalid_nonce_negative_required": true,
+    "standard_route_control_required": true,
+    "real_engine_launches": 5,
+    "engine_stderr_must_be_empty": true
+  },
+  "resource_handoff": {
+    "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+    "supervisor_pid": "RECORDED_AT_READY",
+    "sanitized_command": "python -B control/p15-development-identity-runtime-356-controller.py --expected-source <full-commit> --expected-tree <full-tree> --expected-prereg-sha256 <sha256> --expected-start-receipt-sha256 <sha256> --expected-controller-sha256 <sha256>",
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-development-identity-runtime-356",
+    "target_must_be_absent": true,
+    "T": 1,
+    "N": "one clean-export build; five real engine launches",
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "connection": "none",
+    "network_calls": 0,
+    "openbench_calls": 0,
+    "authorization": "owner-authorized local non-timing engineering inside Crazyhouse-Stockfish",
+    "namespace_ceiling_bytes": 1073741824,
+    "C_free_floor_bytes": 5368709120,
+    "D_free_floor_bytes": 107374182400,
+    "restoration": "The repository remains clean at the formal commit; all owned compiler, linker, Make, Python and engine descendants end; P7 PID 44764 remains byte-for-byte unchanged in process identity; no foreign process lifecycle, affinity, priority or suspension state is mutated."
+  },
+  "stopping_rule": "PASS only if the clean export matches every Git blob, all tool and network pins match, the warning-strict one-thread AVX2 build exits zero with empty stderr and PE timestamp zero, native source verification passes, the exact Crazyhouse development startup/UCI identity and all 24 option lines match, the same legacy net passes the capability harness including its negatives and standard control, every owned descendant ends, P7 is preserved, and the independent verifier reauthenticates the immutable completion. Any mismatch stops lease 356 without repair in place; a timeout is not classified as compiler, engine or outage failure until descendants and artifacts are audited.",
+  "pass_effect": "PASS_DEVELOPMENT_ENGINE_IDENTITY_RUNTIME proves only that the integrated dev identity compiles and runs on the prospective Windows AVX2 lane with the admitted legacy Crazyhouse route. It does not replace the frozen P7 candidate, establish Elo, authenticate a stable 1.0.0 runtime, prove two-export reproducibility, authorize OpenBench or public writes, close G14/G15/G16, create a tag, or release anything.",
+  "boundaries": {
+    "p7_candidate_bytes_may_change": false,
+    "strength_claim": false,
+    "timing_evidence": false,
+    "stable_runtime_authenticated": false,
+    "release_candidate_selected": false,
+    "openbench_evidence": false,
+    "public_mutation": false,
+    "stable_publication_authorized": false,
+    "released_monitored": false
+  }
+}

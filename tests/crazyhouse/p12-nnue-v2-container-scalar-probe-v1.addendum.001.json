@@ -1,0 +1,67 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-container-scalar-probe-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T07:49:07.7261826Z",
+  "status": "FROZEN_BEFORE_FORMAL_RUN",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-container-scalar-probe-v1.json",
+    "bytes": 3636,
+    "sha256": "3610b737bd5396c64a88450590b77b80b48cd052b72e8622b2e02ec7fa1c93c4"
+  },
+  "implementation": {
+    "commit": "3a56dd04a0892831f3adc2654e262a7af8981498",
+    "tree": "b69c09304a7afd16c017fff62af714a5225dcb9a",
+    "src_tree": "b11a0fc955458ff2402c880be0fd8641fdb1cf47",
+    "source_dirty": false,
+    "files": [
+      {"path": "src/Makefile", "bytes": 55584, "sha256": "e71f97367de346d37bf8085402f9271f1ca0c485fc667b1bedb5173c23c4b0c9"},
+      {"path": "src/nnue/crazyhouse_v2_probe.h", "bytes": 3684, "sha256": "fba5dcecd4e8175a2ed2873455ee4a36b905252bd7b680e2c6c1f4e69980a28b"},
+      {"path": "src/nnue/crazyhouse_v2_probe.cpp", "bytes": 19424, "sha256": "07586791cbc662af2eb057109f2f4225b36610844f3979dbd3c5930c39b93284"},
+      {"path": "tools/nnue/crazyhouse_v2_trainer_reference.py", "bytes": 14970, "sha256": "9f203a525ed09bf81800527357c5912c9d95c42d6f2c135c47ffa97757256fc2"},
+      {"path": "tests/crazyhouse_v2_container_scalar.cpp", "bytes": 7795, "sha256": "4173e188faf1e967decc80cd13e3f24761fd61285e53a7ebdb11eb09412e132f"},
+      {"path": "tests/crazyhouse_v2_container_scalar_verify.py", "bytes": 17802, "sha256": "fecf73db668ebec1698bd0f4f73ba57b73828504cf7926ff5ca5898e05b35aa8"}
+    ]
+  },
+  "synthetic_artifact": {
+    "format": "crazyhouse-v2-scalar-probe-container-v1",
+    "extension": ".chn2p",
+    "bytes": 30992,
+    "sha256": "fdd55e1a6af735cf1e999af31341c249c52f444f553454606195124a34b07d12",
+    "generation": "tools/nnue/crazyhouse_v2_trainer_reference.py synthetic_network_bytes()",
+    "random_number_generator": null,
+    "training_admissible": false,
+    "strength_admissible": false
+  },
+  "diagnostic_only_observation": {
+    "formal_gate_credit": false,
+    "valid_records": 48,
+    "perspectives": 96,
+    "lane_values": 1632,
+    "negative_mutations": 30,
+    "protocol_sha256": "f7017ceeadb90259f05caa78b72409b3377f1722dc4fc25d9ba670620c9770bd",
+    "rejection_sha256": "a3b4483e644a9d4c8bcc5b15f387de0be2c6085dda91ebc385193aff18c65d76"
+  },
+  "capacity_interpretation": {
+    "allocated_rows": 138,
+    "maximum_observed_physically_valid_rows": 136,
+    "reason": "Every valid state has two kings, and king squares cannot carry promoted provenance. The allocation remains the frozen conservative 64 board plus 10 pocket plus 64 provenance upper bound."
+  },
+  "formal_run_policy": {
+    "release_and_debug_clean_exports": true,
+    "exact_artifact_identity_required": true,
+    "release_debug_protocol_byte_equal": true,
+    "normal_engine_control_required": true,
+    "sanitizer_incident": "CH-263",
+    "sanitizer_credit": false
+  },
+  "boundaries": {
+    "normal_engine_links_probe": false,
+    "legacy_v1_remains_default": true,
+    "training_authorized": false,
+    "openbench_authorized": false,
+    "strength_claimed": false,
+    "g12_closed": false
+  }
+}

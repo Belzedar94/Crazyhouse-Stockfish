@@ -1,0 +1,38 @@
+{
+  "schema": "crazyhouse-p7-local-opening-timestamp-correction/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING",
+  "created_utc": "2026-08-23T20:06:27.2805730Z",
+  "incident": "CH-230",
+  "base_contract": {
+    "path": "tests/crazyhouse/p7-local-opening-corpus-v1.json",
+    "bytes": 6971,
+    "sha256": "b3762857cf75047eaa399e839c2708d357b5f4c8687a6c811eebae07c34a09f3",
+    "commit": "dc3fd87bf7e13bd551dad3636c55faab0e77a0af",
+    "commit_time": "2026-08-23T21:57:08+02:00",
+    "authoritative_freeze_utc": "2026-08-23T19:57:08Z",
+    "incorrect_embedded_frozen_utc": "2026-08-23T20:20:00Z"
+  },
+  "qualification_contract": {
+    "path": "tests/crazyhouse/p7-local-opening-corpus-v1.addendum.001.json",
+    "bytes": 5920,
+    "sha256": "2cbda0331cfe44fcd93521509ba513cdd80b26197e970510259e7e446e1164d9",
+    "commit": "dd9dc0931945a98947daa9f8db49010ec242116b",
+    "commit_time": "2026-08-23T22:02:56+02:00",
+    "authoritative_freeze_utc": "2026-08-23T20:02:56Z",
+    "incorrect_embedded_frozen_utc": "2026-08-23T20:32:00Z"
+  },
+  "cause": "The embedded UTC labels were manually projected from an assumed later wall-clock value instead of being resolved from the system clock or the immutable Git commit timestamps.",
+  "correction": "The Git commit timestamps above are the authoritative freeze times. Every scientific field, hash pin, stopping rule and output expectation in the two original documents remains unchanged.",
+  "pre_execution_facts": {
+    "formal_lease_started": false,
+    "target_namespace_exists": false,
+    "generated_book_observed": false,
+    "referee_dry_pair_observed": false,
+    "match_result_observed": false,
+    "strength_result_observed": false
+  },
+  "prevention": "Resolve UTC mechanically immediately before serialization and validate created/frozen timestamps against the current clock and Git commit chronology before any formal GO.",
+  "gate_effect": "Timestamp chronology is corrected additively before lease 271. No scientific contract or authorization changes."
+}

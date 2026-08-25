@@ -1,0 +1,295 @@
+{
+  "schema": "crazyhouse-g4-referee-current-match-path-map/v1",
+  "created_utc": "2026-08-22T03:33:39.1748750Z",
+  "evidence_class": "E1_ENGINEERING",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "mapping_scope": "read-only mapping of the current candidate's embedded probe and ordinary match paths; no new rule, protocol, clock, history, PGN or timeout value is frozen here",
+  "product_lineage": {
+    "repository": "Crazyhouse-Stockfish",
+    "branch": "port/official-crazyhouse-core",
+    "commit_before_map": "9537270d0cdc7d1e66bb1bdcc5a202f961b2b439",
+    "tree_before_map": "667c0e58454ef03e29e81f9b46664a39d99f3d70",
+    "official_stockfish_ancestor": "5062aee519a1ba262d472d8ab139851ced56573e",
+    "official_stockfish_ancestor_verified": true,
+    "retired_fairy_base_used": false
+  },
+  "referee_lineage": {
+    "repository": "https://github.com/AndyGrant/cutechess.git",
+    "path": "D:/Crazyhouse-Stockfish/referee/cutechess-24d430-clean",
+    "branch": "crazyhouse/profile-conformance",
+    "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "clean_root_tree": "289867c000147a84b2a48eff5ce1aa2fbd85e168",
+    "candidate_commit": "c1a9b91b3b32c68cbea6cf6708ae06d380bfcdba",
+    "candidate_tree": "2ae9fa88491900227a27c9adf743be4d33052188",
+    "commits_above_clean_root": 11,
+    "merge_commits_above_clean_root": 0,
+    "status_lines": 0,
+    "forbidden_horde_ancestor_present": false
+  },
+  "frozen_contracts": [
+    {
+      "path": "tests/crazyhouse/g4-profile-v1.json",
+      "bytes": 5486,
+      "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+    },
+    {
+      "path": "tests/crazyhouse/g4-referee-source-map-v1.json",
+      "bytes": 15041,
+      "sha256": "51a5dd5b5ca052a3dd8d49de4e593cf632074638af61d2877ebc7892e2d17863"
+    },
+    {
+      "path": "tests/crazyhouse/g4-referee-cases-v1.addendum.001.json",
+      "bytes": 19947,
+      "sha256": "e984177d4e377bfa2864ce94a9b59b0f50fc23d2a2e96650493b38c3fa8fa551"
+    },
+    {
+      "path": "tests/crazyhouse/g4-participant-matrix-v1.addendum.002.json",
+      "bytes": 6309,
+      "sha256": "0087816f7b4c549cd8b4dbeb1ef9fb54e9d00ee2fd7da4c27bdcb021f30cf4d2"
+    }
+  ],
+  "current_source_files": [
+    {
+      "path": "projects/cli/src/main.cpp",
+      "bytes": 20787,
+      "sha256": "98ea82c25fc4dc12cb353c128b63739eb552d3b4ea3fa63447ee801ed2370c75",
+      "git_blob": "142231ac29e3b7a867298f0692e7d76fe918789d",
+      "clean_root_equal": false
+    },
+    {
+      "path": "projects/cli/src/crazyhouseconformance.cpp",
+      "bytes": 6152,
+      "sha256": "1081639902da1dd8dd744292483815110bd242163f370e18a0521e774f77cc8e",
+      "git_blob": "6beb9f6bb454675d8772333317566beed576f61e",
+      "clean_root_equal": false
+    },
+    {
+      "path": "projects/cli/src/enginematch.cpp",
+      "bytes": 4857,
+      "sha256": "5ba5ecd6c14de3200800aefbb8a715ea59f34da5604e1178da7c3661daef6c39",
+      "git_blob": "9e425319f2a9d4ea262bcb4df570a22bab1f8875",
+      "clean_root_equal": true
+    },
+    {
+      "path": "projects/lib/src/tournament.cpp",
+      "bytes": 31226,
+      "sha256": "a63bdfed892bbce1dad8a0e3ad39ee39d7b70dfae7b091b5914e5a98e5f838be",
+      "git_blob": "87b90207bfd438b57bd3af1deef36e104737f1b1",
+      "clean_root_equal": true
+    },
+    {
+      "path": "projects/lib/src/chessgame.cpp",
+      "bytes": 16502,
+      "sha256": "e270c3bc5842b8f1432ec34f8467943feb0d1d2e952056912a8a0f0d6eb2d5c0",
+      "git_blob": "980affc3fad76dc14ae13de3a28bbee847105c46",
+      "clean_root_equal": true
+    },
+    {
+      "path": "projects/lib/src/chessplayer.cpp",
+      "bytes": 5783,
+      "sha256": "823c8cffd39d8771d492181d740bc57423efa3c2c574765dd67cbcb486f54a1e",
+      "git_blob": "755479e3cd0fdec1e2fb6eb05600ef64f3cc7b90",
+      "clean_root_equal": true
+    },
+    {
+      "path": "projects/lib/src/timecontrol.cpp",
+      "bytes": 9174,
+      "sha256": "c47f32a5e82f56c821e9dc02988f5f20b9dc3d7ba7cfe27daa25e1a10fb0db62",
+      "git_blob": "e3b658c41323fb8b72eaf0e2398b61686e429dbc",
+      "clean_root_equal": true
+    },
+    {
+      "path": "projects/lib/src/uciengine.cpp",
+      "bytes": 18140,
+      "sha256": "76b0b1d7b6142d76af57bf31b52988b310d86fa6b88d904abfe21c97efd4b49a",
+      "git_blob": "b667f9d824200ba8d0c96a1f0ed39558388739f7",
+      "clean_root_equal": true
+    },
+    {
+      "path": "projects/lib/src/pgngame.cpp",
+      "bytes": 12452,
+      "sha256": "e9c9bf0e142420681cc2136749065e4b075265b6ae1846e790c67e8371c40db4",
+      "git_blob": "190baca93ce615c8d12725eed6ad131a0cc6eca5",
+      "clean_root_equal": true
+    },
+    {
+      "path": "projects/lib/src/board/boardfactory.cpp",
+      "bytes": 5886,
+      "sha256": "d485ac570487f4c0ae90f321518bf32e5bf26adc4d74c40a648c3bef6307ff8a",
+      "git_blob": "6e6401fe3546ea06ec36983138160e287c8d3106",
+      "clean_root_equal": true
+    },
+    {
+      "path": "projects/lib/src/board/board.cpp",
+      "bytes": 20119,
+      "sha256": "a2c5b62df6eaa7c232f9626136cd7ef8080525ab7fe53178467a59ff4ef03b47",
+      "git_blob": "c919033918b391947a45015b30054c136886a350",
+      "clean_root_equal": false
+    },
+    {
+      "path": "projects/lib/src/board/westernboard.cpp",
+      "bytes": 35136,
+      "sha256": "ce15a7ea03d3c857b9e7295b4f29a3acf2c510c12881eb9bb2fcfc9584b676ac",
+      "git_blob": "fd48b7e573f4245bd4f8b821696b36851dd502ae",
+      "clean_root_equal": false
+    },
+    {
+      "path": "projects/lib/src/board/crazyhouseboard.cpp",
+      "bytes": 8686,
+      "sha256": "5a86f9da7f1d281ec7d504e2aa3155a2294c1634a301b1edeae7f63089ff8a92",
+      "git_blob": "7e5118157525cd2bdae790d3119d33b7c92a70c0",
+      "clean_root_equal": false
+    },
+    {
+      "path": "projects/lib/src/crazyhouseprofile.cpp",
+      "bytes": 1353,
+      "sha256": "00bbb1a9058e7ce038c774f19b43241b09919c86da0cb4b1eac3218c19eeaa85",
+      "git_blob": "5626b13e19def941ba669e8459de81ff02a20540",
+      "clean_root_equal": false
+    }
+  ],
+  "path_observations": [
+    {
+      "id": "embedded_probe_ingress",
+      "status": "PARTIAL_PASS",
+      "source": [
+        "projects/cli/src/main.cpp:724-728",
+        "projects/cli/src/crazyhouseconformance.cpp:174-188"
+      ],
+      "observation": "The first-argument conformance sentinel dispatches inside the production CLI and creates the exact Crazyhouse board through BoardFactory.",
+      "limits": "The current raw Windows stream ends in CRLF, and the probe does not traverse match configuration, engine lines, clocks, history or PGN."
+    },
+    {
+      "id": "ordinary_match_profile_ingress",
+      "status": "RED",
+      "source": [
+        "projects/cli/src/main.cpp:240-275",
+        "projects/cli/src/main.cpp:315-321"
+      ],
+      "observation": "The ordinary parser registers and applies -variant only. It has no exact profile ID/hash ingress or fail-closed match profile selection."
+    },
+    {
+      "id": "shared_board_factory",
+      "status": "PARTIAL_PASS",
+      "source": [
+        "projects/cli/src/crazyhouseconformance.cpp:188",
+        "projects/lib/src/tournament.cpp:418-429"
+      ],
+      "observation": "Probe and match both call BoardFactory::create and therefore share the current Board/FEN/result implementation.",
+      "limits": "Shared construction does not prove the remaining production lifecycle joins."
+    },
+    {
+      "id": "engine_capability_barrier",
+      "status": "RED",
+      "source": [
+        "projects/lib/src/chessgame.cpp:684-731",
+        "projects/lib/src/uciengine.cpp:130-165",
+        "projects/lib/src/uciengine.cpp:698-727"
+      ],
+      "observation": "ChessGame checks only supportsVariant(), marks the game in progress, emits started, and then calls newGame. UciEngine sends the variant, ucinewgame and position without requiring the profile option, a fresh nonce or the exact acknowledgement.",
+      "clean_root_equal": true
+    },
+    {
+      "id": "strict_bestmove_and_legality",
+      "status": "RED",
+      "source": [
+        "projects/lib/src/uciengine.cpp:597-663"
+      ],
+      "observation": "The match path extracts one move token and delegates to board()->moveFromString(); it does not require the frozen strict line grammar, validate all trailing tokens or produce distinct typed protocol_failure versus illegal_move outcomes.",
+      "clean_root_equal": true
+    },
+    {
+      "id": "deadline_arbiter",
+      "status": "RED",
+      "source": [
+        "projects/lib/src/chessplayer.cpp:261-310",
+        "projects/lib/src/timecontrol.cpp:346-385"
+      ],
+      "observation": "Move delivery and timeout callback remain separate paths with no single timestamped MOVE_READY arbiter. Equality currently survives the arithmetic check, but callback ordering is not made deterministic.",
+      "clean_root_equal": true
+    },
+    {
+      "id": "accepted_physical_history_digest",
+      "status": "RED",
+      "source": [
+        "projects/lib/src/chessgame.cpp:216-289"
+      ],
+      "observation": "Accepted moves and PGN data are updated, but no canonical per-ply physical-state payload or SHA-256 history artifact is created.",
+      "clean_root_equal": true
+    },
+    {
+      "id": "semantic_pgn_and_replay",
+      "status": "RED",
+      "source": [
+        "projects/lib/src/chessgame.cpp:662-681",
+        "projects/lib/src/pgngame.cpp:461-516"
+      ],
+      "observation": "Variant is written as lowercase crazyhouse and generic Termination text is available, but RefereeProfile, RefereeProfileSHA256, RefereeReason and HistorySHA256 are absent and semantic replay equivalence is unauthenticated.",
+      "clean_root_equal": true
+    },
+    {
+      "id": "same_executable_identity_in_match_artifacts",
+      "status": "RED",
+      "source": [
+        "projects/cli/src/enginematch.cpp:67-80",
+        "projects/cli/src/enginematch.cpp:110-164"
+      ],
+      "observation": "Ordinary match logs do not emit the candidate commit/tree, profile identity, conformance schema or executable digest required to join the match leg to the probe leg.",
+      "clean_root_equal": true
+    }
+  ],
+  "authenticated_runtime_slice": {
+    "debug_executable": {
+      "bytes": 55390454,
+      "sha256": "d350db34b7595b712c3e823322d38037f5d26234290ccd30fdb1614723bae98e"
+    },
+    "board_profile": {
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0,
+      "receipt": "../../../receipts/resources/p4-referee-board-qtest-explicit-output-t1-end-166.json",
+      "receipt_sha256": "a549eff8dbf04e537129b44d6b511e2096d601633bb55cf167949be90aee1f5b"
+    },
+    "cli_semantics": {
+      "cases_with_expected_exit_and_semantics": 6,
+      "functional_timeouts_at_120_seconds": 0,
+      "lf_only_stream_cases": 0,
+      "terminal_crlf_cases": 5,
+      "receipt": "../../../receipts/resources/p4-referee-cli-runtime-diagnostic-t3-end-165.json",
+      "receipt_sha256": "66eb3079669ff2c6dccd1e7094dda9238c8c461ce68d0f69fc9c011a8602c1bb"
+    },
+    "ordinary_match_process": {
+      "status": "NOT_YET_AUTHENTICATED_ON_CURRENT_CANDIDATE",
+      "no_runtime_claim": true
+    }
+  },
+  "next_expected_red_observations": [
+    {
+      "id": "CH-G4-REF-MATCH-MISSING-PROFILE-CAPABILITY",
+      "actor": "deterministic rule-free UCI process advertising crazyhouse but omitting CrazyhouseProfile and CrazyhouseCapabilityNonce",
+      "required_green_behavior": "fail after UCI discovery and before ucinewgame, position, go, game clock or PGN game start",
+      "red_evidence": "any forbidden post-discovery command or started-game artifact",
+      "status": "PLANNED_NOT_RUN"
+    },
+    {
+      "id": "CH-G4-REF-JOIN-PROBE-MATCH",
+      "required_green_behavior": "one optimized executable traverses the frozen root, two scripted moves, timeout, per-ply states, history digest and semantic PGN contract",
+      "red_evidence": "missing identity join or any semantic mismatch",
+      "status": "PLANNED_NOT_RUN"
+    }
+  ],
+  "oracle_boundary": {
+    "status": "MISSING_ACCESS_NO_ORACLE_ADVISORY",
+    "receipt": "../../../receipts/private/p4-referee-cli-framing-corrective-followup-unavailable-057.json",
+    "receipt_bytes": 3024,
+    "receipt_sha256": "abdc03fbd834f81d4ac2971f908b2f3449cbf225985e87248fd50d49a67116c2",
+    "architecture_decision_allowed": false,
+    "referee_source_change_allowed": false
+  },
+  "conclusion": "The Board-level profile and embedded semantic probe are real E1 progress, but the ordinary match lifecycle is still the clean upstream lifecycle. It cannot yet act as the official Crazyhouse referee.",
+  "gate_status": "IN_PROGRESS",
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

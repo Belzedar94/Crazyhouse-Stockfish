@@ -1,0 +1,167 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-source-discovery-result/v1",
+  "created_utc": "2026-08-23T17:43:37.8266197Z",
+  "evidence_class": "D0_DISCOVERY",
+  "scope": "Exact current upstream Fairy-Stockfish source as the owner-required external local strength comparator only.",
+  "source": {
+    "remote": "https://github.com/fairy-stockfish/Fairy-Stockfish.git",
+    "branch_observed": "master",
+    "commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "tree": "aa4112ea6784cef03fb9b5f87bba632de6168faa",
+    "parent": "c9cf661752a00a8744804e8ed0eefcc9c4f1869a",
+    "authored_utc": "2026-08-23T13:15:40+02:00",
+    "committed_utc": "2026-08-23T13:16:02+02:00",
+    "subject": "Update bench",
+    "checkout": "detached",
+    "status_lines": 0,
+    "may_enter_product_ancestry": false
+  },
+  "execution_evidence": {
+    "lease": 263,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-source-discovery-263",
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-source-discovery-263/completion.json",
+      "bytes": 12728,
+      "sha256": "37110856cf8a32814c2464218dfe036b3a2434da3017c1460a66f8d5d2b3fb12",
+      "result": "PASS_FAIRY_COMPARATOR_SOURCE_DISCOVERY"
+    },
+    "source_manifest": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-source-discovery-263/source-manifest.json",
+      "bytes": 24961,
+      "sha256": "bd645f777445a98424ea9e930056c98dc670fc1be98263b184e7ecd7bf9a7634",
+      "tracked_files": 111,
+      "authenticated_blobs": 111,
+      "failures": 0
+    },
+    "tree_modes": [
+      {"mode": "100644", "entries": 104},
+      {"mode": "100755", "entries": 7}
+    ],
+    "tracked_gitmodules": false,
+    "non_blob_tree_entries": 0,
+    "build_executed": false,
+    "engine_executed": false,
+    "source_modified": false
+  },
+  "license_inventory": {
+    "controller_inventory_correction": "The completion's filename heuristic listed only Copying.txt. The authenticated manifest also contains src/incbin/UNLICENCE; this additive record supplies the complete observed license inventory without rewriting the completion.",
+    "files": [
+      {
+        "path": "Copying.txt",
+        "bytes": 35821,
+        "sha256": "0b383d5a63da644f628d99c33976ea6487ed89aaa59f0b3257992deac1171e6b",
+        "git_blob": "818433ecc0e094a4db1023c68b33f24344643ad8",
+        "classification": "GNU General Public License version 3 text"
+      },
+      {
+        "path": "src/incbin/UNLICENCE",
+        "bytes": 1292,
+        "sha256": "80f60d0578200231dac96e2a42bf508f22ce8540b96f96777b649498656842ff",
+        "git_blob": "32484ab5e7026f9a1f15c2f8c08b1418802e02a8",
+        "classification": "incbin.h public-domain dedication and Unlicense notice"
+      }
+    ],
+    "authors_file": {
+      "path": "AUTHORS",
+      "bytes": 4950,
+      "sha256": "55a0a4599358308af8349344d79176469f04119558e85595efe0a39b583cdf00",
+      "git_blob": "a0f09c8c5068bcfeb940fe150f39406fc87ef857"
+    },
+    "ambiguity": null,
+    "incident": "CH-222"
+  },
+  "build_interface": {
+    "makefile": {
+      "path": "src/Makefile",
+      "bytes": 26820,
+      "sha256": "09d661b25b89670e10634b0ca45feb3b677682345a3465d4babafa251245ab2f",
+      "git_blob": "823649fb389b778d867befd6e7b809bd5fe37f8e"
+    },
+    "declared_language_level": "C++17",
+    "default_arch": "x86-64-modern",
+    "relevant_available_arch": "x86-64-avx2",
+    "public_targets": ["build", "profile-build", "net", "strip", "install", "clean"],
+    "default_nnue_build_setting": "nnue=no",
+    "default_nnue_effect": "NNUE_EMBEDDING_OFF is defined and the build target does not download or embed a network.",
+    "separate_build_required": true,
+    "selected_build_command": null
+  },
+  "crazyhouse_routing": {
+    "uci_option_source": {
+      "path": "src/ucioption.cpp",
+      "bytes": 13762,
+      "sha256": "b41c40fe1ad75e21ba33bc6fe1c85fca736a5cf61eced73bdc0a1f38143e1022",
+      "git_blob": "0326e047f8a8b65cebc33328c0e2bfb39480804d"
+    },
+    "variant_source": {
+      "path": "src/variant.cpp",
+      "bytes": 96042,
+      "sha256": "14f6a10b72b9e5371c95e7912165fb411a3d686ac2448e97d85fc9474803982c",
+      "git_blob": "e722d2593893ea174e6e7dfed0fcd74c65b8ae80"
+    },
+    "observed_contract": [
+      "UCI_Variant is a combo option whose registered keys include crazyhouse.",
+      "The built-in crazyhouse start FEN uses an empty bracket pocket, enables piece drops and returns captures to hand.",
+      "The source advertises UCI and CECP/XBoard support; build qualification must use UCI.",
+      "This source is a comparator implementation, not the Crazyhouse rules authority or product source."
+    ],
+    "full_rule_equivalence_claim": false
+  },
+  "network_interface": {
+    "default_name_source": {
+      "path": "src/evaluate.h",
+      "bytes": 1859,
+      "sha256": "8a956df983d20df68905bf35ea342790f81455d5b8f15281bec1871998b89e59",
+      "git_blob": "b7b7e2345492c7f4b426ee19966bd6ed19afe701",
+      "advertised_default": "nn-3475407dc199.nnue"
+    },
+    "loader_source": {
+      "path": "src/evaluate.cpp",
+      "bytes": 71928,
+      "sha256": "d0900ccf0e6a82c802c9967d3a1abbbc60c6460eea46ecc60ebcad22a43230c7",
+      "git_blob": "ce30aa0453b05428b0ce12f42901139d7cc49869"
+    },
+    "container_parser_source": {
+      "path": "src/nnue/evaluate_nnue.cpp",
+      "bytes": 14352,
+      "sha256": "42748f6ef0923e4899e3d57b59fff40089f31f3bd8408132f1f40cfc6266e3d5",
+      "git_blob": "c13fe535f228ce7145db520d019525f9597bdeaf"
+    },
+    "architecture_source": {
+      "path": "src/nnue/nnue_architecture.h",
+      "bytes": 2098,
+      "sha256": "84f1f42837870f874317282a109984a83081610b12db7322e40da7bee8207abb",
+      "git_blob": "fdbfb3ceb05136724ae0ebfd6c1b308b8e8ed062",
+      "feature_set": "HalfKAv2Variants",
+      "transformed_feature_dimensions": 512
+    },
+    "feature_source": {
+      "path": "src/nnue/features/half_ka_v2_variants.h",
+      "bytes": 3359,
+      "sha256": "5d8ea95232d873551ecce3dff0a76c6190ffac393af3402557f800959d91a270",
+      "git_blob": "34cb8d69e98d1047e9607c0e64b427deaf4b7a3d",
+      "feature_hash": "0x5f234cb8",
+      "hands_represented": true
+    },
+    "routing_observations": [
+      "Use NNUE defaults true at source level, but an nnue=no build exposes EvalFile with default <empty> and embeds no network.",
+      "The loader enables a network only when its basename begins with the active variant name or its NNUE alias.",
+      "The generic advertised default filename does not by itself route to crazyhouse.",
+      "The owner legacy file basename starts with crazyhouse and is therefore eligible for a later explicit load attempt.",
+      "The parser checks container version, architecture hash and all parameter reads; loader compatibility is still unproven until positive and negative runtime tests pass."
+    ],
+    "legacy_network": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Match script/crazyhouse_run15rl_e190_l03.nnue",
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "compatibility_status": "UNPROVEN_RUNTIME_PENDING"
+    }
+  },
+  "result": "PASS_FAIRY_COMPARATOR_SOURCE_DISCOVERY_WITH_ADDITIVE_LICENSE_INVENTORY",
+  "next_safe_action": "Preregister a clean one-thread x86-64-avx2 build and runtime qualification of this exact commit, including UCI option inventory, explicit crazyhouse routing, positive legacy-network load, missing/wrong/corrupt negatives, deterministic fixed-node search and source/artifact reauthentication.",
+  "gate_credit": true,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,157 @@
+{
+  "schema": "crazyhouse-rule-profile/v1",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "evidence_class": "E1_ENGINEERING",
+  "hash_scope": "the exact UTF-8 bytes of this file; no BOM; LF line endings",
+  "authority": {
+    "core_rules": {
+      "repository": "https://github.com/lichess-org/scalachess.git",
+      "commit": "cbffc9d7e2c6f8ba33381c5403e1b4f992199626",
+      "tree": "f5410eb2a6ddb6ef7092317533f704158c86a4fc",
+      "crazyhouse_source_blob": "cdd7b7c34f2453a975d5d87c49e0843f2a00607e"
+    },
+    "product": {
+      "repository": "https://github.com/lichess-org/lila.git",
+      "commit": "13895e5856db0f854f6ab76394fffce852ebd5c9",
+      "tree": "8a5f93aa0e88923781805a94d8e653fcf9a77975"
+    },
+    "project_contracts": [
+      "docs/crazyhouse/adr-0002-rule-and-serialization-profile.md",
+      "docs/crazyhouse/adr-0002-addendum-001-ep-load-normalization.md"
+    ]
+  },
+  "board": {
+    "geometry": "orthodox_8x8",
+    "start_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1",
+    "kings_per_color": 1,
+    "chess960": false
+  },
+  "pockets": {
+    "owners": ["white", "black"],
+    "roles": ["pawn", "knight", "bishop", "rook", "queen"],
+    "kings_allowed": false,
+    "semantic_order": false,
+    "canonical_fen_order": "PNBRQpnbrq",
+    "empty_encoding": "[]",
+    "capture_owner": "capturing_side",
+    "promoted_capture_role": "pawn"
+  },
+  "drops": {
+    "target_must_be_empty": true,
+    "pawn_forbidden_ranks": [1, 8],
+    "doubled_pawn_file_restriction": false,
+    "pawn_drop_mate_restriction": false,
+    "checking_drop_allowed": true,
+    "single_slider_check_block": "strictly_between_checker_and_king",
+    "double_check_drop_evasion": false,
+    "non_slider_check_drop_evasion": false,
+    "dropped_pawn_two_step": "allowed_from_orthodox_start_rank_when_orthodox_conditions_hold"
+  },
+  "promoted_provenance": {
+    "marker": "~",
+    "attached_to": "occupied_nonpawn_nonking_square",
+    "moves_with_piece": true,
+    "capture_clears_marker": true,
+    "capture_enters_pocket_as": "pawn",
+    "part_of_physical_and_repetition_identity": true
+  },
+  "castling": {
+    "legality": "orthodox_non_chess960",
+    "rights_order": "KQkq",
+    "dropped_rook_creates_right": false,
+    "promoted_rook_authenticates_right": false,
+    "ineligible_claimed_right": "reject"
+  },
+  "en_passant": {
+    "input": "one syntactically and physically plausible orthodox target",
+    "commit": "retain only when at least one fully legal en-passant capture exists; otherwise normalize to '-'",
+    "identity": "normalized legally capturable target only",
+    "capture_to_pocket": "pawn",
+    "multiple_targets": "reject"
+  },
+  "counters": {
+    "fen_fields": 6,
+    "halfmove_persisted": true,
+    "fullmove_persisted": true,
+    "halfmove_terminal_policy": "disabled",
+    "reset_on": ["capture", "ordinary_pawn_move", "pawn_drop"],
+    "increment_on": ["non_pawn_drop", "other_non_capture_non_pawn_board_move"],
+    "fullmove_increment": "after_black_move_or_drop",
+    "included_in_repetition_identity": false
+  },
+  "repetition": {
+    "identity_fields": [
+      "board_pieces_and_colors",
+      "side_to_move",
+      "castling_rights",
+      "legally_relevant_en_passant",
+      "pockets_by_owner_role_exact_count",
+      "promoted_origin_markers"
+    ],
+    "history_horizon": "ordered_full_state_sequence_since_null_boundary; never rule50",
+    "automatic_occurrences": 5,
+    "threefold": "player_claim_only_in_core_profile",
+    "match_claim_proxy": "optional_only_when_separately_preregistered"
+  },
+  "terminal": {
+    "precedence": [
+      "checkmate",
+      "future_profile_specific_win",
+      "stalemate",
+      "fivefold_repetition",
+      "optional_preregistered_threefold_claim_proxy"
+    ],
+    "stalemate_result": "1/2-1/2",
+    "fifty_move_draw": false,
+    "seventyfive_move_draw": false,
+    "insufficient_material_draw": false,
+    "syzygy": false,
+    "timeout_when_opponent_has_only_king": "flagging_side_loses",
+    "timeout_material_basis": "scalachess Crazyhouse.opponentHasInsufficientMaterial is always false",
+    "typed_reasons": [
+      "ongoing",
+      "checkmate",
+      "stalemate",
+      "fivefold_repetition",
+      "threefold_repetition_claim",
+      "timeout",
+      "illegal_move",
+      "engine_crash",
+      "protocol_failure",
+      "configuration_failure"
+    ]
+  },
+  "serialization": {
+    "canonical_fen": "bracket_pockets_six_fields",
+    "accepted_fen": ["bracket_pockets", "slash_ninth_field_pockets"],
+    "epd": "physical_fen_plus_explicit_operations",
+    "pgn_variant_tag": "Crazyhouse",
+    "pgn_nonstart": "SetUp=1 plus canonical FEN",
+    "uci_variant": "crazyhouse",
+    "uci_drop_output": "uppercase_role_at_square",
+    "uci_drop_input": "upper_or_lower_ascii_role_at_square"
+  },
+  "routing": {
+    "certified_referee_requires_profile_id": true,
+    "unknown_or_missing_profile": "configuration_failure_before_engine_start",
+    "variant_profile_mismatch": "configuration_failure_before_engine_start",
+    "standard_chess_fallback": false,
+    "engine_configuration_barrier": "isready",
+    "crazyhouse_worker_search_at_g4": "disabled"
+  },
+  "symmetry": {
+    "admitted": "vertical_rank_reflection_plus_color_swap",
+    "involutive": true,
+    "transforms": [
+      "board_colors_and_ranks",
+      "side_to_move",
+      "pocket_ownership",
+      "castling_color",
+      "en_passant_rank",
+      "promoted_squares",
+      "move",
+      "result",
+      "terminal_reason"
+    ]
+  }
+}

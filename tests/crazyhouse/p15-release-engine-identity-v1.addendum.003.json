@@ -1,0 +1,123 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-formal-preregistration/v1",
+  "created_utc": "2026-08-24T23:09:26.7915204Z",
+  "status": "PREREGISTERED_FORMAL_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_contract": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.json",
+    "bytes": 7187,
+    "sha256": "7b916381d9c8dae951d32923cac3f7e5ef3acb1f32a975305ddc37a5bcc8c7c2"
+  },
+  "expected_red_result": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.002.json",
+    "bytes": 3420,
+    "sha256": "0f0153592b58e354a759e57f5339ec57ddcec3cbf7ddfec306938ae95acf7966",
+    "lease": 351,
+    "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION"
+  },
+  "implementation_parent": {
+    "commit": "4c515136488ce0c17bf4ff47a68bf1142b9e8768",
+    "tree": "6c28e51cb4dc164f21b458420d70561aa79eb49f",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "implementation_pins": [
+    {
+      "path": "src/Makefile",
+      "bytes": 62118,
+      "sha256": "77b83838bafd42eed52439fe8eb0623eac9faf321b1f0edd2f02604ca5ed67a4"
+    },
+    {
+      "path": "src/crazyhouse_version.h",
+      "bytes": 678,
+      "sha256": "c412cd4e11ae1c30ee84015d8cf7b9420bc5b629a1c5d9ec6fdd0f2c4d050a31"
+    },
+    {
+      "path": "src/misc.cpp",
+      "bytes": 16430,
+      "sha256": "1a171083cf92e53c2c7e6704e45828b473cf526f0a1fe1d1550d7aca81e74f57"
+    },
+    {
+      "path": "AUTHORS",
+      "bytes": 7048,
+      "sha256": "fa2148b9a64ec5bd1b347951bbf0fd902e475fc74d8e71a253532cfab81852c4"
+    },
+    {
+      "path": "tools/release/verify_crazyhouse_engine_identity.py",
+      "bytes": 30605,
+      "sha256": "1e5d340ba64a18ff6fa3ea8da052c55e38a6f0e5a242ce7cced7d3a4d6b10cc8"
+    },
+    {
+      "path": "tests/crazyhouse_release_engine_identity.py",
+      "bytes": 24768,
+      "sha256": "b1d67f4317321aaee82e0c30a9ca1b784652f6640646c38e08146c50699b69b9"
+    },
+    {
+      "path": ".github/workflows/crazyhouse-correctness.yml",
+      "bytes": 16518,
+      "sha256": "0469cec759c9f81513e1e54aafbc9db6bd953f36675757ea0886bae3b0cce6db"
+    }
+  ],
+  "formal_matrix": {
+    "lease": 352,
+    "clean_exports": 2,
+    "profiles_per_export": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "entrypoint": "C:/msys64/usr/bin/make.exe --no-print-directory --old-file=.depend -C src crazyhouse_p15_release_engine_identity_test",
+    "python": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+    "python_version": "3.12.0",
+    "pythonhashseed": "0",
+    "bytecode_writes_allowed": false,
+    "required_summary": "PASS_RELEASE_ENGINE_IDENTITY_FIXTURES positive=3 negative=25 proposed=true tagged=true public_mutation=false",
+    "positive_count": 3,
+    "negative_count": 25,
+    "all_four_summaries_byte_identical": true,
+    "source_archives_byte_identical": true,
+    "tracked_export_inventory_exact": true,
+    "profile_temp_namespaces_must_restore_empty": true,
+    "allowed_generated_paths": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "compiler_linker_engine_or_bytecode_artifacts": 0,
+    "timeouts_allowed": false,
+    "nonzero_exits_allowed": false
+  },
+  "resource_contract": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 268435456,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764
+  },
+  "stopping_rule": "Stop and preserve the fresh namespace on any source pin, archive, inventory, profile exit, summary, temporary-restoration, generated-file, deterministic-output, resource, P7 identity or restoration mismatch. Never repair a failed formal namespace in place.",
+  "pass_effect": "Qualifies only the synthetic development/proposed/tagged identity verifier and its mutation-negative fixture matrix. It does not compile or run an engine, authenticate a stable runtime identity, prove real package bytes, select a candidate, grant strength or OpenBench credit, create a draft or tag, authorize G15, or prove RELEASED_MONITORED.",
+  "boundaries": {
+    "formal_executed": false,
+    "synthetic_identity_tooling_qualified": false,
+    "development_source_only": true,
+    "stable_runtime_identity_authenticated": false,
+    "full_engine_builds_executed": false,
+    "final_p14_panel_executed": false,
+    "release_artifacts_built": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

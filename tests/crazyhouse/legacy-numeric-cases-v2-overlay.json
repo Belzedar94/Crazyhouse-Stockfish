@@ -1,0 +1,49 @@
+{
+  "schema": "crazyhouse-legacy-numeric-cases-overlay/v2",
+  "evidence_class": "E1_ENGINEERING",
+  "reason": "Correct one over-strong ordering assertion exposed by the rejected v1 run while preserving every case and every numerical output field.",
+  "base_fixture": {
+    "path": "tests/crazyhouse/legacy-numeric-cases-v1.json",
+    "commit": "e6f54be9b7ddda0df02b9bd1bb36dfbabf463808",
+    "tree": "2aa323d65fa2e0fa6d4b6bd7658dbcaa7ab1679f",
+    "bytes": 13409,
+    "sha256": "863f144ea11d9f67f82567ef4c3b966808c7354ae5d4f842588de4547af1defc",
+    "case_count": 43,
+    "relation_count": 5
+  },
+  "rejected_observation": {
+    "receipt": "../../../receipts/resources/p5-legacy-eval-oracle-runtime-t1-end-117.json",
+    "receipt_bytes": 3919,
+    "receipt_sha256": "ff4be4e511a47d86d24486b3541ec1b6e21f6eaa0f8b78227ab347ac3fe52ad2",
+    "result": "FAIL_NO_GOLDEN_EMITTED"
+  },
+  "case_changes": [],
+  "relation_changes": [
+    {
+      "id": "rank-color-swap",
+      "operation": "replace_requirements",
+      "removed": [
+        "left.active_white == right.active_black",
+        "left.active_black == right.active_white"
+      ],
+      "added": [
+        "sort(left.active_white) == sort(right.active_black)",
+        "sort(left.active_black) == sort(right.active_white)"
+      ],
+      "unchanged": [
+        "left.raw_psqt == right.raw_psqt",
+        "left.raw_positional == right.raw_positional",
+        "left.legacy_unadjusted == right.legacy_unadjusted",
+        "left.legacy_adjusted == right.legacy_adjusted"
+      ],
+      "justification": "Active inputs are a mathematical set. Each position has a deterministic enumeration order, but rank reflection reverses board-square traversal and pocket ownership changes pocket traversal order. The transformer sums the same unique indices and does not require cross-position sequence equality."
+    }
+  ],
+  "unchanged_relation_ids": [
+    "promoted-provenance-invisible-v1",
+    "castling-invisible-v1",
+    "en-passant-invisible-v1",
+    "counters-invisible-v1"
+  ],
+  "stopping_rule": "The fresh run must use the exact v1 base plus this exact overlay in a new output namespace. It must restart every UCI/load/negative/two-run/case/relation check. No lease-117 output may be copied into the admitted golden."
+}

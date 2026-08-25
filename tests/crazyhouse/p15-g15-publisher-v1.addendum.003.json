@@ -1,0 +1,109 @@
+{
+  "schema": "crazyhouse-g15-publisher-download-authority-addendum/v1",
+  "created_utc": "2026-08-25T02:46:24.7078411Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE_PREREGISTRATION",
+  "status": "ACCEPTED_PREIMPLEMENTATION_AUTHORITY_CORRECTION",
+  "source": {
+    "commit": "00974597e0d781095d2897001cbd8243954c290c",
+    "tree": "fc3fa57cb55b0f406251919acdcd499411bf5b42",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "parent": {
+    "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.002.json",
+    "bytes": 6288,
+    "sha256": "69fbb15e68d4c4d5bf7459b00c5a2502d18e1d57e8150ae4cb012b907ab5eef8"
+  },
+  "incident": {
+    "id": "CH-328",
+    "symptom": "The frozen preimplementation design selected gh release download by tag to reauthenticate a draft release.",
+    "false_inference": "An authenticated tag-based release download can resolve the exact draft returned by the authenticated releases-list endpoint.",
+    "cause": "GitHub documents the get-release-by-tag path for published releases, while a draft asset is unambiguously addressable through the authenticated release-asset endpoint and its asset ID.",
+    "prevention": "Require a positive integer asset ID from the exact draft record, download each asset through the authenticated release-asset endpoint, and reject tag-based draft downloads.",
+    "gate": "P15_G15_POST_DECISION_PUBLISHER_FORMAL_QUALIFICATION"
+  },
+  "primary_authorities": [
+    {
+      "title": "REST API endpoints for release assets - Get a release asset",
+      "url": "https://docs.github.com/en/rest/releases/assets#get-a-release-asset",
+      "assertion": "GET /repos/{owner}/{repo}/releases/assets/{asset_id} with Accept application/octet-stream returns the binary directly or by redirect."
+    },
+    {
+      "title": "REST API endpoints for releases - Get a release by tag name",
+      "url": "https://docs.github.com/en/rest/releases/releases#get-a-release-by-tag-name",
+      "assertion": "Tag lookup is not the authenticated draft-asset identity frozen by the releases-list response."
+    },
+    {
+      "title": "GitHub CLI gh api manual",
+      "url": "https://cli.github.com/manual/gh_api",
+      "assertion": "gh api accepts exact endpoints and custom HTTP headers without a shell redirect."
+    }
+  ],
+  "cli": {
+    "new_required_argument": "--correction",
+    "argument_pins_this_file": true,
+    "parent_addendum_remains_required": true,
+    "environment_or_token_arguments": false
+  },
+  "github_query_correction": {
+    "required_asset_fields_append": [
+      "id"
+    ],
+    "asset_id_type": "positive_integer_excluding_boolean",
+    "asset_ids_unique_within_release": true,
+    "download_endpoint_template": "repos/Belzedar94/Crazyhouse-Stockfish/releases/assets/<asset_id>",
+    "download_command_prefix": [
+      "gh",
+      "api",
+      "-H",
+      "Accept: application/octet-stream"
+    ],
+    "download_order": "exact frozen asset order",
+    "stdout_mode": "binary",
+    "stderr_must_be_empty_on_success": true,
+    "one_asset_buffered_at_a_time": true,
+    "browser_download_url_forbidden": true,
+    "tag_based_download_forbidden": true,
+    "shell_redirection_forbidden": true
+  },
+  "local_download": {
+    "download_directory_must_be_absent_before_execute": true,
+    "download_directory_created_once": true,
+    "destination_mode": "exclusive binary create",
+    "destination_name": "frozen asset basename",
+    "flush_and_fsync_before_verification": true,
+    "verify_size_and_sha256_immediately": true,
+    "reject_symlink_parent_or_destination": true,
+    "independent_verifier_runs_after_all_exact_assets": true,
+    "no_clobber": true
+  },
+  "qualification_transport": {
+    "runner_interface_unchanged": "argv plus optional stdin; returns exit code, binary stdout and binary stderr",
+    "fake_transport_in_test_only": true,
+    "fake_release_assets_have_unique_positive_ids": true,
+    "assert_exact_asset_endpoint_order": true,
+    "formal_fixture_assets_are_small": true,
+    "real_subprocesses_in_formal_qualification": 0,
+    "network_calls": 0,
+    "github_writes": 0,
+    "git_remote_writes": 0
+  },
+  "unchanged": {
+    "release_transaction_order": true,
+    "release_identity": true,
+    "tag_payload": true,
+    "asset_names_bytes_and_hashes": true,
+    "owner_decision_recorded": false,
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_published": false,
+    "G15": "OPEN",
+    "G16": "OPEN",
+    "strength_credit": false,
+    "openbench_used": false,
+    "p7_candidate_changed": false
+  }
+}

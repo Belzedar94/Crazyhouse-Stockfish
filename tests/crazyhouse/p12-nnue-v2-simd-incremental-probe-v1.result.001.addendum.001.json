@@ -1,0 +1,40 @@
+{
+  "schema": "crazyhouse-evidence-scope-addendum/v1",
+  "created_utc": "2026-08-24T08:47:59.7313749Z",
+  "status": "SCOPE_CORRECTION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "incident": "CH-265",
+  "original_record": {
+    "path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.result.001.json",
+    "bytes": 5883,
+    "sha256": "fe6f8addacdf2ede25bf3a973dfefd2e2000394091e8dc4d2fdb32b86bff820b",
+    "commit": "4c347effff9ec8fd0f35b97882910f4e9b2f48c0"
+  },
+  "correction": {
+    "unchanged_finding": "The isolated 17-lane probe passed scalar/SSE2 parity and exact incremental/full-refresh parity across the authenticated Crazyhouse transition corpus.",
+    "scope_limit": "The probe is test-only and is not the productive V2 topology or engine evaluation datapath.",
+    "invalid_inference": "Primitive probe parity does not prove SIMD/scalar or incremental/full-refresh parity after the productive V2 topology is implemented and integrated.",
+    "gate_effect": "G12 remains OPEN and now explicitly requires productive-topology SIMD and incremental integration evidence in addition to this primitive checkpoint.",
+    "scientific_observations_invalidated": false,
+    "strength_credit": false,
+    "model_selection_credit": false,
+    "release_credit": false
+  },
+  "required_follow_up": [
+    "Implement the productive V2 topology and bind it to the physical decoder.",
+    "Prove scalar versus productive SIMD equality on the actual quantized artifact path.",
+    "Prove productive incremental versus full-refresh equality after make, undo, null, drop, capture, promotion, castling and en-passant transitions.",
+    "Keep the legacy evaluator as the default until all remaining gates pass."
+  ],
+  "boundaries": {
+    "training_started": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-adapter-result/v1",
+  "created_utc": "2026-08-23T19:39:30Z",
+  "evidence_class": "E1_ENGINEERING",
+  "lease": 270,
+  "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-adapter-270",
+  "predecessor_result": {
+    "path": "tests/crazyhouse/p6-fairy-comparator-adapter-v1.result.003.json",
+    "bytes": 2467,
+    "sha256": "f36f0167821b8e69ba45378ff6929b7175eb57d71d0eab20c4fff092423f5401",
+    "git_blob": "55d8fb2fe9d703531c73b5e85c31e5c82b5ab3ae"
+  },
+  "product": {
+    "validated_commit": "5e59ef534450542915d9f2a84ea87343d6c31d39",
+    "validated_tree": "06c5c87d89ff34164423f0b772e0fe60c938d8ed",
+    "src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_product_ancestry": false
+  },
+  "external_comparator": {
+    "source_commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "source_tree": "aa4112ea6784cef03fb9b5f87bba632de6168faa",
+    "raw_executable_sha256": "b79071634530b99f047a51a123b79bb7e14cfc225435f5fb6c50a9411a294183",
+    "raw_match_admission": false,
+    "qualified_adapter": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-adapter-270/build-a/fairy-crazyhouse-adapter.exe",
+      "bytes": 3352494,
+      "sha256": "7707e2a120e9ae4d21507aaca5df4edcdaa2751309529dad4b306ab22f636a5f",
+      "reproducible_second_build": true
+    },
+    "adapted_match_admission": true
+  },
+  "network": {
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-adapter-270/completion.json",
+    "bytes": 26037,
+    "sha256": "8dcd1627c9c6f9ea6ec59097f8755ebe7d40a0c9db1e760d301f3e45ecd55037"
+  },
+  "end_receipt": {
+    "path": "../../../receipts/resources/p6-fairy-comparator-adapter-t1-end-270.json",
+    "bytes": 7836,
+    "sha256": "8b370b592b5afc45f591904b72bae4f17893d9cb7df116bac334bb3f3534c933"
+  },
+  "build": {
+    "clean_builds": 2,
+    "warning_clean": true,
+    "byte_identical": true,
+    "pe_timestamp_disabled": true,
+    "allowed_imports_only": true
+  },
+  "verifier": {
+    "result": "PASS",
+    "case_count": 30,
+    "failures": 0,
+    "startup_identity_cases": 4,
+    "fixed_node_raw_adapter_pairs": 8,
+    "perft_raw_adapter_pairs": 1,
+    "result_sha256": "ac289e7da4b338bab3314297e556cf584078578093c26c60e22124eab5978ff1"
+  },
+  "referee_join": {
+    "referee_commit": "d25294c1b1084f8854c0dc026ca3b150c911b4ee",
+    "referee_tree": "208335f2040d7aac3e5c3b869cadf46b18fb5503",
+    "referee_executable_sha256": "f465025b2ad21526e2cbab2b7da1a231ff3d64f6e8a01a0be5963f525a0bddae",
+    "games": 2,
+    "crazyhouse_variant_tags": 2,
+    "unique_nonces": 4,
+    "ordered_acknowledgements": 4,
+    "adapted_nnue_markers": 2,
+    "candidate_evaluator": "incremental-scalar",
+    "adapted_evaluator": "halfkav2variants",
+    "candidate_stderr_bytes": 0,
+    "adapted_stderr_bytes": 0,
+    "referee_stderr_bytes": 0
+  },
+  "resource_closure": {
+    "owned_residual_processes": 0,
+    "foreign_priority_changes": 0,
+    "foreign_workloads_mutated": false
+  },
+  "result": "PASS_ADAPTED_FAIRY_COMPARATOR_QUALIFICATION",
+  "gate_credit": true,
+  "adapter_qualified": true,
+  "paired_strength_panel_eligible_for_preregistration": true,
+  "paired_strength_panel_executed": false,
+  "next_safe_action": "Freeze the local same-network paired panel and wait for a timing-clean host before GO.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

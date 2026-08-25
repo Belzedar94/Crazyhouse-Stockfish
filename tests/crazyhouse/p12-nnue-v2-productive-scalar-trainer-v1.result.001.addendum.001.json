@@ -1,0 +1,50 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-scalar-trainer-result-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-24T11:24:12.3067335Z",
+  "status": "FORMAL_RESULT_SCOPE_AND_RECEIPT_PINNED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "pins": {
+    "result": {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-scalar-trainer-v1.result.001.json",
+      "bytes": 6765,
+      "sha256": "65fca6fc6aa00eedba646aaffdde1dc075b1f6dbc70b13380d7a2470a1ccc630"
+    },
+    "independent_end_receipt": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-formal-t1-end-311.json",
+      "bytes": 6232,
+      "sha256": "529693b7667a8312da633f996213db9462f1f6d82c59aa89672afc4da99aa526"
+    },
+    "formal_completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-scalar-trainer-311/completion.json",
+      "bytes": 68033,
+      "sha256": "dc38589ed5034e712b6fa60837da60f1f9fea155743536a550ca73ef684a700e"
+    }
+  },
+  "scope": {
+    "credited": [
+      "productive scalar container and integer inference",
+      "trainer/C++ scalar parity over the frozen physical golden corpus",
+      "deterministic engineering micro-fit resume",
+      "adversarial fail-closed parser, exporter, and resume matrices"
+    ],
+    "not_credited": [
+      "productive SIMD integration",
+      "productive incremental integration",
+      "sanitizer runtime",
+      "production-admissible training",
+      "model selection",
+      "playing strength",
+      "OpenBench",
+      "release"
+    ]
+  },
+  "gate_effect": {
+    "g12": "OPEN",
+    "legacy_v1_remains_default": true,
+    "training_admissible": false,
+    "strength_claimed": false
+  }
+}

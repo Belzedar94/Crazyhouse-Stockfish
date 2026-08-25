@@ -1,0 +1,75 @@
+{
+  "schema": "crazyhouse-nnue-v2-quantization/v1",
+  "status": "frozen-before-quantized-artifact",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "input_float": "IEEE-754-binary32-parameters",
+  "rounding": {
+    "operation": "nearest-with-half-away-from-zero",
+    "evaluation_domain": "each binary32 value widened exactly to binary64 before multiplication and rounding",
+    "positive_formula": "floor(x + 0.5)",
+    "negative_formula": "-floor(-x + 0.5)",
+    "nan_or_infinity": "reject"
+  },
+  "layers": [
+    {
+      "name": "shared_sparse_transformer",
+      "float_weight_multiplier": 127,
+      "serialized_weight": "int16-le",
+      "float_bias_multiplier": 127,
+      "serialized_bias": "int32-le",
+      "integer_accumulator": "int64-work-int32-commit",
+      "activation": "clamp integer accumulator to inclusive [0,127]"
+    },
+    {
+      "name": "dense0",
+      "float_weight_multiplier": 64,
+      "serialized_weight": "int8",
+      "float_bias_multiplier": 8128,
+      "serialized_bias": "int32-le",
+      "integer_accumulator": "int64-work-int32-validated",
+      "activation": "zero when sum<=0; 127 when sum>=8128; otherwise floor(sum/64)"
+    },
+    {
+      "name": "dense1",
+      "float_weight_multiplier": 64,
+      "serialized_weight": "int8",
+      "float_bias_multiplier": 8128,
+      "serialized_bias": "int32-le",
+      "integer_accumulator": "int64-work-int32-validated",
+      "activation": "zero when sum<=0; 127 when sum>=8128; otherwise floor(sum/64)"
+    },
+    {
+      "name": "output",
+      "float_weight_multiplier": 64,
+      "serialized_weight": "int16-le",
+      "float_bias_multiplier": 8128,
+      "serialized_bias": "int32-le",
+      "integer_accumulator": "int64-work-int32-validated",
+      "centipawn_conversion": "truncate-toward-zero(raw * 600 / 8128) using int64"
+    }
+  ],
+  "static_bounds": {
+    "transformer": "for each lane, bias plus the sum of at most 138 negative weights and bias plus the sum of at most 138 positive weights must both fit int32",
+    "dense": "for each output, bias plus 127 times all negative weights and bias plus 127 times all positive weights must both fit int32",
+    "output_scale_product": "validated int32 raw multiplied by 600 in int64",
+    "runtime_checks_repeated": true,
+    "saturation_other_than_declared_activation": false,
+    "overflow_or_out_of_range_export": "reject-without-artifact",
+    "overflow_or_out_of_range_load": "reject-without-network-object",
+    "overflow_fallback": false
+  },
+  "parity": {
+    "python_integer_reference_is_canonical_for_export": true,
+    "cpp_scalar_must_be_exact": true,
+    "cpp_simd_must_be_exact_before_g12_closes": true,
+    "incremental_and_full_refresh_must_be_exact_before_g12_closes": true
+  },
+  "scientific_boundary": {
+    "quantization_is_not_model_selection": true,
+    "training_loss_does_not_select_artifact": true,
+    "legacy_v1_remains_default": true,
+    "strength_claimed": false
+  }
+}

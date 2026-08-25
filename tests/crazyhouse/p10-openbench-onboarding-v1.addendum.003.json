@@ -1,0 +1,79 @@
+{
+  "schema": "crazyhouse-openbench-onboarding-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T03:23:50.2380129Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P10",
+  "gate": "G10",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "PREREGISTERED_BEFORE_TARGET_ENFORCEMENT_AND_CLEAN_EXPORTS",
+  "parent": {
+    "path": "tests/crazyhouse/p10-openbench-onboarding-v1.addendum.002.json",
+    "bytes": 4367,
+    "sha256": "ee384a8bb62c503fa408a64f97f06f939b8d9c89a4462674cbdb8e1e636d9388",
+    "commit": "09b2e8bdb67853bfcdea3ec82ebc6f78a369bd64",
+    "tree": "4bcbddfd0c78a1e56605c48a41959437a75951d9"
+  },
+  "decision": {
+    "single_changed_engineering_field": "openbench_build_contract.worker_target_profile",
+    "before": {
+      "arch": "implicit_native",
+      "compiler_family": "implicit_make_detection",
+      "legacy_evaluator": "implicit_default"
+    },
+    "after": {
+      "arch": "x86-64",
+      "windows_comp": "mingw",
+      "linux_comp": "gcc",
+      "legacy_evaluator": "scalar",
+      "optimized": true,
+      "pgo": false,
+      "recursive_target": "all"
+    },
+    "reason": "The pinned OpenBench client forwards no target, ARCH or COMP. Resolve the preregistered generic x86-64 target and the still-productive scalar evaluator identically on every admitted worker.",
+    "frozen_before_clean_export_bench_signature": true
+  },
+  "authorities": {
+    "openbench": {
+      "commit": "e20f0d9432f88fed1706d83fc93469be1a2a2cec",
+      "client_utils_bytes": 20066,
+      "client_utils_sha256": "b0547739fecfca5db285f11ffe33048dfb92dbc8a894b4ec125179df6db5a470"
+    },
+    "crazyhouse_simd_adr": {
+      "path": "docs/crazyhouse/adr-0003-addendum-001-legacy-v1-simd-parity.md",
+      "bytes": 4813,
+      "sha256": "798f413c961bd27ce8f50735481151aa510589b0ad2b241745522e7ee9b7ac52",
+      "production_dispatch": "scalar"
+    },
+    "crazyhouse_local_strength_contract": {
+      "path": "tests/crazyhouse/p7-local-strength-panel-v2.json",
+      "bytes": 15979,
+      "sha256": "c82f08981b09494aa09ccdc6ed8ce7ca56c26cd7b659a9fb0bcccb9ced46b44e",
+      "candidate_evaluator": "incremental-scalar"
+    },
+    "atomic_method_reference_only": {
+      "commit": "95a5257c90835af81a2ff751bb738015250a262f",
+      "makefile_bytes": 61547,
+      "makefile_sha256": "9eb0b1b6bb505d4bc3483081a94d08b1a222d2bc873d6ff2172d6ce69892a314",
+      "values_inherited": []
+    }
+  },
+  "unchanged": {
+    "benchmark_limit": 4,
+    "benchmark_position_count": 12,
+    "benchmark_position_order": true,
+    "benchmark_expected_nodes": null,
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "rule_profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "rule_profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "public_worker_invocation": "make -j EXE=<requested-name> GIT_SHA_FULL=<40-hex-commit> EVALFILE=<exact-network-path>",
+    "datagen_role_separate": true,
+    "strength_claim": false,
+    "openbench_official_claim": false,
+    "release_claim": false
+  },
+  "owner_boundaries": {
+    "local_strength_gate_passed": false,
+    "official_openbench_canary_authorized": false,
+    "publication_authorized": false
+  }
+}

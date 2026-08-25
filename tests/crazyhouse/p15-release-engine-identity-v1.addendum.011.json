@@ -1,0 +1,67 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-ast-path-budget-correction/v1",
+  "created_utc": "2026-08-24T23:56:04.8823953Z",
+  "status": "CORRECTED_BEFORE_EXECUTION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_correction": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.010.json",
+    "bytes": 2463,
+    "sha256": "40adadc4dd020dbe6904a945840faa06d796c71aea4c7b74d32e7f2cfaed60bd",
+    "incident": "CH-319"
+  },
+  "incident": "CH-320",
+  "incorrect_field": {
+    "name": "corrected_path_budget.max_designed_checkout_path_characters",
+    "value": 202,
+    "cause": "The second manual enumeration omitted the longer multiline case label missing-upstream-attribution."
+  },
+  "authoritative_method": {
+    "harness_path": "tests/crazyhouse_release_engine_identity.py",
+    "ast_extract_calls": [
+      "evidence_mutator(label, ...)",
+      "cases.append((label, ...))"
+    ],
+    "negative_labels_required": 25,
+    "positive_repository_labels": [
+      "positive-proposed",
+      "positive-tagged"
+    ],
+    "tracked_paths_source": "git ls-tree -r --name-only <tested-commit>",
+    "cartesian_dimensions": [
+      "four scratch roots",
+      "CPython 3.12 eight-character temporary suffix",
+      "all 27 repository fixture names",
+      "all tracked relative paths"
+    ]
+  },
+  "corrected_path_budget": {
+    "python_version": "3.12.0",
+    "longest_scratch_root": "D:/Crazyhouse-Stockfish/tmp/p15-i355/e1n",
+    "longest_fixture_label": "missing-upstream-attribution",
+    "longest_fixture_label_characters": 28,
+    "longest_case_directory": "negative-missing-upstream-attribution",
+    "longest_case_directory_characters": 37,
+    "longest_tracked_relative_path": "tests/crazyhouse/p12-nnue-v2-productive-scalar-trainer-v1.result.001.addendum.001.json",
+    "longest_tracked_relative_path_characters": 86,
+    "max_designed_checkout_path_characters": 205,
+    "max_allowed_designed_checkout_path_characters": 239,
+    "margin_characters": 34,
+    "pass": true
+  },
+  "execution_effect": "Lease 355 may receive GO only if its controller pins this addendum and derives the exact 25 labels from the harness AST plus both positive repository fixtures, derives tracked paths from the tested commit, computes a 205-character Cartesian maximum, and preserves the same four scratch roots. No lease process or result existed when this correction was issued.",
+  "boundaries": {
+    "lease_started": false,
+    "go_issued": false,
+    "result_observed": false,
+    "source_changed": false,
+    "matrix_changed": false,
+    "scratch_roots_changed": false,
+    "formal_credit": false,
+    "runtime_credit": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "public_mutation": false
+  }
+}

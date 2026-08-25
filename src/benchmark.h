@@ -23,9 +23,11 @@
 #include <string>
 #include <vector>
 
+#include "ruleset.h"
+
 namespace Stockfish::Benchmark {
 
-std::vector<std::string> setup_bench(const std::string&, std::istream&);
+std::vector<std::string> setup_bench(const std::string&, Ruleset, std::istream&);
 
 struct BenchmarkSetup {
     int                      ttSize;

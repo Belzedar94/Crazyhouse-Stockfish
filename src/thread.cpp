@@ -320,7 +320,9 @@ void ThreadPool::start_thinking(const OptionsMap&  options,
         for (const auto& m : MoveList<LEGAL>(pos))
             rootMoves.emplace_back(m);
 
-    Tablebases::Config tbConfig = Tablebases::rank_root_moves(options, pos, rootMoves);
+    Tablebases::Config tbConfig;
+    if (pos.tablebases_applicable())
+        tbConfig = Tablebases::rank_root_moves(options, pos, rootMoves);
 
     // After ownership transfer 'states' becomes empty, so if we stop the search
     // and call 'go' again without setting a new position states.get() == nullptr.
@@ -342,7 +344,8 @@ void ThreadPool::start_thinking(const OptionsMap&  options,
             th->worker->nmpMinPly                                                = 0;
             th->worker->rootDepth                                                = 0;
             th->worker->rootMoves                                                = rootMoves;
-            th->worker->rootPos.set(pos.fen(), pos.is_chess960(), &th->worker->rootState);
+            th->worker->rootPos.set(pos.fen(), pos.is_chess960(), pos.ruleset(),
+                                    &th->worker->rootState);
             th->worker->rootState = setupStates->back();
             th->worker->tbConfig  = tbConfig;
         });

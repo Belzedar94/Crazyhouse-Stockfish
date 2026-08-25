@@ -1,0 +1,210 @@
+{
+  "schema": "crazyhouse-public-correctness-ci-preparation/v1",
+  "created_utc": "2026-08-23T23:17:09.3676283Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P6",
+  "gate": "G6",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "PASS_LOCAL_CI_DRAFT_PREPARED_AWAITING_PUBLIC_EXECUTION",
+  "repository_before_this_receipt": {
+    "commit": "58c66e11f7fed9d6e8ad27cb373de955ca09b1b2",
+    "tree": "1e87e7f878e1b06f2afcd96e311dacd613fbe754",
+    "src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false
+  },
+  "authority": {
+    "baseline_addendum": {
+      "path": "docs/crazyhouse/baseline-manifest.addendum.001.json",
+      "bytes": 8793,
+      "sha256": "913f7e07d7766a501b140c91e9ef0cb836f0b940caebfbb9eb3b78a91d30b46b"
+    },
+    "network": {
+      "canonical_internal_name": "crazyhouse-8ebf84784ad2.nnue",
+      "ci_alias": "Crazyhouse_v1.nnue",
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "license_spdx": "CC0-1.0",
+      "byte_authority_repository": "https://github.com/lichess-org/lila.git",
+      "byte_authority_commit": "13895e5856db0f854f6ab76394fffce852ebd5c9",
+      "byte_authority_path": "public/lifat/nnue/crazyhouse-8ebf84784ad2.nnue",
+      "byte_authority_blob": "ad269c33db13ecae295ec66ee9f438462498c623",
+      "alias_changes_source_default": false,
+      "alias_changes_champion_identity": false
+    }
+  },
+  "public_input_resolution": {
+    "raw_endpoint": {
+      "url": "https://raw.githubusercontent.com/lichess-org/lila/13895e5856db0f854f6ab76394fffce852ebd5c9/public/lifat/nnue/crazyhouse-8ebf84784ad2.nnue",
+      "http_status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 133,
+      "body_classification": "GIT_LFS_POINTER_ONLY",
+      "pointer_oid_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "pointer_declared_size": 58534811,
+      "accepted_as_network_bytes": false
+    },
+    "media_endpoint": {
+      "url": "https://media.githubusercontent.com/media/lichess-org/lila/13895e5856db0f854f6ab76394fffce852ebd5c9/public/lifat/nnue/crazyhouse-8ebf84784ad2.nnue",
+      "http_status": 200,
+      "content_type": "application/octet-stream",
+      "content_length": 58534811,
+      "etag": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "stable_https_without_query": true,
+      "current_tool_full_fetch": "PASS_EXACT_REGISTERED_LEGACY_NETWORK"
+    },
+    "public_fetch_preflight": {
+      "network": {
+        "path": "D:/Crazyhouse-Stockfish/preflight/g6-ci-network-public-fetch-v1/Crazyhouse_v1.nnue",
+        "bytes": 58534811,
+        "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+      },
+      "manifest": {
+        "path": "D:/Crazyhouse-Stockfish/preflight/g6-ci-network-public-fetch-v1/network-materialization.json",
+        "bytes": 802,
+        "sha256": "4f4e1f7d4ff51b1d60a6d456a5f8faede6ffc6aca40432fff69542551ec372a7"
+      },
+      "source_path_private": false,
+      "fallback_observed": false
+    },
+    "local_input_preflight": {
+      "manifest": {
+        "path": "D:/Crazyhouse-Stockfish/preflight/g6-ci-network-materialization-v1-current/network-materialization.json",
+        "bytes": 642,
+        "sha256": "f2484aa02efcbc354046265607523dd5d84f154549291fff4652080a81887bfa"
+      },
+      "source_path_recorded": false,
+      "result": "PASS_EXACT_REGISTERED_LEGACY_NETWORK"
+    }
+  },
+  "implementation": {
+    "workflow": {
+      "path": ".github/workflows/crazyhouse-correctness.yml",
+      "bytes": 15154,
+      "sha256": "fa607887de4dd015d91ca37fdcf75aa19675cea180c53397041c11d41ef0ca89"
+    },
+    "network_materializer": {
+      "path": "tools/ci/fetch_crazyhouse_legacy_network.py",
+      "bytes": 14745,
+      "sha256": "a7eee83e2848470824c020294585ccb87e909b02d52a13d126df8a6443ffc228"
+    },
+    "artifact_aggregator": {
+      "path": "tools/ci/aggregate_crazyhouse_ci_artifacts.py",
+      "bytes": 7475,
+      "sha256": "35f4d64bc85b12924f0eea4ca660d1c22ba7aae18ef9b51c0859218fe9e07ed5"
+    },
+    "ci_make_targets": {
+      "path": "tools/ci/crazyhouse_ci_targets.mk",
+      "bytes": 702,
+      "sha256": "a955b41f2c808b707a4e5e9fc226e13daaed58226a3e8035fc6b9b94a6967baa"
+    },
+    "network_unit_tests": {
+      "path": "tests/crazyhouse_ci_network_fetch_unit.py",
+      "bytes": 7914,
+      "sha256": "55c976c2e83a184ce20fda48df20878129a215509b6e0ead560c639fe03c8913"
+    },
+    "aggregate_unit_tests": {
+      "path": "tests/crazyhouse_ci_artifact_aggregate_unit.py",
+      "bytes": 3102,
+      "sha256": "694539f29ac79d65367606c5c66763b19bec1f390721f112e6707ac82c355132"
+    }
+  },
+  "pinned_actions": [
+    {
+      "repository": "actions/checkout",
+      "tag": "v6.1.0",
+      "commit": "d23441a48e516b6c34aea4fa41551a30e30af803"
+    },
+    {
+      "repository": "actions/setup-python",
+      "tag": "v7.0.0",
+      "commit": "5fda3b95a4ea91299a34e894583c3862153e4b97"
+    },
+    {
+      "repository": "actions/upload-artifact",
+      "tag": "v7.0.1",
+      "commit": "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
+    },
+    {
+      "repository": "actions/download-artifact",
+      "tag": "v8.0.1",
+      "commit": "3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c"
+    },
+    {
+      "repository": "msys2/setup-msys2",
+      "tag": "v2.31.1",
+      "commit": "e9898307ac31d1a803454791be09ab9973336e1c"
+    }
+  ],
+  "local_verification": {
+    "python": "3.12.0",
+    "py_compile": "PASS",
+    "unit_tests": {
+      "passed": 17,
+      "failed": 0,
+      "errors": 0
+    },
+    "real_local_network_verify_existing": "PASS_EXACT_REGISTERED_LEGACY_NETWORK",
+    "real_public_network_fetch": "PASS_EXACT_REGISTERED_LEGACY_NETWORK",
+    "rejected_argument_combination": "PASS_FAIL_CLOSED_EXIT_2_NO_OUTPUT",
+    "ci_make_target_dry_expansion": "PASS_NO_COMPILE",
+    "actionlint": {
+      "version": "1.7.12",
+      "release_url": "https://github.com/rhysd/actionlint/releases/tag/v1.7.12",
+      "archive_sha256": "6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9",
+      "executable_sha256": "54ca21be3de4c7cfa26914aa8b61bd76bf573ef3caac5f80d110558cdf241718",
+      "workflow_errors": 0
+    },
+    "git_diff_check": "PASS",
+    "product_src_tree_changed": false,
+    "timing_sensitive_work_started": false,
+    "foreign_processes_mutated": false
+  },
+  "workflow_scope": {
+    "required_lanes": [
+      "linux-scalar",
+      "linux-simd",
+      "linux-address",
+      "linux-undefined",
+      "windows-scalar"
+    ],
+    "positive_and_negative_legacy_parser": true,
+    "capability_handshake": true,
+    "special_state_search": true,
+    "incremental_full_refresh_parity": true,
+    "simd_scalar_contract": true,
+    "network_artifact_retention_days": 1,
+    "lane_artifact_retention_days": 7,
+    "aggregate_artifact_retention_days": 30,
+    "aggregate_requires_all_jobs_successful": true,
+    "queued_or_cancelled_counts_as_green": false,
+    "legacy_network_excluded_from_aggregate_evidence": true
+  },
+  "public_execution_boundary": {
+    "access_gap_record": {
+      "path": "docs/crazyhouse/g6-public-ci-access-gap-v1.json",
+      "bytes": 4076,
+      "sha256": "061b4991b837960b16abeee28288c3a2eaf35b86724f4cb53e60ba88b8860636"
+    },
+    "remote_repository_resolution": "MISSING_ACCESS_OR_REPOSITORY_ABSENT_HTTP_404",
+    "external_repository_write_performed": false,
+    "workflow_pushed": false,
+    "workflow_run_observed": false,
+    "public_artifacts_observed": false,
+    "g6_status": "OPEN_AWAITING_PUBLIC_REPOSITORY_AND_REAL_GREEN_RUN",
+    "owner_decision_required": "Create or recover the public repository before any push. This receipt does not authorize repository publication."
+  },
+  "claim_boundary": {
+    "local_ci_preparation": true,
+    "public_ci_green": false,
+    "timing_evidence": false,
+    "strength_claim": false,
+    "openbench_evidence": false,
+    "model_selection_claim": false,
+    "release_claim": false,
+    "stable_publication_authorized": false
+  },
+  "gate_effect": "The local fail-closed G6 workflow draft and its tooling are ready for a future public repository run. G6 remains open because the configured remote is unresolved and no public workflow run or downloaded artifact has been independently authenticated.",
+  "next_safe_action": "Commit this local draft without changing src, keep monitoring the clean-host boundary for P7, and request the single repository-creation or access-recovery decision only when a public push is otherwise ready."
+}

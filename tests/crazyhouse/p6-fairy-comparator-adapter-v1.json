@@ -1,0 +1,246 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-adapter/v1",
+  "created_utc": "2026-08-23T18:41:05.8294813Z",
+  "evidence_class": "E1_ENGINEERING",
+  "fixture_parent_commit": "b5f8ddfa0ac679317ac4e6fb2eac55d804aca1e0",
+  "fixture_parent_tree": "5cd9a0eba6b73d8dde5b282d48027c2e92aaa104",
+  "behavior_files_may_change_in_fixture_commit": false,
+  "purpose": "Qualify a native process-owning fail-closed UCI adapter for the exact current Fairy-Stockfish comparator without changing the product or comparator source.",
+  "source": {
+    "repository": "https://github.com/fairy-stockfish/Fairy-Stockfish.git",
+    "commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "tree": "aa4112ea6784cef03fb9b5f87bba632de6168faa",
+    "role": "external comparator only",
+    "product_ancestry": false
+  },
+  "raw_executable": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-build-runtime-265/source/src/stockfish.exe",
+    "bytes": 4530945,
+    "sha256": "b79071634530b99f047a51a123b79bb7e14cfc225435f5fb6c50a9411a294183",
+    "build": "x86-64-avx2, COMP=mingw, nnue=no, T1, zero diagnostics"
+  },
+  "network": {
+    "path": "C:/Users/djime/Documents/Chess_variants/Match script/crazyhouse_run15rl_e190_l03.nnue",
+    "basename": "crazyhouse_run15rl_e190_l03.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "license": "CC0-1.0"
+  },
+  "profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "token": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "adapter": {
+    "source_path": "tools/comparator_adapter/fairy_crazyhouse_adapter.cpp",
+    "platform": "windows-x86_64",
+    "language": "C++20",
+    "compiler": {
+      "path": "C:/msys64/mingw64/bin/g++.exe",
+      "version": "g++.exe (Rev5, Built by MSYS2 project) 16.1.0",
+      "bytes": 3312964,
+      "sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb"
+    },
+    "build_requirements": [
+      "two clean builds",
+      "-std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror",
+      "static MinGW runtime",
+      "PE timestamp disabled",
+      "byte-identical executables and SHA-256"
+    ],
+    "allowed_protocol_transformations": [
+      "replace the single raw UCI_Variant declaration with the exact frozen two-choice declaration",
+      "inject exactly one CrazyhouseProfile, CrazyhouseCapabilityNonce, and CrazyhouseEvalFile declaration before uciok",
+      "inject route_commit and nonce-bound capability acknowledgement at successful Crazyhouse readiness barriers",
+      "suppress the adapter-owned startup eval probe transcript",
+      "emit one stable adapter ERROR record on rejection"
+    ],
+    "forbidden_transformations": [
+      "position, move, go, stop, ponderhit, ucinewgame, clock, node or searchmoves mutation",
+      "score, depth, nodes, PV, bestmove or ponder mutation",
+      "child restart",
+      "classical fallback",
+      "product evaluator identity claim"
+    ]
+  },
+  "inventory": {
+    "required_exact": [
+      "option name UCI_Variant type combo default crazyhouse var chess var crazyhouse",
+      "option name CrazyhouseProfile type string default LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "option name CrazyhouseCapabilityNonce type string default <empty>",
+      "option name CrazyhouseEvalFile type string default <empty>"
+    ],
+    "required_raw_exact": [
+      "option name Use NNUE type check default true",
+      "option name EvalFile type string default <empty>"
+    ],
+    "forbidden": [
+      "raw multi-variant UCI_Variant declaration",
+      "duplicate option names",
+      "CrazyhouseProfileHash"
+    ]
+  },
+  "startup_probe": {
+    "sequence": [
+      "authenticate and lock exact network",
+      "spawn exact child suspended and assign kill-on-close Job Object",
+      "forward uci and buffer handshake",
+      "set raw UCI_Variant=crazyhouse, Use NNUE=true and EvalFile=approved path",
+      "child isready",
+      "child eval followed by child isready",
+      "require exact NNUE marker and forbid classical or fatal markers",
+      "publish transformed inventory and uciok"
+    ],
+    "required_marker": "info string NNUE evaluation using C:\\Users\\djime\\Documents\\Chess_variants\\Match script\\crazyhouse_run15rl_e190_l03.nnue enabled",
+    "required_marker_count": 1,
+    "forbidden_prefixes": [
+      "info string classical evaluation enabled",
+      "info string ERROR:"
+    ]
+  },
+  "capability_cases": [
+    {
+      "id": "positive-route-bound",
+      "variant": "crazyhouse",
+      "profile": "exact",
+      "network": "exact",
+      "nonce": "0123456789abcdef0123456789abcdef",
+      "expected_order": ["route_commit", "capability_ack", "readyok"],
+      "ack_count": 1
+    },
+    {
+      "id": "one-shot-readiness",
+      "depends_on": "positive-route-bound",
+      "second_isready_ack_count": 0,
+      "second_isready_readyok": true
+    },
+    {
+      "id": "standard-control",
+      "variant": "chess",
+      "nonce": null,
+      "route_commit_count": 0,
+      "ack_count": 0,
+      "readyok": true
+    },
+    {
+      "id": "invalid-uppercase-nonce",
+      "nonce": "0123456789ABCDEF0123456789ABCDEF",
+      "expected_error": "info string ERROR isready code=crazyhouse_capability_nonce_invalid",
+      "readyok": false,
+      "adapter_exit": "nonzero"
+    },
+    {
+      "id": "wrong-profile",
+      "profile": "LICHESS_CRAZYHOUSE_2026_08_12@0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_error_code": "crazyhouse_profile_mismatch",
+      "readyok": false,
+      "adapter_exit": "nonzero"
+    },
+    {
+      "id": "use-nnue-false",
+      "command": "setoption name Use NNUE value false",
+      "expected_error_code": "fairy_adapter_nnue_disabled",
+      "adapter_exit": "nonzero"
+    }
+  ],
+  "network_negative_cases": [
+    {
+      "id": "missing-approved-basename",
+      "fixture": "fresh missing directory/crazyhouse_run15rl_e190_l03.nnue",
+      "expected_error_code": "legacy_missing_file"
+    },
+    {
+      "id": "corrupt-approved-basename",
+      "source_fixture_sha256": "28b8db145c2525778fa28bb38fee90c8fae0393a7241b7d0d112f1ce888015c6",
+      "source_fixture_bytes": 4096,
+      "expected_error_code": "legacy_network_identity_mismatch"
+    },
+    {
+      "id": "incompatible-approved-basename",
+      "source_fixture_sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+      "source_fixture_bytes": 98511183,
+      "expected_error_code": "legacy_network_identity_mismatch"
+    },
+    {
+      "id": "byte-identical-wrong-basename",
+      "fixture_basename": "neutral_legacy.nnue",
+      "fixture_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "fixture_bytes": 58534811,
+      "expected_error_code": "legacy_basename_mismatch"
+    }
+  ],
+  "fixed_node_transparency": {
+    "process_model": "fresh raw process and fresh adapted process per case",
+    "threads": 1,
+    "hash_mib": 16,
+    "multipv": 1,
+    "clear_hash_before_position": true,
+    "nodes": 16384,
+    "normalization": {
+      "remove_adapter_only_records": ["route_commit", "crazyhouse_capability_ack"],
+      "remove_info_fields": ["time", "nps", "hashfull"],
+      "preserve": ["ordered info records", "depth", "seldepth", "multipv", "score", "nodes", "tbhits", "pv", "currmove", "bestmove", "ponder"]
+    },
+    "cases": [
+      {
+        "id": "startpos",
+        "position": "position startpos",
+        "go": "go nodes 16384"
+      },
+      {
+        "id": "opening-history",
+        "position": "position startpos moves e2e4 d7d5 e4d5 d8d5 b1c3",
+        "go": "go nodes 16384"
+      },
+      {
+        "id": "pocket-content",
+        "position": "position fen 6k1/8/8/8/8/8/8/K7[PNBRQpnbrq] w - - 0 1",
+        "go": "go nodes 16384"
+      },
+      {
+        "id": "forced-drop-evasion",
+        "position": "position fen 4r2k/8/8/8/8/8/8/4K3[N] w - - 0 1",
+        "go": "go nodes 16384 searchmoves N@e2"
+      },
+      {
+        "id": "promoted-provenance",
+        "position": "position fen 7k/8/8/8/8/8/Q~6r/K7[] b - - 0 1",
+        "go": "go nodes 16384 searchmoves h2a2"
+      },
+      {
+        "id": "en-passant",
+        "position": "position fen 7k/8/8/3pP3/8/8/8/K7[] w - d6 0 2",
+        "go": "go nodes 16384 searchmoves e5d6"
+      },
+      {
+        "id": "castling",
+        "position": "position fen r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1",
+        "go": "go nodes 16384 searchmoves e1g1"
+      },
+      {
+        "id": "capture-drop-chain",
+        "position": "position fen 8/6k1/8/8/8/2N5/R7/K7[] b - - 2 2",
+        "go": "go nodes 16384"
+      }
+    ],
+    "pass_rule": "Every case has an exact NNUE marker before search output and raw versus adapted normalized transcripts are byte-identical."
+  },
+  "lifecycle_cases": [
+    "normal quit exits child and adapter with code zero",
+    "stdin EOF leaves no child",
+    "externally terminated exact child causes adapter nonzero exit and no restart",
+    "adapter rejection kills only its owned Job Object",
+    "no descendant survives any case"
+  ],
+  "referee_join": {
+    "referee_commit": "d25294398b1fc3d80e26341211f4d9a61b1e575c",
+    "referee_executable_sha256": "f465c05e25500d4a55c4788b4cd915dcce6f0575540602e521ee50048e0a0941",
+    "required": "one real two-process pre-game capability join using the exact candidate and adapted comparator, with Crazyhouse settings proven in logs and no timing or Elo interpretation"
+  },
+  "pass_rule": "Two reproducible adapter builds, exact inventory, startup probe, all capability and negative cases, all fixed-node transparency cases, exact-child lifecycle cases, and the authenticated referee join pass. No case may be skipped or converted into a warning.",
+  "gate_effect_on_pass": "The exact adapted Fairy comparator becomes eligible for the separately frozen local same-network paired strength panel only.",
+  "strength_claim": false,
+  "timing_evidence": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-expected-red-preregistration/v1",
+  "created_utc": "2026-08-24T22:13:56.7755918Z",
+  "status": "PREREGISTERED_EXPECTED_RED_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_contract": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.json",
+    "bytes": 7187,
+    "sha256": "7b916381d9c8dae951d32923cac3f7e5ef3acb1f32a975305ddc37a5bcc8c7c2"
+  },
+  "source_base": {
+    "commit": "2d3b67c0dac8239e8541db3ee1af8e89bc58633d",
+    "tree": "36d340ae4bf52aec68bb2674ae98c5f6a2a7115b",
+    "src_tree": "9d769751748870c6b1e7af21dfa1ea12040fc2a4",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "expected_red": {
+    "clean_exports": 1,
+    "make_target": "crazyhouse_p15_release_engine_identity_test",
+    "make_dry_run": true,
+    "required_exit_code": 2,
+    "required_stdout_bytes": 0,
+    "required_stderr_lines": 1,
+    "required_stderr": "make: *** No rule to make target 'crazyhouse_p15_release_engine_identity_test'.  Stop.",
+    "implementation_paths_must_be_absent": [
+      "src/crazyhouse_version.h",
+      "tools/release/verify_crazyhouse_engine_identity.py",
+      "tests/crazyhouse_release_engine_identity.py"
+    ],
+    "allowed_generated_paths": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "compiler_linker_engine_or_bytecode_artifacts": 0,
+    "timeouts_allowed": false
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 268435456,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764
+  },
+  "stopping_rule": "Stop and preserve the fresh namespace on any source, contract, addendum, target, exit, stream, implementation-path, generated-file, process, P7 or restoration mismatch. Never repair a failed expected-red namespace in place.",
+  "pass_effect": "Permits implementation of the three frozen release-identity paths in a new source commit. It grants no stable runtime identity, final-panel, package, strength, draft, publication, G15, G16 or RELEASED_MONITORED credit.",
+  "boundaries": {
+    "expected_red_executed": false,
+    "implementation_present": false,
+    "stable_runtime_identity_authenticated": false,
+    "final_p14_panel_executed": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "crazyhouse-p7-local-opening-resource-accounting-correction/v1",
+  "created_utc": "2026-08-23T20:41:17.5919760Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING_RECEIPT_CORRECTION",
+  "incident": "CH-235",
+  "lease": 275,
+  "parent_contract": {
+    "path": "tests/crazyhouse/p7-local-opening-corpus-v2.addendum.001.json",
+    "bytes": 9031,
+    "sha256": "1d6c3871b3fba92470bfdb31c9a3fb46a97937b6cb4422578988b152d209216e"
+  },
+  "preserved_completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p7-local-opening-corpus-275/completion.json",
+    "bytes": 19590,
+    "sha256": "d4ec1c5e1364bbd902db5a3033e9a7c9e54e7fb97412107bd772277dac6cddc1",
+    "status": "PASS_LOCAL_OPENING_CORPUS_QUALIFICATION",
+    "incorrect_namespace_bytes_before_completion": 0,
+    "rewritten": false
+  },
+  "end_receipt": {
+    "path": "../../../receipts/resources/p7-local-opening-corpus-v2-t1-end-275.json",
+    "bytes": 10422,
+    "sha256": "782638f31b47fdb79c58c9b5107e823774e7e58d4604e1b9016c8c836070b439"
+  },
+  "cause": "The controller returned file identities as OrderedDictionary values. ConvertTo-Json serialized their keys, but Measure-Object -Property bytes saw no PowerShell property named bytes, produced a null sum, and the int64 cast recorded zero.",
+  "independent_correction": {
+    "measurement_source": "Direct FileInfo.Length over every recursive file present before completion, excluding completion.json itself",
+    "file_count": 19,
+    "namespace_bytes_before_completion": 3384897,
+    "namespace_ceiling_bytes": 268435456,
+    "headroom_bytes": 265050559,
+    "ceiling_pass": true,
+    "full_inventory_location": "end_receipt.namespace_inventory_excluding_completion",
+    "full_inventory_hash_verified": true
+  },
+  "scientific_execution": {
+    "completion_status": "PASS_LOCAL_OPENING_CORPUS_QUALIFICATION",
+    "qualification_result_bytes": 7678,
+    "qualification_result_sha256": "3be0bd707d82a43aad2e49f0e23147608b144672d0125ff2ba90cd94d69c63cf",
+    "independent_builds_byte_identical": true,
+    "independent_replay_rows": 1024,
+    "referee_conformance_rows": 1024,
+    "dry_pair_games": 2,
+    "scientific_artifact_changed_by_correction": false,
+    "rerun_required": false
+  },
+  "future_prevention": "Measure FileInfo.Length directly or cast each identity to PSCustomObject, require a positive inventory row count, and reconcile the aggregate with an immutable per-file inventory before capacity PASS.",
+  "effect": "The corrected capacity measurement is 3,384,897 bytes and passes the frozen 268,435,456-byte ceiling. Together with the preserved scientific PASS, lease 275 qualifies the exact v2 corpus for local-panel preregistration only.",
+  "scientific_boundary": {
+    "timing_evidence": false,
+    "elo_claim": false,
+    "strength_claim": false,
+    "openbench_claim": false,
+    "release_claim": false
+  }
+}

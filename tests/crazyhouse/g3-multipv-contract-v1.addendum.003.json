@@ -1,0 +1,79 @@
+{
+  "schema": "crazyhouse-g3-multipv-contract-addendum/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-23T05:43:41.3429565Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct the verifier-only omission found after lease 235: a valid Crazyhouse override being inert in chess did not prove that a sticky invalid Crazyhouse setting is also chess-inert and remains sticky after returning to Crazyhouse. No engine behavior or frozen expectation changes.",
+  "pins": {
+    "behavior_source_addendum": {
+      "path": "tests/crazyhouse/g3-multipv-contract-v1.addendum.002.json",
+      "bytes": 4672,
+      "sha256": "ad12bc6567d270d519cb82df87973cc2b78a33f67ea87776463a5246014b3502"
+    },
+    "partial_green_record": {
+      "path": "../../../receipts/private/p3-multipv-partial-green-record-151.json",
+      "bytes": 4579,
+      "sha256": "b39752567fc6fdacb160c5ac9f28aa9aa2ad0958fcb4dd392c3bb717d1b59429"
+    },
+    "corrected_verifier": {
+      "path": "tests/crazyhouse_multipv_verify.py",
+      "bytes": 20044,
+      "sha256": "543802dd46defa7b2333dbabbb0004a21b0506adaf28c98f038fb8bc3550abc0",
+      "git_blob": "8583d606b6dfb96f434cdb6f4dd0e008032156a9"
+    },
+    "incident_ledger": {
+      "path": "docs/crazyhouse/incident-ledger.md",
+      "bytes": 130954,
+      "sha256": "d7f40f7cbcf770baae25fdc09bf68005e0ddc05186711164d4f03f5280a8947c",
+      "git_blob": "1f02a2bdcf39c5dd29988da3be9d380d709e7802",
+      "incidents": ["CH-196", "CH-197"]
+    }
+  },
+  "correction_commit": {
+    "commit": "ee37262bc04acab0a839319b9295fd3a09bca3dd",
+    "tree": "f741fafaa399d95fadaaaab5e52965c4e3f4c2f6",
+    "parent": "5f3921a89cae28956285092b7dcfd0ca13692921",
+    "changed_paths": [
+      "docs/crazyhouse/incident-ledger.md",
+      "tests/crazyhouse_multipv_verify.py"
+    ],
+    "engine_source_changed": false,
+    "contract_expectation_changed": false,
+    "known_303_fixture_changed": false
+  },
+  "lease_235_classification": {
+    "controller_result": "PASS_CRAZYHOUSE_MULTIPV_GREEN_AND_EXACT_STANDARD_CONTROL",
+    "admitted_gate_result": "PARTIAL_GREEN_REJECTED_INCOMPLETE_INVALID_CHESS_CONTROL",
+    "runtime_artifact_integrity": true,
+    "scientific_coverage_complete": false,
+    "missing_predicate": "sticky invalid CrazyhouseMultiPV state must not block chess search and must remain sticky after returning to Crazyhouse"
+  },
+  "additive_sequence": [
+    "enter a sticky invalid CrazyhouseMultiPV state",
+    "prove evaluator-backed Crazyhouse search is refused",
+    "switch to chess without clearing the invalid state",
+    "prove chess MultiPV 2 search emits exactly two PV lines and a bestmove",
+    "switch back to Crazyhouse without clearing the invalid state",
+    "prove Crazyhouse search is still refused with crazyhouse_multipv_invalid",
+    "set CrazyhouseMultiPV to zero",
+    "prove Crazyhouse search recovers and inherits the persisted orthodox MultiPV value 2"
+  ],
+  "sealed_replay": {
+    "engine_path": "D:/Crazyhouse-Stockfish/leases/p3-multipv-green-235/source/src/stockfish.exe",
+    "engine_bytes": 103064562,
+    "engine_sha256": "8bf2c791d2a1ca9b6b209b8f6194715a932b33558a1e97f5a2ba3a9a3e76cdaa",
+    "engine_behavior_commit": "51ff97d0108dfaa516853ed671d80471ec823290",
+    "rebuild_allowed": false,
+    "source_patch_allowed": false,
+    "new_immutable_namespace_required": true,
+    "full_corrected_verifier_required": true,
+    "standard_control_rebuild_required": false,
+    "reason": "the sealed binary and exact standard control are already authenticated; only the previously absent runtime sequence must be added, while all four verifier sessions replay unchanged plus the composed state transition"
+  },
+  "source_provenance_rule": "External clean-export authentication uses git tree blob IDs and git hash-object --no-filters over extracted files. Windows worktree line-ending bytes are not an archive comparator.",
+  "stopping_rule": "Run the corrected full verifier against the exact sealed engine, legacy network, official network, base contract and 303 fixture in a new lease. Require four PASS evidence cases, the explicit chess-while-invalid fields, re-refusal after returning to Crazyhouse, zero-inheritance recovery, zero stderr, no timeout and no residual owned process. Any mismatch rejects G3 and requires another additive correction.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

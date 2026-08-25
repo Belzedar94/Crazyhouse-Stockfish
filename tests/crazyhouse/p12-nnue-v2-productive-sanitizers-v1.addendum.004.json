@@ -1,0 +1,72 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-preregistration-addendum/v1",
+  "addendum": 4,
+  "created_utc": "2026-08-24T14:32:32.286Z",
+  "status": "PREREGISTERED_MSVC_TRANSLATION_UNIT_CORRECTION_BEFORE_LEASE_324",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Replace only the rejected lease and the MSVC per-translation-unit object identity. Preserve the scientific hypothesis, sanitizer toolchains, source product, matrices, stopping rule, resources, asynchronous pipe correction and claim boundaries.",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.003.json",
+    "commit": "8cb4951bbe172a8db8c36a8880d5b7725e872292",
+    "bytes": 3053,
+    "sha256": "4e16a83736cc5db77088ba2d0894c04f2bfced21e06bfd787a6e793c89d212d9"
+  },
+  "rejected_lease_323": {
+    "status": "REJECTED_ENGINEERING_OR_ORCHESTRATION",
+    "incident": "CH-294",
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-end-323.json",
+      "bytes": 5122,
+      "sha256": "98825cbdaaaea835fa18a5c3c910d46ed560d756a40bb4690e42fd827342c6b9"
+    },
+    "pipe_fix_proven": true,
+    "clean_exports_proven": true,
+    "asan_controls_proven": true,
+    "product_binary_linked": false,
+    "product_verifier_started": false,
+    "scientific_result_observed": false,
+    "gate_credit": false
+  },
+  "single_operational_change": {
+    "old_lease": 323,
+    "new_lease": 324,
+    "old_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-323",
+    "new_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-324",
+    "compile_requirement": "Compile each MSVC translation unit in its own cl.exe /c invocation with a unique explicit /Fo object and /Fd program-database path, then link the complete explicit object list under /fsanitize=address and linker /WX.",
+    "plan_requirement": "Emit an immutable build plan mapping every authenticated source path to one unique object path and reject duplicate object paths before compiler launch."
+  },
+  "formal_source_admission": {
+    "effective_base_commit": "8cb4951bbe172a8db8c36a8880d5b7725e872292",
+    "permitted_difference_from_effective_base": [
+      "docs/crazyhouse/incident-ledger.md",
+      "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.004.json"
+    ],
+    "exact_src_tree_required": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "clean_worktree_required": true
+  },
+  "preserved": {
+    "hypothesis": true,
+    "single_variable": true,
+    "frozen_inputs": true,
+    "toolchains": true,
+    "resource_contract": true,
+    "clean_export_contract": true,
+    "sanitizer_lanes": true,
+    "runtime_matrix": true,
+    "asynchronous_pipe_protocol": true,
+    "large_bidirectional_pipe_preflight": true,
+    "stopping_rule": true,
+    "pass_effect": true,
+    "boundaries": true
+  },
+  "boundaries": {
+    "sanitizer_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

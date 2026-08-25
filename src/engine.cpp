@@ -20,9 +20,11 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstdlib>
 #include <filesystem>
 #include <deque>
 #include <iosfwd>
+#include <limits>
 #include <memory>
 #include <ostream>
 #include <sstream>
@@ -56,15 +58,27 @@ int MaxThreads = std::max(1024, 4 * int(get_hardware_concurrency()));
 // PR#6526). The user can always explicitly override this behavior.
 constexpr NumaAutoPolicy DefaultNumaPolicy = BundledL3Policy{32};
 
-Engine::Engine(std::optional<std::filesystem::path> path) :
+Engine::PositionSlot::PositionSlot(Ruleset ruleset) :
+    position(ruleset),
+    states(std::make_unique<std::deque<StateInfo>>(1)) {}
+
+Engine::Engine(std::optional<std::filesystem::path> path,
+               LegacyExecutionBackend               legacyExecutionBackend_) :
     binaryDirectory(path ? CommandLine::get_binary_directory(*path) : std::filesystem::path{}),
+    legacyExecutionBackend(legacyExecutionBackend_),
     numaContext(NumaConfig::from_system(DefaultNumaPolicy)),
-    states(new std::deque<StateInfo>(1)),
+    positionSlot(std::make_unique<PositionSlot>(Ruleset::CHESS)),
     threads(),
     networkFile{std::nullopt, ""},
     network(numaContext, get_default_network()) {
 
-    pos.set(StartFEN, false, &states->back());
+    positionSlot->position.set(StartFEN, false, &positionSlot->states->back());
+
+    const std::string crazyhouseEvalDefault =
+      NN::LegacyCrazyhouseNetworkV1::embedded_available()
+        ? std::string(NN::LegacyCrazyhouseNetworkV1::EmbeddedFileToken)
+        : std::string{};
+    routing.pending.crazyhouseEvalFile = crazyhouseEvalDefault;
 
     options.add(  //
       "Debug Log File", Option("", [](const Option& o) {
@@ -104,13 +118,46 @@ Engine::Engine(std::optional<std::filesystem::path> path) :
     options.add(  //
       "MultiPV", Option(1, 1, MAX_MOVES));
 
+    options.add(  //
+      "CrazyhouseMultiPV",
+      Option(0, 0, std::numeric_limits<int>::max(),
+             [this](const Option&) {
+                 crazyhouseMultiPVValid = true;
+                 return std::nullopt;
+             },
+             [this](std::string_view) {
+                 crazyhouseMultiPVValid = false;
+                 return "ERROR setoption code=crazyhouse_multipv_invalid "
+                        "option=CrazyhouseMultiPV";
+             }));
+
     options.add("Skill Level", Option(20, 0, 20));
 
     options.add("Move Overhead", Option(10, 0, 5000));
 
     options.add("nodestime", Option(0, 0, 10000));
 
-    options.add("UCI_Chess960", Option(false));
+    options.add(  //
+      "UCI_Chess960", Option(false, [this](const Option& o) {
+          stage_chess960(int(o) != 0);
+          return std::nullopt;
+      }));
+
+    options.add(  //
+      "UCI_Variant",
+      Option("crazyhouse var chess var crazyhouse", "crazyhouse", [this](const Option& o) {
+          stage_ruleset(o == "chess" ? "chess" : "crazyhouse");
+          return std::nullopt;
+      }));
+
+    options.add(  //
+      "CrazyhouseProfile", Option(CrazyhouseProfile::Token.data(),
+                                  [this](const Option& o) {
+                                      stage_crazyhouse_profile(std::string(o));
+                                      return std::nullopt;
+                                  }));
+
+    options.add("CrazyhouseCapabilityNonce", Option(""));
 
     options.add("UCI_LimitStrength", Option(false));
 
@@ -134,7 +181,13 @@ Engine::Engine(std::optional<std::filesystem::path> path) :
 
     options.add(  //
       "EvalFile", Option(EvalFileDefaultName, [this](const Option& o) {
-          load_network(path_from_utf8(std::string(o)));
+          stage_chess_eval_file(std::string(o));
+          return std::nullopt;
+      }));
+
+    options.add(  //
+      "CrazyhouseEvalFile", Option(crazyhouseEvalDefault.c_str(), [this](const Option& o) {
+          stage_crazyhouse_eval_file(std::string(o));
           return std::nullopt;
       }));
 
@@ -143,6 +196,335 @@ Engine::Engine(std::optional<std::filesystem::path> path) :
     resize_threads();
 }
 
+void Engine::refresh_pending_dirty() noexcept {
+    routing.pendingDirty = routing.pendingError.has_value() || !routing.active.has_value()
+                        || !EngineRouting::same_route_options(routing.pending, *routing.active);
+}
+
+bool Engine::stage_ruleset(std::string_view value) {
+    wait_for_search_finished();
+
+    const auto parsed = ruleset_from_uci(value);
+    if (!parsed.has_value())
+    {
+        routing.pendingError = EngineRouting::ErrorCode::InvalidVariant;
+        routing.pendingDirty = true;
+        return false;
+    }
+
+    routing.pending.ruleset = *parsed;
+    if (routing.pendingError == std::optional{EngineRouting::ErrorCode::InvalidVariant})
+        routing.pendingError.reset();
+    refresh_pending_dirty();
+    return true;
+}
+
+void Engine::stage_chess960(bool value) {
+    wait_for_search_finished();
+    routing.pending.chess960 = value;
+    refresh_pending_dirty();
+}
+
+void Engine::stage_crazyhouse_profile(std::string value) {
+    wait_for_search_finished();
+    routing.pending.crazyhouseProfile = std::move(value);
+    refresh_pending_dirty();
+}
+
+void Engine::stage_chess_eval_file(std::string value) {
+    wait_for_search_finished();
+    routing.pending.chessEvalFile = std::move(value);
+    refresh_pending_dirty();
+}
+
+void Engine::stage_crazyhouse_eval_file(std::string value) {
+    wait_for_search_finished();
+    routing.pending.crazyhouseEvalFile = std::move(value);
+    refresh_pending_dirty();
+}
+
+EngineRouting::Epoch Engine::advance_route_epoch() {
+    if (routing.configEpoch == std::numeric_limits<EngineRouting::Epoch>::max())
+        std::abort();
+    return ++routing.configEpoch;
+}
+
+void Engine::clear_routed_backends() {
+    legacyNetwork.reset();
+    officialRouteInstalled = false;
+    networkFile            = {std::nullopt, ""};
+    network                = std::make_unique<NN::Network>();
+}
+
+void Engine::clear_route_runtime_state() {
+    tt.clear(threads);
+    threads.clear();
+}
+
+EngineRouting::ApplyResult Engine::apply_pending_route() {
+    using namespace EngineRouting;
+
+    wait_for_search_finished();
+
+    if (routing.pendingError.has_value())
+        return {false, false, *routing.pendingError};
+
+    if (!routing.pendingDirty && routing.backend.readiness == BackendReadiness::Ready)
+    {
+        if (!backend_matches_epoch(routing))
+            std::abort();
+        return {true, false, ErrorCode::None};
+    }
+
+    const bool retryingFailure =
+      !routing.pendingDirty && routing.backend.readiness == BackendReadiness::Failed;
+    if (!routing.pendingDirty && !retryingFailure)
+        std::abort();
+
+    const RouteOptions requested = routing.pending;
+
+    if (chess960_only_official_transition(routing))
+    {
+        if (!officialRouteInstalled || legacyNetwork || !networkFile.current.has_value())
+            std::abort();
+
+        advance_route_epoch();
+        routing.active       = requested;
+        routing.pendingDirty = false;
+        routing.pendingError.reset();
+        routing.activeError.reset();
+        routing.positionEpoch.reset();
+        routing.backend.epoch = routing.configEpoch;
+
+        if (!snapshot_contract_valid(routing) || !backend_matches_epoch(routing))
+            std::abort();
+        return {true, true, ErrorCode::None};
+    }
+
+    auto commit_failure = [&](ErrorCode error, std::optional<RouteOptions> active) {
+        const bool advance = routing.pendingDirty;
+        if (advance)
+        {
+            advance_route_epoch();
+            routing.positionEpoch.reset();
+            clear_route_runtime_state();
+        }
+
+        routing.active       = std::move(active);
+        routing.pendingDirty = false;
+        routing.pendingError.reset();
+        routing.activeError = error;
+        routing.backend = {BackendKind::None, BackendReadiness::Failed, routing.configEpoch, ""};
+
+        if (!snapshot_contract_valid(routing))
+            std::abort();
+        return ApplyResult{false, advance, error};
+    };
+
+    if (requested.ruleset == Ruleset::CRAZYHOUSE)
+    {
+        const ErrorCode profileError = crazyhouse_profile_error(requested.crazyhouseProfile);
+        if (profileError != ErrorCode::None)
+        {
+            if (retryingFailure)
+                return {false, false, profileError};
+            clear_routed_backends();
+            return commit_failure(profileError, std::nullopt);
+        }
+    }
+
+    if (requested.ruleset == Ruleset::CRAZYHOUSE && requested.chess960)
+    {
+        if (retryingFailure)
+            return {false, false, ErrorCode::CrazyhouseChess960Rejected};
+        clear_routed_backends();
+        return commit_failure(ErrorCode::CrazyhouseChess960Rejected, std::nullopt);
+    }
+
+    clear_routed_backends();
+
+    ErrorCode                                      loadError   = ErrorCode::None;
+    BackendKind                                    backendKind = BackendKind::None;
+    std::string                                    backendIdentity;
+    std::unique_ptr<NN::Network>                   officialCandidate;
+    NN::EvalFile                                   officialCandidateFile{std::nullopt, ""};
+    std::unique_ptr<NN::LegacyCrazyhouseNetworkV1> legacyCandidate;
+
+    if (requested.ruleset == Ruleset::CRAZYHOUSE)
+    {
+        if (requested.crazyhouseEvalFile.empty())
+            loadError = ErrorCode::CrazyhouseEvalFileEmpty;
+        else
+        {
+            legacyCandidate =
+              std::make_unique<NN::LegacyCrazyhouseNetworkV1>(legacyExecutionBackend);
+            NN::LegacyCrazyhouseNetworkV1::LoadResult result{
+              NN::LegacyCrazyhouseNetworkV1::LoadStatus::MissingFile, "network not loaded"};
+            if (std::string_view(requested.crazyhouseEvalFile)
+                == NN::LegacyCrazyhouseNetworkV1::EmbeddedFileToken)
+                result = legacyCandidate->load_embedded();
+            else
+            {
+                auto path = path_from_utf8(requested.crazyhouseEvalFile);
+                if (path.is_relative())
+                    path = binaryDirectory / path;
+                path   = path.lexically_normal();
+                result = legacyCandidate->load_file(path);
+            }
+            loadError = legacy_load_error(result.status);
+
+            if (loadError == ErrorCode::None && !legacyCandidate->loaded())
+                loadError = ErrorCode::LegacyDigestMismatch;
+            if (loadError == ErrorCode::None
+                && legacyCandidate->description()
+                     != NN::LegacyCrazyhouseNetworkV1::RegisteredDescription)
+                loadError = ErrorCode::LegacyDescriptionMismatch;
+            if (loadError == ErrorCode::None
+                && legacyCandidate->artifact_sha256()
+                     != NN::LegacyCrazyhouseNetworkV1::RegisteredSha256)
+                loadError = ErrorCode::LegacyDigestMismatch;
+            if (loadError == ErrorCode::None
+                && legacyCandidate->execution_backend()
+                     == NN::LegacyCrazyhouseNetworkV1::ExecutionBackend::Simd
+                && NN::LegacyCrazyhouseNetworkV1::compiled_simd_backend() == "none")
+                loadError = ErrorCode::LegacySimdUnavailable;
+
+            if (loadError == ErrorCode::None)
+            {
+                backendKind     = BackendKind::LegacyCrazyhouseV1;
+                backendIdentity = NN::LegacyCrazyhouseNetworkV1::RegisteredSha256;
+            }
+        }
+    }
+    else
+    {
+        auto requestedPath = path_from_utf8(requested.chessEvalFile);
+        if (requestedPath.empty())
+            requestedPath = path_from_utf8(EvalFileDefaultName);
+
+        officialCandidate = std::make_unique<NN::Network>();
+        officialCandidate->load(binaryDirectory, requestedPath, officialCandidateFile);
+        if (officialCandidateFile.current != std::optional{requestedPath})
+            loadError = ErrorCode::OfficialEvalNotLoaded;
+        else
+        {
+            backendKind = BackendKind::OfficialChess;
+            backendIdentity =
+              "official-content-hash:" + std::to_string(officialCandidate->get_content_hash());
+        }
+    }
+
+    if (loadError != ErrorCode::None)
+    {
+        legacyCandidate.reset();
+        officialCandidate.reset();
+        return commit_failure(loadError, requested);
+    }
+
+    advance_route_epoch();
+    routing.active       = requested;
+    routing.pendingDirty = false;
+    routing.pendingError.reset();
+    routing.activeError.reset();
+    routing.positionEpoch.reset();
+
+    if (backendKind == BackendKind::OfficialChess)
+    {
+        networkFile            = std::move(officialCandidateFile);
+        network                = std::move(officialCandidate);
+        officialRouteInstalled = true;
+        threads.ensure_network_replicated();
+    }
+    else
+        legacyNetwork = std::move(legacyCandidate);
+
+    routing.backend = {backendKind, BackendReadiness::Ready, routing.configEpoch,
+                       std::move(backendIdentity)};
+    clear_route_runtime_state();
+
+    if (!snapshot_contract_valid(routing))
+        std::abort();
+    return {true, true, ErrorCode::None};
+}
+
+EngineRouting::PositionResult Engine::set_routed_position(const std::string&              fen,
+                                                          const std::vector<std::string>& moves) {
+    using namespace EngineRouting;
+
+    wait_for_search_finished();
+
+    PositionResult result;
+    if (!routing.active.has_value())
+    {
+        routing.positionEpoch.reset();
+        result.error  = ErrorCode::PositionRequiresCommittedRoute;
+        result.detail = "position requires a committed route";
+        return result;
+    }
+
+    auto candidate = std::make_unique<PositionSlot>(routing.active->ruleset);
+    if (auto error = candidate->position.set(fen, routing.active->chess960, routing.active->ruleset,
+                                             &candidate->states->back()))
+    {
+        routing.positionEpoch.reset();
+        result.error  = ErrorCode::InvalidFen;
+        result.detail = error->what();
+        return result;
+    }
+
+    for (std::size_t index = 0; index < moves.size(); ++index)
+    {
+        const Move move = UCIEngine::to_move(candidate->position, moves[index]);
+        if (move == Move::none())
+        {
+            routing.positionEpoch.reset();
+            result.error     = ErrorCode::IllegalMove;
+            result.moveIndex = index + 1;
+            result.token     = moves[index];
+            result.detail    = "illegal move";
+            return result;
+        }
+
+        candidate->states->emplace_back();
+        candidate->position.do_move(move, candidate->states->back());
+    }
+
+    positionSlot.swap(candidate);
+    routing.positionEpoch = routing.configEpoch;
+    result.committed      = true;
+
+    if (!snapshot_contract_valid(routing) || !rule_position_ready(routing))
+        std::abort();
+    return result;
+}
+
+void Engine::invalidate_routed_position() noexcept { routing.positionEpoch.reset(); }
+
+const EngineRouting::Snapshot& Engine::routing_snapshot() const noexcept { return routing; }
+
+bool Engine::has_routed_official_network() const noexcept { return officialRouteInstalled; }
+
+bool Engine::has_routed_legacy_network() const noexcept {
+    return legacyNetwork && legacyNetwork->loaded();
+}
+
+std::string_view Engine::routed_legacy_evaluator_mode() const noexcept {
+    if (!has_routed_legacy_network())
+        return "none";
+    return legacyNetwork->execution_backend() == LegacyExecutionBackend::Simd
+           ? "incremental-simd"
+           : "incremental-scalar";
+}
+
+std::string_view Engine::routed_legacy_simd_backend() const noexcept {
+    if (!has_routed_legacy_network()
+        || legacyNetwork->execution_backend() != LegacyExecutionBackend::Simd)
+        return "none";
+    return NN::LegacyCrazyhouseNetworkV1::compiled_simd_backend();
+}
+
+bool Engine::crazyhouse_multipv_valid() const noexcept { return crazyhouseMultiPVValid; }
+
 std::variant<u64, PositionSetError>
 Engine::perft(const std::string& fen, Depth depth, bool isChess960) {
     verify_network();
@@ -150,11 +532,39 @@ Engine::perft(const std::string& fen, Depth depth, bool isChess960) {
     return Benchmark::perft(fen, depth, isChess960);
 }
 
+std::variant<u64, EngineRouting::ErrorCode> Engine::routed_perft(Depth depth) {
+    using namespace EngineRouting;
+
+    wait_for_search_finished();
+
+    if (!routing.active.has_value())
+        return ErrorCode::PositionRequiresCommittedRoute;
+    if (!routing.positionEpoch.has_value() || *routing.positionEpoch != routing.configEpoch)
+        return ErrorCode::PositionEpochInvalid;
+    if (!rule_position_ready(routing))
+        std::abort();
+
+    const u64 nodes = Benchmark::perft<true>(positionSlot->position, depth);
+    if (!rule_position_ready(routing))
+        std::abort();
+    return nodes;
+}
+
 void Engine::go(Search::LimitsType& limits) {
     assert(limits.perft == 0);
-    verify_network();
+    const bool chessReady      = EngineRouting::chess_search_ready(routing);
+    const bool crazyhouseReady = EngineRouting::crazyhouse_search_ready(routing);
+    if (chessReady == crazyhouseReady)
+        std::abort();
+    if (chessReady)
+        verify_network();
+    else
+    {
+        if (!crazyhouseMultiPVValid || !legacyNetwork || !legacyNetwork->loaded())
+            std::abort();
+    }
 
-    threads.start_thinking(options, pos, states, limits);
+    threads.start_thinking(options, positionSlot->position, positionSlot->states, limits);
 }
 void Engine::stop() { threads.stop = true; }
 
@@ -194,23 +604,24 @@ void Engine::wait_for_search_finished() { threads.main_thread()->wait_for_search
 
 std::optional<PositionSetError> Engine::set_position(const std::string&              fen,
                                                      const std::vector<std::string>& moves) {
-    // Drop the old state and create a new one
-    states   = StateListPtr(new std::deque<StateInfo>(1));
-    auto err = pos.set(fen, options["UCI_Chess960"], &states->back());
+    auto candidate = std::make_unique<PositionSlot>(positionSlot->position.ruleset());
+    auto err       = candidate->position.set(
+      fen, options["UCI_Chess960"], positionSlot->position.ruleset(), &candidate->states->back());
     if (err.has_value())
         return err;
 
     for (const auto& move : moves)
     {
-        auto m = UCIEngine::to_move(pos, move);
+        auto m = UCIEngine::to_move(candidate->position, move);
 
         if (m == Move::none())
             return PositionSetError("Illegal move: " + move);
 
-        states->emplace_back();
-        pos.do_move(m, states->back());
+        candidate->states->emplace_back();
+        candidate->position.do_move(m, candidate->states->back());
     }
 
+    positionSlot.swap(candidate);
     return std::nullopt;
 }
 
@@ -246,8 +657,8 @@ bool Engine::set_numa_config_from_option(const std::string& o) {
 
 void Engine::resize_threads() {
     threads.wait_for_search_finished();
-    threads.set(numaContext.get_numa_config(), {options, threads, tt, sharedHists, network},
-                updateContext);
+    threads.set(numaContext.get_numa_config(),
+                {options, threads, tt, sharedHists, network, legacyNetwork}, updateContext);
 
     // Reallocate the hash with the new threadpool size
     set_tt_size(options["Hash"]);
@@ -322,9 +733,13 @@ void Engine::save_network(const std::optional<std::filesystem::path>& file) {
 // utility functions
 
 void Engine::trace_eval() const {
+    if (!EngineRouting::chess_search_ready(routing))
+        std::abort();
+
     StateListPtr trace_states(new std::deque<StateInfo>(1));
-    Position     p;
-    p.set(pos.fen(), options["UCI_Chess960"], &trace_states->back());
+    Position     p(positionSlot->position.ruleset());
+    p.set(positionSlot->position.fen(), options["UCI_Chess960"], positionSlot->position.ruleset(),
+          &trace_states->back());
 
     verify_network();
 
@@ -334,13 +749,13 @@ void Engine::trace_eval() const {
 const OptionsMap& Engine::get_options() const { return options; }
 OptionsMap&       Engine::get_options() { return options; }
 
-std::string Engine::fen() const { return pos.fen(); }
+std::string Engine::fen() const { return positionSlot->position.fen(); }
 
-std::optional<PositionSetError> Engine::flip() { return pos.flip(); }
+std::optional<PositionSetError> Engine::flip() { return positionSlot->position.flip(); }
 
 std::string Engine::visualize() const {
     std::stringstream ss;
-    ss << pos;
+    ss << positionSlot->position;
     return ss.str();
 }
 

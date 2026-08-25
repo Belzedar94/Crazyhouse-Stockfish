@@ -1,0 +1,74 @@
+{
+  "schema": "crazyhouse-p15-development-engine-identity-runtime-addendum/v1",
+  "created_utc": "2026-08-25T00:47:00Z",
+  "status": "PREREGISTERED_PRE_EXECUTION_CORRECTION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "base_preregistration": {
+    "path": "tests/crazyhouse/p15-development-engine-identity-runtime-v1.json",
+    "commit": "2419d478f0558e21ee3a4e9b9799b1115096034e",
+    "bytes": 10385,
+    "sha256": "1fb8ed2269185be2dc044f5120010b067fe72d6d40635c8c027fca170c6b2f4a",
+    "rewritten": false
+  },
+  "observed_pre_execution_defect": {
+    "incident": "CH-321",
+    "probe": "Read-only psutil.Process(44764) identity inspection with no process mutation.",
+    "expected_by_original_controller": "python",
+    "observed_exact_windows_name": "python.exe",
+    "p7_pid": 44764,
+    "p7_priority_numeric": "32",
+    "p7_created_utc": "2026-08-23T23:36:35.419836+00:00",
+    "lease_namespace_created": false,
+    "compiler_executed": false,
+    "engine_executed": false,
+    "result_observed": false
+  },
+  "single_correction": {
+    "description": "Require the exact psutil Windows process name python.exe at the terminal P7 preservation assertion, and carry this immutable correction record through ready, go, completion and independent verification.",
+    "scientific_inputs_changed": false,
+    "source_src_tree_changed": false,
+    "build_recipe_changed": false,
+    "runtime_matrix_changed": false,
+    "resource_boundary_changed": false,
+    "timeouts_changed": false,
+    "p7_mutation": false,
+    "foreign_process_mutation": false
+  },
+  "source_boundary": {
+    "base_preregistration_commit": "2419d478f0558e21ee3a4e9b9799b1115096034e",
+    "base_preregistration_tree": "997fc63436016f813bc860ee88e18cffc790dbe9",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "formal_source_commit": "SEALED_AFTER_THIS_CORRECTION_COMMIT_IN_THE_IMMUTABLE_START_RECEIPT_AND_CONTROLLER_ARGUMENTS",
+    "formal_source_must_have_exact_parent": "2419d478f0558e21ee3a4e9b9799b1115096034e",
+    "formal_source_must_preserve_src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "corrected_controller": {
+    "path": "control/p15-development-identity-runtime-356-controller.py",
+    "bytes": 38449,
+    "sha256": "ed722464cfac536b999f3c833b1b5aaae925e983ddfa792778e0c8d67fa17430",
+    "supersedes_base_controller_pin_for_lease_356_only": true
+  },
+  "corrected_independent_verifier": {
+    "path": "control/p15-development-identity-runtime-356-independent-verifier.py",
+    "bytes": 15949,
+    "sha256": "9d55d3f106f690d0a44a06047811cc691c16fe814a7c7783a8edd516ae5414fb",
+    "supersedes_base_verifier_pin_for_lease_356_only": true
+  },
+  "corrected_sanitized_commands": {
+    "formal": "python -B control/p15-development-identity-runtime-356-controller.py --expected-source <full-commit> --expected-tree <full-tree> --expected-prereg-sha256 <sha256> --expected-correction-sha256 <sha256> --expected-start-receipt-sha256 <sha256> --expected-controller-sha256 <sha256>",
+    "independent": "python -B control/p15-development-identity-runtime-356-independent-verifier.py --expected-source <full-commit> --expected-tree <full-tree> --expected-prereg-sha256 <sha256> --expected-correction-sha256 <sha256> --expected-controller-sha256 <sha256> --expected-start-receipt-sha256 <sha256> --output <new-external-result>"
+  },
+  "stopping_rule": "Lease 356 may start only from the clean correction commit whose exact parent is the base preregistration commit and whose src tree remains unchanged. The controller, this addendum and the start receipt must all match their passed SHA-256 values before the target namespace is created. The exact P7 process record must remain equal before and after, with psutil name python.exe. Every other condition and boundary in the base preregistration remains unchanged.",
+  "boundaries": {
+    "pre_execution_only": true,
+    "base_preregistration_rewritten": false,
+    "strength_claim": false,
+    "timing_evidence": false,
+    "stable_runtime_authenticated": false,
+    "openbench_evidence": false,
+    "public_mutation": false,
+    "release_claim": false
+  }
+}

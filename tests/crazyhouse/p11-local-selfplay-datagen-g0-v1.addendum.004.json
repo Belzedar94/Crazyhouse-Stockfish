@@ -1,0 +1,66 @@
+{
+  "schema": "crazyhouse-p11-local-selfplay-datagen-g0-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T05:29:31Z",
+  "status": "frozen-before-formal-negative-control-implementation-or-gate-run",
+  "effect": "strictly-additive-test-only-negative-control-definition",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "extends": {
+    "receipt": "tests/crazyhouse/p11-local-selfplay-datagen-g0-v1.json",
+    "negative_rows": [
+      "bound or absent teacher result",
+      "illegal selected move",
+      "nonterminal safety exit"
+    ],
+    "reason": "The frozen two-root G0 book contains only mate-in-one positions. These three rejection paths cannot be reached naturally without changing an authenticated scientific input or corrupting in-process search state."
+  },
+  "control": {
+    "option": "--test-candidate-fault",
+    "admitted_values": [
+      "missing-pv",
+      "illegal-pv",
+      "safety-limit"
+    ],
+    "required_environment": {
+      "CRAZYHOUSE_DATAGEN_G0_FAULT_INJECTION": "1"
+    },
+    "default": "disabled",
+    "capability_advertised": false,
+    "production_command_allowed": false,
+    "openbench_command_allowed": false,
+    "scope": "formal local negative controls only"
+  },
+  "injection_semantics": {
+    "missing-pv": "After a real product search and restoration check, remove exact/PV data from a copied search result and pass it through the unchanged teacher-label admission function.",
+    "illegal-pv": "After a real exact teacher label, replace only the selected move with Move::none() and pass it through the unchanged principal-move legality rejection.",
+    "safety-limit": "Set the test-only effective maximum ply to zero while leaving the rendered and recorded maximum unchanged, then pass through the unchanged nonterminal safety-limit rejection.",
+    "candidate_scope": "Apply the selected deformation to every candidate so the exact-quota abort is deterministic.",
+    "output_policy": "No final or partial output may be created for any injected candidate rejection."
+  },
+  "admission": [
+    "The option is rejected unless the exact fault-injection environment value is present.",
+    "Unknown fault values are rejected.",
+    "The normal engine does not contain or advertise the producer command.",
+    "A positive generation cannot carry the option.",
+    "The formal receipt must label these rows as injected negative controls, not naturally observed search failures."
+  ],
+  "preobservation_boundary": {
+    "core_diagnostic_result": "tests/crazyhouse/p11-selfplay-core-diagnostic-v1.result.001.json",
+    "core_diagnostic_gate_credit": false,
+    "formal_g0_runs": 0,
+    "fault_control_builds": 0,
+    "fault_control_executions": 0,
+    "strength_or_model_result_observed": false
+  },
+  "unchanged": [
+    "registered legacy network bytes",
+    "authenticated book bytes and deterministic order",
+    "campaign, seed and deterministic identity algorithms",
+    "positive generation settings and acceptance criteria",
+    "physical and bundle schemas",
+    "OpenBench and production authorization remain false"
+  ],
+  "claim_boundary": "Injected negatives prove fail-closed routing through the named validation paths. They do not establish the natural frequency of those failures, authorize data generation, establish Elo, select a model, or support release."
+}

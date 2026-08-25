@@ -19,7 +19,9 @@
 #ifndef UCI_H_INCLUDED
 #define UCI_H_INCLUDED
 
+#include <cstddef>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <string_view>
 
@@ -59,6 +61,8 @@ class UCIEngine {
     Engine      engine;
     CommandLine cli;
     std::string currentCmd;
+    std::string crazyhouseCapabilityNonce;
+    bool        crazyhouseCapabilityPending = false;
 
     static void print_info_string(std::string_view str);
 
@@ -68,6 +72,18 @@ class UCIEngine {
     void position(std::istringstream& is);
     void setoption(std::istringstream& is);
     u64  perft(const Search::LimitsType&);
+
+    bool acknowledge_crazyhouse_capability();
+    bool apply_route_for_command(std::string_view command, bool retryFailed);
+    bool admit_chess_command(std::string_view         command,
+                             EngineRouting::ErrorCode crazyhouseError,
+                             bool                     requirePosition);
+    bool admit_bench_command();
+    bool admit_search_command();
+    void report_route_error(std::string_view           command,
+                            EngineRouting::ErrorCode   error,
+                            std::optional<std::size_t> moveIndex = std::nullopt,
+                            std::string_view           token     = {});
 
     static void on_update_no_moves(const Engine::InfoShort& info);
     static void on_update_full(const Engine::InfoFull& info, bool showWDL);

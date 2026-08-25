@@ -1,0 +1,134 @@
+{
+  "schema": "crazyhouse-g4-current-referee-qualification-pass/v1",
+  "created_utc": "2026-08-23T17:24:05.3969008Z",
+  "evidence_class": "E1_ENGINEERING",
+  "effect": "strictly_additive_post_execution_gate_record",
+  "result": "PASS_G4_CURRENT_REFEREE_QUALIFICATION",
+  "purpose": "Close G4 for the exact corrected referee and exact official-Stockfish-based candidate capability join after a complete fresh formal replay and independent artifact reauthentication.",
+  "preregistration": {
+    "path": "tests/crazyhouse/g4-referee-current-qualification-v1.addendum.010.json",
+    "commit": "d0b60b21d244a153ea5b8cf1e013a7c61cff865e",
+    "git_blob": "70998bd6afd69d58898ce31aeb49cfcf44131dbe",
+    "bytes": 9941,
+    "sha256": "43a3b61b7370ae4f8369ffd6c7a89aad1bc7d82e896b5329b69a334233f742d1"
+  },
+  "formal_replay": {
+    "lease": 261,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-261",
+    "namespace_reusable": false,
+    "start_receipt": {
+      "path": "../../../receipts/resources/p4-referee-current-qualification-t1-start-261.json",
+      "bytes": 11744,
+      "sha256": "61477e8e087f876ee4c1a056488b71090d028a763dc43c197e4038d44526553d"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-261/completion.json",
+      "bytes": 35994,
+      "sha256": "23cb3e1b0030dfcbaf42f14889c67d23a4a3188972238404c66583bf3f17fa63",
+      "result": "PASS_CURRENT_REFEREE_TESTS_AND_REAL_CAPABILITY_JOIN"
+    },
+    "end_receipt": {
+      "path": "../../../receipts/resources/p4-referee-current-qualification-t1-end-261.json",
+      "bytes": 8713,
+      "sha256": "66e5d76df82ac9a852790bfffa481302a715d1a3ef9e6ff0ccab1be4e3ad30f9"
+    },
+    "end_receipt_correction": {
+      "path": "../../../receipts/resources/p4-referee-current-qualification-t1-end-261.addendum.001.json",
+      "bytes": 2278,
+      "sha256": "9a0b8a52305aa2e64ee943118dfd93fea203dc1f2b81a31e55ca50bb6af86674",
+      "corrected_fields": [
+        "real_two_process_join.engine_a_stderr.sha256",
+        "real_two_process_join.engine_b_stderr.sha256"
+      ]
+    }
+  },
+  "qualified_referee": {
+    "repository": "D:/Crazyhouse-Stockfish/referee/cutechess-24d430-clean",
+    "commit": "d25294c1b1084f8854c0dc026ca3b150c911b4ee",
+    "tree": "208335f2040d7aac3e5c3b869cadf46b18fb5503",
+    "parent": "6c6ccdd2cecec53db4ec55cef97d63964ea9cee3",
+    "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "tracked_files": 494,
+    "authenticated_blobs": 494,
+    "status_lines": 0,
+    "release_executable": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-261/build/cutechess-cli.exe",
+      "bytes": 2293660,
+      "sha256": "f465025b2ad21526e2cbab2b7da1a231ff3d64f6e8a01a0be5963f525a0bddae"
+    }
+  },
+  "qualified_candidate_join": {
+    "candidate": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-engine-capability-green-247/source/src/stockfish.exe",
+      "bytes": 103068074,
+      "sha256": "aef7a64760c9f4f23cb15b4402130dd6a51c0843a3f8cb00af76e90bb813004b",
+      "source_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+      "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+      "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+    },
+    "legacy_network": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Match script/crazyhouse_run15rl_e190_l03.nnue",
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    },
+    "games": 2,
+    "variant_tags": 2,
+    "draw_results": 2,
+    "acknowledgements": 4,
+    "unique_nonces": 4,
+    "all_acknowledgement_orders_valid": true,
+    "both_engine_stderr_empty": true,
+    "pgn": {
+      "bytes": 904,
+      "sha256": "0522650ee14945cb67eab04b0a36de5aafd73a7ab6bbf37bd27cecd8ace8e1b3"
+    }
+  },
+  "matrix": {
+    "source_manifest": {"files": 494, "authenticated_blobs": 494, "failures": 0},
+    "build": {"configuration": "Release", "jobs": 1, "artifacts": 15, "stderr_bytes": 0, "warning_or_error_diagnostics": 0},
+    "ctest_inventory": 14,
+    "non_grid": {"passed": 13, "failed": 0},
+    "chessboard_full": {"passed": 274, "failed": 1, "skipped": 0, "only_failure": "tst_Board::perft(grid pos2)"},
+    "chessboard_selected_crazyhouse": {"passed": 9, "failed": 0, "skipped": 0},
+    "capability_direct": {"passed": 18, "failed": 0, "skipped": 0, "formula": "15 + 1 + 2 = 18"},
+    "conformance_status": "ok",
+    "ordinary_version_control": "PASS",
+    "all_15_artifacts_stable_after_runtime": true
+  },
+  "closure": {
+    "owned_or_candidate_processes_alive": 0,
+    "recorded_child_processes_alive": 0,
+    "isolated_source_status_lines": 0,
+    "canonical_referee_status_lines": 0,
+    "product_status_lines": 0,
+    "foreign_pid_23580_alive_normal": true,
+    "foreign_processes_signalled_or_reprioritized": false
+  },
+  "historical_closure": {
+    "lease_256_end_receipt_recorded_late": {
+      "path": "../../../receipts/resources/p4-referee-current-qualification-t1-end-256.json",
+      "bytes": 3755,
+      "sha256": "0849ae3250b201cd492e1c88328f356f57be82b36eb176d7f073a86c21ac9d08"
+    },
+    "lease_256_gate_credit": false,
+    "lease_259_gate_credit": false,
+    "lease_260_formal_gate_credit": false
+  },
+  "incident_ledger": {
+    "path": "../../../LESSONS_LEARNED.md",
+    "bytes": 57763,
+    "sha256": "1c4d8a85a460a1afac443074b1d3f96d89a33496ad384cc4a823eff6f5125ea5",
+    "latest_incident": "CH-220"
+  },
+  "gate_decision": {
+    "gate": "G4_CURRENT_REFEREE_FORMAL_QUALIFICATION",
+    "status": "PASS",
+    "scope": "Exact referee commit d25294c1 and exact candidate capability join only.",
+    "next_authorized_work": "Prepare and authenticate the current Fairy-Stockfish comparator and preregister the local same-network paired strength gate."
+  },
+  "receipt_rewrite_allowed": false,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "crazyhouse-legacy-parser-fixture-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-23T07:50:22.1048121Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P5",
+  "gate": "G5",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Admit the immutable lease-243 proof that the exact registered legacy bytes load from an on-disk file named Crazyhouse_v1.nnue and complete the current production Crazyhouse Worker search matrix without fallback.",
+  "preregistered_contract": {
+    "path": "tests/crazyhouse/legacy-parser-v1.addendum.001.json",
+    "commit": "ce3456ba73297ad24a86978423c7edfac86eb16a",
+    "bytes": 6307,
+    "sha256": "b7a4a0d6194dc6d381ca2c67235c08b2b5deb2c1050fc1f422e22aff1522d2b5",
+    "git_blob": "75e85da5073f734983caa7d0bf41c35a9d95cab8"
+  },
+  "evidence": {
+    "start_receipt": {
+      "path": "../../../receipts/resources/p5-public-alias-current-source-t1-start-243.json",
+      "bytes": 3763,
+      "sha256": "3597f9988eb83eeb424747ed9b75e918f2d0242ba8571226f92d1a411c674b44"
+    },
+    "end_receipt": {
+      "path": "../../../receipts/resources/p5-public-alias-current-source-t1-end-243.json",
+      "bytes": 6264,
+      "sha256": "61ed2c20ffd47315d6a0ec0cd8094bb07b0d45ece2d99ed00736bcdae3c86688"
+    },
+    "private_green_record": {
+      "path": "../../../receipts/private/p5-public-alias-current-source-green-record-162.json",
+      "bytes": 4003,
+      "sha256": "1c07e3b54c62f425378bf4443232efa8a9f1c6bd92197ef55ea051b2ef00c092"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p5-public-alias-current-source-243/completion.json",
+      "bytes": 6113,
+      "sha256": "ed9a9617c60fbfa0529e48167deac6cbe75ca21b61e2cacba45b6d4ea6ae192e"
+    }
+  },
+  "validated_source": {
+    "clean_build_commit": "f3c470280c231b433383c64ae1897a67b9ac04bd",
+    "clean_build_tree": "483726407c6e154b07a82bb6b7967c327b7f7787",
+    "product_src_tree": "4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "engine_bytes": 103064599,
+    "engine_sha256": "831470300476aaa8501d9bd7e698176b238ca7bb47c98b898a8f023251ba5c22",
+    "verifier_sha256": "0bf13e4fbe42385c5157bf9263cf400b49fb4b4392e9a9d39f9471fbd4652cbc"
+  },
+  "alias_identity": {
+    "basename": "Crazyhouse_v1.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "registered_source_bytes": 58534811,
+    "registered_source_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "byte_identical": true,
+    "license_spdx": "CC0-1.0",
+    "alias_changes_source_default": false,
+    "alias_changes_champion_identity": false
+  },
+  "runtime_admission": {
+    "runs": 2,
+    "result_each": "PASS_CONSERVATIVE_SEARCH_POLICY_GREEN",
+    "runtime_status_each": "PASS_SPECIAL_STATE_SEARCH_MATRIX",
+    "special_state_cases_each": 10,
+    "profile_each": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "backend_each": "legacy-v1",
+    "evaluator_each": "incremental-scalar",
+    "identity_each": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "semantic_projection_sha256": "389b84525d6b18e26798f2fd6b66f60b76c6b02a8ee9c30e0cafe4038ee7a2fe",
+    "semantic_projections_equal": true,
+    "fallback_observed": false,
+    "timeouts": 0,
+    "nonzero_exits": 0,
+    "stderr_bytes_total": 0,
+    "owned_residual_processes": 0,
+    "foreign_processes_mutated": false,
+    "disk_floors_preserved": true
+  },
+  "result": "PASS_CURRENT_SOURCE_PUBLIC_ALIAS_WORKER_RUNTIME",
+  "gate_effect": "The alias-specific positive-load boundary of G5 is PASS. Whole-gate closure still requires an explicit reconciliation against the preexisting negative-load, numeric, incremental, sanitizer and SIMD evidence.",
+  "claim_boundary": "E1 file-alias and current Worker-route correctness only. This lease artifact is not a release asset and provides no timing, Elo, OpenBench, model-selection, packaging-reproducibility, release or monitoring evidence.",
+  "stopping_rule": "The eventual release export must independently materialize and reauthenticate the byte-identical alias. Any changed network bytes, source tree or route reopens this boundary. Corrections must be additive and hash-pinned."
+}

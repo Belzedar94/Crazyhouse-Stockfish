@@ -1,0 +1,92 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-decoder-scalar-result/v1",
+  "created_utc": "2026-08-24T07:22:49.4239697Z",
+  "status": "PASS_LOCAL_CHECKPOINT_ONLY_WITH_SANITIZER_TOOLCHAIN_GAP",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "preregistration": [
+    {"path": "tests/crazyhouse/p12-nnue-v2-decoder-scalar-v1.json", "commit": "08d75cc60b7d1d75d7d95616300414794dadabf8", "bytes": 3547, "sha256": "40595818d916166c504592194bf86662b02cd71f1755e6b1245a58aca3c9601f"},
+    {"path": "tests/crazyhouse/p12-nnue-v2-decoder-scalar-v1.addendum.001.json", "commit": "aa307106bddd6e09acf2f38ecf86afdb42722717", "bytes": 1391, "sha256": "7f223ca4516ea16ee7d9594accdead6e6570658a645565c0a40af7244b69cbd4"},
+    {"path": "tests/crazyhouse/p12-nnue-v2-decoder-scalar-v1.addendum.002.json", "commit": "eaccc9b2511df328cd6556cb7bebbc60723ccac7", "implementation_pinned_before_formal_run": true}
+  ],
+  "implementation": {
+    "commit": "1a455429ddd9d39060db2b914f93c898558b0391",
+    "tree": "a563788c45dec014f4355b97e9202be227af9ad6",
+    "src_tree": "958e5fa2707e60147884f43ed1bfe1c7f29ca230",
+    "normal_engine_links_v2": false
+  },
+  "formal_lease": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-decoder-scalar-formal-294",
+    "completion": {"path": "completion.json", "bytes": 4851, "sha256": "e3ab1753acda0cd22fb2ca301981035a681e117e8b294107e155a782d2a5b864"},
+    "sanitizer_gap": {"path": "artifacts/sanitizer-toolchain-gap.json", "bytes": 2079, "sha256": "71a279efa6d4583657daa3ff7f8d3e495cc3402ab30d1c09ad961f3f98d5869f"},
+    "source_archive": {"bytes": 5969920, "sha256": "7604a0306e938bad6f685d7efa0b178db8a0ffd2e530f6174bd6ad900c97dece"},
+    "source_manifest": {"files": 435, "bytes": 50169, "sha256": "6e1ceb57a2a232b8a00512c9fe15dab7607f46142896b1c72ce0b75582199e26"},
+    "three_source_exports_match": true
+  },
+  "accepted_evidence": {
+    "release_build": "PASS",
+    "debug_assertion_build": "PASS",
+    "release_debug_protocol_byte_equal": true,
+    "valid_records": 47,
+    "frozen_physical_goldens": 42,
+    "perspective_feature_lists": 94,
+    "named_fail_closed_mutations": 26,
+    "feature_dimensions": 902,
+    "maximum_active": 138,
+    "protocol_sha256": "de9a61c9f0233d4c33cdca60d9a846c31686a444e56a45fc4bea4b035843d605",
+    "decoded_record_equals_live_position": true,
+    "pockets_have_distinct_exact_count_rows": true,
+    "promoted_provenance_has_distinct_rows": true,
+    "rank_reflection_color_swap_parity": true,
+    "wrong_ruleset_fails_closed": true
+  },
+  "normal_engine_control": {
+    "artifact_bytes": 63050751,
+    "artifact_sha256": "3c25a8e70e73aca70ea386ed97824276f256cbccb71c25e11f5f284737a8c33f",
+    "legacy_network_bytes": 58534811,
+    "legacy_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "route_backend": "legacy-v1",
+    "bench_nodes": 113485,
+    "v2_string_hits": 0,
+    "status": "PASS_LEGACY_V1_REMAINS_PRODUCTIVE_DEFAULT"
+  },
+  "sanitizer": {
+    "status": "NO_CREDIT_TOOLCHAIN_RUNTIME_UNAVAILABLE",
+    "mingw_translation_units_compiled": true,
+    "mingw_link_exit": 2,
+    "mingw_missing": "libsanitizer.spec",
+    "clang_version_probe_exit": -1073741511,
+    "wsl_probe_admitted": false,
+    "incident": "CH-263",
+    "implementation_defect_observed": false
+  },
+  "gate_effect": {
+    "g12_status": "OPEN",
+    "checkpoint_credit": "PHYSICAL_DECODER_AND_SCALAR_RELEASE_DEBUG_ONLY",
+    "remaining": [
+      "complete sanitizer runtime execution",
+      "owned quantized container and adversarial parser",
+      "independent trainer decoder and integer layer parity",
+      "SIMD equals scalar",
+      "incremental equals full across make, undo, null, drop, capture and promotion",
+      "deterministic authenticated resume",
+      "legacy control through the new datapath"
+    ]
+  },
+  "scientific_boundary": {
+    "training_data_created": false,
+    "training_authorized": false,
+    "golden_records_training_admissible": false,
+    "openbench_used": false,
+    "strength_claimed": false,
+    "model_selected": false,
+    "g12_closed": false,
+    "release_claimed": false
+  },
+  "next_safe_action": "Preregister and implement the Crazyhouse-owned quantized container plus an independent trainer-side decoder against this frozen 902-row inventory; keep the sanitizer debt open for a complete admitted runtime."
+}

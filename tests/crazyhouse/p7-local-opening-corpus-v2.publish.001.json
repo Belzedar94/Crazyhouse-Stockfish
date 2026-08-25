@@ -1,0 +1,88 @@
+{
+  "schema": "crazyhouse-p7-local-opening-corpus-publication/v1",
+  "created_utc": "2026-08-23T20:44:40.9530591Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING_ARTIFACT_PUBLICATION",
+  "qualification_result": {
+    "path": "tests/crazyhouse/p7-local-opening-corpus-v2.result.001.json",
+    "bytes": 5580,
+    "sha256": "9243d25d6c85990b058e93ab8e1e5e8e86b7f092c73de210b0ee6d9c1bcb884a",
+    "git_blob": "71b2c1e28b01f0272d740280dfce748a7b35e6a0",
+    "result": "PASS_LOCAL_OPENING_CORPUS_V2_QUALIFICATION_WITH_ADDITIVE_RESOURCE_ACCOUNTING_CORRECTION"
+  },
+  "publication_commit": {
+    "commit": "7b5fd0381ea649d9f1d392ad6c9d1b95eb044328",
+    "tree": "fcbe7738d9328da32d70f44044ab1360efecad47",
+    "commit_time": "2026-08-23T22:44:26+02:00",
+    "branch": "engineering/capability-handshake-v1",
+    "remote_push_claim": false
+  },
+  "artifacts": {
+    "book": {
+      "path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.epd",
+      "bytes": 100204,
+      "sha256": "a8976a380a6cc4b3a1a6aae3bf14249b2ab6d1bac6cf4a2715625d7c01747603",
+      "git_blob": "b815827b98ee9de7612de74225671c0d561edee4",
+      "qualified_lease_exact": true,
+      "rows": 1024,
+      "encoding": "US-ASCII",
+      "line_endings": "LF"
+    },
+    "trajectories": {
+      "path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.trajectories.jsonl",
+      "bytes": 1107568,
+      "sha256": "be24d4ecf561e79c63b584cba3673d0108ef8f77e32c58297a67e19c6ae8d06d",
+      "git_blob": "76125887531b98e3207ae33544d3d56bbe33557b",
+      "qualified_lease_exact": true,
+      "records": 1024,
+      "encoding": "UTF-8",
+      "line_endings": "LF"
+    },
+    "manifest": {
+      "path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.manifest.json",
+      "bytes": 4706,
+      "sha256": "5dae74427029e0a15379f09febecaf5db84009047896405a0aeb6043943c25ac",
+      "git_blob": "0c2a9d2581eed75ac1a729732f3f63097a059110",
+      "qualified_lease_exact": true,
+      "schema": "crazyhouse-local-gate-opening-corpus/v2",
+      "artifact_id": "CH-LOCAL-GATE-OPENINGS-V2"
+    }
+  },
+  "validation": {
+    "all_targets_absent_before_successful_generation": true,
+    "bom_forbidden": "PASS",
+    "cr_bytes_forbidden": "PASS",
+    "jsonl_parse": "1024/1024 PASS",
+    "manifest_output_hashes": "PASS",
+    "git_filtered_blob_equals_no_filter_blob": true,
+    "gitattributes": "text=auto eol=lf",
+    "lease_275_byte_equality": true
+  },
+  "incident": {
+    "id": "CH-236",
+    "first_attempt": "REJECTED_OUTPUT_PARENT_ABSENT",
+    "first_attempt_artifacts_created": 0,
+    "correction": "Create only tests/crazyhouse/data, reassert all three file targets are absent, and generate once from the exact pinned implementation.",
+    "qualified_bytes_changed": false
+  },
+  "license": {
+    "generated_data_spdx": "CC0-1.0",
+    "reference_source_spdx": "GPL-3.0-or-later",
+    "reference_source_license_unchanged": true
+  },
+  "result": "PASS_COMMITTED_EXACT_QUALIFIED_CORPUS",
+  "local_repository_publication": true,
+  "remote_repository_publication": false,
+  "eligible_for_local_panel_preregistration": true,
+  "local_strength_panel_authorized_to_run": false,
+  "openbench_authorized": false,
+  "next_safe_action": "Freeze the adapter-overhead diagnostic and equal-time panel contract against these exact Git blobs; run timing-sensitive work only on a timing-clean host.",
+  "scientific_boundary": {
+    "timing_evidence": false,
+    "elo_claim": false,
+    "strength_claim": false,
+    "openbench_claim": false,
+    "release_claim": false
+  }
+}

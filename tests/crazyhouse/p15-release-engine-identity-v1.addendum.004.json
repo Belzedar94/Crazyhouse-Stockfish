@@ -1,0 +1,99 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-formal-failure/v1",
+  "created_utc": "2026-08-24T23:19:20.0834388Z",
+  "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.003.json",
+    "bytes": 4877,
+    "sha256": "c5b3351cb00b016e99001539a45a6114978370663e96262db5d6cd7e739ff424"
+  },
+  "lease": 352,
+  "source": {
+    "commit": "e9a88e73ab17f6c6f5950ffb5cecda7c3bf047e7",
+    "tree": "ef27fb96ccdf1c47a85b8b5252df6fc67045791e",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 571
+  },
+  "observation": {
+    "export": 1,
+    "profile": "python-normal",
+    "elapsed_ms": 3484,
+    "returncode": 2,
+    "timed_out": false,
+    "stdout": {
+      "bytes": 116,
+      "sha256": "1e896e012c9715dbfe6b84559e19e39916784f093c663be4a1522a73f7435f4f"
+    },
+    "stderr": {
+      "bytes": 430,
+      "sha256": "a180768c65f6857886fe2dddcaceb9f1633d6b00356dfdbdc3490cf7f07a37c6"
+    },
+    "failed_operation": "git clone --no-hardlinks <clean-export-root> <fixture-repository>",
+    "root_cause": "The harness assumed that its source root was a Git worktree. A git-archive clean export is intentionally Git-free and therefore cannot supply the ancestry objects needed by synthetic tag fixtures.",
+    "harness_cases_executed": 0,
+    "verifier_verdict": "NOT_EXECUTED",
+    "compiler_failure": false,
+    "engine_failure": false,
+    "host_outage": false
+  },
+  "source_archive": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-release-engine-identity-formal-352/source-1.tar",
+    "bytes": 7536640,
+    "sha256": "7bd25e684bdb1bd605e6b0edbc0a489d2b7cef18d8c61fca5a01e23fba8f1e9f"
+  },
+  "failure": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-release-engine-identity-formal-352/failure.json",
+    "bytes": 1093,
+    "sha256": "36390ad8bb41eb0cab36ad7fa4b3578a5449ce5f602ff1aac98c143fcb1902aa"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-release-engine-identity-formal-t1-end-352.json",
+    "bytes": 3213,
+    "sha256": "07d968b3f39d6db75b13db30e82a6aa7ce9d7aaec32d26fb9ea772c872ee4bf0"
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 580,
+    "namespace_bytes": 14609180,
+    "namespace_ceiling_bytes": 268435456,
+    "owned_processes_remaining": 0,
+    "profile_scratch_entries": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_stage": "WAITING_HOST_TIMING_CLEAN",
+    "p7_foreign_count": 3,
+    "p7_crazyhouse_count": 0
+  },
+  "incident": "CH-316",
+  "correction_boundary": "Permit one explicit, hash-pinned, local Git fixture authority for ancestry-only synthetic setup when the tested source is a Git-free clean export. The verifier, fixture mutations, case counts, stable identity rules and public-mutation boundary must remain unchanged. A fresh diagnostic preregistration and lease are required before any formal replay.",
+  "effect": "Lease 352 is rejected and immutable. It grants no synthetic-tooling, runtime, package, strength, OpenBench, draft, tag, G15, G16 or release credit.",
+  "boundaries": {
+    "formal_executed": true,
+    "formal_passed": false,
+    "synthetic_identity_tooling_qualified": false,
+    "stable_runtime_identity_authenticated": false,
+    "full_engine_builds_executed": false,
+    "final_p14_panel_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

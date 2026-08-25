@@ -1,0 +1,98 @@
+{
+  "schema": "crazyhouse-p16-monitoring-formal-result/v1",
+  "created_utc": "2026-08-24T21:56:16.1133940Z",
+  "status": "PASS_SYNTHETIC_MONITOR_QUALIFICATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p16-monitoring-rollback-v1.addendum.003.json",
+    "bytes": 5006,
+    "sha256": "ed7a74135a5c03448268917ec05389ea8033a4564e35f6a2e5bacd8797a30cb5"
+  },
+  "lease": 350,
+  "source": {
+    "commit": "84bf9ff287d8cac7d82a0ba551565b070e152fa3",
+    "tree": "82193eff207050dd6f14d32c2b811f4e77b91e42",
+    "src_tree": "9d769751748870c6b1e7af21dfa1ea12040fc2a4",
+    "implementation_commit": "bea2a26cbdb8171de0243ab39a7a9b7184bffec2",
+    "implementation_tree": "a30a246ff805037f68be9209b853417e95b117c5",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 560
+  },
+  "archives": {
+    "replicas": 2,
+    "bytes_each": 7434240,
+    "sha256": "8f8314b0dc3145b8de3723ef923aa8ac41183265e2978489cf8ec80926cdaf5d",
+    "byte_identical": true
+  },
+  "matrix": {
+    "clean_exports": 2,
+    "harness_executions": 4,
+    "make_routed_normal_executions": 2,
+    "direct_optimized_executions": 2,
+    "positive_cases_per_execution": 6,
+    "negative_cases_per_execution": 40,
+    "total_positive_case_executions": 24,
+    "total_negative_case_executions": 160,
+    "exact_summary_occurrences": 4,
+    "all_stderr_empty": true,
+    "timeouts": 0,
+    "compiler_linker_engine_or_bytecode_artifacts": 0,
+    "terminal_child_audit_pass": true,
+    "real_publication": false
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p16-monitoring-formal-350/completion.json",
+    "bytes": 9778,
+    "sha256": "76d7bcbbeba8947b209dae45ee9fefd24dabce499700dbf7996fef4d22ff211d"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p16-monitoring-formal-t1-end-350.json",
+    "bytes": 4947,
+    "sha256": "0a59395ffb0046f8932cc490c61883b3b864a306b7928222c26d02a705126641"
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 1139,
+    "namespace_bytes": 28829520,
+    "namespace_ceiling_bytes": 536870912,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_alive": true,
+    "p7_stage": "WAITING_HOST_TIMING_CLEAN",
+    "p7_foreign_count": 3
+  },
+  "ci": {
+    "workflow_path": ".github/workflows/crazyhouse-correctness.yml",
+    "workflow_bytes": 16081,
+    "workflow_sha256": "44d4ffd2914b1127203c92daf74f66a4a73c8ef572a849fa822397c3f5c49228",
+    "yaml_syntax_local_pass": true,
+    "public_ci_executed": false,
+    "queued_or_cancelled_treated_as_green": false
+  },
+  "effect": "Qualifies the synthetic checkpoint creator and independent hash-chain verifier for P16, including schedule, owners, exact asset and native-verifier composition, runtime and issue ingestion, critical-signal rollback state, canonical JSON and forty fail-closed mutants.",
+  "boundaries": {
+    "synthetic_monitor_qualified": true,
+    "real_release_monitored": false,
+    "public_ci_green": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

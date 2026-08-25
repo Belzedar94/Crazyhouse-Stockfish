@@ -1,0 +1,199 @@
+{
+  "schema": "crazyhouse-p15-development-engine-identity-runtime-result/v1",
+  "created_utc": "2026-08-25T01:17:25Z",
+  "status": "PASS_DEVELOPMENT_ENGINE_IDENTITY_RUNTIME",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "source": {
+    "commit": "614c40ad92defe53c4542a91a00f02f144e53176",
+    "tree": "f0d1e29cd62e234b2cddfc5ea4b0a748c69a88cb",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "p7_candidate_ancestor": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "identity_implementation_ancestor": "4c515136488ce0c17bf4ff47a68bf1142b9e8768",
+    "clean_before_and_after": true
+  },
+  "contracts": {
+    "base": {
+      "path": "tests/crazyhouse/p15-development-engine-identity-runtime-v1.json",
+      "bytes": 10385,
+      "sha256": "1fb8ed2269185be2dc044f5120010b067fe72d6d40635c8c027fca170c6b2f4a"
+    },
+    "pre_execution_correction": {
+      "path": "tests/crazyhouse/p15-development-engine-identity-runtime-v1.addendum.001.json",
+      "bytes": 4171,
+      "sha256": "a9af800c2222bba4950d51edecb1da3c049fa1cf55a3ffbba0c6ee44be18f0b7"
+    },
+    "fresh_replay_correction": {
+      "path": "tests/crazyhouse/p15-development-engine-identity-runtime-v1.addendum.002.json",
+      "bytes": 7018,
+      "sha256": "3928d8cbba00e396d728f643dbb9975461866f9a41cd9901e2fa5a2c89fef546"
+    }
+  },
+  "formal_history": {
+    "lease_356": {
+      "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+      "incident": "CH-322",
+      "build_returncode": 0,
+      "build_stderr_bytes": 0,
+      "engine_sha256": "e36798c69d3d79964aba5a55cbf3910311ec74a543c5a48bbfba1881fcc305c5",
+      "failed_step": "development-source-verifier",
+      "failed_step_returncode": 2,
+      "cause": "Mixed --development-source with release-only --output; UCI and capability were not executed.",
+      "end_receipt": {
+        "path": "../../../receipts/resources/p15-development-identity-runtime-t1-end-356.json",
+        "bytes": 5021,
+        "sha256": "c5ba98c839a0f9561d4747d5227463ca388c68b78440cc55abf9c8bcd4f2751a"
+      },
+      "formal_runtime_credit": false,
+      "namespace_reused": false
+    },
+    "lease_357": {
+      "status": "PASS_DEVELOPMENT_ENGINE_IDENTITY_RUNTIME",
+      "target": "D:/Crazyhouse-Stockfish/leases/p15-development-identity-runtime-357",
+      "completion": {
+        "bytes": 36725,
+        "sha256": "e8c8d859f6a1f10c56cd1f09c9b7843f5218ae0bb9991ceec9a311f7756e0a52"
+      },
+      "end_receipt": {
+        "path": "../../../receipts/resources/p15-development-identity-runtime-t1-end-357.json",
+        "bytes": 7173,
+        "sha256": "6b531af7ce2b8013aee4707213ea738a40508b582fe56a3bf494212eeb8f08e7"
+      },
+      "independent_verification": {
+        "path": "../../../receipts/verification/p15-development-identity-runtime-independent-357.json",
+        "bytes": 1958,
+        "sha256": "88510c059df5c50c7fadb298fcb2ca270e97e4a444d7ff33ba42ee532c31d1ae",
+        "result": "INDEPENDENT_DEVELOPMENT_IDENTITY_RUNTIME_OK"
+      }
+    }
+  },
+  "clean_export": {
+    "count": 1,
+    "tracked_files_authenticated": 592,
+    "mismatches": 0,
+    "source_archive_bytes": 7628800,
+    "source_archive_sha256": "ad6e9abc2581d46900a71a4386cfbb3b117e92637777e832e945e165cfe386d6",
+    "source_manifest_bytes": 161927,
+    "source_manifest_sha256": "76fcad5dedbf4882f281b39371b54fed20664a491a2b3c50aa186dc5ffce592a"
+  },
+  "build": {
+    "target": "windows-x86-64-avx2",
+    "architecture": "x86-64-avx2",
+    "compiler": "MinGW GCC 16.1.0",
+    "linker": "GNU Binutils 2.45",
+    "threads": 1,
+    "priority": "BelowNormal",
+    "warning_strict": true,
+    "mingw_reproducible": true,
+    "returncode": 0,
+    "timed_out": false,
+    "elapsed_ms": 296062,
+    "stderr_bytes": 0,
+    "engine": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p15-development-identity-runtime-357/source/src/stockfish.exe",
+      "bytes": 103072105,
+      "sha256": "e36798c69d3d79964aba5a55cbf3910311ec74a543c5a48bbfba1881fcc305c5",
+      "pe_coff_timestamp": 0
+    },
+    "two_export_reproducibility_claim": false,
+    "stable_build_claim": false
+  },
+  "development_source": {
+    "returncode": 0,
+    "stderr_bytes": 0,
+    "stdout_bytes": 102,
+    "stdout_sha256": "1023dba4b1b29722a8ccfda2607d4770fb7e41c7b8c2e497583aebfac8afae00",
+    "parsed": {
+      "stable": false,
+      "status": "PASS_DEVELOPMENT_ENGINE_IDENTITY_SOURCE",
+      "version": "dev"
+    }
+  },
+  "uci_identity": {
+    "startup_line": "Crazyhouse-Stockfish dev-20260825-nogit by the Crazyhouse-Stockfish developers (see AUTHORS file)",
+    "id_name": "id name Crazyhouse-Stockfish dev-20260825-nogit",
+    "id_author": "id author the Crazyhouse-Stockfish developers (see AUTHORS file)",
+    "uciok_count": 1,
+    "legacy_stockfish_only_identity_lines": 0,
+    "option_lines": 24,
+    "option_inventory": {
+      "framing": "UTF-8, one LF byte after every exact option line including the last",
+      "bytes": 1451,
+      "sha256": "dad1204b3bf1cf1ce4e509964812e27bf238dd03c5fbdf2aeb45b3387c2c2c74"
+    },
+    "stdout_bytes": 1698,
+    "stdout_sha256": "a49471089323714409637a536381ec149da7663afac8550fff4711d62eb44c85",
+    "stderr_bytes": 0
+  },
+  "derived_digest_correction": {
+    "incident": "CH-323",
+    "base_preregistration_value": "9b4c3b172aeef57e9f7f0b4e8737f6bd71f314db5d2bd4cf497907bb7e3fa03b",
+    "base_payload_framing_observed": "two literal bytes 0x5c 0x6e after each line",
+    "base_payload_bytes": 1475,
+    "correct_payload_framing": "one byte 0x0a after each line",
+    "correct_payload_bytes": 1451,
+    "correct_sha256": "dad1204b3bf1cf1ce4e509964812e27bf238dd03c5fbdf2aeb45b3387c2c2c74",
+    "exact_line_inventory_was_pinned_before_go": true,
+    "exact_line_inventory_changed": false,
+    "runtime_result_used_to_select_lines": false,
+    "formal_effect": "The derived checksum field is corrected additively; exact line equality was enforced by both pre-GO pinned programs and independently recomputed."
+  },
+  "crazyhouse_capability": {
+    "returncode": 0,
+    "timed_out": false,
+    "stderr_bytes": 0,
+    "summary_bytes": 4679,
+    "summary_sha256": "b3f5cfbd26b949e441aa30f4d1f05490512dccfadee888f56fad3b643467926f",
+    "passed": true,
+    "failures": [],
+    "case_ids": [
+      "inventory",
+      "positive-route-bound",
+      "one-shot-readiness",
+      "invalid-uppercase-nonce",
+      "missing-network",
+      "standard-control"
+    ],
+    "legacy_network_bytes": 58534811,
+    "legacy_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "route_backend": "legacy-v1",
+    "route_evaluator": "incremental-scalar",
+    "same_exact_legacy_network_as_p7": true
+  },
+  "process_and_resource_audit": {
+    "owned_process_identities_observed": 75,
+    "owned_processes_surviving": 0,
+    "p7_preserved": true,
+    "p7_pid": 44764,
+    "p7_name_via_psutil": "python.exe",
+    "p7_priority_numeric": "32",
+    "p7_created_utc": "2026-08-23T23:36:35.419836+00:00",
+    "foreign_processes_mutated": false,
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench_calls": 0
+  },
+  "pass_effect": {
+    "implementation_executed": true,
+    "full_development_engine_build_executed_for_identity": true,
+    "development_runtime_identity_authenticated": true,
+    "legacy_crazyhouse_route_authenticated": true,
+    "stable_runtime_authenticated": false,
+    "p7_candidate_unchanged": true,
+    "p7_strength_credit_changed": false,
+    "strength_claim": false,
+    "timing_evidence": false,
+    "two_export_reproducibility_claim": false,
+    "release_candidate_selected": false,
+    "openbench_authorized": false,
+    "public_write_authorized": false,
+    "G14": "UNCHANGED_OPEN",
+    "G15": "UNCHANGED_OPEN",
+    "G16": "UNCHANGED_OPEN"
+  },
+  "next_safe_action": "Keep P7 waiting for the timing-clean host. Use this development runtime only as an E1 release-foundation input; stable 1.0.0 identity, exact-candidate P14, two-export target builds and G15 remain deferred until strength selection."
+}

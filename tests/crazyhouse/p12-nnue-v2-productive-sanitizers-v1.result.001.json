@@ -1,0 +1,180 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-result/v1",
+  "created_utc": "2026-08-24T15:40:27.009Z",
+  "status": "PASS_PRODUCTIVE_SANITIZERS_FORMAL",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "contracts": [
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.json",
+      "commit": "c77b66249c9b44ce635171014a4e26ce7e96fcb9",
+      "bytes": 10588,
+      "sha256": "3e569fd73e95253890679fd9c2a59d36fb95a3df2be151bd5cef3b6710011ce3"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.007.json",
+      "commit": "1f5525e2cc5bd512ee7da7fbf36ea91a343a9b33",
+      "bytes": 3828,
+      "sha256": "58c33470e35a55aa265faf735051f4b6f4636b4d354ac218ff9685a6f71114c1",
+      "note": "The addendum is the hash-pinned tip of the immutable correction chain."
+    }
+  ],
+  "source": {
+    "implementation_commit": "c9aa1b02e72d7264f2efbb8feac1559f7fb16f92",
+    "formal_source_commit": "1f5525e2cc5bd512ee7da7fbf36ea91a343a9b33",
+    "formal_source_tree": "289d8b4e5495870d7bd6f7096cabc731b1056b94",
+    "formal_src_tree": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true
+  },
+  "accepted_formal_lease": {
+    "lease": 327,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-327",
+    "start_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-start-327.json",
+      "bytes": 6486,
+      "sha256": "0f16a0c290b25a18495c0e98cd4f0efe51cd39a2f4a122a1618cc5b82c1730a1"
+    },
+    "controller_preflight": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-start-327.preflight.001.json",
+      "bytes": 3448,
+      "sha256": "388333f3ce4d4b718367c634192e73b7a982d91abbebd489899873fdf60c9411"
+    },
+    "pid_binding": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-start-327.addendum.001.json",
+      "bytes": 4104,
+      "sha256": "62ae5ebbae45355e3087218e94383ff94b88078aa0d1d2235f5e57499fd3699a"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-327/completion.json",
+      "bytes": 62231,
+      "sha256": "ff81ba985ff7cd1b47f550ad333173ce86a45c431b48c6dff6c3f0408096594d"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-end-327.json",
+      "bytes": 5769,
+      "sha256": "6d718180dd5ab2fcaf69a2fedeae333cbc7da460d7211b28bcbe6101bbafd356"
+    },
+    "controller_exit": 0
+  },
+  "clean_exports": {
+    "count": 2,
+    "archive_bytes_each": 6574080,
+    "archive_sha256": "42448c27b6d4f9bcc30d2d1370e3f2bec42d34eb74a5763a6c87cddb34cdf92c",
+    "archives_byte_equal": true,
+    "tracked_files_each": 488,
+    "every_embedded_path_byte_sha256_pin_authenticated": true,
+    "embedded_pins_checked": 174,
+    "embedded_pin_mismatches": 0
+  },
+  "asan_matrix": {
+    "runtime_sha256": "2babc2a4298d128c8abc33efc7f3b70611246010059ef343d72f096d8ae24ff3",
+    "safe_control_exit_zero": true,
+    "heap_overflow_positive_exit": 3,
+    "heap_overflow_diagnostic_authenticated": true,
+    "control_stack_reserve_bytes": 8388608,
+    "scalar_stack_reserve_bytes": 8388608,
+    "incremental_stack_reserve_bytes": 8388608,
+    "warning_free_links": true,
+    "scalar": {
+      "verification_json_bytes": 22308,
+      "verification_json_sha256": "178683357cdb4eed254ff6144625dc9a6e7ef8dd9ed6c1c83f9d25409b6725da",
+      "parser_negatives": 62,
+      "exporter_negatives": 19,
+      "resume_negatives": 16
+    },
+    "simd": {
+      "verification_json_bytes": 1654,
+      "verification_json_sha256": "e3109131e8952bf9c032f8b3ad945e16440015c7f538201987f36e00bee8b044",
+      "evaluations": 3696,
+      "trace_values": 8049888
+    },
+    "incremental": {
+      "verification_json_bytes": 1852,
+      "verification_json_sha256": "480fa09e7cf0c0627bbc985dbce15e13fd3e12be89e19c1f873d433fb31173da",
+      "cases": 13,
+      "evaluations": 98,
+      "trace_values": 426888,
+      "operation_negatives": 10,
+      "evaluation_negatives": 4
+    }
+  },
+  "ubsan_trap_matrix": {
+    "safe_control_exit_zero": true,
+    "positive_control_exit": -1073741795,
+    "positive_trap_authenticated": true,
+    "scalar_trap_count": 5568,
+    "incremental_trap_count": 75698,
+    "scalar_verifier_exit_zero": true,
+    "simd_verifier_exit_zero": true,
+    "incremental_verifier_exit_zero": true,
+    "scalar_result_byte_equal_to_asan": true,
+    "simd_result_byte_equal_to_asan": true,
+    "incremental_result_byte_equal_to_asan": true
+  },
+  "execution_audit": {
+    "steps": 31,
+    "timeouts": 0,
+    "protocol_failures": 0,
+    "unexpected_nonzero_exits": 0,
+    "expected_positive_control_nonzero_exits": 2,
+    "cpu_threads": 1,
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "ports": 0,
+    "namespace_bytes": 848219341,
+    "namespace_ceiling_bytes": 4294967296,
+    "owned_processes_remaining": 0,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_supervisor_unchanged": true
+  },
+  "rejected_predecessor_credit": {
+    "leases": [
+      321,
+      322,
+      323,
+      324,
+      325,
+      326
+    ],
+    "formal_sanitizer_credit": false,
+    "incidents": [
+      "CH-292",
+      "CH-293",
+      "CH-294",
+      "CH-295",
+      "CH-296",
+      "CH-297"
+    ],
+    "note": "Only the fresh complete lease 327 receives sanitizer credit."
+  },
+  "gate_effect": {
+    "sanitizer_productive_proven": "PASS",
+    "productive_scalar_container_integer_inference": "PRESERVED_PASS",
+    "productive_simd_transformer_scalar_parity": "PRESERVED_PASS",
+    "productive_incremental_full_refresh_parity": "PRESERVED_PASS",
+    "legacy_v1_default": "PRESERVED",
+    "g12": "OPEN",
+    "remaining": [
+      "legacy control through the new productive V2 datapath",
+      "production-admissible data and training"
+    ]
+  },
+  "boundaries": {
+    "training_admissible": false,
+    "production_training_authorized": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "sanitizer_productive_proven": true,
+    "g12_closed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

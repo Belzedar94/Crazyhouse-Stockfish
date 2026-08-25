@@ -1,0 +1,137 @@
+{
+  "schema": "crazyhouse-p15-mingw-release-reproducibility-preregistration/v1",
+  "created_utc": "2026-08-24T18:37:32.9885286Z",
+  "status": "PREREGISTERED_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "hypothesis": "An explicit fail-closed Windows-only MinGW reproducibility mode can force zero PE timestamps and byte-identical repeated links without changing ordinary builds or the frozen playing candidate.",
+  "single_variable": "source-visible propagation and validation of -Wl,--no-insert-timestamp for opted-in Windows links",
+  "base": {
+    "commit": "827acc5f4e21b49b0937cdb8838641f25b6a3532",
+    "tree": "fab809f1b1a162a423b0edbe8adb25c35c1adc75",
+    "src_tree": "36fa1995e984899db1b42fcce3e18c6b419fc49e",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean": true,
+    "makefile": {
+      "path": "src/Makefile",
+      "bytes": 60724,
+      "sha256": "be12eb7c011748f3cf4407e51aed9d5b1f7a612d5062b7f327ed943b8f825c56"
+    }
+  },
+  "observed_defect": {
+    "current_makefile_mode_present": false,
+    "current_makefile_no_insert_timestamp_present": false,
+    "qualified_p7_candidate": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-engine-capability-green-247/source/src/stockfish.exe",
+      "bytes": 103068074,
+      "sha256": "aef7a64760c9f4f23cb15b4402130dd6a51c0843a3f8cb00af76e90bb813004b",
+      "arch": "x86-64-avx2",
+      "pe_timestamp": 1787474874
+    },
+    "claim": "The product lacks an explicit R4 build mode; this does not invalidate its correctness or pending P7 strength use."
+  },
+  "toolchain_observation": {
+    "compiler": {
+      "path": "C:/msys64/mingw64/bin/g++.exe",
+      "version": "16.1.0",
+      "dumpmachine": "x86_64-w64-mingw32",
+      "bytes": 3312964,
+      "sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb"
+    },
+    "linker": {
+      "path": "C:/msys64/mingw64/bin/ld.exe",
+      "version": "GNU Binutils 2.45",
+      "bytes": 1935014,
+      "sha256": "8f68b5189a1a66058be0fb0c773e0b33bcc0cc7c9f02607c5fe817879212848a",
+      "no_insert_timestamp_option_observed": true
+    },
+    "make": {
+      "path": "C:/msys64/usr/bin/make.exe",
+      "version": "4.4.1",
+      "bytes": 229856,
+      "sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22"
+    },
+    "python": {
+      "path": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+      "version": "3.12.0",
+      "zlib_version": "1.2.13",
+      "bytes": 103192,
+      "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"
+    }
+  },
+  "rejected_source_lineage": {
+    "historical_commit": "f44bd6add3a6a95ca702c92b6f14e1b8a46c6858",
+    "historical_commit_is_current_ancestor": false,
+    "historical_branch_role": "incident-history method only",
+    "cherry_pick_allowed": false,
+    "fairy_source_ancestry_allowed": false
+  },
+  "expected_red": {
+    "make_target": "crazyhouse_mingw_reproducibility_probe",
+    "required_observation": "No rule to make target",
+    "compiler_children": 0,
+    "formal_credit": false,
+    "clean_export_required": true,
+    "fresh_resource_lease_required": true
+  },
+  "implementation_contract": {
+    "make_variable": "mingw_reproducible",
+    "allowed_values": ["no", "yes"],
+    "default": "no",
+    "enabled_target_requirement": "target_windows=yes",
+    "enabled_linker_flag": "-Wl,--no-insert-timestamp",
+    "enabled_linker_flag_exact_count": 1,
+    "config_sanity_display_required": true,
+    "invalid_value_fails_before_compilation": true,
+    "non_windows_enabled_fails_before_compilation": true,
+    "probe_target": "crazyhouse_mingw_reproducibility_probe",
+    "independent_verifier": "tests/crazyhouse_mingw_reproducibility_verify.py",
+    "ordinary_build_default_unchanged": true
+  },
+  "formal_fixture_matrix": {
+    "two_clean_exports": true,
+    "profiles": ["python-normal", "python-optimized"],
+    "architectures": ["x86-64", "x86-64-avx2"],
+    "make_enabled_probe": true,
+    "make_disabled_probe": true,
+    "make_invalid_value_negative": true,
+    "make_non_windows_negative": true,
+    "tiny_link_replays_per_architecture": 2,
+    "pe_timestamp_required": 0,
+    "same_architecture_executables_byte_equal": true,
+    "cross_profile_normalized_result_byte_equal": true,
+    "full_engine_build_required_for_this_fixture": false,
+    "full_engine_and_archive_reproducibility_deferred_to_exact_r4_candidate": true
+  },
+  "resource_boundary": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "ports": 0,
+    "future_formal_namespace_ceiling_bytes": 268435456,
+    "foreign_processes_must_not_be_mutated": true,
+    "p7_autopilot_pid_44764_must_not_be_mutated": true
+  },
+  "stopping_rule": "Stop at the first source, target, toolchain, option-routing, diagnostic, PE-header, byte-replay, clean-export, process or resource failure. Preserve the namespace and retry only through a hash-pinned additive correction.",
+  "pass_effect": "Qualify only the explicit MinGW reproducibility plumbing and tiny-link verifier. Full target builds, archives, runtime smoke, candidate identity, target matrix, SBOM, draft, G15, stable publication and monitoring remain open.",
+  "boundaries": {
+    "implementation_started": false,
+    "release_build_mode_qualified": false,
+    "full_engine_reproducible": false,
+    "archive_reproducible": false,
+    "target_matrix_frozen": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

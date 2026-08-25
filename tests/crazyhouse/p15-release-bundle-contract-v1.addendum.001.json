@@ -1,0 +1,60 @@
+{
+  "schema": "crazyhouse-p15-release-bundle-contract-addendum/v1",
+  "created_utc": "2026-08-24T19:34:02Z",
+  "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_contract": {
+    "path": "tests/crazyhouse/p15-release-bundle-contract-v1.json",
+    "bytes": 7953,
+    "sha256": "8f179d4051129b0a2452e8a26af9947bc5d38475f1b06d93862518a563a548f6"
+  },
+  "lease": 340,
+  "source": {
+    "commit": "2c56b451c06c96175dede579985a7c88a49ba341",
+    "tree": "81f8bd8f5b689ea65a78a7586df0fad99a3910f6",
+    "src_tree": "15e5245b0910bbb5ffa79b3bb67943b8bff24803",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true
+  },
+  "observation": {
+    "make_target": "crazyhouse_release_bundle_contract_test",
+    "exit_code": 2,
+    "exact_stderr": "make: *** No rule to make target 'crazyhouse_release_bundle_contract_test'.  Stop.",
+    "stdout_bytes": 0,
+    "implementation_paths_present": 0,
+    "compiler_or_interpreter_artifacts": 0,
+    "tracked_files": 527
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-release-bundle-expected-red-340/completion.json",
+    "bytes": 4377,
+    "sha256": "4b60821661e965703713f82ad853c7e6a5c588c44cfbdb36d67339385078c257"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-release-bundle-expected-red-t1-end-340.json",
+    "bytes": 3017,
+    "sha256": "b8ac69a538d66f5e00dffd2cbfd95084c1830ff1c6e1f19a3d9239f9101a77d4"
+  },
+  "effect": "The release bundle contract has a causal clean-export expected-red. Tooling implementation may begin on a new commit. No fixture, engine, archive, candidate, strength, OpenBench, draft, tag or release credit is granted.",
+  "boundaries": {
+    "expected_red_proven": true,
+    "implementation_started": false,
+    "fixture_tooling_qualified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}
+

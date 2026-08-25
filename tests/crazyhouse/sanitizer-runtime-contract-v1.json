@@ -1,0 +1,108 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract/v1",
+  "contract_id": "CRAZYHOUSE-OFFICIAL-STOCKFISH-SANITIZER-RUNTIME-V1",
+  "created_utc": "2026-08-22T23:18:09.2319581Z",
+  "evidence_class": "E1_ENGINEERING",
+  "phase_gates": ["P3/G3", "P5/G5"],
+  "source_baseline": {
+    "commit": "4e53ff466b18505b6fd6289d60c3da73b68afdd0",
+    "tree": "256d07b52d9ca68ec3ae7b524659697942f06d7d",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false,
+    "allowed_fixture_only_descendants": [
+      "tests/crazyhouse_asan_control.cpp",
+      "tests/crazyhouse/sanitizer-runtime-contract-v1.json"
+    ]
+  },
+  "external_artifacts": {
+    "legacy_network": {
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    },
+    "official_network": {
+      "bytes": 98511183,
+      "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2"
+    },
+    "official_comparator": {
+      "bytes": 102861732,
+      "sha256": "401294d34f4003de2ebdc9bd9831c3bd2a49cb6451a7e5d2f64a8a1afc4cb793"
+    }
+  },
+  "pinned_test_inputs": {
+    "tests/crazyhouse_asan_control.cpp": "b8553536df7a71c46092f0fd6b2ce929336d3050203d127e2c1e857ec2663a77",
+    "tests/crazyhouse_ubsan_control.cpp": "d946ed527d3b2d06979ccba91ef37a86479bf194547dfb9d32e27b6a64bd79cc",
+    "tests/crazyhouse_legacy_incremental.cpp": "b75d723cb9bf097883d648a85a2e0b97a47bf2691fc8ac143fcdccbd847e81bf",
+    "tests/crazyhouse_legacy_incremental_verify.py": "cd0b3df1f15bd06b843e6fce8a4ab3eee84e72c7c39e2656293f381f50a2b605",
+    "tests/crazyhouse/legacy-incremental-cases-v1.json": "ba18990faaadcb4fe92b87f8396441f249cf31c1cc6bc98d8912af0a04aa841b",
+    "tests/crazyhouse/legacy-incremental-cases-v1.addendum.001.json": "784fffe5ba8f0121a567bb8de8bba8fd5f6a31ea6fd26dc0c8f9210b17b527bf",
+    "tests/crazyhouse_worker_search_verify.py": "68ffb7ed81325239091f8db251e60b6da5b74eec520d5236ec1e5adc9f47f659",
+    "tests/crazyhouse/worker-search-contract-v1.json": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59",
+    "tests/crazyhouse/worker-search-contract-v1.addendum.002.json": "fd0f2c182504cfc67d1ae647ba90b149d1de2451b188132ca78d6761de3c11f6",
+    "tests/crazyhouse_uci_routing_verify.py": "0e2ba3b42162b4a638d03e9ab642decf22517e40e5ad973f22107272f97d10d7",
+    "tests/crazyhouse/routing-contract-v1.json": "f98828dcf79211bc8f547b1562cea2f282adc71669256383309ba43f85b69dfd",
+    "tests/crazyhouse/routing-contract-v1.addendum.001.json": "569ef378350be65fddac2a2897f30fd7587eed2fc88e6cc6728fc1bab8f67fd6",
+    "tests/crazyhouse/routing-contract-v1.addendum.004.json": "9afdf33f3f4f0a0756700e63ea608d11e1ba3ec5c70fee918919c980cb03cd07",
+    "tests/crazyhouse_upstream_sync_control.py": "51ff1c0acd44d5e98976f0a6204f83b805642374495c0233f47a03c5fcd3f082",
+    "tests/crazyhouse/upstream-sync-standard-control-v1.json": "06d7e4d5236df4dd7147b68c8d07ce04250fbd7ca9e9237b041316a53e806f02"
+  },
+  "toolchains": {
+    "msvc_asan": {
+      "compiler": "MSVC 19.44.35215 x64",
+      "compiler_sha256": "a9a3a13e4d019cfc0a9d823b3ee0cc383c6f3f86b00f861ac066032d869997e5",
+      "linker_sha256": "f5950d9bd30d14a003747dd5359fc53b5c852a2271c5ea5855e4ae44ba5b86c1",
+      "environment_script_sha256": "c004278e64444bf3524360f960511b5ce7b1d0306910f08a4ebcf1c42ff9bd6d",
+      "runtime_name": "clang_rt.asan_dynamic-x86_64.dll",
+      "runtime_bytes": 1190432,
+      "runtime_sha256": "2babc2a4298d128c8abc33efc7f3b70611246010059ef343d72f096d8ae24ff3",
+      "required_flags": ["/std:c++17", "/Od", "/Zi", "/fsanitize=address", "/W4", "/WX", "/DIS_64BIT"],
+      "asan_options": "halt_on_error=1:abort_on_error=1:detect_leaks=0"
+    },
+    "gcc_ubsan_trap": {
+      "compiler": "g++.exe (Rev5, Built by MSYS2 project) 16.1.0",
+      "compiler_sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb",
+      "objdump": "GNU objdump 2.45",
+      "objdump_sha256": "2d4746ee2402b2d77342e87a1597a82a4dc58e218cfcd372ae5cf799f82c0029",
+      "make": "GNU Make 4.4.1",
+      "make_sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22",
+      "required_flags": ["-O0", "-g3", "-fsanitize=undefined", "-fsanitize-undefined-trap-on-error", "-Werror"],
+      "runtime_library_required": false
+    }
+  },
+  "matrix": {
+    "independent_clean_exports": ["msvc_asan", "gcc_ubsan_trap"],
+    "address_lane": {
+      "builds": ["full production engine", "legacy incremental oracle", "ASan control"],
+      "safe_control": "PASS crazyhouse_asan_control safe_path=PASS positive_control=SEPARATE",
+      "positive_control_argument": "--heap-overflow",
+      "positive_control_requirements": ["nonzero exit", "nonempty stderr", "ERROR: AddressSanitizer: heap-buffer-overflow", "no FAIL marker"],
+      "runtime_replays": ["incremental oracle twice", "Worker contract/addendum 002", "routing contract/addenda 001 and 004", "exact upstream standard control"]
+    },
+    "undefined_lane": {
+      "builds": ["full production engine", "legacy incremental oracle", "UBSan trap control"],
+      "safe_control": "PASS crazyhouse_ubsan_control safe_path=PASS positive_control=SEPARATE",
+      "positive_control_argument": "--signed-overflow",
+      "positive_control_requirements": ["nonzero exit", "no FAIL marker", "instrumented control disassembly contains a trap instruction"],
+      "runtime_replays": ["incremental oracle twice", "Worker contract/addendum 002", "routing contract/addenda 001 and 004"]
+    }
+  },
+  "expected_protocols": {
+    "incremental_protocol_sha256": "55d5e699a0e294cba06705af38688611eaca38aea79c4265a068cef0b1a8b9d3",
+    "incremental_trace_digest": "ccc566b7c58a917a",
+    "worker": "PASS crazyhouse_worker_search cases=2 runs=4 backend=legacy-v1 evaluator=incremental-scalar route_telemetry=PASS worker_binding=PASS strength_claim=false",
+    "routing": "PASS crazyhouse_uci_routing scenarios=11 markers=32 protocol_sha256=aef709f821942c38b1437d6c9647cb7ca69a83642a6cf10c4843b80d2efb505f crazyhouse_search=BOUND_LEGACY_V1_INCREMENTAL_SCALAR_AUTHENTICATED chess_control=PASS",
+    "standard_signature_sha256": "28ec174ed2f5dd775ec50e4c6bf8de360d66c3693c90a9ac877edadf4caa255e"
+  },
+  "resource_contract": {
+    "cpu_threads": 1,
+    "priority": "BelowNormal",
+    "gpu": "forbidden",
+    "openbench": false,
+    "network": false,
+    "timing_sensitive": false,
+    "minimum_c_free_bytes": 5368709120,
+    "minimum_d_free_bytes": 1099511627776
+  },
+  "stopping_rule": "No source edit or same-namespace retry after GO. Stop on any tool identity drift, compile/link failure, missing instrumentation, safe-path diagnostic, positive-control mismatch, verifier mismatch, unexpected stderr, external artifact drift, process-ownership ambiguity or low-space boundary.",
+  "admission": "PASS requires compile, link and authenticated runtime evidence in both lanes. Object instrumentation or accepted flags alone are insufficient.",
+  "claim_boundary": "This contract can admit sanitizer correctness for the exact scalar incremental Worker route only. It cannot admit SIMD parity, speed, timing, Elo, OpenBench, model selection, release or monitoring evidence."
+}

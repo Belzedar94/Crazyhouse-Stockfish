@@ -1,0 +1,130 @@
+{
+  "schema": "crazyhouse-release-workflow-guard-formal-result/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE",
+  "created_utc": "2026-08-25T01:43:00Z",
+  "status": "PASS_RELEASE_WORKFLOW_GUARD_FORMAL",
+  "tested_source": {
+    "commit": "79e17bfb70afb5d01c69e6f9c42f8bb5f49935e1",
+    "tree": "0748142c0b3f4e9652c6d32e92c8c8011193b3f3",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "clean_before_and_after": true
+  },
+  "lineage": {
+    "contract": {
+      "path": "tests/crazyhouse/p15-release-workflow-guard-v1.json",
+      "bytes": 3653,
+      "sha256": "14702b3cd16a840e0db255db133e0cfcf1fc2536e2ce2f29374e3ecea245d857"
+    },
+    "expected_red": {
+      "path": "tests/crazyhouse/p15-release-workflow-guard-v1.addendum.001.json",
+      "bytes": 2275,
+      "sha256": "9c850367a5c8c4ba3cc2997bab3c2049c95564b57f8c20d262ca57ba6f6bad30"
+    },
+    "formal_preregistration": {
+      "path": "tests/crazyhouse/p15-release-workflow-guard-v1.addendum.002.json",
+      "bytes": 4823,
+      "sha256": "f31cd048763a2c8959d9c806493f61edf42b9ba5550f127f887d5e21e0346f5c"
+    },
+    "pre_execution_correction": {
+      "path": "tests/crazyhouse/p15-release-workflow-guard-v1.addendum.003.json",
+      "bytes": 2104,
+      "sha256": "eaf984c6f0e83fdcd4548abf5766d71600461763d052125329625a53e95aa1a7",
+      "incident": "CH-325"
+    }
+  },
+  "formal_lease": {
+    "id": 358,
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-release-workflow-guard-358",
+    "completion": {
+      "bytes": 8970,
+      "sha256": "676d989cb754a60cb90daa3d97267415a7daa6734c16f3c92134afcf30b57dd8"
+    },
+    "start_receipt": {
+      "path": "../../../receipts/resources/p15-release-workflow-guard-t1-start-358.json",
+      "project_relative_path": "receipts/resources/p15-release-workflow-guard-t1-start-358.json",
+      "bytes": 2859,
+      "sha256": "c2d4e6a8357a4560122efe104e9ddfa1535b1bd3d40de7a593e82e9b5e997f4a"
+    },
+    "end_receipt": {
+      "path": "../../../receipts/resources/p15-release-workflow-guard-t1-end-358.json",
+      "project_relative_path": "receipts/resources/p15-release-workflow-guard-t1-end-358.json",
+      "bytes": 4469,
+      "sha256": "c1b40539d564f4dbd5d24a012df9ba26ca3605dd4c0159b91c5e47b71d72b58e"
+    },
+    "independent_verification": {
+      "path": "../../../receipts/verification/p15-release-workflow-guard-independent-358.json",
+      "project_relative_path": "receipts/verification/p15-release-workflow-guard-independent-358.json",
+      "bytes": 765,
+      "sha256": "0bd541f2b1bbb71c967166ce4ed08a7e50e7f4ac71d8cfcd361c234d7f6cab97",
+      "result": "INDEPENDENT_RELEASE_WORKFLOW_GUARD_OK"
+    }
+  },
+  "qualified_artifact": {
+    "path": ".github/workflows/official_release.yml",
+    "bytes": 498,
+    "sha256": "a0fabef4ce5ca8a745af8df861822ad9e45aa8378df3493dda55ca983bea4db7",
+    "contents_permission": "read",
+    "manual_guard_exit": 1,
+    "github_write_operations": 0,
+    "build_jobs": 0,
+    "tag_operations": 0,
+    "release_operations": 0
+  },
+  "matrix": {
+    "clean_exports": 2,
+    "source_archive_bytes_each": 7680000,
+    "source_archive_sha256": "79922940d7d1bb1c2880eea6f2e692eca8c1afd2fb096a4ad08ce520039b199c",
+    "source_archives_byte_identical": true,
+    "tracked_files_per_export": 601,
+    "export_manifest_sha256": "528c68ed9aa2b6d9afaf2d70788ee383e43d75ab8194a6fbc0993957b4587029",
+    "profiles": [
+      "export-a/python-normal",
+      "export-a/python-optimized",
+      "export-b/python-normal",
+      "export-b/python-optimized"
+    ],
+    "verifier_executions": 4,
+    "unit_executions": 4,
+    "unit_tests_per_execution": 9,
+    "forbidden_fragment_mutations_per_execution": 13,
+    "additional_mutation_classes": 7,
+    "verifier_summary_sha256": "3975167b3350b9af349c0a4275613f6fd296da031abfea10956b1b959d7ffef5",
+    "verifier_summaries_byte_identical": true,
+    "all_returncodes_zero": true,
+    "timeouts": 0,
+    "exports_unchanged_after_execution": true
+  },
+  "resource_boundary": {
+    "cpu_threads": 1,
+    "priority": "BelowNormal",
+    "target_bytes": 29753937,
+    "target_ceiling_bytes": 67108864,
+    "owned_supervisor_surviving": false,
+    "p7_pid": 44764,
+    "p7_preserved": true,
+    "foreign_processes_mutated": false,
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "github_calls": 0,
+    "openbench_calls": 0
+  },
+  "pass_effect": {
+    "release_workflow_guard_qualified": true,
+    "inherited_release_path_fail_closed": true,
+    "future_publisher_implemented": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_published": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "public_write_authorized": false,
+    "stable_publication_authorized": false,
+    "G15": "UNCHANGED_OPEN",
+    "G16": "UNCHANGED_OPEN"
+  },
+  "next_safe_action": "Keep P7 waiting for a timing-clean host. Design the future publisher only after exact-candidate and complete-draft evidence are frozen; it must consume the explicit G15 owner decision."
+}

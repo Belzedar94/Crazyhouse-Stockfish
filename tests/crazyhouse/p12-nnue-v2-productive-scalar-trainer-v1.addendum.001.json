@@ -1,0 +1,92 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-scalar-trainer-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-24T09:15:30.6225854Z",
+  "status": "EXPECTED_RED_AUTHENTICATED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Authenticate the dedicated productive V2 target as absent at the frozen preregistration commit before implementation begins. Preserve both operational defects without reusing or rewriting their namespaces.",
+  "pins": {
+    "preregistration": {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-scalar-trainer-v1.json",
+      "bytes": 6076,
+      "sha256": "d521795e18fe51ad561a13deacf217d6e9632caa1ea7071bf9fd966df00e67a5"
+    },
+    "frozen_source": {
+      "commit": "948168228168f91468cf48d5da9dabb98f3cbf66",
+      "tree": "60282bfaafb462e149a4b74ff22903be2824e8b8",
+      "src_tree": "5940f07ad6e0e66af0a91d4eb37337cf63ac9005",
+      "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+    },
+    "rejected_lease_298": {
+      "start_receipt": {
+        "path": "../../../receipts/resources/p12-nnue-v2-productive-expected-red-t1-start-298.json",
+        "bytes": 2651,
+        "sha256": "3a4799dee0f0477043574949d68fd56616261145bf830f9e1a37c4c2717fc0a6"
+      },
+      "start_addendum": {
+        "path": "../../../receipts/resources/p12-nnue-v2-productive-expected-red-t1-start-298.addendum.001.json",
+        "bytes": 1334,
+        "sha256": "08f0cefb94d3dcea44cf6828a8d9b372fe81ec20ce06aa1b093fbb0ce46cb5ec"
+      },
+      "end_receipt": {
+        "path": "../../../receipts/resources/p12-nnue-v2-productive-expected-red-t1-end-298.json",
+        "bytes": 2866,
+        "sha256": "e62edc6227e24b10f8d0d70ed5da6779f0cf314cd5a8b347765a00486366f4d3"
+      },
+      "status": "REJECTED_NON_ADMISSIBLE_TOOLCHAIN_ENVIRONMENT",
+      "credit": false
+    },
+    "accepted_lease_299": {
+      "start_receipt": {
+        "path": "../../../receipts/resources/p12-nnue-v2-productive-expected-red-t1-start-299.json",
+        "bytes": 3898,
+        "sha256": "00cb71c4abc2d0d5cbf12888fa5baf950be0dc1aee99d77b29cbd1657836107d"
+      },
+      "end_receipt": {
+        "path": "../../../receipts/resources/p12-nnue-v2-productive-expected-red-t1-end-299.json",
+        "bytes": 3441,
+        "sha256": "1a50a318759c3ba1f272474312154fbe45a4087267081e561387e1623c69ca11"
+      },
+      "status": "PASS_EXPECTED_RED_ONLY"
+    }
+  },
+  "authenticated_observation": {
+    "target": "crazyhouse_v2_productive_test",
+    "exit_code": 2,
+    "stdout_bytes": 0,
+    "stderr_bytes": 73,
+    "stderr_exact_line": "make: *** No rule to make target 'crazyhouse_v2_productive_test'.  Stop.",
+    "other_errors": 0,
+    "observed_compiler_children": 0,
+    "source_clean_before": true,
+    "source_clean_after": true,
+    "owned_processes_remaining": 0
+  },
+  "incidents": {
+    "CH-266": "Ambient make lookup failed before namespace creation or child launch; corrected by pinning the executable.",
+    "CH-267": "Lease 298 mixed the target absence with missing MSYS utilities and has no credit.",
+    "CH-268": "Lease 299's inline Git postcheck inherited the child PATH; additive postcheck evidence restored source and process postconditions before credit."
+  },
+  "implementation_transition": {
+    "expected_red_credit": true,
+    "implementation_may_begin": true,
+    "required_first_green_target": "crazyhouse_v2_productive_test",
+    "architecture_changes_allowed": false,
+    "quantization_changes_allowed": false,
+    "container_changes_allowed": false,
+    "microfit_recipe_changes_allowed": false,
+    "legacy_default_changes_allowed": false
+  },
+  "boundaries": {
+    "training_started": false,
+    "production_training_authorized": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

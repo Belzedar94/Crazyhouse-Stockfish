@@ -1,0 +1,54 @@
+{
+  "schema": "crazyhouse-p11-local-selfplay-datagen-g0-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T04:49:00Z",
+  "status": "frozen-before-selfplay-build-or-run",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "gate": "G11_LOCAL_PRECONDITION_ONLY",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p11-local-selfplay-datagen-g0-v1.json",
+    "bytes": 6364,
+    "sha256": "f1029ec405ca522bcab782f78d97ca16d54f34cbc6dc6e51db7aef3545849d5c",
+    "commit": "8ffd718a8a3692752bd0efe3f44d17a4b59c2046"
+  },
+  "defect": {
+    "symptom": "The parent preregistration named the frozen G9 codec capability as its challenged capability.",
+    "false_inference_prevented": "A producer authenticated for frozen trajectory replay is therefore authenticated for search-backed self-play.",
+    "cause": "The G9 response does not bind product search, registered network use, OpenBench stdin framing, complete-game generation or the physical-record quota policy.",
+    "observed_after_selfplay_build_or_run": false
+  },
+  "correction": {
+    "kind": "additive-distinct-capability-contract",
+    "legacy_g9_contract_rewritten": false,
+    "legacy_g9_receipt_credit_changed": false,
+    "selfplay_capability_contract": {
+      "path": "tests/crazyhouse/datagen-selfplay-capability-v1.json",
+      "bytes": 4563,
+      "sha256": "482fd210ed4009aaf145c34d44b18fc05f99b11969e69dd9f69d9907204c87dd"
+    },
+    "request": [
+      "--datagen-selfplay-capabilities-v1",
+      "--challenge",
+      "<32-lowercase-hex>"
+    ],
+    "response_schema": "crazyhouse-datagen-selfplay-capability-response/v1",
+    "generation_must_bind_response": true,
+    "legacy_codec_response_substitution": "reject-before-output"
+  },
+  "unchanged": [
+    "official Stockfish ancestry",
+    "Crazyhouse rule profile",
+    "crazyhouse-physical-v1 bytes",
+    "registered legacy network bytes",
+    "two-root G0 book",
+    "four-record exact target",
+    "depth-one search",
+    "single-thread envelope",
+    "normal-engine isolation",
+    "OpenBench authorization remains false"
+  ],
+  "stopping_rule": "Authenticate both capability contracts independently, require search-backed generation to bind only the new response, and require frozen G9 replay to remain byte-identical with its old response. Any substitution, drift, extra output or fallback fails before output.",
+  "claim_boundary": "This addendum repairs capability identity only. It does not close G11, authorize an OpenBench workload, admit the canary for training, establish strength or support release."
+}

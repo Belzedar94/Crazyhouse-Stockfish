@@ -1,0 +1,90 @@
+{
+  "schema": "crazyhouse-worker-search-routing-addendum/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-22T22:31:09.6690998Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Replay the immutable transactional UCI routing corpus after the production Worker binding changes from the historically admitted legacy-v1 scalar full-refresh evaluator to the separately certified legacy-v1 scalar incremental evaluator.",
+  "pins": {
+    "routing_contract_v1": {
+      "path": "tests/crazyhouse/routing-contract-v1.json",
+      "bytes": 6646,
+      "sha256": "f98828dcf79211bc8f547b1562cea2f282adc71669256383309ba43f85b69dfd"
+    },
+    "routing_addendum_001": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.001.json",
+      "bytes": 4023,
+      "sha256": "569ef378350be65fddac2a2897f30fd7587eed2fc88e6cc6728fc1bab8f67fd6"
+    },
+    "routing_addendum_002": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.002.json",
+      "bytes": 3257,
+      "sha256": "725a4abc353e1567e79e49d69cf0520f1412b0bd6c844f0789b982f4f7a1243f"
+    },
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "worker_search_addendum_001": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.001.json",
+      "bytes": 4690,
+      "sha256": "413107394ab2507f478a6c181b891a5250b2541db178202c593d224390bf2c54"
+    },
+    "routing_verifier_before_incremental_support": {
+      "path": "tests/crazyhouse_uci_routing_verify.py",
+      "bytes": 29600,
+      "sha256": "b1989be17e8a6df668359ad03d3c47e8a3e15c458b95fadd38c7496a55c9e15e",
+      "git_blob": "9043822248493a75abca165419b89131f014d5ba"
+    },
+    "incremental_scalar_parity_gate_record": {
+      "path": "../../../receipts/private/p5-legacy-incremental-green-gate-record-124.json",
+      "bytes": 2590,
+      "sha256": "7278da1bd1112e9c176a8a92efa9330ea8832bb68188d79fc4eb7ee2bd8a9e75"
+    }
+  },
+  "implementation": {
+    "commit": "eb13ec473b6e5339ec914e6de36c0c640fb05b1b",
+    "tree": "43ee5becef2122f3eac7dfdc268ef945923c6c75",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "single_variable_transition": {
+    "variable": "Crazyhouse production Worker evaluator mode",
+    "from": {
+      "crazyhouse_search": "BOUND_LEGACY_V1_FULL_REFRESH",
+      "routing_addendum": 2
+    },
+    "to": {
+      "crazyhouse_search": "BOUND_LEGACY_V1_INCREMENTAL_SCALAR",
+      "required_ruleset": "crazyhouse",
+      "required_profile": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "required_backend": "legacy-v1",
+      "required_backend_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "required_worker_addendum": 1,
+      "fallback_allowed": false,
+      "incremental_scalar_claim": true,
+      "simd_claim": false
+    }
+  },
+  "replayed_scenario": {
+    "id": "crazyhouse_rule_route_and_command_refusals",
+    "unchanged_perft": "go perft 1 from Crazyhouse startpos must return 20 nodes",
+    "changed_evaluator_mode_only": true,
+    "go_command": "go depth 1",
+    "expected_bestmove_set_source": "STARTPOS_DEPTH_1 from the pinned base Worker contract",
+    "remaining_scenario_count": 10,
+    "remaining_scenario_semantics": "unchanged",
+    "expected_marker_count": 32,
+    "expected_protocol_sha256": "9828804516bb0629cede024403c79ae69e2b9fc3985b9e5bba0e81bf3012120e"
+  },
+  "unchanged_command_refusals": {
+    "eval": "crazyhouse_eval_not_bound",
+    "bench": "crazyhouse_bench_not_bound",
+    "speedtest": "crazyhouse_speedtest_not_bound",
+    "export_net": "crazyhouse_export_net_not_bound"
+  },
+  "stopping_rule": "Run all 11 routing scenarios once from the same freshly exported and source-authenticated binary used by the incremental Worker replay. Require the exact historical 32-marker protocol digest, a legal bounded depth-1 Crazyhouse bestmove, all four non-search refusal codes, and the exact official standard-chess control. Any mismatch rejects this integration slice; no source, fixture or expected digest is edited inside the lease.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

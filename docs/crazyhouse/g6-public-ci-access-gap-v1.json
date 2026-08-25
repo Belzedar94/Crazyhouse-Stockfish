@@ -1,0 +1,110 @@
+{
+  "schema": "crazyhouse-g6-public-ci-access-gap/v1",
+  "project": "Crazyhouse-Stockfish",
+  "evidence_class": "E1_ENGINEERING",
+  "observed_utc": "2026-08-23T22:48:51.2207633Z",
+  "repository": {
+    "commit": "5fc3a39a76fc917785eee752ac773ce3008ac849",
+    "tree": "38538ddc4a0a03f80a2a4549150f69452d2bf85a",
+    "src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "dirty_before_observation": false,
+    "source_modified_by_observation": false
+  },
+  "remote": {
+    "name": "origin",
+    "sanitized_url": "https://github.com/Belzedar94/Crazyhouse-Stockfish.git",
+    "github_cli_repository_query": "HTTP_404_REPOSITORY_NOT_RESOLVED",
+    "git_ls_remote": "REPOSITORY_NOT_FOUND",
+    "classification": "MISSING_ACCESS_OR_REPOSITORY_ABSENT_HTTP_404",
+    "repository_absence_proven": false,
+    "public_visibility_proven": false,
+    "external_writes_performed": false,
+    "stable_publication_authorized": false
+  },
+  "workflow_inventory": {
+    "count": 14,
+    "crazyhouse_mentions": 0,
+    "classification": "INHERITED_STOCKFISH_WORKFLOWS_NOT_CRAZYHOUSE_CORRECTNESS_CI",
+    "files": [
+      {
+        "path": ".github/workflows/arm_compilation.yml",
+        "bytes": 3295,
+        "sha256": "682f0906349e285a3ef8f7d139ec76945bd01f3c4d89d7b64c9b9754e4c00433"
+      },
+      {
+        "path": ".github/workflows/avx2_compilers.yml",
+        "bytes": 3610,
+        "sha256": "4cdb192369f249a9c8c8e63555a8380597a2507ad896aaa60b4273430c582d22"
+      },
+      {
+        "path": ".github/workflows/clang-format.yml",
+        "bytes": 2267,
+        "sha256": "4230ccd6352d504e6fd15ad2e1fbe4615b56b9fd6dff852b614764a96b8ddbd7"
+      },
+      {
+        "path": ".github/workflows/codeql.yml",
+        "bytes": 2166,
+        "sha256": "ad3e3805708a08be8246ba4c5af6c81b8adbbd2d313575f0ada77c1097161435"
+      },
+      {
+        "path": ".github/workflows/games.yml",
+        "bytes": 1591,
+        "sha256": "57897a631ffa7aac9aca507b3c5583629ac3135efd821e3f83a2e210a28ad97b"
+      },
+      {
+        "path": ".github/workflows/iwyu.yml",
+        "bytes": 1674,
+        "sha256": "ba5822e2d779dc3a6146e80c813fc5a1371eceadcb66c3fe5c230b6d42de6028"
+      },
+      {
+        "path": ".github/workflows/matetrack.yml",
+        "bytes": 6160,
+        "sha256": "69d77f5525ec29bab66b1cb8962121885df5c33c96785b41ff706a9b3cf04a43"
+      },
+      {
+        "path": ".github/workflows/official_release.yml",
+        "bytes": 4448,
+        "sha256": "c3ecf4b40096d8b0f3af8555ffc0f261a783322105676759f97d2a366676a2ac"
+      },
+      {
+        "path": ".github/workflows/sanitizers.yml",
+        "bytes": 2834,
+        "sha256": "fbad4ffe2bbf74d78909f2314de7814e4d0a441145c07905d90d598d9c81b3aa"
+      },
+      {
+        "path": ".github/workflows/stockfish.yml",
+        "bytes": 7774,
+        "sha256": "471b340fcb9b84338d0252076a7f8fc1ac008fdef85b412be3563e62816f3d88"
+      },
+      {
+        "path": ".github/workflows/tests.yml",
+        "bytes": 13416,
+        "sha256": "187c135c55eb9c4093e83fdb817c366e99006fd4dc13a7191765f9af7da849a9"
+      },
+      {
+        "path": ".github/workflows/universal_compilation.yml",
+        "bytes": 11383,
+        "sha256": "303f53e79ea8d93d6f75b7b5b8c41bd77d18dbd01b949f016c1c852ed3ff11c1"
+      },
+      {
+        "path": ".github/workflows/upload_binaries.yml",
+        "bytes": 2746,
+        "sha256": "a380b1c10dd453ea349ccf27f47276d4a74d1b4004f6077925d6b21f05505454"
+      },
+      {
+        "path": ".github/workflows/wasm_compilation.yml",
+        "bytes": 1708,
+        "sha256": "aecf8617c834e2e2799567f8498502c5408e6e47cab7c277ab08734543a2ab66"
+      }
+    ]
+  },
+  "gate_effect": {
+    "g6_status": "OPEN",
+    "queued_or_cancelled_counts_as_pass": false,
+    "public_completed_success_evidence": false,
+    "artifact_authentication_evidence": false,
+    "strength_claim": false,
+    "openbench_claim": false,
+    "next_safe_action": "Prepare Crazyhouse-specific correctness CI locally without changing the frozen candidate, then request the owner decision needed to create or recover the public repository before any push."
+  }
+}

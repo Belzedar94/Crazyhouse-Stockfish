@@ -1,0 +1,91 @@
+{
+  "schema": "crazyhouse-g3-multipv-contract-addendum/v1",
+  "addendum": 5,
+  "created_utc": "2026-08-23T07:07:29.2204013Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Require a bounded current-product-source MultiPV protocol regression replay before whole-G3 reconciliation because the later conservative search change shares src/search.cpp with the admitted MultiPV implementation.",
+  "pins": {
+    "admitted_multipv_addendum_004": {
+      "path": "tests/crazyhouse/g3-multipv-contract-v1.addendum.004.json",
+      "bytes": 3066,
+      "sha256": "b532e0b1ffafbc4a86e48662049a50bb5dd4a86a9d640d8ae53609077882b57f",
+      "git_blob": "6e5e87be8d15aaa191bd2da396eebec4a4972b6b"
+    },
+    "admitted_multipv_gate_record": {
+      "path": "../../../receipts/private/p3-multipv-green-gate-record-152.json",
+      "bytes": 5409,
+      "sha256": "d9697e80a91a31197ba86ac7e17140cb782887186bb86f315b33a583ad070522"
+    },
+    "current_verifier": {
+      "path": "tests/crazyhouse_multipv_verify.py",
+      "bytes": 20044,
+      "sha256": "543802dd46defa7b2333dbabbb0004a21b0506adaf28c98f038fb8bc3550abc0",
+      "git_blob": "8583d606b6dfb96f434cdb6f4dd0e008032156a9"
+    },
+    "fixture": {
+      "path": "tests/crazyhouse/max-moves-303.json",
+      "bytes": 4541,
+      "sha256": "3c77de3377d66feecdffd37459e31a1824424b3833a39e2272b4202d1c312e38",
+      "git_blob": "2b8af94ccfeffcb81cd472bb0b2edd6183af672c"
+    },
+    "base_contract": {
+      "path": "tests/crazyhouse/g3-multipv-contract-v1.json",
+      "bytes": 4329,
+      "sha256": "f2779ae3a3e313bc89d639833a1ae96a6b2b787d55852908d4fa20c976a03ddb",
+      "git_blob": "9cdb690238e25532a28162d527c44ccd1e6cb731"
+    },
+    "current_product_build": {
+      "lease": 238,
+      "source_commit": "f3c470280c231b433383c64ae1897a67b9ac04bd",
+      "source_tree": "483726407c6e154b07a82bb6b7967c327b7f7787",
+      "product_src_tree": "4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+      "engine_bytes": 103064599,
+      "engine_sha256": "831470300476aaa8501d9bd7e698176b238ca7bb47c98b898a8f023251ba5c22",
+      "warning_strict": true,
+      "authenticated_source_blobs": 275
+    }
+  },
+  "affected_source_assessment": {
+    "multipv_behavior_commit": "51ff97d0108dfaa516853ed671d80471ec823290",
+    "conservative_search_behavior_commit": "5d1bee77ac96b3fe95fa28717d428693b56297c1",
+    "shared_file": "src/search.cpp",
+    "later_change_touches_multipv_loop_lines": false,
+    "later_change_can_change_search_results": true,
+    "decision": "Replay the full frozen protocol verifier on the exact later product binary rather than infer noninterference from the diff."
+  },
+  "replay_boundary": {
+    "lease": 241,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p3-current-source-multipv-replay-241",
+    "engine": "D:/Crazyhouse-Stockfish/leases/p3-conservative-search-green-238/source/src/stockfish.exe",
+    "engine_rebuild": false,
+    "engine_identity_must_match": "831470300476aaa8501d9bd7e698176b238ca7bb47c98b898a8f023251ba5c22",
+    "current_repository_src_tree_must_match": "4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+    "mode": "green",
+    "required_result": "PASS_CRAZYHOUSE_MULTIPV_PROTOCOL_BOUNDARY",
+    "required_known_303_indices_complete": true,
+    "required_known_303_move_digest": "9e45d177d1a599c1ca3a517b223a70115c0a51e69af72acd0534483f378616e0",
+    "required_startpos_dynamic_clamp": 20,
+    "required_searchmoves_dynamic_clamp": 2,
+    "required_invalid_chess_search_pvs": 2,
+    "required_zero_recovery_pvs": 2,
+    "required_stderr_bytes": 0,
+    "fallback_allowed": false
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "priority": "BelowNormal",
+    "gpu": "forbidden",
+    "workers": false,
+    "openbench": false,
+    "network": false,
+    "timing_sensitive": false,
+    "minimum_c_free_bytes": 5368709120,
+    "minimum_d_free_bytes": 1099511627776
+  },
+  "stopping_rule": "Run once in fresh lease 241 after authenticating this addendum, the verifier, fixture, base contract, exact engine, legacy network and official network. Reject on identity drift, repository product-src drift, nonzero exit, stderr, timeout, fallback, incomplete protocol predicates, residual owned process, foreign-process mutation or crossed disk floor. Do not extend after observing output.",
+  "claim_boundary": "This is a current-source E1 protocol regression replay only. It is not timing, Elo, OpenBench, model-selection or release evidence.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

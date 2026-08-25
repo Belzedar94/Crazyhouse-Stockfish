@@ -1,0 +1,54 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum_id": "CRAZYHOUSE-OFFICIAL-STOCKFISH-SANITIZER-RUNTIME-V1-ADDENDUM-004",
+  "created_utc": "2026-08-22T23:56:00Z",
+  "parent": {
+    "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.003.json",
+    "bytes": 1791,
+    "sha256": "551e7a7519f8fd2521d4d712aea007910ca700b78eda7fca54504a0dc4ab6966"
+  },
+  "formal_expected_red": {
+    "lease": 226,
+    "source_commit": "26f7a04d9f81058fecb4cc7de1d00808f4ecf6b3",
+    "end_receipt": {
+      "path": "receipts/resources/p5-sanitizer-runtime-t1-end-226.json",
+      "bytes": 5984,
+      "sha256": "0edf8cf4401c40aaedd3f93a63b7d55a53d38b03d73f0fe638be61e58908f5b5"
+    },
+    "private_rejection_record": {
+      "path": "receipts/private/p5-sanitizer-runtime-rejection-record-131.json",
+      "bytes": 1528,
+      "sha256": "d0c5e9d6a293eafb3cb19f55ba1e1f9023d93e0388cf58b42c000f103586cc76"
+    },
+    "routing_stderr": {
+      "bytes": 340,
+      "sha256": "d3ca4d2318f67674af67fe8a6a45a4f9721ebee01077756078557ad2571f1221"
+    },
+    "expected_code": "legacy_missing_file",
+    "observed_code": "legacy_file_read_failure",
+    "sanitizer_diagnostic": false,
+    "timeout": false,
+    "crash": false
+  },
+  "demonstrated_cause": {
+    "path": "src/nnue/crazyhouse_legacy_network.cpp",
+    "predicate": "load_file compares the filesystem status error_code directly to std::make_error_code(std::errc::no_such_file_or_directory)",
+    "platform_effect": "MSVC reports the missing path through a system-category error_code; direct code/category equality is false even though the portable no_such_file_or_directory condition is equivalent."
+  },
+  "single_source_change": {
+    "path": "src/nnue/crazyhouse_legacy_network.cpp",
+    "pre_change_sha256": "3f9ff68764fd2f19352c9480446bb96af7dc8b1e69c7e0d32ae7a9cb04aee1af",
+    "replace": "error == std::make_error_code(std::errc::no_such_file_or_directory)",
+    "with": "error == std::errc::no_such_file_or_directory",
+    "forbidden_changes": ["other load statuses", "file framing", "network bytes", "evaluation", "search", "routing epochs", "contracts or expected outputs"]
+  },
+  "required_green": {
+    "fresh_lease": 227,
+    "repeat_complete_parent_matrix": true,
+    "msvc_missing_file_code": "legacy_missing_file",
+    "gcc_missing_file_code": "legacy_missing_file",
+    "all_other_routing_markers_unchanged": true,
+    "stop_on_first_failure": true
+  },
+  "claim_boundary": "The correction can admit portable missing-file classification only after the entire ASan and UBSan-trap matrix passes in a fresh namespace. It is not SIMD, timing, Elo, OpenBench or release evidence."
+}

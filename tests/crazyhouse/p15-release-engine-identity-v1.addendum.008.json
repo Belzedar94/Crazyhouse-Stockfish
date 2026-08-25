@@ -1,0 +1,92 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-corrected-formal-failure/v1",
+  "created_utc": "2026-08-24T23:49:02.9745996Z",
+  "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.007.json",
+    "bytes": 5616,
+    "sha256": "1adce6d5b900c7e0e08bf456959f69dc19f51386b9bda630cb683cdede03147b"
+  },
+  "lease": 354,
+  "source": {
+    "commit": "6cc2a9b0dd6f1f410f601bc8cc450fad59facc55",
+    "tree": "8ef87213cb7d454e494c956ad04b6e38407a5574",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 579
+  },
+  "observation": {
+    "export": 1,
+    "profile": "python-normal",
+    "elapsed_ms": 44156,
+    "returncode": 2,
+    "timed_out": false,
+    "stdout_bytes": 116,
+    "stdout_sha256": "1e896e012c9715dbfe6b84559e19e39916784f093c663be4a1522a73f7435f4f",
+    "stderr_bytes": 637,
+    "stderr_sha256": "1d7026e1520b435026a033f56f75346ae585f0f4a8b28bbdc880eafc72b7489a",
+    "failed_fixture": "negative-wrong-project",
+    "root_cause": "The registered formal target and verbose per-profile scratch prefix placed the longest tracked fixture checkout path at 260 characters, where Git for Windows rejected the checkout with Filename too long.",
+    "observed_design_path_characters": 260,
+    "short_scratch_design_path_characters": 190,
+    "completed_fixture_matrices": 0,
+    "verifier_regression": false,
+    "compiler_failure": false,
+    "engine_failure": false,
+    "host_outage": false
+  },
+  "failure": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-release-engine-identity-corrected-formal-354/failure.json",
+    "bytes": 1124,
+    "sha256": "a545ba5b90ef8509b971ddc9dbaf690b4f3567e210819b8076df2af96f387fb8"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-release-engine-identity-corrected-formal-t1-end-354.json",
+    "bytes": 3435,
+    "sha256": "58ffb3ae5f00279a5585bd2755013a1ac21372fe009637526ad592dcbfc2d4e5"
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 588,
+    "namespace_bytes": 14668214,
+    "namespace_ceiling_bytes": 268435456,
+    "owned_processes_remaining": 0,
+    "profile_scratch_entries": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_stage": "WAITING_HOST_TIMING_CLEAN",
+    "p7_foreign_count": 3,
+    "p7_crazyhouse_count": 0
+  },
+  "incident": "CH-318",
+  "correction_boundary": "Keep source, verifier, harness, fixture matrix, Make entrypoint, Git authority, timeouts and formal target unchanged. In a fresh lease only, preregister four dedicated short scratch roots under D:/Crazyhouse-Stockfish/tmp/p15-i355, prove the worst-case designed path is below 240 characters, require each root absent before use and empty after use, and include their combined bytes in the resource ceiling.",
+  "effect": "Lease 354 is rejected and immutable. It grants no formal-tooling, runtime, package, strength, OpenBench, draft, tag, G15, G16 or release credit.",
+  "boundaries": {
+    "formal_executed": true,
+    "formal_passed": false,
+    "synthetic_identity_tooling_qualified": false,
+    "stable_runtime_identity_authenticated": false,
+    "full_engine_builds_executed": false,
+    "final_p14_panel_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "crazyhouse-worker-search-routing-addendum/v1",
+  "addendum": 10,
+  "created_utc": "2026-08-23T04:25:12.2558660Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct only the current-source Worker provenance used by the AVX2 ordinary default-scalar routing control after scoping failed-route refusals. Routing addendum 009 and the exact successful routing protocol digest remain immutable.",
+  "pins": {
+    "routing_addendum_009": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.009.json",
+      "bytes": 3479,
+      "sha256": "4f0a29327b17682ba30cd8a9bf23d83d834f739dd967b7e02e19e85e48bc41df"
+    },
+    "worker_search_addendum_007": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.007.json",
+      "bytes": 5267,
+      "sha256": "e8c5ae2afec63ff4f1f30017334bf5338267b219bdefb91ff7676689802d6b91"
+    },
+    "overbroad_route_rejection_record": {
+      "path": "../../../receipts/private/p5-worker-simd-overbroad-route-barrier-rejection-record-147.json",
+      "bytes": 3150,
+      "sha256": "3698af4bab1e5baff66d71275cbe07e2a2f81d23fecd8331b339a9392e1c89a8"
+    }
+  },
+  "preserved_routing_control": {
+    "addendum": 9,
+    "rewritten": false,
+    "target_arch": "x86-64-avx2",
+    "expected_protocol_sha256": "df375512dda60f4cab1545287197c1b407a3d4f7c0e9f4415e0f36fcb3905d35",
+    "required_route_token": "evaluator=incremental-scalar",
+    "successful_crazyhouse_route_commits": 5,
+    "no_active_route_position_error": "position_requires_committed_route",
+    "routing_expectation_changed": false
+  },
+  "worker_provenance_correction": {
+    "superseded_positive_pin": {
+      "addendum": 6,
+      "status_on_current_source": "FAIL_UCI_SOURCE_PIN_MISMATCH",
+      "search_started": false
+    },
+    "current_positive_pin": {
+      "addendum": 7,
+      "source_descendant_commit": "b6f756a93a8f0ce0ea21afdff5bdbb32c8c428ad",
+      "source_descendant_tree": "d7956e1ee0ca7abb3714e3fae4171ac3493e614f",
+      "changed_source_pin_path": "src/uci.cpp",
+      "target_arch": "x86-64-avx2",
+      "build_selector_supplied": false,
+      "required_route_token": "evaluator=incremental-scalar",
+      "forbidden_route_tokens": ["evaluator=incremental-simd", "simd_backend="],
+      "required_worker_summary": "PASS crazyhouse_worker_search cases=2 runs=4 backend=legacy-v1 evaluator=incremental-scalar route_telemetry=PASS worker_binding=PASS scalar_default_unchanged=true strength_claim=false"
+    }
+  },
+  "formal_replay": {
+    "routing_addendum": 10,
+    "worker_addendum": 7,
+    "same_clean_export_required": true,
+    "backend_make_variable_omitted": true,
+    "failed_route_negative_required": true,
+    "no_active_route_refusal_preserved": true,
+    "exact_standard_control_required": true,
+    "zero_stderr_required": true,
+    "zero_timeout_required": true,
+    "zero_residual_processes_required": true
+  },
+  "expected_red": {
+    "pre_support_required_failure": "worker-search routing addendum number mismatch",
+    "engine_must_not_start": true
+  },
+  "stopping_rule": "Use addendum 010 only with current-source Worker addendum 007 and the unchanged routing protocol inherited through addendum 009. Require both contracts to pass on the same fresh x86-64-avx2 default-scalar export, require the original no-active-route refusal and the general-64 active-failed-route negative, then require exact official standard control. Any source-pin drift, routing digest drift, refusal drift, selector leak, fallback, stderr, crash or timeout rejects the slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

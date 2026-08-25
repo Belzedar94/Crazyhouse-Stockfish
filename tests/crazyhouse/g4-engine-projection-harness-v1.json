@@ -1,0 +1,133 @@
+{
+  "schema": "crazyhouse-g4-engine-projection-harness/v1",
+  "evidence_class": "E1_ENGINEERING_FIXTURE_FIRST",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "source_parent": "796b8cf4af6a0298e8145add4d9b536c42fbd7ab",
+  "implementation_commit_under_test": "834972193eab30707eb5d836b5050b952d3ce60d",
+  "inputs": {
+    "corpus": {
+      "path": "tests/crazyhouse/reference-cases.json",
+      "bytes": 17810,
+      "sha256": "4a00bca20d3b149b5bbe3f4153a4a3ff5a20473126763c2d8125a4ba2d11742e",
+      "cases": 48
+    },
+    "applicability": {
+      "path": "tests/crazyhouse/g4-engine-projection-applicability-v1.json",
+      "bytes": 10011,
+      "sha256": "bc6cc255beada0adb7a8139441debfbb8d4d5d4e9d93c4c8cda2dbb395260c7c"
+    },
+    "capacity": {
+      "path": "tests/crazyhouse/max-moves-303.json",
+      "bytes": 4541,
+      "sha256": "3c77de3377d66feecdffd37459e31a1824424b3833a39e2272b4202d1c312e38",
+      "legal_moves": 303,
+      "drops": 295,
+      "non_drops": 8,
+      "sorted_uci_lf_sha256": "9e45d177d1a599c1ca3a517b223a70115c0a51e69af72acd0534483f378616e0"
+    },
+    "legacy_network": {
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    },
+    "routing_prerequisite": {
+      "receipt": "receipts/resources/p4-engine-profile-routing-t1-end-141.json",
+      "bytes": 8495,
+      "sha256": "1ad8e850317910267e6bbf5e354cae76aa1135f3ac4bd297550b9764f8de17e9",
+      "result": "PASS_EXACT_PROFILE_ROUTING"
+    }
+  },
+  "fixtures": {
+    "direct_source": {
+      "path": "tests/crazyhouse_engine_projection_direct.cpp",
+      "bytes": 12033,
+      "sha256": "a3250b8f0d3e5b9d673902b429e7a8cd145b062247b6d0e269849b619581a442",
+      "protocol": "crazyhouse-engine-direct-projection/v1"
+    },
+    "verifier": {
+      "path": "tests/crazyhouse_engine_projection_verify.py",
+      "bytes": 29752,
+      "sha256": "3942554780b724b873687c74b4749c41df9f0c26e3e468e32ac486c6dc6e7550",
+      "result_schema": "crazyhouse-engine-projection-result/v1"
+    }
+  },
+  "participants": {
+    "direct": {
+      "role": "thin test adapter linked to production Position, MoveList, make/history, repetition, FEN, terminal and perft code",
+      "product_surface": false,
+      "separate_rule_or_result_implementation": false,
+      "normalized_runs": 2,
+      "fields": [
+        "canonical_fen",
+        "turn",
+        "castling_rights",
+        "ep_square",
+        "halfmove_clock",
+        "fullmove_number",
+        "pockets",
+        "promoted_squares",
+        "in_check",
+        "legal_moves",
+        "perft_nodes",
+        "repetition_occurrences",
+        "is_draw_at_ply_1",
+        "automatic_terminal_reason",
+        "automatic_terminal_winner",
+        "automatic_terminal_result"
+      ]
+    },
+    "production_uci": {
+      "role": "exact canonical Makefile product through the existing UCI dispatcher",
+      "new_diagnostic_command": false,
+      "normalized_runs": 2,
+      "fields": [
+        "route_profile_acknowledgement",
+        "canonical_fen",
+        "in_check_from_exact_checkers_line",
+        "legal_moves_from_go_perft_1",
+        "perft_nodes"
+      ],
+      "typed_history_or_result_inference": false
+    }
+  },
+  "shared_fields": ["canonical_fen", "in_check", "legal_moves", "perft_nodes"],
+  "search_refusal_forms": [
+    "go depth 1",
+    "go nodes 1",
+    "go movetime 1",
+    "go infinite",
+    "go ponder wtime 1000 btime 1000"
+  ],
+  "search_refusal_error": "crazyhouse_search_not_bound",
+  "post_refusal_same_position_perft": true,
+  "build": {
+    "compiler": "pinned MinGW g++",
+    "language": "c++17",
+    "warnings": [
+      "-Wall",
+      "-Wcast-qual",
+      "-Wextra",
+      "-Wpedantic",
+      "-Wshadow",
+      "-Wmissing-declarations",
+      "-Werror"
+    ],
+    "direct_modes": ["debug", "release"],
+    "product": "make -C src -j1 build ARCH=x86-64 COMP=gcc",
+    "network_embedding": "off for direct adapter; canonical product receives only the official build-time net"
+  },
+  "fail_closed": [
+    "input hash or case-order drift",
+    "missing duplicate extra or failed case",
+    "participant output mismatch",
+    "root duplicate truncation subtotal or total mismatch",
+    "non-identical normalized repetition",
+    "missing or malformed route acknowledgement",
+    "unexpected warning stderr search info or bestmove",
+    "timeout early EOF or nonzero exit",
+    "repository contamination",
+    "Crazyhouse search activation"
+  ],
+  "first_observation_rule": "Commit this fixture set before building or running it. Do not alter product source, retry, or reinterpret a failure until an immutable first-observation receipt is closed.",
+  "gate_boundary": "A PASS closes only the official-base direct-plus-production-UCI projection slice. It does not certify the real referee, strength, OpenBench or release."
+}

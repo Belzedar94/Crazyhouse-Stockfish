@@ -1,0 +1,128 @@
+{
+  "schema": "crazyhouse-p15-native-package-formal-fixture-preregistration/v1",
+  "created_utc": "2026-08-24T20:48:43.4602923Z",
+  "status": "PREREGISTERED_FORMAL_FIXTURE_REPLAY_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_result": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.006.json",
+    "bytes": 4064,
+    "sha256": "8b11b9f96b8f81c64ae031b1004c2445e4ee2c157f8ed97df35aec7d2024ecdb",
+    "lease": 346,
+    "status": "PASS_DIRTY_SOURCE_DIAGNOSTIC_ONLY"
+  },
+  "implementation": {
+    "commit": "fc759b5efa5c865e4e5e30c17438712d47295d38",
+    "tree": "5b72c3ed696c429f672801650c46e04ca102f088",
+    "src_tree": "fef67c6603c479439c33baaec496115dba293a0c",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "tracked_files": 548,
+    "clean": true
+  },
+  "implementation_pins": [
+    {
+      "path": "src/Makefile",
+      "bytes": 61826,
+      "sha256": "f49c3b889680692923c702f071a3c51cd2bd67702f473d3e44e58339a3a8e092"
+    },
+    {
+      "path": "tools/release/crazyhouse_release_native_package.py",
+      "bytes": 23223,
+      "sha256": "355615ac2419583275c97e7e13a38bc26693b08cecd545b88e9fa3736f79fb87"
+    },
+    {
+      "path": "tools/release/verify_crazyhouse_native_package.py",
+      "bytes": 25590,
+      "sha256": "63fc4afde5322f9410d7aa489832160c795ec73130cf0122b7eceea858b2f9b0"
+    },
+    {
+      "path": "tests/crazyhouse_release_native_package.py",
+      "bytes": 43410,
+      "sha256": "ed39a3509cef426bde8a6320b93d7346c59d9a15aaea7481ab1edc01f668841c"
+    }
+  ],
+  "formal_matrix": {
+    "clean_exports": 2,
+    "profiles_per_export": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "entrypoint": "make --no-print-directory --old-file=.depend -C src crazyhouse_release_native_package_contract_test",
+    "pythonhashseed": "0",
+    "bytecode_writes_allowed": false,
+    "temporary_files_confined_to_lease": true,
+    "required_summary": "PASS_NATIVE_PACKAGE_FIXTURES positive=4 negative=72 real_network=false full_engine=false release_claim=false",
+    "positive_count": 4,
+    "negative_count": 72,
+    "normal_raw_stdout_bytes": 225,
+    "normal_raw_stdout_sha256": "3c200f0f09b020f49e0ef2a7fb23a3d81b4f091b99612b959fa25fbc99437f3a",
+    "optimized_raw_stdout_bytes": 228,
+    "optimized_raw_stdout_sha256": "75cbab4ae9c5183785d83bf9c369624e0d34a48101fda3e6e10a56e65877aa77",
+    "all_four_normalized_summaries_byte_identical": true,
+    "source_archives_byte_identical": true,
+    "tracked_export_inventory_exact": true,
+    "allowed_generated_paths": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "compiler_linker_or_bytecode_artifacts": 0,
+    "timeouts_allowed": false,
+    "nonzero_exits_allowed": false,
+    "real_network": false,
+    "full_engine": false
+  },
+  "toolchain": {
+    "python": {
+      "path": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+      "version": "Python 3.12.0",
+      "bytes": 103192,
+      "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"
+    },
+    "make": {
+      "path": "C:/msys64/usr/bin/make.exe",
+      "version": "GNU Make 4.4.1",
+      "bytes": 229856,
+      "sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22"
+    },
+    "git_launcher": {
+      "path": "C:/Program Files/Git/cmd/git.exe",
+      "bytes": 46464,
+      "sha256": "fec691d80fccc35fcc309fbc9f720536c1d795b8a562ec169f28c9923da9600f"
+    }
+  },
+  "resource_contract": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 536870912,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764
+  },
+  "stopping_rule": "Stop and preserve the fresh namespace on any source, preregistration, toolchain, archive, export inventory, implementation pin, raw transcript, normalized summary, generated-file, timeout, exit, process, P7, containment or resource mismatch. Never repair a failed formal namespace in place.",
+  "pass_effect": "Qualifies only deterministic small-fixture native ZIP assembly, independent verification, inventory and SPDX behavior from clean exports. Real legacy-network containment, full engine packages, product archive reproducibility, runtime smoke, candidate identity, strength, OpenBench, draft, G15 and release remain open.",
+  "boundaries": {
+    "formal_executed": false,
+    "small_fixture_tooling_qualified": false,
+    "real_network_containment_verified": false,
+    "package_internal_layout_verified_for_release": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

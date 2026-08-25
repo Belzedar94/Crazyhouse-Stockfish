@@ -1,0 +1,132 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum": 6,
+  "created_utc": "2026-08-23T06:31:59.3760152Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Require a fresh current-source ASan and UBSan-trap replay of the admitted conservative Crazyhouse search policy without reclassifying the earlier sanitizer lease as coverage for later source.",
+  "pins": {
+    "sanitizer_addendum_005": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.005.json",
+      "bytes": 5523,
+      "sha256": "15fd07942db2154cac2a6bb49342fb104c23e5082afede5f876963203f12eafa",
+      "git_blob": "f8b2b8d8277fc05952afdb913a7fa3b90f0df595"
+    },
+    "prior_full_sanitizer_end_receipt": {
+      "path": "../../../receipts/resources/p5-sanitizer-runtime-t1-end-228.json",
+      "bytes": 7795,
+      "sha256": "40046e321aac115c959e06a12b0e3b55d62e17715767c2068d36626addf2ed3c"
+    },
+    "prior_full_sanitizer_gate_record": {
+      "path": "../../../receipts/private/p5-sanitizer-runtime-green-gate-record-137.json",
+      "bytes": 2114,
+      "sha256": "007fce97576e4cbaa1710542f65f6645e18d2a2dfec295129187e68dac4429ee"
+    },
+    "conservative_search_addendum_003": {
+      "path": "tests/crazyhouse/g3-conservative-search-contract-v1.addendum.003.json",
+      "bytes": 5257,
+      "sha256": "05d712899e9196b0f2c0731df2274ee35d592da24c5cf154085025b9d9aac2b0",
+      "git_blob": "4b6db875de9e0c67580cc10e4874d7615a68a73a"
+    },
+    "conservative_search_gate_record": {
+      "path": "../../../receipts/private/p3-conservative-search-green-record-154.json",
+      "bytes": 7238,
+      "sha256": "a681cf971719cf06db1b17aa4c5a0d59d622d7a7ebda90fc3ae9936990e744a9"
+    },
+    "conservative_search_verifier": {
+      "path": "tests/crazyhouse_conservative_search_verify.py",
+      "bytes": 17722,
+      "sha256": "0bf13e4fbe42385c5157bf9263cf400b49fb4b4392e9a9d39f9471fbd4652cbc",
+      "git_blob": "71e063449773b09f96342473ea963be5b92b48b0"
+    },
+    "changed_search_source": {
+      "path": "src/search.cpp",
+      "behavior_commit": "5d1bee77ac96b3fe95fa28717d428693b56297c1",
+      "bytes": 96025,
+      "sha256": "fb899f14d1f363bd4befe861c04186dfa8ba3cb980295ca433dfb3566a835e9c",
+      "git_blob": "2ffb6da42d9d2f584d6789c1dca3f229045429f1"
+    }
+  },
+  "source_boundary": {
+    "admission": "a clean committed descendant containing this addendum, behavior commit 5d1bee77ac96b3fe95fa28717d428693b56297c1, and no product-source change after that behavior commit",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_required": true,
+    "fairy_stockfish_source_allowed": false,
+    "independent_clean_exports": 2,
+    "every_exported_blob_must_match_git": true,
+    "expected_tracked_blob_count_after_this_addendum": 277
+  },
+  "prior_evidence_use": {
+    "carried_forward": [
+      "exact digest-pinned sanitizer toolchain identities",
+      "ASan safe and heap-overflow positive-control capability",
+      "UBSan safe and signed-overflow trap positive-control capability"
+    ],
+    "not_carried_forward": [
+      "product binary identity",
+      "product runtime PASS",
+      "source coverage after validated commit 374cd739aba0192bd3b578e5ee0cbfba718c0bd0"
+    ],
+    "rule": "The prior full sanitizer gate proves that the pinned toolchains and controls are real. Only fresh builds and fresh runtime observations can cover the current product source."
+  },
+  "address_lane": {
+    "toolchain": "MSVC 19.44.35215 x64",
+    "compiler_sha256": "a9a3a13e4d019cfc0a9d823b3ee0cc383c6f3f86b00f861ac066032d869997e5",
+    "linker_sha256": "f5950d9bd30d14a003747dd5359fc53b5c852a2271c5ea5855e4ae44ba5b86c1",
+    "environment_script_sha256": "c004278e64444bf3524360f960511b5ce7b1d0306910f08a4ebcf1c42ff9bd6d",
+    "runtime_sha256": "2babc2a4298d128c8abc33efc7f3b70611246010059ef343d72f096d8ae24ff3",
+    "required_flags": ["/std:c++17", "/EHsc", "/Od", "/Zi", "/fsanitize=address", "/W4", "/WX"],
+    "allowed_exact_warning_suppressions": ["/wd4141", "/wd4244", "/wd4324", "/wd4702"],
+    "required_link_inputs": ["Shell32.lib"],
+    "asan_options": "halt_on_error=1:abort_on_error=1:detect_leaks=0",
+    "instrumentation_authentication": "the fresh full product imports clang_rt.asan_dynamic-x86_64.dll and runs with the exact copied runtime",
+    "runtime": "run the frozen ten-case conservative-search verifier in green mode",
+    "required_result": "PASS_CONSERVATIVE_SEARCH_POLICY_GREEN",
+    "required_runtime_status": "PASS_SPECIAL_STATE_SEARCH_MATRIX",
+    "required_case_count": 10,
+    "required_stderr_bytes": 0
+  },
+  "undefined_lane": {
+    "toolchain": "MSYS2 GCC 16.1.0",
+    "compiler_sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb",
+    "make_sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22",
+    "objdump_sha256": "2d4746ee2402b2d77342e87a1597a82a4dc58e218cfcd372ae5cf799f82c0029",
+    "build": "make -j1 build ARCH=x86-64 COMP=mingw CXX=/mingw64/bin/g++.exe debug=yes optimize=no",
+    "required_flags": ["-Werror", "-O0", "-g3", "-fsanitize=undefined", "-fsanitize-undefined-trap-on-error"],
+    "instrumentation_authentication": "the fresh full-product disassembly contains at least one ud2 trap instruction",
+    "runtime": "run the frozen ten-case conservative-search verifier in green mode",
+    "required_result": "PASS_CONSERVATIVE_SEARCH_POLICY_GREEN",
+    "required_runtime_status": "PASS_SPECIAL_STATE_SEARCH_MATRIX",
+    "required_case_count": 10,
+    "required_stderr_bytes": 0
+  },
+  "cross_evidence_binding": {
+    "same_source_commit_and_tree_both_lanes": true,
+    "same_legacy_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "unsanitized_exact_standard_control": {
+      "lease": 238,
+      "engine_sha256": "831470300476aaa8501d9bd7e698176b238ca7bb47c98b898a8f023251ba5c22",
+      "official_and_product_runs": "3+3",
+      "deterministic_signature_sha256": "28ec174ed2f5dd775ec50e4c6bf8de360d66c3693c90a9ac877edadf4caa255e",
+      "product_equals_exact_official": true
+    },
+    "sanitized_standard_control_required": false,
+    "reason": "The current-source exact orthodox control is already sealed in the same conservative-search gate. This affected replay asks only whether the current full product survives authenticated address and undefined-behavior instrumentation on the variant search corpus; it makes no new orthodox or performance claim."
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "priority": "BelowNormal",
+    "gpu": "forbidden",
+    "workers": false,
+    "openbench": false,
+    "network": false,
+    "timing_sensitive": false,
+    "minimum_c_free_bytes": 5368709120,
+    "minimum_d_free_bytes": 1099511627776
+  },
+  "stopping_rule": "No source edit or same-namespace retry after GO. Reject on source or tool drift, unauthenticated export bytes, warning or link failure, missing ASan import, missing UBSan trap, missing runtime DLL, verifier mismatch, sanitizer diagnostic, stderr, timeout, crash, fallback, repository drift, residual owned process or crossed disk floor.",
+  "expected_result": "PASS_CURRENT_SOURCE_ASAN_UBSAN_CONSERVATIVE_SEARCH",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

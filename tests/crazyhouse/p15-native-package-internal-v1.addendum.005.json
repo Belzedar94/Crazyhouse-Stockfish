@@ -1,0 +1,159 @@
+{
+  "schema": "crazyhouse-p15-native-package-terminal-audit-replay-preregistration/v1",
+  "created_utc": "2026-08-24T20:36:57.9003318Z",
+  "status": "PREREGISTERED_UNCHANGED_SOURCE_TERMINAL_AUDIT_REPLAY_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.004.json",
+    "bytes": 5276,
+    "sha256": "cbada1392d563583f83dd733a5e9419c85303770fbcd70c5d53d0f50742d240c"
+  },
+  "rejected_lease": {
+    "lease": 345,
+    "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+    "matrix_target_passed": true,
+    "terminal_child_identity_recorded": false,
+    "failure_bytes": 1683,
+    "failure_sha256": "9187a04b6ebcde2a30f7c3708aea7cf0bfac907a3d3546ce58b785a64a6a90cc",
+    "end_receipt_bytes": 3315,
+    "end_receipt_sha256": "080e2d3d3479369e5b9d3029aa2772b22f5c7335605649c71c6779864d2577b1",
+    "namespace_reused": false
+  },
+  "incidents": [
+    {
+      "id": "CH-304",
+      "prevention": "Permit zero or one exact direct System32 conhost created with the supervisor and reject every other descendant."
+    },
+    {
+      "id": "CH-307",
+      "ledger_commit": "0ffaf070976ba8711dd5bd1a2ae800076c98f7a8",
+      "prevention": "Persist full child identity before verdict and enforce known-incident review on controller reuse."
+    }
+  ],
+  "proven_process_audit_reference": [
+    {
+      "path": "control/p15-mingw-reproducibility-formal-338-controller.py",
+      "bytes": 8233,
+      "sha256": "27ab7e6521bb27088921bc01ffa3e443f0ff24702603c91fe7b07944230c1a6f"
+    },
+    {
+      "path": "control/p15-descendant-lifetime-diagnostic-337.py",
+      "bytes": 2994,
+      "sha256": "93533596721de3318c271d6bc15880fc96cf67bd33a20296a0690b216056ec45"
+    },
+    {
+      "path": "control/p15-descendant-lifetime-diagnostic-337.stdout.log",
+      "bytes": 1457,
+      "sha256": "de5727d9bf297fdaad5c73634328d429bf16ea413884addf61559aa53c5d6007"
+    }
+  ],
+  "source_base": {
+    "commit": "0ffaf070976ba8711dd5bd1a2ae800076c98f7a8",
+    "tree": "68d53eb72e018c6734c966cd47718a142fabcfff",
+    "src_tree": "1058720318d4e0ad9c3f61e6ee48675f2dd13b6b",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "exact_overlays": [
+    {
+      "path": "src/Makefile",
+      "bytes": 61826,
+      "sha256": "f49c3b889680692923c702f071a3c51cd2bd67702f473d3e44e58339a3a8e092"
+    },
+    {
+      "path": "tools/release/crazyhouse_release_native_package.py",
+      "bytes": 23223,
+      "sha256": "355615ac2419583275c97e7e13a38bc26693b08cecd545b88e9fa3736f79fb87"
+    },
+    {
+      "path": "tools/release/verify_crazyhouse_native_package.py",
+      "bytes": 25590,
+      "sha256": "63fc4afde5322f9410d7aa489832160c795ec73130cf0122b7eceea858b2f9b0"
+    },
+    {
+      "path": "tests/crazyhouse_release_native_package.py",
+      "bytes": 43410,
+      "sha256": "ed39a3509cef426bde8a6320b93d7346c59d9a15aaea7481ab1edc01f668841c"
+    }
+  ],
+  "raw_transcript": {
+    "bytes": 225,
+    "sha256": "3c200f0f09b020f49e0ef2a7fb23a3d81b4f091b99612b959fa25fbc99437f3a",
+    "normalized_summary_bytes": 109,
+    "normalized_summary_sha256": "2f0dc802408e93b2857a631518fb7a59da93f3a63f47de1f03c662fdfba2da50"
+  },
+  "terminal_child_audit": {
+    "capture_before_verdict": [
+      "pid",
+      "ppid",
+      "name",
+      "created_epoch",
+      "status",
+      "executable",
+      "command_line"
+    ],
+    "expected_executable": "C:/Windows/System32/conhost.exe",
+    "allowed_count_range": [
+      0,
+      1
+    ],
+    "allowed_parent": "current supervisor PID",
+    "allowed_name_casefold": "conhost.exe",
+    "allowed_creation": "not earlier than supervisor creation",
+    "unknown_or_uninspectable_allowed": false,
+    "any_compute_shell_python_or_nonconhost_allowed": false,
+    "full_record_required_in_completion_or_failure": true
+  },
+  "diagnostic_matrix": {
+    "clean_base_export": 1,
+    "python_profiles": [
+      "normal"
+    ],
+    "make_target": "crazyhouse_release_native_package_contract_test",
+    "required_summary": "PASS_NATIVE_PACKAGE_FIXTURES positive=4 negative=72 real_network=false full_engine=false release_claim=false",
+    "full_replay_from_case_one": true,
+    "source_or_test_change_since_lease_345": false,
+    "positive_small_fixture_cases": 4,
+    "negative_cases": 72,
+    "real_network": false,
+    "full_engine": false,
+    "compiler_linker_or_bytecode_artifacts": 0,
+    "nonzero_exits_allowed": false,
+    "timeouts_allowed": false
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 536870912,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_has_priority": true
+  },
+  "stopping_rule": "In a fresh namespace, authenticate source, overlays, raw transcript and complete matrix, then persist the full terminal-child audit before verdict. Stop on any unknown child, identity drift, process, P7, artifact or resource mismatch.",
+  "pass_effect": "A pass remains dirty-source diagnostic evidence only and permits review plus an exact implementation commit. It grants no formal package, real-network, candidate, strength, OpenBench, draft, G15 or release credit.",
+  "boundaries": {
+    "dirty_source_diagnostic_only": true,
+    "formal_credit": false,
+    "real_network_containment_verified": false,
+    "package_internal_layout_verified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

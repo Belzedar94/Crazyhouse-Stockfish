@@ -68,9 +68,21 @@ else
 	EXE = stockfish
 endif
 
+ifneq ($(strip $(GIT_SHA_FULL)),)
+.DEFAULT_GOAL := openbench
+endif
+
+OPENBENCH_ARCH = x86-64
+ifeq ($(OS),Windows_NT)
+OPENBENCH_COMP = mingw
+else
+OPENBENCH_COMP = gcc
+endif
+
 ### Installation dir definitions
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
+PYTHON ?= python3
 
 ### Built-in benchmark for pgo-builds
 PGOBENCH = $(RUN_PREFIX) ./$(EXE) bench
@@ -79,9 +91,10 @@ PGOBENCH = $(RUN_PREFIX) ./$(EXE) bench
 SRCS = attacks.cpp benchmark.cpp bitboard.cpp evaluate.cpp main.cpp \
 	misc.cpp movegen.cpp movepick.cpp position.cpp \
 	search.cpp thread.cpp timeman.cpp tt.cpp uci.cpp ucioption.cpp tune.cpp syzygy/tbprobe.cpp \
-	nnue/nnue_accumulator.cpp nnue/nnue_misc.cpp nnue/network.cpp \
+	nnue/nnue_accumulator.cpp nnue/nnue_misc.cpp nnue/network.cpp nnue/crazyhouse_legacy_network.cpp \
+	nnue/crazyhouse_legacy_features.cpp \
 	nnue/features/half_ka_v2_hm.cpp nnue/features/full_threats.cpp nnue/features/pp_3wide.cpp \
-	engine.cpp score.cpp memory.cpp
+	engine.cpp engine_routing.cpp score.cpp memory.cpp
 
 OTHER_SRCS = universal/entry_x86.cpp universal/entry_arm64.cpp universal/entry_riscv64.cpp universal/nnue_embed.cpp
 
@@ -91,11 +104,61 @@ HEADERS = attacks.h benchmark.h bitboard.h evaluate.h misc.h movegen.h movepick.
 		nnue/layers/clipped_relu.h nnue/layers/sqr_clipped_relu.h nnue/nnue_accumulator.h \
 		nnue/nnue_architecture.h nnue/nnue_common.h nnue/nnue_feature_transformer.h nnue/simd.h \
 		nnue/nnz_helper.h position.h search.h syzygy/tbprobe.h thread.h thread_native.h timeman.h \
-		tt.h tune.h types.h uci.h ucioption.h perft.h nnue/network.h engine.h score.h numa.h memory.h shm.h shm_unix.h
+		tt.h tune.h types.h uci.h ucioption.h perft.h nnue/network.h nnue/crazyhouse_legacy_network.h \
+		nnue/crazyhouse_legacy_features.h engine.h score.h numa.h memory.h shm.h shm_unix.h
 
 OBJS = $(notdir $(SRCS:.cpp=.o))
 
-VPATH = syzygy:nnue:nnue/features
+CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_EXE  = crazyhouse-legacy-incremental-tests$(suffix $(EXE))
+CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_OBJS = crazyhouse_legacy_incremental_tests.o \
+	$(filter-out main.o,$(OBJS))
+
+CRAZYHOUSE_LEGACY_SIMD_TEST_EXE  = crazyhouse-legacy-simd-tests$(suffix $(EXE))
+CRAZYHOUSE_LEGACY_SIMD_TEST_OBJS = crazyhouse_legacy_simd_tests.o \
+	$(filter-out main.o,$(OBJS))
+
+CRAZYHOUSE_V2_DECODER_SCALAR_TEST_EXE = crazyhouse-v2-decoder-scalar-tests$(suffix $(EXE))
+CRAZYHOUSE_V2_DECODER_SCALAR_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
+	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp
+CRAZYHOUSE_V2_DECODER_SCALAR_TEST_OBJS = crazyhouse_v2_decoder_scalar_tests.o \
+	$(addprefix .v2-decoder-obj/,$(notdir $(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_SRCS:.cpp=.o)))
+
+CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_EXE = crazyhouse-v2-container-scalar-tests$(suffix $(EXE))
+CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_SRCS = nnue/crazyhouse_v2_physical.cpp \
+	nnue/crazyhouse_v2_features.cpp nnue/crazyhouse_v2_probe.cpp
+CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_OBJS = crazyhouse_v2_container_scalar_tests.o \
+	$(addprefix .v2-container-obj/,$(notdir $(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_SRCS:.cpp=.o)))
+
+CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_EXE = crazyhouse-v2-simd-incremental-tests$(suffix $(EXE))
+CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
+	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp nnue/crazyhouse_v2_probe.cpp
+CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_OBJS = crazyhouse_v2_simd_incremental_tests.o \
+	$(addprefix .v2-simd-incremental-obj/,$(notdir $(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_SRCS:.cpp=.o)))
+
+CRAZYHOUSE_V2_PRODUCTIVE_TEST_EXE = crazyhouse-v2-productive-tests$(suffix $(EXE))
+CRAZYHOUSE_V2_PRODUCTIVE_TEST_SRCS = nnue/crazyhouse_v2_physical.cpp \
+	nnue/crazyhouse_v2_features.cpp nnue/crazyhouse_v2_productive.cpp
+CRAZYHOUSE_V2_PRODUCTIVE_TEST_OBJS = crazyhouse_v2_productive_tests.o \
+	$(addprefix .v2-productive-obj/,$(notdir $(CRAZYHOUSE_V2_PRODUCTIVE_TEST_SRCS:.cpp=.o)))
+
+CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_EXE = crazyhouse-v2-productive-incremental-tests$(suffix $(EXE))
+CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
+	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp nnue/crazyhouse_v2_productive.cpp
+CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_OBJS = crazyhouse_v2_productive_incremental_tests.o \
+	$(addprefix .v2-productive-incremental-obj/,$(notdir $(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_SRCS:.cpp=.o)))
+
+CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_EXE = crazyhouse-v2-legacy-control-tests$(suffix $(EXE))
+CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
+	nnue/crazyhouse_v2_legacy_control.cpp
+CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_OBJS = crazyhouse_v2_legacy_control_tests.o \
+	$(addprefix .v2-legacy-control-obj/,$(notdir $(CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_SRCS:.cpp=.o)))
+
+CRAZYHOUSE_DATAGEN_EXE = crazyhouse-stockfish-datagen$(suffix $(EXE))
+CRAZYHOUSE_DATAGEN_SRCS = $(filter-out main.cpp,$(SRCS)) \
+	datagen/crazyhouse_datagen_v1.cpp datagen/crazyhouse_datagen_main.cpp
+CRAZYHOUSE_DATAGEN_OBJS = $(addprefix .datagen-obj/,$(notdir $(CRAZYHOUSE_DATAGEN_SRCS:.cpp=.o)))
+
+VPATH = syzygy:nnue:nnue/features:datagen
 
 ### ==========================================================================
 ### Section 2. High-level Configuration
@@ -176,6 +239,8 @@ endif
 optimize = yes
 debug = no
 sanitize = none
+mingw_reproducible = no
+CRAZYHOUSE_LEGACY_BACKEND ?= scalar
 bits = 64
 prefetch = no
 popcnt = no
@@ -502,6 +567,19 @@ CXXFLAGS = $(ENV_CXXFLAGS) -Wall -Wcast-qual -fno-exceptions -std=c++17 $(EXTRAC
 DEPENDFLAGS = $(ENV_DEPENDFLAGS) -std=c++17
 LDFLAGS = $(ENV_LDFLAGS) $(EXTRALDFLAGS)
 
+ifeq ($(OPENBENCH_PLAY_BUILD),1)
+empty :=
+space := $(empty) $(empty)
+CRAZYHOUSE_LEGACY_EMBED_DEP := $(subst $(space),\$(space),$(EVALFILE))
+CXXFLAGS += -DNNUE_EMBEDDING_OFF '-DCRAZYHOUSE_LEGACY_EMBED_FILE="$(EVALFILE)"'
+endif
+
+ifeq ($(CRAZYHOUSE_LEGACY_BACKEND),simd)
+	CXXFLAGS += -DCRAZYHOUSE_LEGACY_BACKEND_SIMD
+else ifneq ($(CRAZYHOUSE_LEGACY_BACKEND),scalar)
+	$(error CRAZYHOUSE_LEGACY_BACKEND must be scalar or simd)
+endif
+
 ifeq ($(COMP),)
 	COMP=gcc
 endif
@@ -536,6 +614,19 @@ endif
 
 ifeq ($(target_windows),yes)
 	LDFLAGS += -static
+endif
+
+MINGW_REPRODUCIBLE_LINK_FLAG := -Wl,--no-insert-timestamp
+ifneq ($(mingw_reproducible),no)
+ifneq ($(mingw_reproducible),yes)
+$(error mingw_reproducible must be yes or no)
+endif
+endif
+ifeq ($(mingw_reproducible),yes)
+ifneq ($(target_windows),yes)
+$(error mingw_reproducible=yes requires target_windows=yes)
+endif
+	LDFLAGS += $(MINGW_REPRODUCIBLE_LINK_FLAG)
 endif
 
 ifeq ($(COMP),mingw)
@@ -912,10 +1003,20 @@ endif
 BUILD_SHA_FILE       := .build_sha.txt
 BUILD_DATE_FILE      := .build_date.txt
 BUILD_DIFFINDEX_FILE := .build_diffindex.txt
-GIT_SHA              := $(shell git rev-parse HEAD 2>/dev/null | cut -c 1-8 || true)
+GIT_SHA              := $(shell if printf '%s' '$(GIT_SHA_FULL)' | grep -Eq '^[0-9A-Fa-f]{40}$$'; then printf '%s' '$(GIT_SHA_FULL)' | cut -c 1-8; else git rev-parse HEAD 2>/dev/null | cut -c 1-8 || true; fi)
 GIT_DATE             := $(shell git show -s --date=format:%Y%m%d --format=%cd HEAD 2>/dev/null || true)
 GIT_DIFFINDEX        := $(shell git update-index --refresh >/dev/null 2>&1; git -c core.filemode=false -c core.autocrlf=false  diff-index --quiet HEAD -- 2>/dev/null; [ $$? -eq 1 ] && echo 1 || true)
 COMPILER_DATE        := $(shell date +%Y%m%d 2>/dev/null)
+
+DATAGEN_GIT ?= $(shell if command -v git >/dev/null 2>&1; then command -v git; elif test -x '/c/Program Files/Git/cmd/git.exe'; then printf '%s\n' '/c/Program Files/Git/cmd/git.exe'; fi)
+DATAGEN_SOURCE_COMMIT ?= $(shell "$(DATAGEN_GIT)" rev-parse HEAD 2>/dev/null || true)
+DATAGEN_SOURCE_TREE   ?= $(shell "$(DATAGEN_GIT)" rev-parse 'HEAD^{tree}' 2>/dev/null || true)
+DATAGEN_SRC_TREE      ?= $(shell "$(DATAGEN_GIT)" rev-parse 'HEAD:src' 2>/dev/null || true)
+DATAGEN_SOURCE_DIRTY  ?= $(shell if "$(DATAGEN_GIT)" rev-parse --is-inside-work-tree >/dev/null 2>&1; then "$(DATAGEN_GIT)" update-index --refresh >/dev/null 2>&1; if "$(DATAGEN_GIT)" -c core.filemode=false -c core.autocrlf=false diff-index --quiet HEAD -- && test -z "$$("$(DATAGEN_GIT)" ls-files --others --exclude-standard)"; then echo 0; else echo 1; fi; fi)
+DATAGEN_TOOLCHAIN_IDENTITY ?= $(shell $(CXX) --version 2>/dev/null | head -n 1 | tr -d '\r')
+DATAGEN_TOOLCHAIN_SHA256 ?= $(shell printf '%s\n' '$(DATAGEN_TOOLCHAIN_IDENTITY)' | sha256sum | cut -d ' ' -f 1)
+DATAGEN_BUILD_RECIPE_TEXT = crazyhouse-datagen-selfplay-v1|ARCH=$(ARCH)|COMP=$(COMP)|CXX=$(CXX)|CPPFLAGS=$(CPPFLAGS)|CXXFLAGS=$(CXXFLAGS) -fexceptions -DNNUE_EMBEDDING_OFF -DCRAZYHOUSE_DATA_GENERATOR|LDFLAGS=$(LDFLAGS)
+DATAGEN_BUILD_RECIPE_SHA256 ?= $(shell printf '%s\n' '$(DATAGEN_BUILD_RECIPE_TEXT)' | sha256sum | cut -d ' ' -f 1)
 
 BUILD_DATE           := $(if $(GIT_DATE),$(GIT_DATE),$(COMPILER_DATE))
 
@@ -1015,6 +1116,7 @@ help:
 	echo "help                    > Display architecture details" && \
 	echo "profile-build           > standard build with profile-guided optimization" && \
 	echo "build                   > skip profile-guided optimization" && \
+	echo "crazyhouse-datagen      > separate physical Crazyhouse DATAGEN producer" && \
 	echo "macos-lipo              > macOS x86-64 + Apple silicon universal binary" && \
 	echo "net                     > Download the default nnue nets" && \
 	echo "strip                   > Strip executable" && \
@@ -1087,6 +1189,15 @@ endif
 
 
 .PHONY: help analyze build profile-build macos-lipo strip install clean net \
+	openbench openbench-identity-sanity openbench-network-sanity \
+	crazyhouse-legacy-incremental-tests crazyhouse-legacy-simd-tests \
+	crazyhouse_v2_legacy_control_test crazyhouse_v2_training_admission_test \
+	crazyhouse_release_bundle_contract_test \
+	crazyhouse_release_native_package_contract_test \
+	crazyhouse_p15_release_engine_identity_test \
+	crazyhouse_p16_monitoring_contract_test \
+	crazyhouse_mingw_reproducibility_probe \
+	crazyhouse-datagen datagen-identity-sanity \
 	objclean profileclean config-sanity \
 	icx-profile-use icx-profile-make \
 	gcc-profile-use gcc-profile-make \
@@ -1095,6 +1206,30 @@ endif
 
 analyze: net config-sanity objclean
 	$(MAKE) -k ARCH=$(ARCH) COMP=$(COMP) $(OBJS)
+
+openbench: openbench-identity-sanity
+ifeq ($(OPENBENCH_DATAGEN),1)
+	+$(MAKE) ARCH=$(ARCH) COMP=$(COMP) datagen-identity-sanity
+	+$(MAKE) ARCH=$(ARCH) COMP=$(COMP) CRAZYHOUSE_DATAGEN_EXE='$(EXE)' '$(EXE)'
+else
+	+$(MAKE) ARCH=$(ARCH) COMP=$(COMP) openbench-network-sanity
+	+$(MAKE) ARCH=$(OPENBENCH_ARCH) COMP=$(OPENBENCH_COMP) \
+		CRAZYHOUSE_LEGACY_BACKEND=scalar OPENBENCH_PLAY_BUILD=1 all
+endif
+
+openbench-identity-sanity:
+	@test "$$(printf '%s' '$(GIT_SHA_FULL)' | grep -E '^[0-9A-Fa-f]{40}$$')" != ""
+	@if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then \
+		test "$$(git rev-parse HEAD | tr 'A-F' 'a-f')" = "$$(printf '%s' '$(GIT_SHA_FULL)' | tr 'A-F' 'a-f')"; \
+		git update-index --refresh >/dev/null 2>&1; \
+		test -z "$$(git status --porcelain --untracked-files=normal)"; \
+	fi
+
+openbench-network-sanity:
+	@test -n '$(EVALFILE)'
+	@test -f '$(EVALFILE)'
+	@test "$$(wc -c < '$(EVALFILE)' | tr -d '[:space:]')" = 58534811
+	@test "$$(sha256sum '$(EVALFILE)' | cut -d ' ' -f 1 | tr 'A-F' 'a-f')" = 8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43
 
 ifeq ($(UNIVERSAL_BUILD),false)
 build: net config-sanity
@@ -1208,7 +1343,8 @@ clean: objclean profileclean universalclean
 
 # clean binaries and objects
 objclean:
-	@rm -f stockfish stockfish.exe *.o ./syzygy/*.o ./nnue/*.o ./nnue/features/*.o $(BUILD_SHA_FILE) $(BUILD_DATE_FILE) $(BUILD_DIFFINDEX_FILE)
+	@rm -f stockfish stockfish.exe $(CRAZYHOUSE_DATAGEN_EXE) $(CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_LEGACY_SIMD_TEST_EXE) $(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_EXE) $(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_EXE) $(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_V2_PRODUCTIVE_TEST_EXE) $(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_EXE) *.o ./syzygy/*.o ./nnue/*.o ./nnue/features/*.o $(BUILD_SHA_FILE) $(BUILD_DATE_FILE) $(BUILD_DIFFINDEX_FILE)
+	@rm -rf .datagen-obj .v2-decoder-obj .v2-container-obj .v2-simd-incremental-obj .v2-productive-obj .v2-productive-incremental-obj .v2-legacy-control-obj
 
 # clean auxiliary profiling files
 profileclean:
@@ -1218,6 +1354,12 @@ profileclean:
 	@rm -f stockfish.*args*
 	@rm -f stockfish.*lt*
 	@rm -f stockfish.res
+	@rm -f crazyhouse-v2-decoder-scalar-tests.*args* crazyhouse-v2-decoder-scalar-tests.*lt* crazyhouse-v2-decoder-scalar-tests.res
+	@rm -f crazyhouse-v2-container-scalar-tests.*args* crazyhouse-v2-container-scalar-tests.*lt* crazyhouse-v2-container-scalar-tests.res
+	@rm -f crazyhouse-v2-simd-incremental-tests.*args* crazyhouse-v2-simd-incremental-tests.*lt* crazyhouse-v2-simd-incremental-tests.res
+	@rm -f crazyhouse-v2-productive-tests.*args* crazyhouse-v2-productive-tests.*lt* crazyhouse-v2-productive-tests.res
+	@rm -f crazyhouse-v2-productive-incremental-tests.*args* crazyhouse-v2-productive-incremental-tests.*lt* crazyhouse-v2-productive-incremental-tests.res
+	@rm -f crazyhouse-v2-legacy-control-tests.*args* crazyhouse-v2-legacy-control-tests.*lt* crazyhouse-v2-legacy-control-tests.res
 	@rm -f ./-lstdc++.res
 
 universalclean:
@@ -1246,6 +1388,7 @@ config-sanity: net
 	echo "debug: '$(debug)'" && \
 	echo "sanitize: '$(sanitize)'" && \
 	echo "optimize: '$(optimize)'" && \
+	echo "mingw_reproducible: '$(mingw_reproducible)'" && \
 	echo "arch: '$(arch)'" && \
 	echo "bits: '$(bits)'" && \
 	echo "kernel: '$(KERNEL)'" && \
@@ -1271,6 +1414,7 @@ config-sanity: net
 	echo "lsx: '$(lsx)'" && \
 	echo "lasx: '$(lasx)'" && \
 	echo "syzygy: '$(syzygy)'" && \
+	echo "crazyhouse_legacy_backend: '$(CRAZYHOUSE_LEGACY_BACKEND)'" && \
 	echo "target_windows: '$(target_windows)'" && \
 	echo "" && \
 	echo "Flags:" && \
@@ -1282,6 +1426,8 @@ config-sanity: net
 	echo "" && \
 	(test "$(debug)" = "yes" || test "$(debug)" = "no") && \
 	(test "$(optimize)" = "yes" || test "$(optimize)" = "no") && \
+	(test "$(mingw_reproducible)" = "yes" || test "$(mingw_reproducible)" = "no") && \
+	(test "$(CRAZYHOUSE_LEGACY_BACKEND)" = "scalar" || test "$(CRAZYHOUSE_LEGACY_BACKEND)" = "simd") && \
 	(test "$(SUPPORTED_ARCH)" = "true") && \
 	(test "$(arch)" = "any" || test "$(arch)" = "x86_64" || test "$(arch)" = "i386" || \
 	 test "$(arch)" = "ppc64" || test "$(arch)" = "ppc" || test "$(arch)" = "e2k" || \
@@ -1310,6 +1456,9 @@ config-sanity: net
 	(test "$(comp)" = "gcc" || test "$(comp)" = "icx" || test "$(comp)" = "mingw" || \
 	 test "$(comp)" = "clang" || test "$(comp)" = "armv7a-linux-androideabi16-clang" || \
 	 test "$(comp)" = "aarch64-linux-android21-clang")
+
+crazyhouse_mingw_reproducibility_probe:
+	@printf '%s\n' "CRAZYHOUSE_MINGW_REPRODUCIBILITY mode=$(mingw_reproducible) target_windows=$(target_windows) flag_count=$(words $(filter $(MINGW_REPRODUCIBLE_LINK_FLAG),$(LDFLAGS)))"
 
 $(EXE): $(OBJS)
 	+$(CXX) -o $@ $(OBJS) $(LDFLAGS)
@@ -1363,6 +1512,142 @@ icx-profile-use:
 
 .depend: $(SRCS)
 	-@$(CXX) $(DEPENDFLAGS) -MM $(SRCS) > $@ 2> /dev/null
+
+crazyhouse-legacy-incremental-tests: $(CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_EXE)
+
+$(CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_EXE): $(CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_legacy_incremental_tests.o: ../tests/crazyhouse_legacy_incremental.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS)) -I. -c -o $@ $<
+
+crazyhouse-legacy-simd-tests: $(CRAZYHOUSE_LEGACY_SIMD_TEST_EXE)
+
+$(CRAZYHOUSE_LEGACY_SIMD_TEST_EXE): $(CRAZYHOUSE_LEGACY_SIMD_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_LEGACY_SIMD_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_legacy_simd_tests.o: ../tests/crazyhouse_legacy_simd.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS)) -I. -c -o $@ $<
+
+crazyhouse-v2-decoder-scalar-tests: $(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_EXE)
+
+$(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_EXE): $(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_v2_decoder_scalar_tests.o: ../tests/crazyhouse_v2_decoder_scalar.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+.v2-decoder-obj/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+crazyhouse-v2-container-scalar-tests: $(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_EXE)
+
+$(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_EXE): $(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_v2_container_scalar_tests.o: ../tests/crazyhouse_v2_container_scalar.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+.v2-container-obj/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+crazyhouse-v2-simd-incremental-tests: $(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_EXE)
+
+$(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_EXE): $(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_v2_simd_incremental_tests.o: ../tests/crazyhouse_v2_simd_incremental.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+.v2-simd-incremental-obj/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+crazyhouse_v2_productive_test: $(CRAZYHOUSE_V2_PRODUCTIVE_TEST_EXE)
+
+crazyhouse_v2_productive_simd_test: $(CRAZYHOUSE_V2_PRODUCTIVE_TEST_EXE)
+
+$(CRAZYHOUSE_V2_PRODUCTIVE_TEST_EXE): $(CRAZYHOUSE_V2_PRODUCTIVE_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_V2_PRODUCTIVE_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_v2_productive_tests.o: ../tests/crazyhouse_v2_productive.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+.v2-productive-obj/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+crazyhouse_v2_productive_incremental_test: $(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_EXE)
+
+$(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_EXE): $(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_v2_productive_incremental_tests.o: ../tests/crazyhouse_v2_productive_incremental.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+.v2-productive-incremental-obj/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+crazyhouse_v2_legacy_control_test: $(CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_EXE)
+
+$(CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_EXE): $(CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_v2_legacy_control_tests.o: ../tests/crazyhouse_v2_legacy_control.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+crazyhouse_v2_training_admission_test:
+	$(PYTHON) -B ../tests/crazyhouse_v2_training_admission_verify.py \
+		--loader ../tools/nnue/crazyhouse_v2_training_admission.py
+
+crazyhouse_release_bundle_contract_test:
+	$(PYTHON) -B ../tests/crazyhouse_release_bundle_contract.py
+
+crazyhouse_release_native_package_contract_test:
+	$(PYTHON) -B ../tests/crazyhouse_release_native_package.py
+
+crazyhouse_p15_release_engine_identity_test:
+	$(PYTHON) -B ../tests/crazyhouse_release_engine_identity.py
+
+crazyhouse_p16_monitoring_contract_test:
+	$(PYTHON) -B ../tests/crazyhouse_release_monitor.py
+
+.v2-legacy-control-obj/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
+
+ifeq ($(OPENBENCH_PLAY_BUILD),1)
+crazyhouse_legacy_network.o: $(CRAZYHOUSE_LEGACY_EMBED_DEP)
+endif
+
+crazyhouse-datagen: datagen-identity-sanity $(CRAZYHOUSE_DATAGEN_EXE)
+
+datagen-identity-sanity:
+	@test "$$(printf '%s' '$(DATAGEN_SOURCE_COMMIT)' | grep -E '^[0-9a-f]{40}$$')" != ""
+	@test "$$(printf '%s' '$(DATAGEN_SOURCE_TREE)' | grep -E '^[0-9a-f]{40}$$')" != ""
+	@test "$$(printf '%s' '$(DATAGEN_SRC_TREE)' | grep -E '^[0-9a-f]{40}$$')" != ""
+	@test "$$(printf '%s' '$(DATAGEN_BUILD_RECIPE_SHA256)' | grep -E '^[0-9a-f]{64}$$')" != ""
+	@test "$$(printf '%s' '$(DATAGEN_TOOLCHAIN_SHA256)' | grep -E '^[0-9a-f]{64}$$')" != ""
+	@test -n '$(DATAGEN_TOOLCHAIN_IDENTITY)'
+	@test '$(DATAGEN_SOURCE_DIRTY)' = 0 || test '$(DATAGEN_SOURCE_DIRTY)' = 1
+
+$(CRAZYHOUSE_DATAGEN_EXE): $(CRAZYHOUSE_DATAGEN_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_DATAGEN_OBJS) $(LDFLAGS)
+
+.datagen-obj/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -fexceptions -DNNUE_EMBEDDING_OFF \
+		-DCRAZYHOUSE_DATA_GENERATOR \
+		-DDATAGEN_SOURCE_COMMIT=\"$(DATAGEN_SOURCE_COMMIT)\" \
+		-DDATAGEN_SOURCE_TREE=\"$(DATAGEN_SOURCE_TREE)\" \
+		-DDATAGEN_SRC_TREE=\"$(DATAGEN_SRC_TREE)\" \
+		-DDATAGEN_SOURCE_DIRTY=$(DATAGEN_SOURCE_DIRTY) \
+		-DDATAGEN_BUILD_RECIPE_SHA256=\"$(DATAGEN_BUILD_RECIPE_SHA256)\" \
+		-DDATAGEN_TOOLCHAIN_SHA256=\"$(DATAGEN_TOOLCHAIN_SHA256)\" \
+		'-DDATAGEN_TOOLCHAIN_IDENTITY="$(DATAGEN_TOOLCHAIN_IDENTITY)"') -c -o $@ $<
 
 ifeq (, $(filter $(MAKECMDGOALS), help strip install clean net objclean profileclean format config-sanity))
 ifeq ($(UNIVERSAL_BUILD),false)

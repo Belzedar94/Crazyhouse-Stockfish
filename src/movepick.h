@@ -55,22 +55,26 @@ class MovePicker {
     template<typename Pred>
     Move select(Pred);
     template<GenType T>
-    ExtMove* score(const MoveList<T>&);
+    usize score(const MoveList<T>&);
 
-    const Position&              pos;
-    const ButterflyHistory*      mainHistory;
-    const LowPlyHistory*         lowPlyHistory;
-    const CapturePieceToHistory* captureHistory;
-    const PieceToHistory**       continuationHistory;
-    const SharedHistories*       sharedHistory;
-    Move                         ttMove;
-    ExtMove *                    cur, *endCur, *endBadCaptures, *endCaptures, *endGenerated;
-    int                          stage;
-    int                          threshold;
-    Depth                        depth;
-    int                          ply;
-    bool                         skipQuiets = false;
-    ExtMove                      moves[MAX_MOVES];
+    const Position&                       pos;
+    const ButterflyHistory*               mainHistory;
+    const LowPlyHistory*                  lowPlyHistory;
+    const CapturePieceToHistory*          captureHistory;
+    const PieceToHistory**                continuationHistory;
+    const SharedHistories*                sharedHistory;
+    Move                                  ttMove;
+    usize                                 cur            = 0;
+    usize                                 endCur         = 0;
+    usize                                 endBadCaptures = 0;
+    usize                                 endCaptures    = 0;
+    usize                                 endGenerated   = 0;
+    int                                   stage;
+    int                                   threshold;
+    Depth                                 depth;
+    int                                   ply;
+    bool                                  skipQuiets = false;
+    RulesetMoveBuffer<ExtMove, MAX_MOVES> moves;
 };
 
 }  // namespace Stockfish

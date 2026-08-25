@@ -1,0 +1,137 @@
+{
+  "schema": "crazyhouse-public-correctness-ci-preparation-result/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-25T02:07:35.0643571Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P6",
+  "gate": "G6",
+  "evidence_class": "E1_ENGINEERING_LOCAL_RESULT",
+  "status": "PASS_LOCAL_G15_GUARD_CI_INTEGRATION_AWAITING_PUBLIC_EXECUTION",
+  "source": {
+    "commit": "1954b1bad54bcea6c804de9c468bc6558c6e85b0",
+    "tree": "de91660dd95ffa9dad44e7c3772adf9c72979606",
+    "parent_commit": "71a44a29a5091d65e83f83b2b8b6cca214a56891",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "src_tree_changed": false,
+    "commit_subject": "ci: enforce G15 workflow guard"
+  },
+  "preregistration": {
+    "path": "docs/crazyhouse/g6-public-correctness-ci-preparation-v1.addendum.002.json",
+    "bytes": 3735,
+    "sha256": "1fbf07acf0b7384820f63e3c28ad90db00d4be63f8ec91b378b7906e3ed6a353",
+    "status_before_execution": "PREREGISTERED_G15_GUARD_CI_INTEGRATION_NOT_EXECUTED"
+  },
+  "workflow_change": {
+    "path": ".github/workflows/crazyhouse-correctness.yml",
+    "only_path_changed_in_source_commit": true,
+    "before": {
+      "commit": "71a44a29a5091d65e83f83b2b8b6cca214a56891",
+      "bytes": 16518,
+      "sha256": "0469cec759c9f81513e1e54aafbc9db6bd953f36675757ea0886bae3b0cce6db"
+    },
+    "after": {
+      "commit": "1954b1bad54bcea6c804de9c468bc6558c6e85b0",
+      "bytes": 17128,
+      "sha256": "0442f0449467fb53c277ff0df1624887f95f9614740a5efd5eae7faf15122c79"
+    },
+    "job": "network-tooling",
+    "position": "after Test release engine identity contract and before network materialization",
+    "step_name": "Test fail-closed G15 release workflow guard",
+    "step_instances": 1,
+    "commands": [
+      "python -m py_compile tools/release/verify_crazyhouse_release_workflow_guard.py tests/crazyhouse_release_workflow_guard.py",
+      "python -B tools/release/verify_crazyhouse_release_workflow_guard.py --contract tests/crazyhouse/p15-release-workflow-guard-v1.json --workflow .github/workflows/official_release.yml",
+      "python -B tests/crazyhouse_release_workflow_guard.py",
+      "python -O -B tests/crazyhouse_release_workflow_guard.py"
+    ],
+    "new_job": false,
+    "new_runner": false,
+    "new_matrix": false,
+    "new_permission": false,
+    "new_secret": false,
+    "new_network_input": false
+  },
+  "guard_inputs": {
+    "qualified_guard_result": {
+      "path": "tests/crazyhouse/p15-release-workflow-guard-v1.addendum.004.json",
+      "bytes": 5042,
+      "sha256": "b601a39ade2180acdc9d22cfb4a68f1b8e016d7ef7638c221bb13332f9262efc"
+    },
+    "contract": {
+      "path": "tests/crazyhouse/p15-release-workflow-guard-v1.json",
+      "bytes": 3653,
+      "sha256": "14702b3cd16a840e0db255db133e0cfcf1fc2536e2ce2f29374e3ecea245d857"
+    },
+    "verifier": {
+      "path": "tools/release/verify_crazyhouse_release_workflow_guard.py",
+      "bytes": 4891,
+      "sha256": "9f982d904e0aec785cbafeb80cfdcdb81a9c7dd18534d2fef0466a9f71544afe"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_release_workflow_guard.py",
+      "bytes": 4224,
+      "sha256": "45203ad9c722d863d987557e34b7a3ab63d163adb62ec5affe65b7d64262ccfa"
+    },
+    "guard_workflow": {
+      "path": ".github/workflows/official_release.yml",
+      "bytes": 498,
+      "sha256": "a0fabef4ce5ca8a745af8df861822ad9e45aa8378df3493dda55ca983bea4db7"
+    }
+  },
+  "verification": {
+    "python": "3.12.0",
+    "py_compile": "PASS",
+    "canonical_guard_verifier": {
+      "status": "PASS_RELEASE_WORKFLOW_GUARD",
+      "actual_bytes": 498,
+      "actual_sha256": "a0fabef4ce5ca8a745af8df861822ad9e45aa8378df3493dda55ca983bea4db7",
+      "forbidden_fragments_present": [],
+      "github_writes": 0,
+      "openbench_calls": 0
+    },
+    "unit_profiles": [
+      {
+        "profile": "normal",
+        "tests_passed": 9,
+        "tests_failed": 0
+      },
+      {
+        "profile": "optimized",
+        "tests_passed": 9,
+        "tests_failed": 0
+      }
+    ],
+    "forbidden_fragment_mutations_per_profile": 13,
+    "additional_mutation_classes_per_profile": 7,
+    "yaml_base_loader_structure": "PASS_EXACTLY_ONE_REQUIRED_STEP",
+    "actionlint": {
+      "version": "1.7.12",
+      "bytes": 6432768,
+      "sha256": "54ca21be3de4c7cfa26914aa8b61bd76bf573ef3caac5f80d110558cdf241718",
+      "errors": 0
+    },
+    "post_commit_reauthentication": "PASS"
+  },
+  "incident": {
+    "id": "CH-326",
+    "symptom": "The locally qualified G15 guard was not invoked by the prepared public correctness workflow.",
+    "false_inference": "Formal local qualification automatically protects a future public CI run.",
+    "cause": "The CI draft predated the guard, and later additive release steps were not represented by a current G6 workflow pin.",
+    "prevention": "Every new release gate must receive one exact CI step, an additive workflow digest receipt, structural verification, both Python profiles and actionlint before public execution.",
+    "gate": "P6/G6 and P15/G15 cross-gate CI integration"
+  },
+  "claim_boundary": {
+    "local_ci_integration_executed": true,
+    "public_workflow_pushed": false,
+    "public_workflow_run_observed": false,
+    "public_artifacts_observed": false,
+    "G6": "UNCHANGED_OPEN",
+    "G15": "UNCHANGED_OPEN",
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "public_write_authorized": false,
+    "stable_publication_authorized": false
+  },
+  "pass_effect": "The prepared local correctness-CI draft now enforces the qualified fail-closed G15 guard. G6 remains open until the public repository exists, all required jobs complete successfully and downloaded artifacts are independently authenticated; G15 remains open until every release prerequisite and the owner's explicit stable-publication decision."
+}

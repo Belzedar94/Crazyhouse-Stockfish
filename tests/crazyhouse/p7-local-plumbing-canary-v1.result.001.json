@@ -1,0 +1,86 @@
+{
+  "schema": "crazyhouse-local-plumbing-canary-result/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING_PLUMBING",
+  "created_utc": "2026-08-23T22:14:22.1371104Z",
+  "result": "PASS_PLUMBING_ONLY",
+  "lease": 279,
+  "repository": {
+    "commit": "1dffb82d3b64c4834c2aab6ea2d6bbe0f7a8009f",
+    "tree": "cd090e36985216c01b4088216092b27c09f03fa3",
+    "src_tree": "e5a751edfa52b219fea00c919a2180fade576377"
+  },
+  "contract": {
+    "path": "tests/crazyhouse/p7-local-strength-panel-v2.json",
+    "bytes": 15372,
+    "sha256": "f1b9a25b38b5bcad4a4becc2257b0da8b9ae1b294010b85c8bfcc2216efcaabe"
+  },
+  "correction_addendum": {
+    "path": "tests/crazyhouse/p7-local-strength-panel-v2.addendum.001.json",
+    "bytes": 3643,
+    "sha256": "78d31936c4a6aa446a8aa6b0fac275bff7997c94c08033f73a14bb331e569682"
+  },
+  "receipts": {
+    "start": {
+      "path": "receipts/resources/p7-local-plumbing-canary-t1-start-279.json",
+      "bytes": 5011,
+      "sha256": "126ad31ddd025f4df0e13ed498466a45e2efe2724158f02308efd475cdcb5647"
+    },
+    "end": {
+      "path": "receipts/resources/p7-local-plumbing-canary-t1-end-279.json",
+      "bytes": 3693,
+      "sha256": "b637edee4408364b96396bb99273971a9864a41dd6ca3d41eb82e2ece04233de"
+    }
+  },
+  "execution": {
+    "target": "D:/Crazyhouse-Stockfish/leases/p7-local-plumbing-canary-279",
+    "games": 2,
+    "pairs": 1,
+    "time_control": "2+0.02",
+    "opening_start": 1,
+    "srand": 2026082399,
+    "started_utc": "2026-08-23T22:13:53.179635Z",
+    "completed_utc": "2026-08-23T22:13:58.882116Z"
+  },
+  "authenticated_proof": {
+    "runner_routing_checks": "11/11 PASS",
+    "independent_routing_checks": "8/8 PASS",
+    "unique_nonce_sets": 4,
+    "matching_nonce_acknowledgements": 4,
+    "candidate_route": "legacy-v1/incremental-scalar",
+    "comparator_route": "fairy-external/halfkav2variants",
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "variant": "crazyhouse",
+    "profile": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "engine_stderr_empty": true,
+    "protocol_error_records": 0,
+    "independent_pgn_replay": {
+      "games": 2,
+      "moves": 143,
+      "terminal_reasons": {"CHECKMATE": 2}
+    }
+  },
+  "raw_artifacts": {
+    "manifest": {"bytes": 7758, "sha256": "79f57046a8bf27b490337d2681dd48d4475cdb9185014886fd191378a1f69ae7"},
+    "canary_result": {"bytes": 2151, "sha256": "71be0823eecc248fba3b1bea67e7b6912291566bfe87f294c83019363ed694fb"},
+    "cutechess_log": {"bytes": 419818, "sha256": "1ffde8c0c7571224a0aad9e671e8509eb3509d2bb5fea1e4871aa912c4ea60a5"},
+    "pgn": {"bytes": 5009, "sha256": "765ee05c139509b54cffe4185a1fd837803dae0db53775269dc66a2cb254b9cf"},
+    "completion": {"bytes": 1708, "sha256": "2812f64301d1f2284fa87148611ebf4a9224fbd9e90d210e710e7f0ec1faa00c"}
+  },
+  "resource_boundary": {
+    "foreign_processes_mutated": false,
+    "foreign_identity_diff": [],
+    "owned_processes_survive": false
+  },
+  "scientific_boundary": {
+    "score_interpretation": false,
+    "elo_claim": false,
+    "strength_claim": false,
+    "adapter_overhead_claim": false,
+    "host_ready_claim": false,
+    "openbench_authorized": false,
+    "release_claim": false
+  },
+  "effect": "The exact candidate/comparator routing plumbing is qualified. Adapter overhead and the local strength ladder remain unexecuted and require a clean host."
+}

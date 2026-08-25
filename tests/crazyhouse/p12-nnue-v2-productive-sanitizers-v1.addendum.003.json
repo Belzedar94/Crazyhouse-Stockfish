@@ -1,0 +1,67 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-preregistration-addendum/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-24T14:15:47.235Z",
+  "status": "PREREGISTERED_PIPE_ORCHESTRATION_CORRECTION_BEFORE_LEASE_323",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Replace only the rejected lease and the bidirectional redirected-process orchestration. Preserve the scientific hypothesis, sanitizer toolchains, source product, matrices, stopping rule, resources and claim boundaries from the parent preregistration.",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.002.json",
+    "commit": "68b363fbbd11e5d7607869d4eef2d5f4d1d5eb3e",
+    "bytes": 2004,
+    "sha256": "6214930351ef8240064ffeaa80d8723eb1f099a144a1e05f66ad3268050b0ce3"
+  },
+  "rejected_lease_322": {
+    "status": "REJECTED_ENGINEERING_OR_ORCHESTRATION",
+    "incident": "CH-293",
+    "completion": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-start-322.intervention.001.addendum.001.json",
+      "bytes": 1979,
+      "sha256": "094fd38bf2d703d5738e24b327be0bae1824e631272873c0f06877a93450d378"
+    },
+    "compiler_started": false,
+    "verifier_started": false,
+    "scientific_result_observed": false,
+    "gate_credit": false
+  },
+  "single_operational_change": {
+    "old_lease": 322,
+    "new_lease": 323,
+    "old_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-322",
+    "new_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-323",
+    "runner_requirement": "Start asynchronous stdout and stderr drains immediately after process start; write stdin asynchronously under the same absolute deadline; close stdin after the write; preserve timeout tree-kill and full stream capture.",
+    "preflight_requirement": "Before namespace creation, a live bidirectional probe larger than the native pipe capacity must echo identical payloads to stdout and stderr and exit zero under the same ordering and deadline."
+  },
+  "formal_source_admission": {
+    "effective_base_commit": "68b363fbbd11e5d7607869d4eef2d5f4d1d5eb3e",
+    "permitted_difference_from_effective_base": [
+      "docs/crazyhouse/incident-ledger.md",
+      "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.003.json"
+    ],
+    "exact_src_tree_required": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "clean_worktree_required": true
+  },
+  "preserved": {
+    "hypothesis": true,
+    "single_variable": true,
+    "frozen_inputs": true,
+    "toolchains": true,
+    "resource_contract": true,
+    "clean_export_contract": true,
+    "sanitizer_lanes": true,
+    "runtime_matrix": true,
+    "stopping_rule": true,
+    "pass_effect": true,
+    "boundaries": true
+  },
+  "boundaries": {
+    "sanitizer_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

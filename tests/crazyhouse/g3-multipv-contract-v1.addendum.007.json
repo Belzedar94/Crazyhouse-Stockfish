@@ -1,0 +1,95 @@
+{
+  "schema": "crazyhouse-g3-multipv-contract-addendum/v1",
+  "addendum": 7,
+  "created_utc": "2026-08-23T07:24:45.0491314Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Admit the immutable lease-242 current-product-source MultiPV regression evidence after correction-only supervisor provenance and independent post-exit authentication.",
+  "pins": {
+    "provenance_correction_addendum_006": {
+      "path": "tests/crazyhouse/g3-multipv-contract-v1.addendum.006.json",
+      "bytes": 4271,
+      "sha256": "4cb2b4d5a6aa383f3d4bd682c14d4a7de253ffeaec339a27e0426a8442d1605d",
+      "git_blob": "200b7f0e07b622c0b396df57b54a8a7a1dcdf23c"
+    },
+    "lease_242_end_receipt": {
+      "path": "../../../receipts/resources/p3-current-source-multipv-replay-t1-end-242.json",
+      "bytes": 5809,
+      "sha256": "55728e06c2cd11a5b80f3b9603f463f2c0340b72825a02758e9f47208e6179c4"
+    },
+    "lease_242_private_green_record": {
+      "path": "../../../receipts/private/p3-current-source-multipv-replay-green-record-158.json",
+      "bytes": 4077,
+      "sha256": "fb48c61626ac4b55bbc4f904ce697203273119c56487ec4cce2486ce92dbae4f"
+    },
+    "lease_242_completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p3-current-source-multipv-replay-242/completion.json",
+      "bytes": 7221,
+      "sha256": "eb756735abe27c0b2848ebaeff285a579484aafb2666dc5483f7f1baa3697a3a"
+    },
+    "lease_242_observation": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p3-current-source-multipv-replay-242/green-observation.json",
+      "bytes": 70337,
+      "sha256": "ee617cb000e15c1123b217e9a893021f4cbfbe59e582a5da61e10352a6fe194d"
+    }
+  },
+  "validated_source": {
+    "repository_commit": "121e34d5e19461c775b588fe0f34adf8312cc25c",
+    "repository_tree": "72482bb45f6f7d86337bfe7c11e92102cce4b4bb",
+    "product_src_tree": "4bc1cf5f3cdf203b09bf64681c9e3afa88e33cc3",
+    "sealed_engine_source_commit": "f3c470280c231b433383c64ae1897a67b9ac04bd",
+    "sealed_engine_sha256": "831470300476aaa8501d9bd7e698176b238ca7bb47c98b898a8f023251ba5c22",
+    "multipv_behavior_commit": "51ff97d0108dfaa516853ed671d80471ec823290",
+    "conservative_search_behavior_commit": "5d1bee77ac96b3fe95fa28717d428693b56297c1",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false,
+    "repository_clean_before_and_after": true
+  },
+  "runtime_admission": {
+    "result": "PASS_CRAZYHOUSE_MULTIPV_PROTOCOL_BOUNDARY",
+    "evidence_groups_passed": "4/4",
+    "known_303_indices_complete": true,
+    "known_303_moves_unique": true,
+    "known_303_move_digest": "9e45d177d1a599c1ca3a517b223a70115c0a51e69af72acd0534483f378616e0",
+    "startpos_dynamic_clamp": 20,
+    "searchmoves_dynamic_clamp": 2,
+    "valid_override_persists_across_routes": true,
+    "valid_override_is_chess_inert": true,
+    "invalid_inputs": 5,
+    "invalid_chess_search_pvs": 2,
+    "invalid_sticky_after_return_to_crazyhouse": true,
+    "zero_recovery_pvs": 2,
+    "fallback_observed": false,
+    "stderr_bytes": 0,
+    "timeout": false
+  },
+  "operational_admission": {
+    "launcher_pid": 25124,
+    "supervisor_pid": 10148,
+    "verifier_pid": 47032,
+    "launcher_controller_go_completion_pid_match": true,
+    "postexit_artifact_checks": 10,
+    "postexit_artifact_mismatches": 0,
+    "owned_residual_processes": 0,
+    "exact_engine_processes_alive": 0,
+    "foreign_processes_mutated": false,
+    "disk_floors_preserved": true,
+    "gpu_used": false,
+    "workers_used": false,
+    "network_used": false
+  },
+  "rejection_disposition": {
+    "lease_241_gate_credit": false,
+    "lease_241_namespace_reused": false,
+    "lease_241_output_reused": false,
+    "receipts_rewritten": false,
+    "incident": "CH-204"
+  },
+  "result": "PASS_CRAZYHOUSE_MULTIPV_CURRENT_SOURCE_REPLAY",
+  "gate_effect": "The MultiPV protocol boundary remains PASS on the exact current product-src tree after the conservative search change. Whole-G3 reconciliation remains separate.",
+  "claim_boundary": "This is deterministic E1 protocol correctness evidence. It is not timing, Elo, OpenBench, model-selection, release or monitoring evidence.",
+  "stopping_rule": "Any later product-src change that can affect root search or UCI protocol requires a new affected-source assessment. Lease 241 remains immutable no-credit diagnostic evidence.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

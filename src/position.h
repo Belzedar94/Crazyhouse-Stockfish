@@ -21,6 +21,7 @@
 
 #include <array>
 #include <cassert>
+#include <cstdlib>
 #include <deque>
 #include <iosfwd>
 #include <memory>
@@ -31,6 +32,8 @@
 
 #include "attacks.h"
 #include "bitboard.h"
+#include "crazyhouse_state.h"
+#include "ruleset.h"
 #include "types.h"
 
 namespace Stockfish {
@@ -54,6 +57,7 @@ struct StateInfo {
     int    rule50;
     int    pliesFromNull;
     Square epSquare;
+    CrazyhouseState crazyhouse;
 
     // Not copied when making a move (will be recomputed anyhow)
     Key        key;
@@ -79,6 +83,26 @@ struct PositionSetError: std::runtime_error {
     using std::runtime_error::runtime_error;
 };
 
+enum class CrazyhouseClaimPolicy {
+    AUTOMATIC_ONLY,
+    THREEFOLD_IMMEDIATE_CLAIM
+};
+
+enum class CrazyhouseTerminalReason {
+    ONGOING,
+    CHECKMATE,
+    STALEMATE,
+    FIVEFOLD_REPETITION,
+    THREEFOLD_REPETITION_CLAIM
+};
+
+struct CrazyhouseTerminalStatus {
+    CrazyhouseTerminalReason reason = CrazyhouseTerminalReason::ONGOING;
+    std::optional<Color>      winner;
+
+    constexpr bool ended() const { return reason != CrazyhouseTerminalReason::ONGOING; }
+};
+
 // Position class stores information regarding the board representation as
 // pieces, side to move, hash keys, castling info, etc. Important methods are
 // do_move() and undo_move(), used by the search to update node info when
@@ -87,12 +111,16 @@ class Position {
    public:
     static void init();
 
-    Position()                           = default;
+    Position() = default;
+    explicit Position(Ruleset ruleset) :
+        activeRuleset(validate_ruleset(ruleset, "Position")) {}
     Position(const Position&)            = delete;
     Position& operator=(const Position&) = delete;
 
     // FEN string input/output
     std::optional<PositionSetError> set(const std::string& fenStr, bool isChess960, StateInfo* si);
+    std::optional<PositionSetError>
+    set(const std::string& fenStr, bool isChess960, Ruleset ruleset, StateInfo* si);
     std::optional<PositionSetError> set(const std::string& code, Color c, StateInfo* si);
     std::string                     fen() const;
 
@@ -105,6 +133,9 @@ class Position {
     Bitboard                            pieces(Color c, PieceTypes... pts) const;
     Piece                               piece_on(Square s) const;
     const std::array<Piece, SQUARE_NB>& piece_array() const;
+    const CrazyhouseState&              crazyhouse_state() const;
+    int                                 pocket_count(Color c, PieceType pt) const;
+    Bitboard                            promoted_pieces() const;
     Square                              ep_square() const;
     bool                                empty(Square s) const;
     template<PieceType Pt>
@@ -159,24 +190,29 @@ class Position {
 
     // Accessing hash keys
     Key key() const;
-    Key prefetch_key(Move m) const;
+    std::optional<Key> prefetch_key(Move m) const;
     Key material_key() const;
     Key pawn_key() const;
     Key minor_piece_key() const;
     Key non_pawn_key(Color c) const;
 
     // Other properties of the position
-    Color side_to_move() const;
-    int   game_ply() const;
-    bool  is_chess960() const;
-    bool  is_draw(int ply) const;
-    bool  is_repetition(int ply) const;
-    bool  upcoming_repetition(int ply) const;
-    bool  has_repeated() const;
-    int   rule50_count() const;
-    Value non_pawn_material(Color c) const;
-    Value non_pawn_material() const;
-    bool  dtz_is_dtm() const;  // Pawnless && (3-men || 4-men-minors-only)
+    Color   side_to_move() const;
+    Ruleset ruleset() const;
+    int     game_ply() const;
+    bool    is_chess960() const;
+    bool    is_draw(int ply) const;
+    bool    is_repetition(int ply) const;
+    bool    upcoming_repetition(int ply) const;
+    bool    has_repeated() const;
+    int     repetition_occurrences() const;
+    CrazyhouseTerminalStatus
+         crazyhouse_terminal_status(CrazyhouseClaimPolicy policy) const;
+    bool tablebases_applicable() const;
+    int     rule50_count() const;
+    Value   non_pawn_material(Color c) const;
+    Value   non_pawn_material() const;
+    bool    dtz_is_dtm() const;  // Pawnless && (3-men || 4-men-minors-only)
 
     // Position consistency check, for debugging
     bool                            pos_is_ok() const;
@@ -191,8 +227,13 @@ class Position {
 
    private:
     // Initialization helpers (used while setting up a position)
+    std::optional<PositionSetError>
+    set_in_place(const std::string& fenStr, bool isChess960, Ruleset ruleset, StateInfo* si);
+    std::optional<PositionSetError> validate_crazyhouse_physical_state() const;
     void set_castling_right(Color c, Square rfrom);
     Key  compute_material_key() const;
+    Key  compute_crazyhouse_pocket_key() const;
+    Key  compute_crazyhouse_promoted_key() const;
     void set_state() const;
     void set_check_info() const;
 
@@ -228,12 +269,15 @@ class Position {
     int        gamePly;
     Color      sideToMove;
     bool       chess960;
+    Ruleset    activeRuleset = Ruleset::CHESS;
     Dirties    scratchDirties;
 };
 
 std::ostream& operator<<(std::ostream& os, const Position& pos);
 
 inline Color Position::side_to_move() const { return sideToMove; }
+
+inline Ruleset Position::ruleset() const { return activeRuleset; }
 
 inline Piece Position::piece_on(Square s) const {
     assert(is_ok(s));
@@ -242,9 +286,28 @@ inline Piece Position::piece_on(Square s) const {
 
 inline const std::array<Piece, SQUARE_NB>& Position::piece_array() const { return board; }
 
+inline const CrazyhouseState& Position::crazyhouse_state() const {
+    assert(st);
+    return st->crazyhouse;
+}
+
+inline int Position::pocket_count(Color c, PieceType pt) const {
+    const int index = Crazyhouse::pocket_index(pt);
+    if (!st || (c != WHITE && c != BLACK) || index < 0)
+        std::abort();
+    return st->crazyhouse.pockets.count[c][index];
+}
+
+inline Bitboard Position::promoted_pieces() const {
+    assert(st);
+    return st->crazyhouse.promoted;
+}
+
 inline bool Position::empty(Square s) const { return piece_on(s) == NO_PIECE; }
 
-inline Piece Position::moved_piece(Move m) const { return piece_on(m.from_sq()); }
+inline Piece Position::moved_piece(Move m) const {
+    return m.is_drop() ? make_piece(sideToMove, m.drop_piece_type()) : piece_on(m.from_sq());
+}
 
 inline Bitboard Position::pieces() const { return byTypeBB[ALL_PIECES]; }
 
@@ -316,7 +379,9 @@ inline Bitboard Position::pinners(Color c) const { return st->pinners[c]; }
 
 inline Bitboard Position::check_squares(PieceType pt) const { return st->checkSquares[pt]; }
 
-inline Key Position::key() const { return adjust_key50(st->key); }
+inline Key Position::key() const {
+    return activeRuleset == Ruleset::CRAZYHOUSE ? st->key : adjust_key50(st->key);
+}
 
 template<bool AfterMove>
 inline Key Position::adjust_key50(Key k) const {
@@ -342,6 +407,8 @@ inline int Position::game_ply() const { return gamePly; }
 inline int Position::rule50_count() const { return st->rule50; }
 
 inline bool Position::is_chess960() const { return chess960; }
+
+inline bool Position::tablebases_applicable() const { return activeRuleset == Ruleset::CHESS; }
 
 inline bool Position::dtz_is_dtm() const {
     return !count<PAWN>()

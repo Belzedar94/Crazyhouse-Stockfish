@@ -1,0 +1,120 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum": 5,
+  "created_utc": "2026-08-23T00:18:24.4324518Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Authorize only the fail-closed Worker provenance-chain rebase required after the admitted portable missing-file source correction, then require a complete fresh sanitizer replay.",
+  "pins": {
+    "sanitizer_contract_v1": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.json",
+      "bytes": 7180,
+      "sha256": "a8fc11270142c806834b90db40b808da253fd886d5412f0c11da116b9849f8d9"
+    },
+    "sanitizer_addendum_001": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.001.json",
+      "bytes": 2575,
+      "sha256": "deaa165c8990616d55ded40646bb22797ab436f26d5d9792e5972ef929b7d602"
+    },
+    "sanitizer_addendum_002": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.002.json",
+      "bytes": 1798,
+      "sha256": "580db0d31ad3dea9ba22c1fd71a47b5071098cf60f8d0d3f6bbe84a310574dd8"
+    },
+    "sanitizer_addendum_003": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.003.json",
+      "bytes": 1791,
+      "sha256": "551e7a7519f8fd2521d4d712aea007910ca700b78eda7fca54504a0dc4ab6966"
+    },
+    "sanitizer_addendum_004": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.004.json",
+      "bytes": 2666,
+      "sha256": "24f18035759269b14937dc671d5c7a6497493262942178b605813ef8d2eae2fc"
+    },
+    "worker_addendum_003": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.003.json",
+      "bytes": 6829,
+      "sha256": "ad3f69dcaf02828614a522d70e63944c4a85b35c5e26bc147abfd6a6195368cc"
+    },
+    "verifier_before_addendum_003_support": {
+      "path": "tests/crazyhouse_worker_search_verify.py",
+      "bytes": 13451,
+      "sha256": "68ffb7ed81325239091f8db251e60b6da5b74eec520d5236ec1e5adc9f47f659",
+      "git_blob": "dc04a9e53ac2c8346cec92b2ab9861e982558b2d"
+    },
+    "formal_stale_pin_red_end_receipt": {
+      "path": "../../../receipts/resources/p5-sanitizer-runtime-t1-end-227.json",
+      "bytes": 6255,
+      "sha256": "a852ae0fb70bf63245a08f66f8cc94408b2f937828efeeb8e31d51d53d5273a0"
+    },
+    "formal_stale_pin_rejection_record": {
+      "path": "../../../receipts/private/p5-sanitizer-runtime-rejection-record-133.json",
+      "bytes": 1974,
+      "sha256": "1fe699f02b605214b0152c69ee607353665bc74f0c9a4a37f89f2c6de84a8199"
+    },
+    "old_verifier_expected_red_record": {
+      "path": "../../../receipts/private/p5-worker-provenance-addendum-red-gate-record-134.json",
+      "bytes": 2301,
+      "sha256": "319eea1643dc8ce67b11e6c281d0569e958566eabac5b848ec7cda347ae5900e"
+    },
+    "controller_before_provenance_support": {
+      "path": "control/p5-sanitizer-runtime-226.ps1",
+      "bytes": 32595,
+      "sha256": "9e1e802936d944a1cae89868901f45bdc594e46ddf8265788bce07afa4a55bbe"
+    }
+  },
+  "source_boundary": {
+    "engine_code_commit": "33256716e894f08a75836f0745a6d74433a7df5d",
+    "engine_code_tree": "7dba6bd6be7e0e50b2e303d6804508479db89ed7",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "allowed_product_source_changes": [],
+    "allowed_test_changes": ["tests/crazyhouse_worker_search_verify.py"],
+    "allowed_external_controller_changes": [
+      "authenticate sanitizer addendum 005",
+      "invoke Worker addendum 003 in both lanes",
+      "advance expected source commit and tree",
+      "advance lease defaults and fresh namespaces"
+    ],
+    "fairy_stockfish_source_allowed": false
+  },
+  "single_variable_transition": {
+    "variable": "Worker provenance-chain authentication",
+    "from": {
+      "latest_worker_addendum": 2,
+      "portable_source_pin_supported": false,
+      "formal_result": "REJECTED_SANITIZER_RUNTIME_STALE_WORKER_SOURCE_PIN"
+    },
+    "to": {
+      "latest_worker_addendum": 3,
+      "portable_source_pin_supported": true,
+      "prior_contract_bytes_and_hashes_still_authenticated": true,
+      "changed_source_pin_count": 1,
+      "worker_mode": "INCREMENTAL_SCALAR",
+      "route_token": "evaluator=incremental-scalar",
+      "fallback_allowed": false,
+      "simd_claim": false
+    }
+  },
+  "required_verifier_behavior": {
+    "accept_addendum_numbers": [1, 2, 3],
+    "addendum_003_must_pin_base_and_both_prior_addenda": true,
+    "addendum_003_must_validate_three_unchanged_incremental_source_pins": true,
+    "addendum_003_must_validate_one_exact_before_after_replacement": true,
+    "addendum_003_must_validate_portable_transition_text_and_commit_identity": true,
+    "addendum_003_must_preserve_addendum_002_summary_and_route_token": true,
+    "corrupt_or_stale_field_must_fail_before_engine_launch": true,
+    "historical_full_refresh_binary_must_fail": true
+  },
+  "required_preflight": {
+    "old_verifier_expected_red": "PASS",
+    "new_verifier_positive_worker_replay": true,
+    "new_verifier_corrupt_addendum_negative": true,
+    "new_verifier_stale_source_negative": true,
+    "build_only_same_path": true,
+    "full_runtime_same_path_after_new_immutable_start_receipt": true
+  },
+  "stopping_rule": "No C++ or evaluator change is authorized. Any weakening of base/prior-addendum hashes, source pins, route telemetry, corpus, stderr policy, fail-closed behavior or full-matrix replay rejects the slice. The formal rerun uses a fresh lease and may not reuse lease 227.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

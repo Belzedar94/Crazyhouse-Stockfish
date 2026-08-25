@@ -1,0 +1,175 @@
+{
+  "schema": "crazyhouse-g4-referee-source-map/v1",
+  "created_utc": "2026-08-14T05:47:31.0111993Z",
+  "evidence_class": "E1_ENGINEERING",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "mapping_scope": "read-only source mapping completed before any referee behavior edit",
+  "upstream": {
+    "repository": "https://github.com/AndyGrant/cutechess.git",
+    "commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "tree": "289867c000147a84b2a48eff5ce1aa2fbd85e168",
+    "default_branch_head_equal_at_fetch": true,
+    "non_shallow": true,
+    "clean": true,
+    "fsck_full_exit": 0,
+    "replace_refs": [],
+    "grafts": [],
+    "forbidden_horde_object_present": false,
+    "fetch_start_receipt": {
+      "path": "../../../receipts/resources/p4-referee-clean-root-fetch-t1-start-145.json",
+      "bytes": 3195,
+      "sha256": "df9e6ae3d746fb99488f891607cfc4b787272cccde470c92da691d4abcac4061"
+    },
+    "fetch_end_receipt": {
+      "path": "../../../receipts/resources/p4-referee-clean-root-fetch-t1-end-145.json",
+      "bytes": 3196,
+      "sha256": "35e88097b6e9a29f74d0956e8a4bf8f2e013571696517531f6122f0801d8adab"
+    }
+  },
+  "advisory_review": {
+    "path": "../../../receipts/private/p4-referee-fixture-closure-consultation-040.json",
+    "bytes": 3994,
+    "sha256": "7d0f515bcef1387cf7a79f84cafb1495009ccbe1cc383074590ff04ec8862e46",
+    "verdict": "CHANGE_THEN_ACCEPT"
+  },
+  "source_files": [
+    {"path": "projects/cli/src/main.cpp", "bytes": 20614, "sha256": "e7349eb3a1baa803abee5d99e273bf01cd15ed38217d4683c988a59b183fcbf0"},
+    {"path": "projects/cli/src/matchparser.cpp", "bytes": 5075, "sha256": "74a4152b9ea27f922a8caeb8582e3135e679797a9a4552bfcf31145a8d0d97df"},
+    {"path": "projects/cli/src/matchparser.h", "bytes": 3169, "sha256": "bdb033706b55a41cb5571890e63378ec443c2982c8a7223617f4be9e0c4fb149"},
+    {"path": "projects/cli/src/enginematch.cpp", "bytes": 4857, "sha256": "5ba5ecd6c14de3200800aefbb8a715ea59f34da5604e1178da7c3661daef6c39"},
+    {"path": "projects/cli/src/enginematch.h", "bytes": 1847, "sha256": "78b7fa9c2c00b2949e3438678f5204fa593879e3c62cec19ce6d0153cafd8a17"},
+    {"path": "projects/lib/src/board/boardfactory.cpp", "bytes": 5886, "sha256": "d485ac570487f4c0ae90f321518bf32e5bf26adc4d74c40a648c3bef6307ff8a"},
+    {"path": "projects/lib/src/board/board.cpp", "bytes": 19197, "sha256": "2200599b48af26cf58130f81abb574928bda8e5d2c9a6466280e2b2eeda9288f"},
+    {"path": "projects/lib/src/board/board.h", "bytes": 19530, "sha256": "7d8165b1d429e78af07683aa5f1bb00226b7b25675eefc82e66f2f1231497375"},
+    {"path": "projects/lib/src/board/crazyhouseboard.cpp", "bytes": 5636, "sha256": "db8ec06ae01ba6397107f8575f2975c350ca66391c2607a80f0ca0aee5b0dd3a"},
+    {"path": "projects/lib/src/board/crazyhouseboard.h", "bytes": 2762, "sha256": "2147973c1f608b383bcc37e30770667767e5ec4a950f977357a22d2773cacf2e"},
+    {"path": "projects/lib/src/board/westernboard.cpp", "bytes": 33998, "sha256": "bf1ce0fe112f7c23486419ad680b6e073b0d690888474eab609d184296a7b45a"},
+    {"path": "projects/lib/src/board/westernboard.h", "bytes": 9064, "sha256": "e85f0f58ccf3fafa58adc13408ad378e44a626e530a0679e39e9a53d29a33693"},
+    {"path": "projects/lib/src/board/westernzobrist.cpp", "bytes": 2014, "sha256": "35f2af619b6c98dd4cfc7301abd6a42e4d75028edf2667493c65ef49a73a86d6"},
+    {"path": "projects/lib/src/board/westernzobrist.h", "bytes": 1819, "sha256": "070a94310f1a1e8ed0159d04c304f99f84ef4b9dd17981909db5dcf971e820b2"},
+    {"path": "projects/lib/src/chessplayer.cpp", "bytes": 5783, "sha256": "823c8cffd39d8771d492181d740bc57423efa3c2c574765dd67cbcb486f54a1e"},
+    {"path": "projects/lib/src/chessplayer.h", "bytes": 8708, "sha256": "4e94953986a2939e6a87af9a65e49480db21b1da4abd1251c6fb536b7ed86aae"},
+    {"path": "projects/lib/src/timecontrol.cpp", "bytes": 9174, "sha256": "c47f32a5e82f56c821e9dc02988f5f20b9dc3d7ba7cfe27daa25e1a10fb0db62"},
+    {"path": "projects/lib/src/timecontrol.h", "bytes": 6390, "sha256": "dec551165f954b58e519720800b7d22f42542cfa7b6476053ce3bdba6677582f"},
+    {"path": "projects/lib/src/chessgame.cpp", "bytes": 16502, "sha256": "e270c3bc5842b8f1432ec34f8467943feb0d1d2e952056912a8a0f0d6eb2d5c0"},
+    {"path": "projects/lib/src/chessgame.h", "bytes": 4184, "sha256": "d33e8c989d0f85816911e4f2ef7117c42e80d5bf7525deb4d6b5c540721413eb"},
+    {"path": "projects/lib/src/chessengine.cpp", "bytes": 10618, "sha256": "7589296974bb42d74c7a7be821d22e21ed2a62396965c69465315411d8b5fb92"},
+    {"path": "projects/lib/src/chessengine.h", "bytes": 8646, "sha256": "1d8ad5bf28620fa0e6898d07066204231d45404eb03f1b0c6de20d061240e95b"},
+    {"path": "projects/lib/src/uciengine.cpp", "bytes": 18140, "sha256": "76b0b1d7b6142d76af57bf31b52988b310d86fa6b88d904abfe21c97efd4b49a"},
+    {"path": "projects/lib/src/uciengine.h", "bytes": 3063, "sha256": "c11725c9255733fd5bc9b9a5032ce5dbbe46baabbc2c607644427b904341f88e"},
+    {"path": "projects/lib/src/pgngame.cpp", "bytes": 12452, "sha256": "e9c9bf0e142420681cc2136749065e4b075265b6ae1846e790c67e8371c40db4"},
+    {"path": "projects/lib/src/pgngame.h", "bytes": 7286, "sha256": "c4c89728cf5d3a623d35e6b093b1592b6583d5cbf1ab8997df43c32aa2ecba2f"},
+    {"path": "projects/lib/src/pgnstream.cpp", "bytes": 7704, "sha256": "fdf72eed5a61de9b594d550c33531f353b8a4697d682736e0cce9e5f5750f677"},
+    {"path": "projects/lib/src/pgnstream.h", "bytes": 6053, "sha256": "2cda1707b9b205449b47874b3ab0af7f0e950fa3f0d3cf3b205617f520dae8a7"},
+    {"path": "projects/lib/src/gamemanager.cpp", "bytes": 11697, "sha256": "6bd432f545052704e3b8903eb519b04809ac3d3a7e2ebacfda0ab1d9d80cb7bc"},
+    {"path": "projects/lib/src/gamemanager.h", "bytes": 6436, "sha256": "8fbf7ffe2b82c44caa1a827729792fe60805b3874555e66b314643a49e5a7569"},
+    {"path": "projects/lib/src/tournament.cpp", "bytes": 31226, "sha256": "a63bdfed892bbce1dad8a0e3ad39ee39d7b70dfae7b091b5914e5a98e5f838be"},
+    {"path": "projects/lib/src/tournament.h", "bytes": 22075, "sha256": "b86ad981865ee5f74519352d8f2c44ba7e4b4c4bd4f6ffa8565f1b4fc6fc0813"},
+    {"path": "projects/lib/src/gameadjudicator.cpp", "bytes": 3768, "sha256": "37bcedd78b5cd527be3230d08988ffcc8a0dfca11beeab01db9ee75958efc57f"},
+    {"path": "projects/lib/src/gameadjudicator.h", "bytes": 3573, "sha256": "a651db4b9281329238163bdf90c7e008d63351b9386a533a3617552266f08425"}
+  ],
+  "boundaries": [
+    {
+      "id": "board_factory_and_variant_dispatch",
+      "symbols": ["BoardFactory::create", "REGISTER_BOARD(CrazyhouseBoard, crazyhouse)", "Tournament::startGame"],
+      "paths": ["projects/lib/src/board/boardfactory.cpp", "projects/lib/src/tournament.cpp"],
+      "current_behavior": "one new CrazyhouseBoard is created for every game from the tournament variant",
+      "fixture_join": ["rule_core:all", "sequential_and_concurrent_isolation"]
+    },
+    {
+      "id": "fen_pockets_and_promoted_provenance",
+      "symbols": ["Board::fenString", "Board::setFenString", "CrazyhouseBoard::reserveType", "CrazyhouseBoard::normalPieceType", "CrazyhouseBoard::promotedPieceType"],
+      "paths": ["projects/lib/src/board/board.cpp", "projects/lib/src/board/crazyhouseboard.cpp", "projects/lib/src/board/westernboard.cpp"],
+      "current_behavior": "bracket pockets and promoted piece types enter the production board path",
+      "nonconformance": ["empty pocket emits [-]", "slash-pocket input is not supported", "a closing bracket is not required", "trailing pocket text is not rejected", "reserve role membership is not enforced", "failed parsing can mutate the board"]
+    },
+    {
+      "id": "move_generation_storage_and_capacity",
+      "symbols": ["Board::generateMoves", "Board::generateDropMoves", "Board::legalMoves", "CrazyhouseBoard::generateMovesForPiece"],
+      "paths": ["projects/lib/src/board/board.cpp", "projects/lib/src/board/crazyhouseboard.cpp", "projects/lib/src/board/westernboard.cpp"],
+      "current_behavior": "QVarLengthArray has inline storage but grows dynamically; no fixed 256-move truncation was found",
+      "fixture_join": ["capacity:303_complete_moves", "rule_core:legal_moves"]
+    },
+    {
+      "id": "move_parsing_and_notation",
+      "symbols": ["Board::moveFromLanString", "WesternBoard::moveFromLanString", "WesternBoard::moveFromSanString", "CrazyhouseBoard::moveFromSanString", "UciEngine::parseLine"],
+      "paths": ["projects/lib/src/board/board.cpp", "projects/lib/src/board/westernboard.cpp", "projects/lib/src/board/crazyhouseboard.cpp", "projects/lib/src/uciengine.cpp"],
+      "current_behavior": "ordinary match bestmove uses the general move parser, which accepts SAN and decorated forms outside the strict Crazyhouse UCI contract",
+      "nonconformance": ["no strict bestmove grammar", "no canonical lower-to-upper drop normalization receipt", "trailing-token policy is not fail-closed"]
+    },
+    {
+      "id": "make_undo_physical_history_and_repetition",
+      "symbols": ["Board::makeMove", "Board::undoMove", "Board::repeatCount", "CrazyhouseBoard::vMakeMove", "CrazyhouseBoard::vUndoMove", "WesternBoard::vMakeMove", "WesternBoard::vUndoMove", "WesternZobrist::piece", "Zobrist::reservePiece"],
+      "paths": ["projects/lib/src/board/board.cpp", "projects/lib/src/board/crazyhouseboard.cpp", "projects/lib/src/board/westernboard.cpp", "projects/lib/src/board/westernzobrist.cpp"],
+      "current_behavior": "board keys include side, board pieces including promoted piece types, pockets, castling and normalized en-passant; move and western histories are separate vectors",
+      "nonconformance": ["repeatCount is consumed by an orthodox threefold result", "no canonical per-ply history payload or SHA-256 is emitted"]
+    },
+    {
+      "id": "terminal_result_precedence",
+      "symbols": ["WesternBoard::result", "ChessGame::onMoveMade", "ChessGame::setMoves", "GameAdjudicator::addEval"],
+      "paths": ["projects/lib/src/board/westernboard.cpp", "projects/lib/src/chessgame.cpp", "projects/lib/src/gameadjudicator.cpp"],
+      "current_behavior": "checkmate and stalemate are evaluated before inherited orthodox material, halfmove and threefold predicates",
+      "nonconformance": ["Crazyhouse inherits insufficient-material draw", "Crazyhouse inherits 50-move draw", "Crazyhouse inherits automatic threefold draw", "typed profile-owned terminal reasons are absent"]
+    },
+    {
+      "id": "clock_timeout_and_event_order",
+      "symbols": ["TimeControl::startTimer", "TimeControl::update", "ChessPlayer::startClock", "ChessPlayer::emitMove", "ChessPlayer::onTimeout", "ChessPlayer::forfeit"],
+      "paths": ["projects/lib/src/timecontrol.cpp", "projects/lib/src/chessplayer.cpp"],
+      "current_behavior": "elapsed equal to allowance is not expired; move parsing precedes emitMove; a separate timer callback can also forfeit",
+      "nonconformance": ["no single deterministic MOVE_READY arbiter", "kings-only Crazyhouse timeout is converted to a draw through WesternBoard::winPossible", "no injectable monotonic event sequence"]
+    },
+    {
+      "id": "engine_discovery_configuration_and_capability",
+      "symbols": ["ChessEngine::applyConfiguration", "ChessEngine::setOption", "ChessEngine::onProtocolStart", "UciEngine::parseLine", "UciEngine::addVariantsFromOption", "UciEngine::setVariant", "UciEngine::sendOption"],
+      "paths": ["projects/lib/src/chessengine.cpp", "projects/lib/src/uciengine.cpp"],
+      "current_behavior": "variant support is inferred from advertised options and setoption has no protocol acknowledgement",
+      "nonconformance": ["missing options only warn", "no exact profile capability", "no nonce-bound post-configuration acknowledgement", "no duplicate or stale acknowledgement policy", "configuration can reach ucinewgame without the required profile barrier"]
+    },
+    {
+      "id": "game_lifecycle_and_match_path",
+      "symbols": ["ChessGame::start", "ChessGame::startGame", "ChessGame::startTurn", "ChessGame::onMoveMade", "ChessGame::onResultClaim", "Tournament::startGame"],
+      "paths": ["projects/lib/src/chessgame.cpp", "projects/lib/src/tournament.cpp"],
+      "current_behavior": "the game clock begins only when a player starts thinking, but engines are configured inside newGame after the game is marked started",
+      "nonconformance": ["profile capability failure is not a pre-clock gate", "no embedded conformance entrypoint shares this lifecycle"]
+    },
+    {
+      "id": "pgn_write_parse_and_replay",
+      "symbols": ["ChessGame::addPgnMove", "ChessGame::initializePgn", "PgnGame::parseMove", "PgnGame::write", "PgnGame::setResult", "PgnGame::setVariant", "PgnGame::setStartingFenString", "PgnStream::setVariant"],
+      "paths": ["projects/lib/src/chessgame.cpp", "projects/lib/src/pgngame.cpp", "projects/lib/src/pgnstream.cpp"],
+      "current_behavior": "PGN replay constructs the same board type and replays through production move parsing and make",
+      "nonconformance": ["Variant value is lowercase crazyhouse rather than exact Crazyhouse", "profile ID and hash tags are absent", "typed reason and history hash tags are absent", "semantic per-ply replay equivalence is not checked"]
+    },
+    {
+      "id": "sequential_and_concurrent_isolation",
+      "symbols": ["Tournament::startGame", "GameManager::getThread", "GameThread::newGame", "ChessPlayer::newGame", "ChessGame::resetBoard"],
+      "paths": ["projects/lib/src/tournament.cpp", "projects/lib/src/gamemanager.cpp", "projects/lib/src/chessplayer.cpp", "projects/lib/src/chessgame.cpp"],
+      "current_behavior": "boards are per game while engine player objects and threads may be reused between games",
+      "required_invariant": "profile, pocket, history, clock and capability nonce state must be game-local or reset before every reused-player game"
+    },
+    {
+      "id": "cli_ingress_and_artifact_output",
+      "symbols": ["parseMatch", "EngineMatch::start", "EngineMatch::onGameFinished"],
+      "paths": ["projects/cli/src/main.cpp", "projects/cli/src/matchparser.cpp", "projects/cli/src/enginematch.cpp"],
+      "current_behavior": "the CLI admits a variant but has no exact Crazyhouse profile or embedded conformance contract",
+      "nonconformance": ["missing or unknown profile cannot fail at CLI ingress", "same-executable probe and match identity is not emitted"]
+    }
+  ],
+  "discovered_gap_ids": [
+    "REFEREE_PROFILE_SELECTION_MISSING",
+    "REFEREE_RESULT_POLICY_ORTHODOX",
+    "REFEREE_TIMEOUT_MATERIAL_ORTHODOX",
+    "REFEREE_FEN_DIALECT_AND_STRICTNESS",
+    "REFEREE_BESTMOVE_PARSER_PERMISSIVE",
+    "REFEREE_CAPABILITY_ACK_MISSING",
+    "REFEREE_DEADLINE_ARBITER_MISSING",
+    "REFEREE_HISTORY_DIGEST_MISSING",
+    "REFEREE_TYPED_REASON_MISSING",
+    "REFEREE_PGN_PROFILE_AND_REPLAY_MISSING",
+    "REFEREE_EMBEDDED_PROBE_MISSING"
+  ],
+  "behavior_source_edits_observed": false,
+  "next_gate_action": "freeze g4-referee-cases-v1.addendum.001.json and its independent golden derivation receipt before creating a candidate referee branch",
+  "strength_claim": false,
+  "release_claim": false
+}

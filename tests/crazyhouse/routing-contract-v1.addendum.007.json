@@ -1,0 +1,89 @@
+{
+  "schema": "crazyhouse-worker-search-routing-addendum/v1",
+  "addendum": 7,
+  "created_utc": "2026-08-23T03:25:19.5263617Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Freeze the same-target x86-64-avx2 ordinary default-scalar positive control required by SIMD routing correction addendum 006, without changing product defaults or admitting a runtime selector.",
+  "pins": {
+    "routing_addendum_006": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.006.json",
+      "bytes": 4620,
+      "sha256": "07c85a908eae2e692490bf40b98d1dcb3e36a3b26adb82912e32331d16272c39"
+    },
+    "worker_search_addendum_002": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.002.json",
+      "bytes": 4062,
+      "sha256": "fd0f2c182504cfc67d1ae647ba90b149d1de2451b188132ca78d6761de3c11f6"
+    },
+    "architecture_diagnostic_record": {
+      "path": "../../../receipts/private/p5-worker-simd-routing-architecture-diagnostic-record-144.json",
+      "bytes": 5800,
+      "sha256": "6aa9f2a0df0a17becfc26a7e2d14e20a19b6e5bc62829dd773fc988603bea855"
+    },
+    "official_network": {
+      "bytes": 98511183,
+      "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2"
+    },
+    "legacy_network": {
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    }
+  },
+  "implementation": {
+    "product_commit": "9f3ae6ca13ad5a73386db42ad2eda89c99a9cbe2",
+    "product_tree": "2e441204eab98d7e0e54ae23a66765153ce8fe0e",
+    "freeze_commit_parent": "bbdc772260fe462f9830fac1efd4f6767ef44ed2",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false
+  },
+  "single_variable_control": {
+    "variable": "legacy V1 capability build selector",
+    "simd_capability": {
+      "target_arch": "x86-64-avx2",
+      "build_selector": "CRAZYHOUSE_LEGACY_BACKEND=simd",
+      "route_commit_evaluator_field": "evaluator=incremental-simd",
+      "simd_backend_field": "simd_backend=avx2"
+    },
+    "ordinary_default": {
+      "target_arch": "x86-64-avx2",
+      "build_selector_supplied": false,
+      "make_default": "CRAZYHOUSE_LEGACY_BACKEND=scalar",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "simd_backend_field": null,
+      "runtime_selector_present": false,
+      "environment_selector_present": false,
+      "fallback_claim": false
+    }
+  },
+  "runtime_replay": {
+    "scenario_count": 11,
+    "marker_count": 32,
+    "expected_protocol_sha256": "df375512dda60f4cab1545287197c1b407a3d4f7c0e9f4415e0f36fcb3905d35",
+    "expected_official_content_hash": "11653427611306125920",
+    "required_route_token": "evaluator=incremental-scalar",
+    "forbidden_route_tokens": [
+      "evaluator=incremental-simd",
+      "simd_backend="
+    ],
+    "successful_crazyhouse_route_commits": 5,
+    "expected_binding": "BOUND_LEGACY_V1_INCREMENTAL_SCALAR_AUTHENTICATED",
+    "bestmoves_unchanged": true,
+    "non_search_refusals_unchanged": true,
+    "chess_control_unchanged_within_target": true
+  },
+  "formal_gate_requirements": {
+    "clean_export_distinct_from_simd_export": true,
+    "backend_make_variable_omitted": true,
+    "warning_clean_build": true,
+    "worker_scalar_replay": true,
+    "routing_scalar_replay": true,
+    "official_standard_comparator": true,
+    "engine_and_network_hashes_stable": true,
+    "zero_residual_processes": true
+  },
+  "stopping_rule": "The ordinary default control passes only from a fresh x86-64-avx2 export of the same admitted source when the build command omits CRAZYHOUSE_LEGACY_BACKEND, all five successful Crazyhouse route commits expose evaluator=incremental-scalar with no SIMD token, the exact protocol digest is df375512dda60f4cab1545287197c1b407a3d4f7c0e9f4415e0f36fcb3905d35, Worker remains scalar, and standard chess equals the official comparator. Any selector leak, fallback claim, marker drift, stderr, crash or timeout rejects the slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "crazyhouse-g4-participant-matrix-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-14T05:16:33.9978708Z",
+  "evidence_class": "E1_ENGINEERING",
+  "pins": {
+    "path": "tests/crazyhouse/g4-participant-matrix-v1.json",
+    "bytes": 5184,
+    "sha256": "f0ad7131f7a607e03cf5dc0ededb0b3a46301772e8910eb2553235a919fb32dc"
+  },
+  "reason": "Discovery proved that the negative production binary descends from a Horde-specific source tip, while v1 records only its clean upstream base. The owner contract forbids Horde commit and referee inheritance. This addendum corrects provenance and freezes the target lineage without rewriting v1.",
+  "advisory_review": {
+    "receipt": "../../../receipts/private/p4-referee-lineage-consultation-039.json",
+    "bytes": 6023,
+    "sha256": "058d3224c9a690d9efb26866c5b048bb1bc7b64e5e25ac017c1ca4b3cc09533a"
+  },
+  "negative_runtime_comparator": {
+    "path": "C:\\Users\\djime\\Documents\\Chess_variants\\Codex\\Fairy-Stockfish organization\\openbench-spell\\Client\\cutechess-ob.exe",
+    "version": "cutechess-cli 1.3.0-beta4; Qt 5.15.19",
+    "bytes": 7511040,
+    "sha256": "1c0bbab69e15a277c0b68bf032848b513f706749999cd5f6d09a1fb60f05b8a6",
+    "clean_upstream_base_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "clean_upstream_base_tree": "289867c000147a84b2a48eff5ce1aa2fbd85e168",
+    "actual_binary_source_tip_commit": "12fe19fb52646b48e626690a744c0cb2f177177c",
+    "actual_binary_source_tip_tree": "e1645d72e119cbe2f5e112453cfc7a99619486e0",
+    "contains_forbidden_horde_ancestor": true,
+    "status": "KNOWN_NONCONFORMING",
+    "may_supply_expected_values": false,
+    "may_enter_candidate_source": false,
+    "may_enter_candidate_build": false,
+    "may_enter_candidate_runtime": false,
+    "may_be_match_fallback": false
+  },
+  "target_referee_lineage": {
+    "authoritative_remote": "https://github.com/AndyGrant/cutechess.git",
+    "mandatory_clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "mandatory_clean_root_tree": "289867c000147a84b2a48eff5ce1aa2fbd85e168",
+    "forbidden_ancestor_commit": "12fe19fb52646b48e626690a744c0cb2f177177c",
+    "forbidden_ancestor_tree": "e1645d72e119cbe2f5e112453cfc7a99619486e0",
+    "fresh_non_shallow_checkout_required": true,
+    "replace_refs_allowed": false,
+    "grafts_allowed": false,
+    "merge_commits_after_root_allowed": false,
+    "project_authored_fixture_mapped_commits_required": true,
+    "forbidden_horde_code_data_schema_value_or_metadata_copy": true
+  },
+  "probe_match_join": {
+    "same_optimized_executable_sha256_required": true,
+    "conformance_mode_must_be_embedded": true,
+    "test_only_rule_implementation_allowed": false,
+    "shared_paths_required": [
+      "board_factory",
+      "fen_pockets_and_promoted_state",
+      "move_generation_and_storage",
+      "move_parsing_and_notation",
+      "make_and_history",
+      "repetition_identity",
+      "terminal_result_policy",
+      "clock_and_timeout_policy",
+      "pgn_and_replay"
+    ]
+  },
+  "candidate_identity_output": [
+    "clean_root_commit",
+    "clean_root_tree",
+    "candidate_commit",
+    "candidate_tree",
+    "profile_id",
+    "profile_sha256",
+    "conformance_schema",
+    "build_and_toolchain_identity"
+  ],
+  "missing_fixture_boundary": {
+    "status": "MUST_FREEZE_BEFORE_BEHAVIOR_CODE",
+    "families": [
+      "engine_capability_acknowledgement_failures_and_valid_control",
+      "exact_deadline_equality_and_event_ordering",
+      "deterministic_history_digest"
+    ]
+  },
+  "effective_gate_status": "OPEN",
+  "strength_claim": false,
+  "release_claim": false
+}

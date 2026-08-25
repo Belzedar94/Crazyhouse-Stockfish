@@ -1,0 +1,39 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-adapter-addendum/v1",
+  "created_utc": "2026-08-23T18:51:07.9037513Z",
+  "evidence_class": "E1_ENGINEERING",
+  "parent_fixture": {
+    "path": "tests/crazyhouse/p6-fairy-comparator-adapter-v1.json",
+    "commit": "c49c2dea5dba536f5ee7ed73988809d16812b02a",
+    "tree": "3008779f8fdd91a53a631d61b66393d9b65f20f0",
+    "bytes": 10144,
+    "sha256": "3c4649e0ad9b2e6222d999cd14a2320474ebb106d4c3b0b2142567dca2da68a8",
+    "git_blob": "d4c91f1fe34834a7c79890ab73e356f891bf254c"
+  },
+  "incident": "CH-225",
+  "reason": "The frozen parent fixture manually completed two abbreviated referee identities instead of resolving them from the canonical referee repository and executable. The parent remains immutable; this addendum replaces only those two fields before any referee join or gate execution.",
+  "superseded_fields": {
+    "referee_join.referee_commit": "d25294398b1fc3d80e26341211f4d9a61b1e575c",
+    "referee_join.referee_executable_sha256": "f465c05e25500d4a55c4788b4cd915dcce6f0575540602e521ee50048e0a0941"
+  },
+  "authoritative_fields": {
+    "referee_join.referee_commit": "d25294c1b1084f8854c0dc026ca3b150c911b4ee",
+    "referee_join.referee_tree": "208335f2040d7aac3e5c3b869cadf46b18fb5503",
+    "referee_join.referee_executable_path": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-261/build/cutechess-cli.exe",
+    "referee_join.referee_executable_bytes": 2293660,
+    "referee_join.referee_executable_sha256": "f465025b2ad21526e2cbab2b7da1a231ff3d64f6e8a01a0be5963f525a0bddae"
+  },
+  "mechanical_resolution": [
+    "git -C D:/Crazyhouse-Stockfish/referee/cutechess-24d430-clean rev-parse HEAD",
+    "git -C D:/Crazyhouse-Stockfish/referee/cutechess-24d430-clean rev-parse HEAD^{tree}",
+    "Get-FileHash -Algorithm SHA256 D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-261/build/cutechess-cli.exe",
+    "Get-Item D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-261/build/cutechess-cli.exe"
+  ],
+  "execution_boundary": {
+    "referee_join_executed_under_superseded_identity": false,
+    "gate_credit_under_superseded_identity": false,
+    "strength_or_timing_run_executed": false,
+    "openbench_used": false
+  },
+  "interpretation": "Read this addendum with the parent fixture. All parent requirements remain unchanged except the exact referee commit, tree, executable path, byte count and SHA-256 above."
+}

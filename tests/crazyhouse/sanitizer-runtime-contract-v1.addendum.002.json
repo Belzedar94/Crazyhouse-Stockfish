@@ -1,0 +1,38 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum_id": "CRAZYHOUSE-OFFICIAL-STOCKFISH-SANITIZER-RUNTIME-V1-ADDENDUM-002",
+  "created_utc": "2026-08-22T23:39:00Z",
+  "parent": {
+    "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.001.json",
+    "bytes": 2575,
+    "sha256": "deaa165c8990616d55ded40646bb22797ab436f26d5d9792e5972ef929b7d602"
+  },
+  "expected_red": {
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p5-sanitizer-build-preflight-7a64ca6d-004",
+    "source_commit": "7a64ca6d0a4f5746aa8f0b6d6ea1020366ff6ae4",
+    "completion": {
+      "bytes": 6003,
+      "sha256": "c2220dc21eaffc7c2d178bde19a94a4009c34d18c86136e843460b56c794181b"
+    },
+    "compiler_stdout": {
+      "bytes": 5575,
+      "sha256": "c4700e1aa7f2f0aa042f4b2567247b813a44e3f24a2cae1d9b5af036e970b124"
+    },
+    "compiler_stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "warning_inventory": {
+      "C4702": 32,
+      "all_other_warning_codes": 0,
+      "source": "src/movegen.cpp template instantiations with compile-time unreachable branches"
+    }
+  },
+  "contract_correction": {
+    "append_exact_warning_suppression": "/wd4702",
+    "retained_fatal_policy": ["/W4", "/WX"],
+    "forbidden": "No broad warning disable, no source mutation, and no suppression of any code other than C4141, C4244, C4324 and C4702 admitted by the additive chain."
+  },
+  "required_next_observation": "A fresh clean export must complete and link the entire MSVC ASan product, incremental oracle and control before any runtime or sanitizer claim is admitted.",
+  "claim_boundary": "This addendum changes only the MSVC warning surface. It is not a sanitizer PASS, SIMD, timing, Elo, OpenBench or release claim."
+}

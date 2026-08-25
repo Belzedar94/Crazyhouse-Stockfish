@@ -1,0 +1,62 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-source-discovery-addendum/v1",
+  "created_utc": "2026-08-23T17:39:01.1293073Z",
+  "evidence_class": "D0_DISCOVERY",
+  "amends": {
+    "path": "tests/crazyhouse/p6-fairy-comparator-source-discovery-v1.json",
+    "bytes": 3455,
+    "sha256": "79d468294fdcae6c573c239bd1187f7aa26063abd5b727bb3ad57cf04cbd42d3",
+    "git_blob": "b7ac26235e86e4645cc302e1f92756fc07fb6ce1"
+  },
+  "rejected_attempt": {
+    "lease": 262,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-source-discovery-262",
+    "end_receipt": {
+      "path": "../../../receipts/resources/p6-fairy-comparator-source-discovery-t1-end-262.json",
+      "bytes": 3461,
+      "sha256": "e9a2e36b1039b17627ed0eb6ed89e362df6284c625800bed0e636114e99d6140"
+    },
+    "result": "REJECTED_FAIRY_COMPARATOR_SOURCE_DISCOVERY",
+    "gate_credit": false,
+    "classification": "CONTROLLER_OPTIONAL_OUTPUT_NORMALIZATION_DEFECT",
+    "observed_without_credit": "The primary remote probe, clone and detached checkout succeeded, but the controller called .Trim() on the legitimate null output of git branch --show-current before creating the authenticated source manifest."
+  },
+  "correction": {
+    "scope": "Normalize the optional detached-branch output to an empty string before Trim; do not change the remote, commit, discovery questions, source policy, acceptance criteria or stopping rule.",
+    "controller": {
+      "path": "../../../control/p6-fairy-comparator-source-discovery-263.ps1",
+      "bytes": 15056,
+      "sha256": "2c17a7d38561b1d11ff5082d95ae4194d0faf852119ed13967c45ea18279ab3d",
+      "powershell_parser_errors": 0,
+      "bare_boolean_command_asts": 0
+    },
+    "detached_branch_preflight": {
+      "source": "preserved lease 262 checkout",
+      "raw_output_rows": 0,
+      "normalized_value": "",
+      "normalized_length": 0,
+      "result": "PASS_OPTIONAL_OUTPUT_NORMALIZATION"
+    }
+  },
+  "replacement_execution": {
+    "lease": 263,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-source-discovery-263",
+    "namespace_must_not_preexist": true,
+    "single_use": true,
+    "source_commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "source_tree_expected_after_checkout": "aa4112ea6784cef03fb9b5f87bba632de6168faa",
+    "remote_must_be_reobserved": true,
+    "all_tracked_blobs_must_authenticate": true,
+    "non_blob_tree_entry_policy": "reject as submodule or unsupported source ambiguity",
+    "build_allowed": false,
+    "engine_execution_allowed": false,
+    "source_edit_allowed": false
+  },
+  "interpretation": "A pass in lease 263 may authenticate only the exact Fairy-Stockfish source comparator. Source-level conclusions about build targets, UCI routing, default networks and NNUE loading must remain tied to authenticated files and receive a separate result record before any build preregistration.",
+  "stopping_rule": "Do not reuse lease 262. Execute controller 263 exactly once in fresh namespace 263. Any identity drift, checkout dirtiness, blob mismatch, ambiguous license or source inventory, accidental build or engine execution rejects discovery and preserves the namespace.",
+  "gate_credit": false,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

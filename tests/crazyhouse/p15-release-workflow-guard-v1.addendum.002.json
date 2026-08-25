@@ -1,0 +1,132 @@
+{
+  "schema": "crazyhouse-release-workflow-guard-formal-preregistration/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE",
+  "created_utc": "2026-08-25T01:36:00Z",
+  "status": "PREREGISTERED_FORMAL_NOT_EXECUTED",
+  "source_parent": {
+    "commit": "3d361ab1dad0d2b8182c694c82a942e43e89a084",
+    "tree": "55b1c1158c22c9fa6d3d1a74937f3f9f849ddf83",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "inputs": {
+    "contract": {
+      "path": "tests/crazyhouse/p15-release-workflow-guard-v1.json",
+      "bytes": 3653,
+      "sha256": "14702b3cd16a840e0db255db133e0cfcf1fc2536e2ce2f29374e3ecea245d857"
+    },
+    "expected_red": {
+      "path": "tests/crazyhouse/p15-release-workflow-guard-v1.addendum.001.json",
+      "bytes": 2275,
+      "sha256": "9c850367a5c8c4ba3cc2997bab3c2049c95564b57f8c20d262ca57ba6f6bad30"
+    },
+    "adr": {
+      "path": "docs/crazyhouse/adr-0021-g15-release-workflow-guard-v1.md",
+      "bytes": 2890,
+      "sha256": "d64475d47bb92f2d798b30e17dabcb4b0331bdf6527e2e39db08b5d4c34c6f69"
+    },
+    "workflow": {
+      "path": ".github/workflows/official_release.yml",
+      "bytes": 498,
+      "sha256": "a0fabef4ce5ca8a745af8df861822ad9e45aa8378df3493dda55ca983bea4db7"
+    },
+    "verifier": {
+      "path": "tools/release/verify_crazyhouse_release_workflow_guard.py",
+      "bytes": 4891,
+      "sha256": "9f982d904e0aec785cbafeb80cfdcdb81a9c7dd18534d2fef0466a9f71544afe"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_release_workflow_guard.py",
+      "bytes": 4224,
+      "sha256": "45203ad9c722d863d987557e34b7a3ab63d163adb62ec5affe65b7d64262ccfa"
+    },
+    "controller": {
+      "path": "control/p15-release-workflow-guard-358-controller.py",
+      "bytes": 15121,
+      "sha256": "adc9b776c189f1e325756cf6bd413194b0c970def69041f85b6c528787e336b6"
+    },
+    "independent_verifier": {
+      "path": "control/p15-release-workflow-guard-358-independent-verifier.py",
+      "bytes": 5955,
+      "sha256": "92f86d1732caa19aafae53780540c18fd19f8bc7b2570e0d204617652957d921"
+    }
+  },
+  "runtime": {
+    "python": {
+      "path": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+      "version": "3.12.0",
+      "bytes": 103192,
+      "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"
+    },
+    "psutil": {
+      "version": "7.2.2",
+      "module_bytes": 92363,
+      "module_sha256": "7b6a0675824eb1fa2ff0cb1eb36e358dc454703e51dfa4e9a0e6ccd26a159f0c"
+    },
+    "git": {
+      "path": "C:/Program Files/Git/cmd/git.exe",
+      "version": "2.49.0.windows.1",
+      "bytes": 46464,
+      "sha256": "fec691d80fccc35fcc309fbc9f720536c1d795b8a562ec169f28c9923da9600f"
+    }
+  },
+  "formal_matrix": {
+    "lease": 358,
+    "target": "D:/Crazyhouse-Stockfish/leases/p15-release-workflow-guard-358",
+    "target_must_be_absent": true,
+    "clean_exports": 2,
+    "source_archives_byte_identical": true,
+    "profiles_per_export": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "verifier_executions": 4,
+    "unit_executions": 4,
+    "unit_tests_per_execution": 9,
+    "forbidden_fragment_mutations_per_execution": 13,
+    "additional_mutation_classes": [
+      "single-byte canonical drift",
+      "CRLF framing",
+      "UTF-8 BOM",
+      "missing trailing LF",
+      "linked workflow",
+      "duplicate contract key",
+      "contract digest drift"
+    ],
+    "export_manifest_unchanged_after_each_profile": true,
+    "verifier_summaries_byte_identical": true,
+    "timeouts_allowed": false,
+    "nonzero_exits_allowed": false,
+    "network_calls": 0,
+    "github_writes": 0,
+    "openbench_calls": 0
+  },
+  "resource_contract": {
+    "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench_calls": 0,
+    "target_ceiling_bytes": 67108864,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_must_be_preserved": true
+  },
+  "stopping_rule": "Stop and preserve lease 358 on any source, input, ready/GO, archive, extraction, manifest, profile, mutation, stream, process, resource or P7 mismatch. Never repair or rerun the namespace in place.",
+  "pass_effect": "Qualifies only the fail-closed inherited-workflow guard from two clean exports. It cannot create a draft or tag, authorize G15, publish a release, grant strength credit or close G15/G16.",
+  "boundaries": {
+    "formal_executed": false,
+    "release_workflow_guard_qualified": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false
+  }
+}

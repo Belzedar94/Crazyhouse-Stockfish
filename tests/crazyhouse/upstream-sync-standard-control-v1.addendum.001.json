@@ -1,0 +1,75 @@
+{
+  "schema": "crazyhouse-upstream-sync-control/v1",
+  "project": "Crazyhouse-Stockfish",
+  "evidence_class": "E1_ENGINEERING",
+  "addendum": 1,
+  "created_utc": "2026-08-23T05:30:30.6617302Z",
+  "purpose": "Add the frozen CrazyhouseMultiPV product-only option to the exact official standard-search control without rewriting the predecessor contract or changing any common Stockfish option.",
+  "predecessor": {
+    "path": "tests/crazyhouse/upstream-sync-standard-control-v1.json",
+    "bytes": 2447,
+    "sha256": "06d7e4d5236df4dd7147b68c8d07ce04250fbd7ca9e9237b041316a53e806f02",
+    "rewritten": false
+  },
+  "official": {
+    "commit": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "tree": "11ff8e5aeaa5c0d19c085cdd92b5c8f9321199e6"
+  },
+  "product_source_anchor": {
+    "commit": "51ff97d0108dfaa516853ed671d80471ec823290",
+    "tree": "fd86418b4d5965dacffb415ade3df1d5a79a750c",
+    "required_src_diff_from_final_validation_commit": 0
+  },
+  "network": {
+    "filename": "nn-1a298aa575a0.nnue",
+    "sha256_prefix": "1a298aa575a0",
+    "authority": "https://tests.stockfishchess.org/api/nn/nn-1a298aa575a0.nnue",
+    "same_bytes_required_for_both_binaries": true
+  },
+  "options": {
+    "product_extra_names": [
+      "CrazyhouseMultiPV",
+      "UCI_Variant",
+      "CrazyhouseProfile",
+      "CrazyhouseEvalFile"
+    ],
+    "required_product_lines": [
+      "option name CrazyhouseMultiPV type spin default 0 min 0 max 2147483647",
+      "option name UCI_Variant type combo default crazyhouse var chess var crazyhouse",
+      "option name CrazyhouseProfile type string default LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "option name CrazyhouseEvalFile type string default <empty>"
+    ],
+    "all_common_lines_and_order_must_equal_official": true,
+    "orthodox_multipv_line": "option name MultiPV type spin default 1 min 1 max 256",
+    "orthodox_multipv_changed": false
+  },
+  "route": {
+    "handshake_commits": 1,
+    "bench_commits": 3,
+    "product_required_ruleset": "chess",
+    "product_required_backend": "official-chess",
+    "official_must_emit_no_product_route_marker": true
+  },
+  "bench": {
+    "command": "bench 16 1 13 default depth",
+    "runs_per_binary": 3,
+    "bestmoves_each": 51,
+    "required_relation": "Each binary is internally deterministic and the product signature equals the exact official-upstream signature.",
+    "signature_fields": [
+      "command",
+      "aggregate nodes",
+      "ordered bestmove lines"
+    ],
+    "timing_excluded": true
+  },
+  "timeouts": {
+    "handshake_seconds": 300,
+    "bench_seconds": 1800,
+    "classification": "Functional ceilings only. A timeout requires process and artifact inspection and is not timing evidence."
+  },
+  "stopping_rule": "No expected numeric bench result is learned or edited between comparator and product runs. The single invocation must fail closed on identity, network, option, route, protocol, repetition or cross-binary mismatch. No retry or source edit is allowed inside the lease.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,158 @@
+{
+  "schema": "crazyhouse-p15-native-package-real-network-preregistration/v1",
+  "created_utc": "2026-08-24T21:02:00.0000000Z",
+  "status": "PREREGISTERED_REAL_NETWORK_CONTAINMENT_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_result": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.008.json",
+    "bytes": 4226,
+    "sha256": "c26e4e3cd1e1d5863e2fae0465aea593892867dd069615ba14e043cd5ddc7aec",
+    "lease": 347,
+    "status": "PASS_NATIVE_PACKAGE_FORMAL_FIXTURE"
+  },
+  "implementation_identity": {
+    "commit": "fc759b5efa5c865e4e5e30c17438712d47295d38",
+    "tree": "5b72c3ed696c429f672801650c46e04ca102f088",
+    "src_tree": "fef67c6603c479439c33baaec496115dba293a0c",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "network": {
+    "runtime_input": "one owner-supplied external regular unlinked file; absolute local path excluded from the public preregistration",
+    "package_member": "networks/Crazyhouse_v1.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "license": "CC0-1.0",
+    "asset_blob": "ad269c33db13ecae295ec66ee9f438462498c623",
+    "license_declaration_blob": "c94bf53d0cd54599d899a51f0aa4c1e01e4f0b94",
+    "policy_schema": "crazyhouse-native-production-network-policy/v1",
+    "must_rehash_before_and_after": true,
+    "must_rehash_each_packaged_member": true,
+    "fallback_allowed": false
+  },
+  "fixture_identity": {
+    "version": "0.0.0",
+    "source_date_epoch": 1787529600,
+    "release_asset": false,
+    "full_engine": false,
+    "candidate_commit": "fc759b5efa5c865e4e5e30c17438712d47295d38",
+    "candidate_tree": "5b72c3ed696c429f672801650c46e04ca102f088",
+    "inputs": {
+      "AUTHORS": {
+        "bytes": 78,
+        "sha256": "b24fa9469f8171c2f760e077fd64ed9c1c5cda7bb0f675bf074392c98b53260c"
+      },
+      "CITATION.cff": {
+        "bytes": 85,
+        "sha256": "077bd21019f994464bdbeb77401d774f91e2fefc67d0e3a725b15452c9d5f5ca"
+      },
+      "Copying.txt": {
+        "bytes": 81,
+        "sha256": "506a2ddcfa65df1dfd09ffdb093d36c2069390ae03e5dce9ef4d958b26f7f34b"
+      },
+      "README.md": {
+        "bytes": 67,
+        "sha256": "8d2529cb986382a9e6e292b99f2112f518596a5ec12efa364cfb911a97ee3666"
+      },
+      "SOURCE.md": {
+        "bytes": 291,
+        "sha256": "6724e8e96960a1aa227d6e419392664d35ef8a4134527cf8d59a3b72ce525ba6"
+      },
+      "bin/crazyhouse-stockfish.exe": {
+        "bytes": 46,
+        "sha256": "22307cdda437178de97c0a830daa335d9c0949a6509ce0e41090b8104963db7d"
+      },
+      "docs/RELEASE_NOTES_DRAFT.md": {
+        "bytes": 46,
+        "sha256": "632f0f66bfb472bc082277677fd3d2663c125669e849d7f00823b3d6d7a9a4c1"
+      },
+      "docs/RULE_PROFILE.md": {
+        "bytes": 45,
+        "sha256": "4b73ead8e480304d02e3986519b52c0c982c912a7478d443db1ad897ef8016a7"
+      },
+      "licenses/CC0-1.0-NOTICE.md": {
+        "bytes": 252,
+        "sha256": "8f5863172419c99184ad9652b8e1025b52a7b36c7acedf24308e137efd590330"
+      },
+      "networks/README.md": {
+        "bytes": 541,
+        "sha256": "f385eb0c4febc6b1b1e56acbc831fb3030e4f3e06693ef44e32f782f75e1eed0"
+      }
+    }
+  },
+  "formal_matrix": {
+    "clean_exports": 1,
+    "targets": [
+      "windows-x86-64",
+      "windows-x86-64-avx2"
+    ],
+    "independent_input_roots_per_target": 2,
+    "production_policy_archives": 4,
+    "assembler_cli_exits_zero": 4,
+    "independent_verifier_cli_exits_zero": 4,
+    "stderr_allowed_on_positive": false,
+    "byte_identical_pairs": 2,
+    "independent_packaged_network_member_checks": 4,
+    "negative_controls": [
+      "missing external network",
+      "wrong external network bytes"
+    ],
+    "negative_nonzero_exits": 2,
+    "negative_output_archives_allowed": 0,
+    "persistent_archives": 4,
+    "temporary_files_confined_to_lease": true,
+    "network_calls": 0,
+    "full_engine_builds": 0,
+    "runtime_engine_smokes": 0,
+    "release_assets": 0
+  },
+  "toolchain": {
+    "python": {
+      "path": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+      "version": "Python 3.12.0",
+      "bytes": 103192,
+      "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"
+    },
+    "git_launcher": {
+      "path": "C:/Program Files/Git/cmd/git.exe",
+      "bytes": 46464,
+      "sha256": "fec691d80fccc35fcc309fbc9f720536c1d795b8a562ec169f28c9923da9600f"
+    }
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "bulk_root": "D:/Crazyhouse-Stockfish/leases",
+    "namespace_ceiling_bytes": 536870912,
+    "minimum_d_free_bytes_before_go": 10737418240,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764
+  },
+  "stopping_rule": "Stop and preserve the namespace on any source, preregistration, toolchain, external-network, input, CLI exit, stderr, archive name, member, independent-verifier, pair-determinism, negative-control, disk, process, P7 or restoration mismatch. Never modify the owner-supplied network and never repair a failed formal namespace in place.",
+  "pass_effect": "Qualifies containment and independent verification of the exact production-policy legacy-network bytes in deterministic fixture-engine ZIPs for both Windows targets. It does not qualify a full engine package, runtime, release candidate, product archive, strength, OpenBench, draft, G15 or release.",
+  "boundaries": {
+    "real_network_containment_executed": false,
+    "real_network_containment_verified": false,
+    "small_fixture_engine_only": true,
+    "full_engine_builds_executed": false,
+    "package_internal_layout_verified_for_release": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

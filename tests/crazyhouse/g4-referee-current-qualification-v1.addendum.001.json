@@ -1,0 +1,90 @@
+{
+  "schema": "crazyhouse-g4-current-referee-qualification-addendum/v1",
+  "created_utc": "2026-08-23T13:34:47.1806164Z",
+  "lease": 255,
+  "evidence_class": "E1_ENGINEERING",
+  "effect": "strictly_additive_before_execution",
+  "purpose": "Pin the detached execution chain, the C compiler omitted from the base preregistration, and an exact referee build-identity conformance control before namespace 255 is admitted.",
+  "base_preregistration": {
+    "path": "tests/crazyhouse/g4-referee-current-qualification-v1.json",
+    "commit": "41617aecfe655521bfad38ea3c55125c4101f09c",
+    "tree": "b0d63b3ac4225b002ba1b471d20de1d2f703b81a",
+    "git_blob": "66b8509bc938277d926b59190160a7084dd971ba",
+    "bytes": 8451,
+    "sha256": "92b6e914dc9bab213d0adb63c872a7d14f1fc2d8fc2ce79fd4cfc9acff3dac89"
+  },
+  "execution_artifacts": {
+    "controller": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/control/p4-referee-current-qualification-255-controller.ps1",
+      "bytes": 40697,
+      "sha256": "c3a081488a504271ea6b783ca5e73116bb084c433ad14b233935620c126c655b",
+      "powershell_parser_errors": 0
+    },
+    "launcher": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/control/p4-referee-current-qualification-255-launcher.ps1",
+      "bytes": 8241,
+      "sha256": "d617dc568ad92ab125577490b5227579dc9f8a722bae9c50871064464608ef09",
+      "powershell_parser_errors": 0
+    },
+    "detached_start_coordinator": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/control/p4-referee-current-qualification-255-detached-start.ps1",
+      "bytes": 6510,
+      "sha256": "1579c0389d8f3670b2decc05e54064723a76b90d888116871b355661ab2bf5fb",
+      "powershell_parser_errors": 0
+    },
+    "powershell": {
+      "path": "C:/Users/djime/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+      "version": "7.6.4",
+      "bytes": 301368,
+      "sha256": "db6dd81183fe57d22e03b911ec9a30a2fd7c40542e97743615355a6fb44f458f"
+    }
+  },
+  "toolchain_addition": {
+    "gcc": {
+      "path": "C:/msys64/mingw64/bin/gcc.exe",
+      "version": "16.1.0 Rev5",
+      "bytes": 3310404,
+      "sha256": "d38d4dd6bea387499487881383e644ab7c193ac8f8364dc4252d6e6cc09700e2"
+    }
+  },
+  "additional_predicates": {
+    "conformance_identity": {
+      "command": "cutechess-cli --crazyhouse-conformance-v1 identity-canonical-fen --profile-id <frozen-profile> --profile-sha256 <frozen-profile-sha256> --fen <frozen-input>",
+      "schema": "crazyhouse-referee-conformance/v1",
+      "status": "ok",
+      "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+      "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "candidate_commit": "7dc4995cc83c68c858fe5144e5edf21ed96f466f",
+      "candidate_tree": "e6a204df3ac32397ee520c95d4dc6595059af425",
+      "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+      "clean_root_tree": "289867c000147a84b2a48eff5ce1aa2fbd85e168",
+      "build_configuration": "Release",
+      "qt_runtime_version": "5.15.19",
+      "canonical_fen": "r3k2r/8/8/3pP3/8/2N~5/8/R3K2R[PPNRnq] w KQkq d6 12 42",
+      "stdout_framing": "exactly one UTF-8 JSON line terminated by LF with no CR",
+      "stderr_bytes": 0
+    },
+    "ordinary_cli_control": {
+      "command": "cutechess-cli --version",
+      "must_start_with": "cutechess-cli ",
+      "must_not_contain": "crazyhouse-referee-conformance/v1",
+      "stderr_bytes": 0
+    },
+    "source_authentication": "Every one of the 494 clean-clone files must reproduce its frozen Git blob before configuration.",
+    "engine_stderr_policy": "Both real-join stderr artifacts must exist and be zero bytes; missing artifacts fail closed and are never synthesized.",
+    "product_admission": "The clean product HEAD and tree recorded in the immutable start receipt must contain the base preregistration commit as an ancestor and remain unchanged through close."
+  },
+  "controller_corrections_before_seal": [
+    "Use the observed gcc.exe byte count and digest.",
+    "Parenthesize UTF-8 ls-tree text before line splitting.",
+    "Fail when a candidate stderr artifact is absent instead of creating an empty substitute.",
+    "Materialize all final Git status arrays before evaluating their counts."
+  ],
+  "execution_namespace": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-255",
+  "stopping_rule": "All base predicates remain mandatory. The additional predicates in this addendum may only reject the run; they do not weaken, replace or reinterpret any frozen expectation. Namespace 255 is single-use and must be preserved on pass or failure.",
+  "claim_boundary": "A pass qualifies this exact referee build, its tests and one real candidate capability join as engineering evidence only. It is not timing, Elo, OpenBench or release evidence.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}
