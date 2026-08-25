@@ -1,0 +1,54 @@
+{
+  "schema": "crazyhouse-upstream-sync-control-calibration/v1",
+  "created_utc": "2026-08-25T14:17:00.0000000Z",
+  "project": "Crazyhouse-Stockfish",
+  "evidence_class": "E1_ENGINEERING",
+  "pins": {
+    "standard_control_v2": {
+      "path": "tests/crazyhouse/upstream-sync-standard-control-v2.json",
+      "bytes": 2913,
+      "sha256": "acd2361769cebe63315b77bd1ccb2c9cc9e24ea4d960c6d15d0e270da09934c3"
+    }
+  },
+  "official_calibration": {
+    "source_commit": "598ae2c46500e6dc50b54919ea4bebfe213ddcd1",
+    "source_tree": "16871b96f713d09e1d58b2c188527c440cb084dd",
+    "binary": {
+      "bytes": 102890056,
+      "sha256": "c1bba8c43c9f8c56ba9f87ce7f8bbb7ae69312ddbcb3135cec1e2585afa31ab8"
+    },
+    "network": {
+      "filename": "nn-1a298aa575a0.nnue",
+      "bytes": 98511183,
+      "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2"
+    },
+    "command": "bench 16 1 13 default depth",
+    "fresh_process_runs": 3,
+    "bestmoves_each": 51,
+    "deterministic_signature_sha256": "cf363e532488313d98e5aed794f6a1d6b834480725e75a716fe6a2123257684f"
+  },
+  "diagnostic_product_observation": {
+    "source_commit": "f9d23a72a0f79d00357afa9cba3337abe34e08ab",
+    "src_tree": "005e3e8ac95f83a24cede46c59a8288057e65a77",
+    "binary": {
+      "bytes": 103070340,
+      "sha256": "eecf3ebb1fe7898b4e26387d89ace35d72ac261d4aa5b008f1266b365a55cb84"
+    },
+    "fresh_process_runs": 3,
+    "deterministic_signature_sha256": "cf363e532488313d98e5aed794f6a1d6b834480725e75a716fe6a2123257684f",
+    "equals_exact_official": true,
+    "formal_gate_credit": false
+  },
+  "future_replay": {
+    "required_official_signature_sha256": "cf363e532488313d98e5aed794f6a1d6b834480725e75a716fe6a2123257684f",
+    "required_product_signature_sha256": "cf363e532488313d98e5aed794f6a1d6b834480725e75a716fe6a2123257684f",
+    "required_relation": "product_equals_exact_official",
+    "two_clean_product_exports_required": true,
+    "source_src_tree_must_remain": "005e3e8ac95f83a24cede46c59a8288057e65a77"
+  },
+  "stopping_rule": "Future formal replays must authenticate this addendum before starting either product export, use the exact official source and network above, require three fresh deterministic runs per binary and reject any signature or common-option mismatch. A timeout is operationally ambiguous and supplies no timing evidence.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}
