@@ -1,0 +1,153 @@
+{
+  "schema": "crazyhouse-official-dev-routing-contract/v1",
+  "project": "Crazyhouse-Stockfish",
+  "evidence_class": "E1_ENGINEERING",
+  "source": {
+    "behavior_commit": "f9d23a72a0f79d00357afa9cba3337abe34e08ab",
+    "behavior_tree": "a2c82374448990a29282542f3d09efa20a88d723",
+    "src_tree": "005e3e8ac95f83a24cede46c59a8288057e65a77",
+    "official_parent": "598ae2c46500e6dc50b54919ea4bebfe213ddcd1",
+    "official_parent_tree": "16871b96f713d09e1d58b2c188527c440cb084dd",
+    "fairy_stockfish_source_allowed": false
+  },
+  "pins": {
+    "routing_contract_v1": {
+      "path": "tests/crazyhouse/routing-contract-v1.json",
+      "bytes": 6646,
+      "sha256": "f98828dcf79211bc8f547b1562cea2f282adc71669256383309ba43f85b69dfd"
+    },
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "standard_control_v2": {
+      "path": "tests/crazyhouse/upstream-sync-standard-control-v2.json",
+      "bytes": 2913,
+      "sha256": "acd2361769cebe63315b77bd1ccb2c9cc9e24ea4d960c6d15d0e270da09934c3"
+    }
+  },
+  "profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "token": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "networks": {
+    "legacy": {
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "required_backend": "legacy-v1",
+      "fallback_allowed": false
+    },
+    "official_chess": {
+      "filename": "nn-1a298aa575a0.nnue",
+      "bytes": 98511183,
+      "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+      "required_backend": "official-chess"
+    }
+  },
+  "option_inventory": {
+    "expected_count": 24,
+    "ordered_names": [
+      "Debug Log File",
+      "NumaPolicy",
+      "Threads",
+      "Hash",
+      "Clear Hash",
+      "Ponder",
+      "MultiPV",
+      "CrazyhouseMultiPV",
+      "Skill Level",
+      "Move Overhead",
+      "nodestime",
+      "UCI_Chess960",
+      "UCI_Variant",
+      "CrazyhouseProfile",
+      "CrazyhouseCapabilityNonce",
+      "UCI_LimitStrength",
+      "UCI_Elo",
+      "UCI_ShowWDL",
+      "SyzygyPath",
+      "SyzygyProbeDepth",
+      "Syzygy50MoveRule",
+      "SyzygyProbeLimit",
+      "EvalFile",
+      "CrazyhouseEvalFile"
+    ],
+    "expected_eval_file_line": "option name EvalFile type string default nn-1a298aa575a0.nnue",
+    "required_additive_lines": [
+      "option name CrazyhouseMultiPV type spin default 0 min 0 max 2147483647",
+      "option name CrazyhouseCapabilityNonce type string default <empty>"
+    ]
+  },
+  "worker": {
+    "fixed_options": {
+      "Threads": 1,
+      "Hash": 16,
+      "MultiPV": 1,
+      "UCI_Chess960": false
+    },
+    "go_command": "go depth 1",
+    "allowed_bestmoves": [
+      "a2a3",
+      "a2a4",
+      "b2b3",
+      "b2b4",
+      "c2c3",
+      "c2c4",
+      "d2d3",
+      "d2d4",
+      "e2e3",
+      "e2e4",
+      "f2f3",
+      "f2f4",
+      "g2g3",
+      "g2g4",
+      "h2h3",
+      "h2h4",
+      "b1a3",
+      "b1c3",
+      "g1f3",
+      "g1h3"
+    ],
+    "binding": "BOUND_LEGACY_V1_INCREMENTAL_SCALAR_AUTHENTICATED",
+    "required_route_token": "evaluator=incremental-scalar",
+    "forbidden_route_tokens": [
+      "evaluator=incremental-simd",
+      "simd_backend="
+    ]
+  },
+  "replay": {
+    "scenario_ids": [
+      "inventory",
+      "initial_failure",
+      "invalid_variant",
+      "profile_failure_and_recovery",
+      "crazyhouse_rule_route_and_command_refusals",
+      "crossed_routes",
+      "failed_replacement_and_recovery",
+      "crazyhouse_chess960_rejection",
+      "transactional_position",
+      "option_persistence_across_variant_and_ucinewgame",
+      "standard_chess_control"
+    ],
+    "expected_markers": 31,
+    "expected_protocol_sha256": "e0ef6d177965c7be722aecae67dedea4b1fb7cce6b47cbd9ca56bfeb3ad1f02a",
+    "protocol_derivation": "The immutable 32-marker scalar protocol df375512dda60f4cab1545287197c1b407a3d4f7c0e9f4415e0f36fcb3905d35 with only its obsolete crazyhouse_bench_not_bound marker removed before current-source execution.",
+    "successful_crazyhouse_route_commits": 5,
+    "standard_startpos_perft_1": 20,
+    "standard_depth_1_bestmove": "d2d4"
+  },
+  "bench_boundary": {
+    "crazyhouse_bench_supported": true,
+    "routing_replay_executes_bench": false,
+    "separate_p10_replay_required": true,
+    "frozen_depth_4_nodes": 113485,
+    "reason": "The current product deliberately binds bench to a twelve-position Crazyhouse corpus. Routing cannot treat that production capability as a refused command or consume its full work as a quick marker."
+  },
+  "stopping_rule": "Authenticate every portable pin and runtime byte identity, then execute all eleven routing scenarios once while leaving the separately frozen production Crazyhouse bench to its P10 replay. Reject on option drift, route or readiness drift, fail-open evaluator behavior, illegal bounded search, marker count or protocol digest drift, stderr, crash or timeout. The historical verifier and contracts remain immutable.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}
