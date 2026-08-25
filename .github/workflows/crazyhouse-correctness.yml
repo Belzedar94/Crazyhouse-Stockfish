@@ -242,6 +242,70 @@ jobs:
           include-hidden-files: true
           retention-days: 7
 
+  core-rules:
+    name: Frozen Crazyhouse core rules
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Build and replay debug core rules
+        run: |
+          set -euo pipefail
+          mkdir -p .ci/evidence
+          g++ --version | tee .ci/evidence/compiler.log
+          make --version | tee .ci/evidence/make.log
+          python --version 2>&1 | tee .ci/evidence/python.log
+          python -m py_compile tests/crazyhouse_core_suite_verify.py
+          make -C src -f Makefile -f ../tools/ci/crazyhouse_ci_targets.mk \
+            -j2 crazyhouse-core-tests \
+            ARCH=x86-64-avx2 COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND=scalar \
+            debug=yes optimize=no \
+            EXTRACXXFLAGS="-Werror -DNNUE_EMBEDDING_OFF" \
+            2>&1 | tee .ci/evidence/core-debug-build.log
+          python tests/crazyhouse_core_suite_verify.py \
+            --bin-dir src \
+            --configuration debug \
+            --output .ci/evidence/core-debug-runtime.json \
+            2>&1 | tee .ci/evidence/core-debug-runtime.log
+
+      - name: Build and replay release core rules
+        run: |
+          set -euo pipefail
+          make -C src objclean
+          make -C src -f Makefile -f ../tools/ci/crazyhouse_ci_targets.mk \
+            -j2 crazyhouse-core-tests \
+            ARCH=x86-64-avx2 COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND=scalar \
+            EXTRACXXFLAGS="-Werror -DNNUE_EMBEDDING_OFF" \
+            2>&1 | tee .ci/evidence/core-release-build.log
+          python tests/crazyhouse_core_suite_verify.py \
+            --bin-dir src \
+            --configuration release \
+            --output .ci/evidence/core-release-runtime.json \
+            2>&1 | tee .ci/evidence/core-release-runtime.log
+          git rev-parse HEAD > .ci/evidence/git-commit.txt
+          git rev-parse 'HEAD^{tree}' > .ci/evidence/git-tree.txt
+          git rev-parse 'HEAD:src' > .ci/evidence/git-src-tree.txt
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Publish core-rule evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: crazyhouse-correctness-core-rules
+          path: .ci/evidence/
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
+
   sanitizers:
     name: Linux ${{ matrix.sanitizer }} sanitizer
     needs: network-tooling
@@ -393,7 +457,7 @@ jobs:
 
   evidence:
     name: Aggregate required evidence
-    needs: [correctness-linux, sanitizers, correctness-windows]
+    needs: [correctness-linux, core-rules, sanitizers, correctness-windows]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -420,6 +484,7 @@ jobs:
             --output-dir .ci/aggregate \
             --expected-artifact crazyhouse-correctness-linux-scalar \
             --expected-artifact crazyhouse-correctness-linux-simd \
+            --expected-artifact crazyhouse-correctness-core-rules \
             --expected-artifact crazyhouse-correctness-sanitizer-address \
             --expected-artifact crazyhouse-correctness-sanitizer-undefined \
             --expected-artifact crazyhouse-correctness-windows-scalar
