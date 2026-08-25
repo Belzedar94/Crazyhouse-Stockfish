@@ -1,0 +1,127 @@
+{
+  "schema": "crazyhouse-p15-mingw-release-reproducibility-result/v1",
+  "created_utc": "2026-08-24T19:05:16.5584685Z",
+  "status": "PASS_MINGW_REPRODUCIBILITY_PLUMBING",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "source": {
+    "commit": "e0f10878eec9bcc2276691a573f6829de0ff3357",
+    "tree": "a546678bc50189716a7ee50f640ba10cb44b0ee5",
+    "src_tree": "15e5245b0910bbb5ffa79b3bb67943b8bff24803",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_after": true
+  },
+  "implementation": {
+    "mode": "mingw_reproducible=yes|no",
+    "default": "no",
+    "windows_only_when_enabled": true,
+    "linker_flag": "-Wl,--no-insert-timestamp",
+    "enabled_flag_count": 1,
+    "ordinary_build_flag_count": 0,
+    "implementation_commit": "5726d54cc8efec202ddcc99f391c46dcb73a0a0e",
+    "normalized_evidence_commit": "d97b972c0ed1dbcf4be813640d81c90b79df9cc6",
+    "makefile": {
+      "bytes": 61519,
+      "sha256": "2e8ce4c14c1467a12af733400d942b138109b132f730aa36e8d5e10deb8b7862"
+    },
+    "verifier": {
+      "bytes": 14065,
+      "sha256": "0bc9acd09c6ca9cf64d915fb2b3f6561e6511b5269a7034e7fba31080d376c6a"
+    }
+  },
+  "expected_red": {
+    "lease": 336,
+    "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+    "completion": {
+      "bytes": 4781,
+      "sha256": "59ee1ed923044402c7962ac471dbcf57b57deb6b1337226f75ff713bb50c89b2"
+    },
+    "compiler_or_linker_artifacts": 0
+  },
+  "formal_history": {
+    "lease_337": {
+      "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+      "source_profiles_passed": 4,
+      "formal_credit": false,
+      "failure": {
+        "bytes": 5712,
+        "sha256": "8d137e6cb3abfcdd7809a1db5cbd91c4438bd5dd2c2d48f4bbd280560b44356e"
+      },
+      "end_receipt": {
+        "bytes": 2887,
+        "sha256": "a110ca6196ee56aa2162d1acfc63f03179f9fd867f05c9c0f7d7741c71a5047e"
+      },
+      "cause": "The harness treated the supervisor-owned Windows console host as a surviving compute descendant.",
+      "namespace_reused": false
+    },
+    "lease_338": {
+      "status": "PASS_MINGW_REPRODUCIBILITY_PLUMBING",
+      "completion": {
+        "bytes": 10165,
+        "sha256": "3592fd4c7a86b8973d58d124172b13f1e62b56c93b6e5cf85dd695e89f6b9237"
+      },
+      "end_receipt": {
+        "bytes": 3150,
+        "sha256": "185a6e2e51c29fa7d42030f193531b7b667631e29ebb077e242073efd8944443"
+      },
+      "namespace_bytes_after_completion": 27203277
+    }
+  },
+  "formal_matrix": {
+    "clean_exports": 2,
+    "tracked_files_per_export": 518,
+    "source_archives_byte_identical": true,
+    "source_archive_bytes_each": 6993920,
+    "source_archive_sha256_each": "f1c803ed0031cb9d68fd41608c8e66106b4628f7ef83dca65dec92f528e1e767",
+    "profiles": ["python-normal", "python-optimized"],
+    "profiles_total": 4,
+    "normalized_results_byte_equal": true,
+    "normalized_result": {
+      "bytes": 10214,
+      "sha256": "fae31f3cbea1f0421b32a0f86bc8ca58fe7922fbd62bd901c4c759847a3b09e8"
+    },
+    "architectures": ["x86-64", "x86-64-avx2"],
+    "tiny_link_replays_per_architecture": 2,
+    "pe_coff_timestamps": [0, 0, 0, 0],
+    "same_architecture_executables_byte_identical": true,
+    "invalid_mode_fails_closed": true,
+    "enabled_non_windows_fails_closed": true,
+    "missing_flag_mutation_detected": true,
+    "duplicate_flag_mutation_detected": true
+  },
+  "terminal_process_audit": {
+    "supervisor_pid": 22072,
+    "observed_descendants": 1,
+    "allowed_platform_console_hosts": 1,
+    "disallowed_descendants": 0,
+    "record": {
+      "pid": 17328,
+      "ppid": 22072,
+      "name": "conhost.exe",
+      "executable": "C:/Windows/System32/conhost.exe",
+      "created_no_earlier_than_supervisor": true,
+      "alive_after_supervisor_exit": false
+    },
+    "compiler_linker_make_shell_or_python_descendants": 0,
+    "foreign_process_mutation": false
+  },
+  "pass_effect": "The explicit MinGW reproducible-link routing and independent tiny PE-link verifier are qualified for use by later exact-candidate release builds.",
+  "boundaries": {
+    "release_build_mode_qualified": true,
+    "tiny_pe_link_reproducible": true,
+    "full_engine_reproducible": false,
+    "release_archive_reproducible": false,
+    "target_matrix_frozen": false,
+    "release_candidate_selected": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

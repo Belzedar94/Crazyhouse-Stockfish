@@ -31,8 +31,10 @@
 #include <vector>
 #include <cstring>
 
+#include "crazyhouse_search_capacity.h"
 #include "history.h"
 #include "misc.h"
+#include "nnue/crazyhouse_legacy_network.h"
 #include "nnue/nnue_accumulator.h"
 #include "numa.h"
 #include "position.h"
@@ -168,6 +170,33 @@ struct RootMove {
 using RootMoves = std::vector<RootMove>;
 
 
+#ifdef CRAZYHOUSE_DATA_GENERATOR
+
+struct TrainingSearchRequest {
+    Depth depth   = 0;
+    u64   nodes   = 0;
+    usize multiPV = 1;
+};
+
+struct TrainingSearchLine {
+    Value   value = VALUE_NONE;
+    PVMoves pv;
+    bool    exact = false;
+};
+
+struct TrainingSearchResult {
+    Value                           value = VALUE_NONE;
+    PVMoves                         pv;
+    std::vector<TrainingSearchLine> lines;
+    u64                             nodes    = 0;
+    Depth                           depth    = 0;
+    int                             selDepth = 0;
+    bool                            exact    = false;
+};
+
+#endif
+
+
 // LimitsType struct stores information sent by the caller about the analysis required.
 struct LimitsType {
 
@@ -192,22 +221,25 @@ struct LimitsType {
 // The UCI stores the uci options, thread pool, and transposition table.
 // This struct is used to easily forward data to the Search::Worker class.
 struct SharedState {
-    SharedState(const OptionsMap&                                        optionsMap,
-                ThreadPool&                                              threadPool,
-                TranspositionTable&                                      transpositionTable,
-                std::map<NumaIndex, SharedHistories>&                    sharedHists,
-                const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>& net) :
+    SharedState(const OptionsMap&                                             optionsMap,
+                ThreadPool&                                                   threadPool,
+                TranspositionTable&                                           transpositionTable,
+                std::map<NumaIndex, SharedHistories>&                         sharedHists,
+                const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&      net,
+                const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>& legacyNet) :
         options(optionsMap),
         threads(threadPool),
         tt(transpositionTable),
         sharedHistories(sharedHists),
-        network(net) {}
+        network(net),
+        legacyNetwork(legacyNet) {}
 
-    const OptionsMap&                                        options;
-    ThreadPool&                                              threads;
-    TranspositionTable&                                      tt;
-    std::map<NumaIndex, SharedHistories>&                    sharedHistories;
-    const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>& network;
+    const OptionsMap&                                             options;
+    ThreadPool&                                                   threads;
+    TranspositionTable&                                           tt;
+    std::map<NumaIndex, SharedHistories>&                         sharedHistories;
+    const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&      network;
+    const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>& legacyNetwork;
 };
 
 class Worker;
@@ -344,6 +376,12 @@ class Worker {
 
     void ensure_network_replicated();
 
+#ifdef CRAZYHOUSE_DATA_GENERATOR
+    // Synchronous root search linked only by the isolated physical-data target.
+    // Values are exact raw engine scores; UCI conversion belongs to the codec.
+    TrainingSearchResult training_search(Position&, const TrainingSearchRequest&);
+#endif
+
     // Public because they need to be updatable by the stats
     ButterflyHistory mainHistory;
     LowPlyHistory    lowPlyHistory;
@@ -405,22 +443,24 @@ class Worker {
     usize                     threadIdx, numaThreadIdx, numaTotal;
     NumaReplicatedAccessToken numaAccessToken;
 
-    // Reductions lookup table initialized at startup
-    std::array<int, MAX_MOVES> reductions;  // [depth or moveNumber]
+    // Fixed lookup plus formula fallback for depth or moveNumber.
+    MoveCountReductionTable reductions;
 
     // The main thread has a SearchManager, the others have a NullSearchManager
     std::unique_ptr<ISearchManager> manager;
 
     Tablebases::Config tbConfig;
 
-    const OptionsMap&                                        options;
-    ThreadPool&                                              threads;
-    TranspositionTable&                                      tt;
-    const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>& network;
+    const OptionsMap&                                             options;
+    ThreadPool&                                                   threads;
+    TranspositionTable&                                           tt;
+    const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&      network;
+    const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>& legacyNetwork;
 
     // Used by NNUE
-    Eval::NNUE::AccumulatorStack  accumulatorStack;
-    Eval::NNUE::AccumulatorCaches refreshTable;
+    Eval::NNUE::AccumulatorStack                   accumulatorStack;
+    Eval::NNUE::LegacyCrazyhouseAccumulatorStackV1 legacyAccumulatorStack;
+    Eval::NNUE::AccumulatorCaches                  refreshTable;
 
     friend class Stockfish::ThreadPool;
     friend class SearchManager;

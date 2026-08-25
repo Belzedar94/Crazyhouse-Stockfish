@@ -1,0 +1,94 @@
+{
+  "schema": "crazyhouse-nnue-v2-feature-contract/v1",
+  "status": "frozen-before-container-bytes",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "physical_input": {
+    "schema_id": "crazyhouse-physical-v1",
+    "schema_sha256": "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55",
+    "canonical_source": "physical-state-not-feature-rows"
+  },
+  "perspectives": {
+    "count": 2,
+    "white": 0,
+    "black": 1,
+    "ownership": "relative-to-perspective",
+    "square_orientation": "white uses square; black uses square XOR 56",
+    "side_to_move_row": false
+  },
+  "dimensions": 902,
+  "maximum_active_capacity": 138,
+  "active_count_formula": "occupied_board_squares + 10 + popcount(promoted_mask)",
+  "blocks": [
+    {
+      "id": "relative-board-role-square",
+      "offset": 0,
+      "rows": 768,
+      "active": "one per occupied square",
+      "piece_codes": {"white": [1, 2, 3, 4, 5, 6], "black": [9, 10, 11, 12, 13, 14]},
+      "piece_type_order": ["pawn", "knight", "bishop", "rook", "queen", "king"],
+      "role_order_per_type": ["relative-owner", "relative-opponent"],
+      "index_formula": "2 * (piece_type_code - 1) * 64 + (piece_owner != perspective) * 64 + oriented_square"
+    },
+    {
+      "id": "exact-pocket-count",
+      "offset": 768,
+      "rows": 70,
+      "active": "exactly one row per relative-owner and droppable piece type, including zero",
+      "absolute_storage_order": ["white-pawn", "white-knight", "white-bishop", "white-rook", "white-queen", "black-pawn", "black-knight", "black-bishop", "black-rook", "black-queen"],
+      "relative_owner_order": ["relative-owner", "relative-opponent"],
+      "bands": [
+        {"piece_type": "pawn", "type_base": 0, "maximum": 16, "width_per_owner": 17},
+        {"piece_type": "knight", "type_base": 34, "maximum": 4, "width_per_owner": 5},
+        {"piece_type": "bishop", "type_base": 44, "maximum": 4, "width_per_owner": 5},
+        {"piece_type": "rook", "type_base": 54, "maximum": 4, "width_per_owner": 5},
+        {"piece_type": "queen", "type_base": 64, "maximum": 2, "width_per_owner": 3}
+      ],
+      "index_formula": "768 + type_base + relative_owner * width_per_owner + exact_count"
+    },
+    {
+      "id": "promoted-origin-square",
+      "offset": 838,
+      "rows": 64,
+      "active": "one per promoted-mask bit",
+      "index_formula": "838 + oriented_square",
+      "dependency": "visible owner and piece type remain represented by the board-role row on the same square"
+    }
+  ],
+  "enumeration_order": [
+    "occupied board squares in physical a1-through-h8 order",
+    "pocket types pawn-knight-bishop-rook-queen with relative owner then opponent",
+    "promoted bits in physical a1-through-h8 order"
+  ],
+  "admission": {
+    "exactly_one_king_per_absolute_side": true,
+    "reserved_piece_codes_rejected": true,
+    "pawns_on_first_or_eighth_rank_rejected": true,
+    "promoted_bit_requires_occupied_nonpawn_nonking": true,
+    "pocket_bounds": {"pawn": 16, "knight": 4, "bishop": 4, "rook": 4, "queen": 2},
+    "duplicates_rejected": true,
+    "out_of_range_rows_rejected": true
+  },
+  "decoded_but_not_feature_rows_in_v1": [
+    "side to move",
+    "castling rights",
+    "raw and effective en-passant",
+    "halfmove and fullmove counters",
+    "repetition occurrences and claim policy",
+    "ordered history identity",
+    "move, result, terminal and teacher labels"
+  ],
+  "scientific_boundary": {
+    "feature_contract_is_not_training_data": true,
+    "topology_selected": false,
+    "quantization_selected": false,
+    "container_selected": false,
+    "strength_claimed": false,
+    "g12_closed": false
+  }
+}

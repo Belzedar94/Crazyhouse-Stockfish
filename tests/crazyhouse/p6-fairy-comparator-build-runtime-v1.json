@@ -1,0 +1,208 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-build-runtime/v1",
+  "created_utc": "2026-08-23T17:57:43.7236903Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Build and qualify the exact current Fairy-Stockfish source as an external Crazyhouse comparator with the owner legacy network; identify any raw fail-closed binding gap before match admission.",
+  "source": {
+    "remote": "https://github.com/fairy-stockfish/Fairy-Stockfish.git",
+    "commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "tree": "aa4112ea6784cef03fb9b5f87bba632de6168faa",
+    "source_manifest": {
+      "bytes": 24961,
+      "sha256": "bd645f777445a98424ea9e930056c98dc670fc1be98263b184e7ecd7bf9a7634",
+      "authenticated_blobs": 111
+    },
+    "role": "external_strength_comparator_only",
+    "may_enter_product_ancestry": false
+  },
+  "execution": {
+    "lease": 264,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-build-runtime-264",
+    "namespace_must_not_preexist": true,
+    "single_use": true,
+    "source_transport": "local clone with --no-hardlinks, no checkout, LF configuration and detached exact checkout",
+    "network_access": false,
+    "jobs": 1,
+    "process_priority": "Normal",
+    "harness": {
+      "path": "../control/fairy-comparator-build-runtime-harness-v1.py",
+      "bytes": 29476,
+      "sha256": "da86de118054361cfb19861b089afd1d6704960ec7bef286ca1b3bedb49fcaad"
+    },
+    "python": {
+      "path": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+      "version": "Python 3.12.0",
+      "bytes": 103192,
+      "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"
+    }
+  },
+  "build": {
+    "working_directory": "<fresh-source>/src",
+    "tool": "C:/msys64/usr/bin/make.exe",
+    "arguments": [
+      "-j1",
+      "build",
+      "ARCH=x86-64-avx2",
+      "COMP=mingw",
+      "nnue=no",
+      "largeboards=no",
+      "all=no",
+      "EXTRACXXFLAGS=-Werror"
+    ],
+    "environment": {
+      "MSYSTEM": "MINGW64",
+      "SOURCE_DATE_EPOCH": "1787483762",
+      "PATH_prefix": "C:/msys64/mingw64/bin;C:/msys64/usr/bin"
+    },
+    "expected": {
+      "exit_code": 0,
+      "timed_out": false,
+      "stderr_bytes": 0,
+      "warning_or_error_diagnostics": 0,
+      "artifact": "stockfish.exe",
+      "tracked_source_status_lines": 0
+    },
+    "fairness_note": "The ISA target and compiler executable family match the already-qualified Crazyhouse-Stockfish candidate build. Engine-specific build systems remain unmodified."
+  },
+  "inputs": {
+    "legacy_network": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Match script/crazyhouse_run15rl_e190_l03.nnue",
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    },
+    "incompatible_standard_network_negative_only": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-engine-capability-green-247/source/src/nn-1a298aa575a0.nnue",
+      "bytes": 98511183,
+      "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+      "classification": "valid official-Stockfish network deliberately renamed only inside the fresh negative-fixture directory"
+    },
+    "authority_cases": {
+      "path": "tests/crazyhouse/reference-cases.json",
+      "bytes": 17810,
+      "sha256": "4a00bca20d3b149b5bbe3f4153a4a3ff5a20473126763c2d8125a4ba2d11742e",
+      "git_blob": "69ff656153aa7bb1847eca364ec14047267a6fab",
+      "authority_profile": "LICHESS_CRAZYHOUSE_2026_08_12"
+    },
+    "search_current_map": {
+      "path": "tests/crazyhouse/g3-conservative-search-current-map-v1.json",
+      "bytes": 10709,
+      "sha256": "02ac761a2cb90c65797f0be2b60ca5e9748eaa76eb1281100aa5df4cac389ce8",
+      "git_blob": "48e69ef64e53f079307ae8ae514bbee3f130c14b"
+    }
+  },
+  "uci_inventory": {
+    "required_id_prefix": "id name Fairy-Stockfish",
+    "required_unique_options": ["Threads", "Hash", "UCI_Variant", "Use NNUE", "EvalFile"],
+    "uci_variant_must_advertise": "crazyhouse",
+    "use_nnue_line": "option name Use NNUE type check default true",
+    "eval_file_line_for_nnue_no_build": "option name EvalFile type string default <empty>",
+    "uciok_count": 1
+  },
+  "network_cases": [
+    {
+      "id": "legacy_positive",
+      "network": "exact legacy_network path",
+      "settings": {"UCI_Variant": "crazyhouse", "Use NNUE": true, "Threads": 1, "Hash": 16},
+      "trigger": "go nodes 10000",
+      "expected": {
+        "exit_code": 0,
+        "stderr_bytes": 0,
+        "readyok": true,
+        "nnue_enabled_marker_contains_exact_path": true,
+        "bestmove": true,
+        "classical_marker": false
+      }
+    },
+    {
+      "id": "missing_correct_prefix",
+      "network_fixture": "crazyhouse_missing.nnue (must not exist)",
+      "trigger": "go nodes 1",
+      "expected": {"exit_nonzero": true, "error_markers": true, "bestmove": false, "classical_marker": false}
+    },
+    {
+      "id": "corrupt_correct_prefix",
+      "network_fixture": "crazyhouse_corrupt.nnue containing exactly the first 4096 bytes of the legacy network",
+      "trigger": "go nodes 1",
+      "expected": {"exit_nonzero": true, "error_markers": true, "bestmove": false, "classical_marker": false}
+    },
+    {
+      "id": "incompatible_correct_prefix",
+      "network_fixture": "crazyhouse_incompatible.nnue byte-identical to incompatible_standard_network_negative_only",
+      "trigger": "go nodes 1",
+      "expected": {"exit_nonzero": true, "error_markers": true, "bestmove": false, "classical_marker": false}
+    },
+    {
+      "id": "wrong_basename_expected_red",
+      "network_fixture": "neutral_legacy.nnue byte-identical to legacy_network",
+      "trigger": "go nodes 100",
+      "expected": {"exit_code": 0, "classical_marker": true, "bestmove": true, "nnue_enabled_marker": false},
+      "interpretation": "This expected-red source behavior proves that the raw comparator does not fail closed on a wrong variant filename and therefore is not match-admissible without a neutral enforcing adapter."
+    },
+    {
+      "id": "use_nnue_false_expected_red",
+      "network": "exact legacy_network path",
+      "settings": {"UCI_Variant": "crazyhouse", "Use NNUE": false},
+      "trigger": "go nodes 100",
+      "expected": {"exit_code": 0, "classical_marker": true, "bestmove": true, "nnue_enabled_marker": false},
+      "interpretation": "The later match adapter must require and authenticate Use NNUE=true rather than trusting match configuration alone."
+    }
+  ],
+  "perft_cases": [
+    {"id": "CH-REF-PERFT-001", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1", "depth": 4, "nodes": 197281},
+    {"id": "CH-REF-PERFT-002", "fen": "2k5/8/8/8/8/8/8/4K3[QRBNPqrbnp] w - - 0 1", "depth": 2, "nodes": 75353},
+    {"id": "CH-REF-PERFT-003", "fen": "2k5/8/8/8/8/8/8/4K3[Qn] w - - 0 1", "depth": 3, "nodes": 88634},
+    {"id": "CH-REF-PERFT-004", "fen": "2k5/8/8/8/8/8/8/4K3/Qn w - - 0 1", "depth": 3, "nodes": 88634},
+    {"id": "CH-REF-PERFT-005", "fen": "r1bqk2r/pppp1ppp/2n1p3/4P3/1b1Pn3/2NB1N2/PPP2PPP/R1BQK2R[] b KQkq - 0 1", "depth": 3, "nodes": 58057}
+  ],
+  "transition_cases": [
+    {"id": "CH-REF-PROV-002", "fen": "7k/8/8/8/8/8/Q~6r/K7[] b - - 0 1", "moves": ["h2a2"], "canonical_fen": "7k/8/8/8/8/8/r7/K7[p] w - - 0 2"},
+    {"id": "CH-REF-PROV-004", "fen": "7k/P7/8/8/8/8/8/K7[] w - - 0 1", "moves": ["a7a8q"], "canonical_fen": "Q~6k/8/8/8/8/8/8/K7[] b - - 0 1"},
+    {"id": "CH-REF-CASTLE-002", "fen": "r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1", "moves": ["e1g1"], "canonical_fen": "r3k2r/8/8/8/8/8/8/R4RK1[] b kq - 1 1"},
+    {"id": "CH-REF-EP-001", "fen": "7k/3p4/8/4P3/8/8/8/K7[] b - - 0 1", "moves": ["d7d5", "e5d6"], "canonical_fen": "7k/8/3P4/8/8/8/8/K7[P] b - - 0 2"},
+    {"id": "CH-REF-DROP-PAWN-DOUBLE", "fen": "7k/8/8/8/8/8/8/K7[P] w - - 0 1", "moves": ["P@e2", "h8h7", "e2e4"], "canonical_fen": "8/7k/8/8/4P3/8/8/K7[] b - - 0 2"},
+    {"id": "CH-REF-CAP-DROP-CHAIN", "fen": "6k1/8/8/8/8/8/n6R/K7[] w - - 0 1", "moves": ["h2a2", "g8g7", "N@c3"], "canonical_fen": "8/6k1/8/8/8/2N5/R7/K7[] b - - 2 2"},
+    {"id": "CH-REF-CASTLE-RIGHTS-NOT-RESTORED", "fen": "r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1", "moves": ["h1h2", "a8a7", "h2h1", "a7a8"], "canonical_fen": "r3k2r/8/8/8/8/8/8/R3K2R[] w Qk - 4 3"},
+    {"id": "CH-REF-CASTLE-DROPPED-ROOK-NO-RIGHT", "fen": "4k3/8/8/8/8/8/8/4K3[R] w - - 0 1", "moves": ["R@h1"], "canonical_fen": "4k3/8/8/8/8/8/8/4K2R[] b - - 1 1"},
+    {"id": "CH-REF-CASTLE-ROOK-CAPTURE", "fen": "r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1", "moves": ["a1a8"], "canonical_fen": "R3k2r/8/8/8/8/8/8/4K2R[R] b Kk - 0 1"}
+  ],
+  "legal_move_cases": [
+    {"id": "CH-REF-DROP-001", "fen": "7k/8/8/8/8/8/8/K7[PNBRQ] w - - 0 1", "must_include": ["P@a2", "P@h7", "N@b1", "B@d4", "R@e5", "Q@g8"], "must_exclude": ["P@a1", "P@h1", "P@a8", "P@h8"]},
+    {"id": "CH-REF-CHECK-001", "fen": "4r2k/8/8/8/8/8/8/4K3[N] w - - 0 1", "must_include": ["N@e2", "N@e7"], "must_exclude": []},
+    {"id": "CH-REF-CHECK-002", "fen": "4r2k/8/8/8/1b6/8/8/4K3[N] w - - 0 1", "must_include": [], "forbidden_prefixes": ["N@"]},
+    {"id": "CH-REF-DROP-OCCUPIED", "fen": "7k/8/8/8/4p3/8/8/K7[PNBRQ] w - - 0 1", "must_include": ["P@e3", "N@e3", "B@e3", "R@e3", "Q@e3"], "must_exclude": ["P@e4", "N@e4", "B@e4", "R@e4", "Q@e4"]},
+    {"id": "CH-REF-DROP-DOUBLED-PAWN-ALLOWED", "fen": "7k/8/8/8/8/4P3/8/K7[P] w - - 0 1", "must_include": ["P@e2", "P@e4", "P@e7"], "must_exclude": ["P@e1", "P@e8"]},
+    {"id": "CH-REF-CASTLE-THROUGH-CHECK", "fen": "r3k2r/8/8/8/2b5/8/8/R3K2R[] w KQkq - 0 1", "must_include": ["e1c1"], "must_exclude": ["e1g1"]},
+    {"id": "CH-REF-EP-LOAD-PINNED-ILLEGAL", "fen": "4r2k/8/8/3pP3/8/8/8/4K3[] w - d6 0 2", "must_include": [], "must_exclude": ["e5d6"]},
+    {"id": "CH-REF-EP-MIXED-SOURCES", "fen": "4r2k/8/8/2PpP3/8/8/8/4K3[] w - d6 0 2", "must_include": ["c5d6"], "must_exclude": ["e5d6"]},
+    {"id": "CH-REF-EP-HORIZONTAL-DISCOVERY", "fen": "7k/8/8/r4pPK/8/8/8/8[] w - f6 0 2", "must_include": [], "must_exclude": ["g5f6"]},
+    {"id": "CH-REF-EP-CHECK-EVASION", "fen": "7k/8/8/3pP3/4K3/8/8/8[] w - d6 0 2", "must_include": ["e5d6"], "must_exclude": []}
+  ],
+  "terminal_cases": [
+    {"id": "CH-REF-TERM-MATE", "fen": "k7/1Q6/2K5/8/8/8/8/8[] b - - 0 1", "go": "go depth 2", "bestmove": "(none)", "required_score": "score mate 0"},
+    {"id": "CH-REF-TERM-STALEMATE", "fen": "k7/2Q5/2K5/8/8/8/8/8[] b - - 0 1", "go": "go depth 2", "bestmove": "(none)", "required_score": "score cp 0"},
+    {"id": "CH-REF-TERM-POCKET-PREVENTS-STALEMATE", "fen": "k7/2Q5/2K5/8/8/8/8/8[n] b - - 0 1", "go": "go depth 2 searchmoves N@a1", "bestmove": "N@a1"},
+    {"id": "CH-REF-TERM-NO-FIFTY", "fen": "7k/8/8/8/8/8/8/K7[] w - - 100 1", "go": "go depth 2", "bestmove_set": ["a1a2", "a1b1", "a1b2"]}
+  ],
+  "deterministic_search_cases": [
+    {"id": "startpos_nodes_10000", "position": "position startpos", "go": "go nodes 10000", "repetitions": 2},
+    {"id": "rich_state_nodes_10000", "position": "position fen r3k2r/8/8/3pP3/8/2N~5/8/R3K2R[PPNRnq] w KQkq d6 12 42", "go": "go nodes 10000", "repetitions": 2}
+  ],
+  "determinism_signature": {
+    "fields": ["final_score", "final_pv", "bestmove"],
+    "excluded_nonfunctional_fields": ["time", "nps", "hashfull", "tbhits"],
+    "pairwise_requirement": "exact equality within each case across two fresh T1/Hash16 processes",
+    "timing_evidence": false
+  },
+  "acceptance": {
+    "build_and_runtime_pass": "All source, build, UCI, positive loader, negative loader, perft, transition, legal-move, terminal and deterministic checks match the frozen contract.",
+    "raw_match_admission": false,
+    "raw_match_admission_reason": "The wrong-basename and Use NNUE=false expected-red controls intentionally demonstrate unguarded classical fallback.",
+    "next_required_gate": "A protocol-only adapter must authenticate engine/net/settings, reject the two classical-fallback controls, preserve exact fixed-node behavior and satisfy the current referee capability handshake before any paired strength match."
+  },
+  "stopping_rule": "Execute once in lease 264. Any identity drift, source mismatch, warning/error diagnostic, timeout, positive-load failure, negative-load fallback, authority fixture mismatch, non-deterministic signature, artifact mutation or residual owned process rejects the qualification. Expected-red classical fallback is recorded but never treated as match-admissible behavior.",
+  "gate_credit": false,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

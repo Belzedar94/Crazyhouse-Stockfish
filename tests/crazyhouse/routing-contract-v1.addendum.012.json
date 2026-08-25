@@ -1,0 +1,127 @@
+{
+  "schema": "crazyhouse-uci-routing-capability-addendum/v1",
+  "addendum": 12,
+  "created_utc": "2026-08-23T10:04:00.0000000Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Admit the two separately frozen Crazyhouse UCI options into the current full routing inventory without changing any routing scenario, marker, route semantics, product default or protocol digest. The capability nonce remains unset throughout the legacy routing replay.",
+  "pins": {
+    "routing_addendum_011": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.011.json",
+      "bytes": 4125,
+      "sha256": "0e34bdd446aa0fb03a9ef6fc8efcca434709513598508d1566d2fdb0ed40e7e5"
+    },
+    "upstream_addendum_001": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.001.json",
+      "bytes": 4023,
+      "sha256": "569ef378350be65fddac2a2897f30fd7587eed2fc88e6cc6728fc1bab8f67fd6"
+    },
+    "multipv_addendum_007": {
+      "path": "tests/crazyhouse/g3-multipv-contract-v1.addendum.007.json",
+      "bytes": 4450,
+      "sha256": "14e4aa06bf2937dabc2d29d229397f547425b66015f6567738b52a2f69f22877"
+    },
+    "capability_fixture": {
+      "path": "tests/crazyhouse/capability-handshake-v1.json",
+      "bytes": 2741,
+      "sha256": "4b027bb4f0e632e298addcb37f18b2bd61c25fe4158f33d3293291a481feab6d"
+    },
+    "capability_adr": {
+      "path": "docs/crazyhouse/adr-0004-addendum-005-capability-handshake-integration.md",
+      "bytes": 3280,
+      "sha256": "7373405ba1d46bcce316d8de99617ea8d3b6571d94e635e0ae74fb3638d10a9d"
+    },
+    "expected_red_record": {
+      "path": "../../../receipts/private/p4-routing-capability-inventory-expected-red-record-165.json",
+      "bytes": 6923,
+      "sha256": "ca164776cd1f85fedd6e4ff7b7b935789e71f81f977417e284a36a8b3933d849"
+    },
+    "engine_capability_end_receipt": {
+      "path": "../../../receipts/resources/p4-engine-capability-green-t1-end-247.json",
+      "bytes": 4143,
+      "sha256": "250a3613df652fa664108b30bba2d55c7749f74e786450737f9881f872c02630"
+    }
+  },
+  "validated_source": {
+    "fixture_commit": "85010213175475176eb2d081e79c6f4a20d7da81",
+    "behavior_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "behavior_tree": "90b31388cdf8b2da61fb3d6bfaf1f5cfde1936b6",
+    "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false
+  },
+  "option_inventory": {
+    "base_count": 22,
+    "expected_count": 24,
+    "ordered_names": [
+      "Debug Log File",
+      "NumaPolicy",
+      "Threads",
+      "Hash",
+      "Clear Hash",
+      "Ponder",
+      "MultiPV",
+      "CrazyhouseMultiPV",
+      "Skill Level",
+      "Move Overhead",
+      "nodestime",
+      "UCI_Chess960",
+      "UCI_Variant",
+      "CrazyhouseProfile",
+      "CrazyhouseCapabilityNonce",
+      "UCI_LimitStrength",
+      "UCI_Elo",
+      "UCI_ShowWDL",
+      "SyzygyPath",
+      "SyzygyProbeDepth",
+      "Syzygy50MoveRule",
+      "SyzygyProbeLimit",
+      "EvalFile",
+      "CrazyhouseEvalFile"
+    ],
+    "added_option_lines": [
+      "option name CrazyhouseMultiPV type spin default 0 min 0 max 2147483647",
+      "option name CrazyhouseCapabilityNonce type string default <empty>"
+    ],
+    "unchanged_required_lines": [
+      "option name UCI_Variant type combo default crazyhouse var chess var crazyhouse",
+      "option name CrazyhouseProfile type string default LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "option name CrazyhouseEvalFile type string default <empty>",
+      "option name EvalFile type string default nn-1a298aa575a0.nnue"
+    ]
+  },
+  "routing_control": {
+    "scenario_count": 11,
+    "marker_count": 32,
+    "expected_protocol_sha256": "df375512dda60f4cab1545287197c1b407a3d4f7c0e9f4415e0f36fcb3905d35",
+    "required_binding": "BOUND_LEGACY_V1_INCREMENTAL_SCALAR_AUTHENTICATED",
+    "required_route_token": "evaluator=incremental-scalar",
+    "successful_crazyhouse_route_commits": 5,
+    "capability_nonce_set_during_replay": false,
+    "capability_ack_expected_during_replay": false,
+    "routing_markers_changed": false,
+    "product_behavior_changed_by_this_addendum": false
+  },
+  "verifier_extension": {
+    "new_cli_argument": "--capability-addendum",
+    "opt_in": true,
+    "historical_invocations_remain_supported": true,
+    "must_authenticate_every_pin": true,
+    "must_require_exact_24_option_order": true,
+    "must_require_both_added_option_lines": true,
+    "must_preserve_all_legacy_scenarios": true,
+    "must_preserve_protocol_digest": true,
+    "must_not_set_capability_nonce": true
+  },
+  "expected_red": {
+    "record": 165,
+    "required_failure": "option order mismatch",
+    "engine_started": true,
+    "runtime_scenarios_started": false,
+    "fallback_observed": false
+  },
+  "stopping_rule": "Invoke the full routing verifier with upstream addendum 001, Worker routing addendum 011 and this exact capability addendum. Reject on any pin mismatch, option count or order drift, missing exact custom option line, changed routing scenario count, marker drift, protocol digest drift, capability acknowledgement during the nonce-free replay, fallback, stderr, crash or timeout. This slice supplies engineering correctness only.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

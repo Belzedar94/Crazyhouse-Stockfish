@@ -1,0 +1,72 @@
+{
+  "schema": "crazyhouse-p11-local-selfplay-datagen-g0-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T06:03:45Z",
+  "status": "frozen-after-lease-290-rejection-before-controller-fix-or-lease-291",
+  "effect": "strictly-additive-canonical-network-basename-repair",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "rejected_observation": {
+    "lease": 290,
+    "result": "REJECTED_LOCAL_PRECONDITION_DIAGNOSTIC",
+    "completion_bytes": 24387,
+    "completion_sha256": "872a4f974c458fa3461a789963cb982ed3aaae090365c193e03a0e0c148e364a",
+    "handoff_end_bytes": 1082,
+    "handoff_end_sha256": "539a948501741034b75c3db9fc9136b3149cb31d1b8398536ccc4024571dae58",
+    "harness_failure_bytes": 2649,
+    "harness_failure_sha256": "205854e5676321b07ed30f9cbd2c6eae84720a1dc8ab0be834412fab964f96bd",
+    "harness_stderr_bytes": 100,
+    "harness_stderr_sha256": "54f60b157ed40d05f1602a10472efdd26831a85e61cf369a8b4d5709287b0bf3",
+    "independent_verifier_stdout_bytes": 77,
+    "independent_verifier_stdout_sha256": "bef5c785433bb0812d5e1aec9eeb6c825a4fe15638c7224450aaabba1ad49818",
+    "independent_verifier_diagnostic": "FAIL_CRAZYHOUSE_SELFPLAY_DATAGEN_G0_INDEPENDENT provenance network basename",
+    "first_bundle_bytes": 6845,
+    "first_bundle_sha256": "a09a359a16f68a63cf87490bddd5f5b00b76bf60bdb86a2cb120245b7df57892",
+    "completed_matrix_rows_before_rejection": 9,
+    "gate_credit": false
+  },
+  "authenticated_non_causes": {
+    "source_commit": "697a257f54333aba977e8b92a9ae305e16c7472a",
+    "source_tree": "ef1c326134596aee839487490199a45b607b1c02",
+    "src_tree": "834827c801093b49bc1616a866757de5a994a06a",
+    "clean_producer_build_exit": 0,
+    "dirty_control_build_exit": 0,
+    "normal_engine_build_exit": 0,
+    "build_timeouts": 0,
+    "build_stderr_bytes": 0,
+    "clean_capability_authenticated": true,
+    "dirty_capability_authenticated": true,
+    "network_bytes": 58534811,
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+  },
+  "root_cause": {
+    "class": "formal-controller-input-packaging",
+    "incorrect_copied_basename": "legacy.nnue",
+    "required_canonical_basename": "crazyhouse_run15rl_e190_l03.nnue",
+    "bytes_or_digest_changed": false,
+    "producer_or_verifier_defect_observed": false,
+    "reason": "The producer binds the supplied network basename into provenance, and the independent verifier correctly requires the frozen canonical legacy-network basename. The lease-290 controller preserved bytes but renamed the copied input."
+  },
+  "additive_repair": {
+    "next_lease": 291,
+    "new_controller_required": true,
+    "lease_290_controller_must_remain_immutable": true,
+    "copy_network_with_canonical_basename": true,
+    "rebuild_both_producers_and_normal_engine_from_two_new_exports": true,
+    "replay_full_formal_matrix_from_row_zero": true,
+    "partial_row_credit": false
+  },
+  "unchanged_frozen_values": [
+    "source commit/tree/src-tree",
+    "network bytes and SHA-256",
+    "book bytes and SHA-256",
+    "schemas and capability contracts",
+    "campaign/chunk derivation",
+    "record and trajectory quotas",
+    "search controls and stopping rules",
+    "OpenBench and production authorization remain false"
+  ],
+  "stopping_rule": "Lease 291 starts only in a fresh absent namespace with a new hash-pinned controller. It must preserve the canonical network basename and replay the entire clean-build, positive, independent, negative, mutation, kill/retry, normal-engine and G9 matrix. Any failed row remains a rejection and receives another additive record.",
+  "claim_boundary": "This addendum repairs a local controller packaging defect only. Lease 290 remains rejected and supplies no P11 gate credit, training admission, OpenBench evidence, strength evidence, model-selection evidence or release evidence."
+}

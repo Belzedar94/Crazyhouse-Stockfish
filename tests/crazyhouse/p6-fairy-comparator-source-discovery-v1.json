@@ -1,0 +1,67 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-source-discovery/v1",
+  "created_utc": "2026-08-23T17:29:54.0567631Z",
+  "evidence_class": "D0_DISCOVERY",
+  "purpose": "Freeze and authenticate the current upstream Fairy-Stockfish source strictly as the owner-required local baseline comparator, never as Crazyhouse-Stockfish source ancestry.",
+  "remote_observation": {
+    "command": "git ls-remote <primary-remote> refs/heads/master",
+    "observed_utc": "2026-08-23T17:26:00Z",
+    "remote": "https://github.com/fairy-stockfish/Fairy-Stockfish.git",
+    "branch": "master",
+    "commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "source_type": "primary_upstream_git",
+    "network_fallback_used": false
+  },
+  "local_candidates": [
+    {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/upstream/Fairy-Stockfish",
+      "head": "fb78cb561aa01708338e35b3dc3b65a42149a3c4",
+      "branch": "master",
+      "status_lines": 0,
+      "classification": "STALE_READ_ONLY_REFERENCE_NOT_CURRENT_COMPARATOR"
+    },
+    {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/FSF-spell-baseline",
+      "head": "aa15756a8a74d9332b6fc5af7919a60a5866ae20",
+      "branch": "fix/freeze-gate-enemy-center",
+      "classification": "PROJECT_SPECIFIC_FORK_NOT_CURRENT_UPSTREAM_COMPARATOR"
+    }
+  ],
+  "source_role": {
+    "role": "external_strength_comparator_only",
+    "may_enter_product_ancestry": false,
+    "may_supply_product_rules_or_search_defaults": false,
+    "may_be_modified_in_discovery": false,
+    "may_generate_strength_evidence_in_discovery": false,
+    "same_legacy_network_required_later": true
+  },
+  "discovery_execution": {
+    "lease": 262,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-source-discovery-262",
+    "namespace_must_not_preexist": true,
+    "single_use": true,
+    "source_directory": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-source-discovery-262/source",
+    "clone": "remote clone without checkout followed by detached exact checkout",
+    "network_allowed": "GitHub source retrieval only",
+    "build_allowed": false,
+    "engine_execution_allowed": false,
+    "source_edit_allowed": false
+  },
+  "required_observations": [
+    "detached HEAD equals the frozen remote commit and the checkout is clean",
+    "all tracked files match their Git blob IDs",
+    "commit, tree, parents, authored and committed timestamps are recorded",
+    "license files and exact identities are recorded",
+    "build documentation and available architecture targets are inventoried without building",
+    "Crazyhouse variant option, evaluator option, network loader and network-format implementation paths are inventoried",
+    "the source's advertised default network names and embedded-network behavior are recorded without inferring compatibility from the .nnue extension",
+    "any submodules or generated dependencies are declared",
+    "namespace, source and process closure are hash-pinned"
+  ],
+  "stopping_rule": "This lease ends after source authentication and inventory. Any remote identity drift, checkout dirtiness, blob mismatch, missing or ambiguous license, submodule ambiguity or accidental build/engine execution rejects discovery and blocks comparator build preregistration.",
+  "gate_credit": false,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

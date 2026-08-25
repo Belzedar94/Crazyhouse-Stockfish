@@ -1,0 +1,115 @@
+{
+  "schema": "crazyhouse-p15-native-package-diagnostic-result/v1",
+  "created_utc": "2026-08-24T20:45:10.6109290Z",
+  "status": "PASS_DIRTY_SOURCE_DIAGNOSTIC_ONLY",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.005.json",
+    "bytes": 5976,
+    "sha256": "d5bebe55c55b0d1bd0e13c7f1501fe67ab70f85b01161fd11ff48a6d6b2c5374"
+  },
+  "lease": 346,
+  "source": {
+    "commit": "1b386f4413b815f1004501241f698f0b1f8e1d2e",
+    "tree": "7af39122d19f78c7964f7b45eab6cf4cb9692b2f",
+    "src_tree": "1058720318d4e0ad9c3f61e6ee48675f2dd13b6b",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "dirty_source_diagnostic_only": true
+  },
+  "exact_overlays": [
+    {
+      "path": "src/Makefile",
+      "bytes": 61826,
+      "sha256": "f49c3b889680692923c702f071a3c51cd2bd67702f473d3e44e58339a3a8e092"
+    },
+    {
+      "path": "tools/release/crazyhouse_release_native_package.py",
+      "bytes": 23223,
+      "sha256": "355615ac2419583275c97e7e13a38bc26693b08cecd545b88e9fa3736f79fb87"
+    },
+    {
+      "path": "tools/release/verify_crazyhouse_native_package.py",
+      "bytes": 25590,
+      "sha256": "63fc4afde5322f9410d7aa489832160c795ec73130cf0122b7eceea858b2f9b0"
+    },
+    {
+      "path": "tests/crazyhouse_release_native_package.py",
+      "bytes": 43410,
+      "sha256": "ed39a3509cef426bde8a6320b93d7346c59d9a15aaea7481ab1edc01f668841c"
+    }
+  ],
+  "matrix": {
+    "make_target": "crazyhouse_release_native_package_contract_test",
+    "exit_code": 0,
+    "stderr_bytes": 0,
+    "raw_transcript_bytes": 225,
+    "raw_transcript_sha256": "3c200f0f09b020f49e0ef2a7fb23a3d81b4f091b99612b959fa25fbc99437f3a",
+    "normalized_summary_bytes": 109,
+    "normalized_summary_sha256": "2f0dc802408e93b2857a631518fb7a59da93f3a63f47de1f03c662fdfba2da50",
+    "positive_small_fixture_cases": 4,
+    "negative_cases": 72,
+    "independent_verifier_imports_assembler": false,
+    "real_network": false,
+    "full_engine": false
+  },
+  "terminal_child_audit": {
+    "contract_pass": true,
+    "observed_count": 1,
+    "allowed_count": 1,
+    "disallowed_count": 0,
+    "pid": 33288,
+    "ppid": 908,
+    "name": "conhost.exe",
+    "executable": "C:/Windows/System32/conhost.exe",
+    "created_after_supervisor": true,
+    "owned_processes_remaining_after_exit": 0
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-native-package-diagnostic-346/completion.json",
+    "bytes": 9963,
+    "sha256": "90ea80e438c190900eaef63f1e5ac3478ede15d08aef02d3ed9d2fe6a57b3186"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-native-package-diagnostic-t1-end-346.json",
+    "bytes": 3648,
+    "sha256": "301f272bb5dfae86f239db30f4610b60ecb67fcefe00b6f9cbf3390b42e4be03"
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 558,
+    "namespace_bytes": 14022004,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_alive": true,
+    "p7_foreign_count": 5
+  },
+  "effect": "The exact four implementation overlays are admitted for review and an explicit implementation commit. Formal clean-export qualification is still required.",
+  "boundaries": {
+    "dirty_source_diagnostic_passed": true,
+    "formal_credit": false,
+    "real_network_containment_verified": false,
+    "package_internal_layout_verified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

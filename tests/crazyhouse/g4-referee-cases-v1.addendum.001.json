@@ -1,0 +1,404 @@
+{
+  "schema": "crazyhouse-g4-referee-cases-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-14T05:50:15.9564973Z",
+  "evidence_class": "E1_ENGINEERING",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "fixture_policy": "this addendum is frozen before referee behavior implementation; corrections require a new hash-pinned addendum",
+  "pins": {
+    "base_cases": {
+      "path": "tests/crazyhouse/g4-referee-cases-v1.json",
+      "bytes": 4572,
+      "sha256": "6768fa3fb0ff5f3128fe55e1e1beea96aa0e479adf6a8c774dc50b77839f5d7b"
+    },
+    "profile": {
+      "path": "tests/crazyhouse/g4-profile-v1.json",
+      "bytes": 5486,
+      "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+    },
+    "source_map": {
+      "path": "tests/crazyhouse/g4-referee-source-map-v1.json",
+      "bytes": 15041,
+      "sha256": "51a5dd5b5ca052a3dd8d49de4e593cf632074638af61d2877ebc7892e2d17863"
+    },
+    "advisory_review": {
+      "path": "../../../receipts/private/p4-referee-fixture-closure-consultation-040.json",
+      "bytes": 3994,
+      "sha256": "7d0f515bcef1387cf7a79f84cafb1495009ccbe1cc383074590ff04ec8862e46"
+    },
+    "golden_derivation": {
+      "path": "../../../receipts/private/p4-referee-fixture-goldens-041.json",
+      "bytes": 5423,
+      "sha256": "aef60bc8a408aae7e35ff074f703a4c02876b4142f647fb482b818d6679b941b"
+    }
+  },
+  "clock_contract": {
+    "clock": "injectable monotonic integer clock at the unit boundary",
+    "deadline_formula": "clock_start + time_left + expiry_margin",
+    "normative_event": "MOVE_READY",
+    "move_ready_definition": "one atomic event created only after a complete newline-terminated bestmove line is framed, strict UCI grammar parsing succeeds, and conversion to a legal move in the current physical position succeeds",
+    "timestamp_point": "after legality conversion, when MOVE_READY is created",
+    "precedence": [
+      "MOVE_READY before deadline is accepted",
+      "legal MOVE_READY exactly at deadline is accepted and outranks a timeout event with the same timestamp regardless of callback delivery order",
+      "MOVE_READY after deadline or no MOVE_READY by deadline is timeout",
+      "a malformed or illegal complete line strictly before deadline terminates with its typed protocol_failure or illegal_move reason",
+      "unactionable input at the exact deadline does not outrank timeout",
+      "increment and state transition occur only after an accepted MOVE_READY wins arbitration",
+      "late, incomplete, malformed or illegal input creates no history record"
+    ],
+    "cases": [
+      {
+        "id": "CH-G4-REF-DEADLINE-EQUAL-LEGAL",
+        "fen": "7k/8/5KQ1/8/8/8/8/8[] w - - 0 1",
+        "bestmove": "g6g7",
+        "move_ready_time": "deadline",
+        "delivery_permutations": ["move_callback_then_timeout_callback", "timeout_callback_then_move_callback"],
+        "expected": {
+          "accept_move": true,
+          "timeout": false,
+          "ended": true,
+          "reason": "checkmate",
+          "winner": "white",
+          "result": "1-0",
+          "final_fen": "7k/6Q1/5K2/8/8/8/8/8[] b - - 1 1",
+          "history_records": 2,
+          "history_sha256": "5514b062e6af1e3e8ea1be505094ce38098ef7454ddcd6aa7d43775fa9005ec3"
+        }
+      },
+      {
+        "id": "CH-G4-REF-DEADLINE-EQUAL-UNACTIONABLE",
+        "fen": "7k/8/5KQ1/8/8/8/8/8[] w - - 0 1",
+        "event_time": "deadline",
+        "mutations": [
+          {"kind": "incomplete_line", "bytes": "bestmove g6g7", "line_terminator": false},
+          {"kind": "strict_parse_failure", "line": "bestmove Qg7#"},
+          {"kind": "illegal_move", "line": "bestmove g6f6"}
+        ],
+        "expected": {
+          "accept_move": false,
+          "reason": "timeout",
+          "winner": "black",
+          "result": "0-1",
+          "final_fen": "7k/8/5KQ1/8/8/8/8/8[] w - - 0 1",
+          "history_records": 1,
+          "history_sha256": "4b84aa2cbd625d4a9e3ffec242469b896afa7871fb60cc490887cfbddfc996ff"
+        }
+      },
+      {
+        "id": "CH-G4-REF-LINE-BEFORE-PARSE-AFTER",
+        "fen": "7k/8/5KQ1/8/8/8/8/8[] w - - 0 1",
+        "line": "bestmove g6g7\n",
+        "line_complete_time": "deadline_minus_1",
+        "move_ready_time": "deadline_plus_1",
+        "expected": {"accept_move": false, "reason": "timeout", "history_records": 1}
+      },
+      {
+        "id": "CH-G4-REF-ILLEGAL-BEFORE-DEADLINE",
+        "fen": "7k/8/5KQ1/8/8/8/8/8[] w - - 0 1",
+        "line": "bestmove g6f6\n",
+        "legality_failure_time": "deadline_minus_1",
+        "expected": {"accept_move": false, "reason": "illegal_move", "winner": "black", "result": "0-1", "history_records": 1}
+      }
+    ],
+    "real_process_boundary": "existing broad before/after cases plus the same-executable join use wide margins; exact equality is forbidden as a scheduler-sensitive integration assertion"
+  },
+  "history_digest_contract": {
+    "schema_token": "crazyhouse-history-digest/v1",
+    "encoding": "UTF-8",
+    "bom": false,
+    "line_ending": "LF",
+    "terminal_lf": true,
+    "hash": "SHA-256",
+    "hex": "lowercase exactly 64 ASCII digits",
+    "header_lines": [
+      "schema<TAB>crazyhouse-history-digest/v1",
+      "profile<TAB>LICHESS_CRAZYHOUSE_2026_08_12<TAB>d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+    ],
+    "record_grammar": "<decimal-ply><TAB><canonical-uci-or-dash><TAB><canonical-six-field-bracket-pocket-fen><LF>",
+    "record_rules": {
+      "root_ply": 0,
+      "root_move": "-",
+      "decimal_leading_zero_allowed": false,
+      "accepted_legal_moves_only": true,
+      "drops": "uppercase role at square for both colors",
+      "promotion": "lowercase canonical UCI suffix",
+      "castling": "king source to king destination",
+      "no_record_for": ["timeout", "late input", "incomplete input", "parse failure", "illegal move", "engine crash", "protocol failure", "configuration failure"]
+    },
+    "golden_vectors": [
+      {
+        "id": "CH-G4-REF-HISTORY-JOIN",
+        "payload_utf8": "schema\tcrazyhouse-history-digest/v1\nprofile\tLICHESS_CRAZYHOUSE_2026_08_12\td0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68\n0\t-\tr3k2r/8/8/3pP3/8/2N~5/8/R3K2R[PNq] w KQkq d6 0 42\n1\te5d6\tr3k2r/8/3P4/8/8/2N~5/8/R3K2R[PPNq] b KQkq - 0 42\n2\tQ@e7\tr3k2r/4q3/3P4/8/8/2N~5/8/R3K2R[PPN] w KQkq - 1 43\n",
+        "bytes": 306,
+        "sha256": "bb4975b777d102c2584f203d9e28b797b459e74cc758525857c478db26822bf2"
+      },
+      {
+        "id": "CH-G4-REF-HISTORY-PATH-A",
+        "payload_utf8": "schema\tcrazyhouse-history-digest/v1\nprofile\tLICHESS_CRAZYHOUSE_2026_08_12\td0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68\n0\t-\t1n2k1n1/8/8/8/8/8/8/1N2K1N1[] w - - 0 1\n1\tb1c3\t1n2k1n1/8/8/8/8/2N5/8/4K1N1[] b - - 1 1\n2\tb8c6\t4k1n1/8/2n5/8/8/2N5/8/4K1N1[] w - - 2 2\n3\tg1f3\t4k1n1/8/2n5/8/8/2N2N2/8/4K3[] b - - 3 2\n4\tg8f6\t4k3/8/2n2n2/8/8/2N2N2/8/4K3[] w - - 4 3\n",
+        "bytes": 371,
+        "sha256": "19d8d70835601b7d311a08e1d007d56296efbe6f53cc91d735bbb0b321d5372f"
+      },
+      {
+        "id": "CH-G4-REF-HISTORY-PATH-B",
+        "payload_utf8": "schema\tcrazyhouse-history-digest/v1\nprofile\tLICHESS_CRAZYHOUSE_2026_08_12\td0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68\n0\t-\t1n2k1n1/8/8/8/8/8/8/1N2K1N1[] w - - 0 1\n1\tg1f3\t1n2k1n1/8/8/8/8/5N2/8/1N2K3[] b - - 1 1\n2\tg8f6\t1n2k3/8/5n2/8/8/5N2/8/1N2K3[] w - - 2 2\n3\tb1c3\t1n2k3/8/5n2/8/8/2N2N2/8/4K3[] b - - 3 2\n4\tb8c6\t4k3/8/2n2n2/8/8/2N2N2/8/4K3[] w - - 4 3\n",
+        "bytes": 371,
+        "sha256": "fed5bafd5e7511c0b8189cf0292d46900aab8fe5ff64b171ec9fdd16f85e2653",
+        "same_root_and_final_as": "CH-G4-REF-HISTORY-PATH-A",
+        "digest_must_differ": true
+      },
+      {
+        "id": "CH-G4-REF-DEADLINE-EQUAL-LEGAL-HISTORY",
+        "payload_utf8": "schema\tcrazyhouse-history-digest/v1\nprofile\tLICHESS_CRAZYHOUSE_2026_08_12\td0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68\n0\t-\t7k/8/5KQ1/8/8/8/8/8[] w - - 0 1\n1\tg6g7\t7k/6Q1/5K2/8/8/8/8/8[] b - - 1 1\n",
+        "bytes": 215,
+        "sha256": "5514b062e6af1e3e8ea1be505094ce38098ef7454ddcd6aa7d43775fa9005ec3"
+      }
+    ]
+  },
+  "engine_capability_contract": {
+    "failure_boundary": "after process spawn and UCI discovery but before ucinewgame, position, go, game clock start or any fallback",
+    "required_advertisements": [
+      "option name UCI_Variant type combo default crazyhouse var chess var crazyhouse",
+      "option name CrazyhouseProfile type string default LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "option name CrazyhouseCapabilityNonce type string default <empty>"
+    ],
+    "nonce": {
+      "grammar": "exactly 32 lowercase hexadecimal ASCII digits",
+      "freshness": "unique for every engine process and game configuration barrier; never reused within a process",
+      "fixture_value": "0123456789abcdef0123456789abcdef",
+      "chatter_extends_deadline": false
+    },
+    "positive_wire_order": [
+      "setoption name UCI_Variant value crazyhouse",
+      "setoption name CrazyhouseProfile value LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "setoption name CrazyhouseCapabilityNonce value 0123456789abcdef0123456789abcdef",
+      "isready",
+      "info string crazyhouse_capability_ack status=ok profile=LICHESS_CRAZYHOUSE_2026_08_12 profile_sha256=d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68 nonce=0123456789abcdef0123456789abcdef",
+      "readyok"
+    ],
+    "positive_invariants": [
+      "the acknowledgement is emitted exactly once after the matching isready and before its readyok",
+      "the acknowledgement reflects the active route after both configuration commands",
+      "both engines independently pass with distinct nonces",
+      "readyok without the exact acknowledgement is failure"
+    ],
+    "negative_cases": [
+      "missing_or_malformed_UCI_Variant_option",
+      "UCI_Variant_without_exact_crazyhouse_choice",
+      "missing_or_malformed_CrazyhouseProfile_option",
+      "missing_or_malformed_CrazyhouseCapabilityNonce_option",
+      "missing_acknowledgement",
+      "wrong_profile_id",
+      "wrong_profile_sha256",
+      "wrong_or_malformed_nonce",
+      "acknowledgement_before_variant_configuration",
+      "acknowledgement_before_profile_configuration",
+      "acknowledgement_after_configuration_but_before_matching_isready",
+      "readyok_before_acknowledgement",
+      "duplicate_acknowledgement_even_if_identical",
+      "correct_then_conflicting_acknowledgement_before_readyok",
+      "stale_nonce_from_earlier_game_or_barrier",
+      "timeout_with_or_without_chatter",
+      "early_eof_or_process_exit",
+      "one_engine_passes_and_the_other_fails"
+    ],
+    "failure_result": {"start_game": false, "reason": "configuration_failure", "standard_chess_fallback": false}
+  },
+  "fen_and_pocket_contract": {
+    "positive_cases": [
+      {
+        "id": "CH-G4-REF-FEN-EMPTY-BRACKET",
+        "input": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+        "canonical": "7k/8/8/8/8/8/8/K7[] w - - 0 1"
+      },
+      {
+        "id": "CH-G4-REF-FEN-EMPTY-SLASH",
+        "input": "7k/8/8/8/8/8/8/K7/ w - - 0 1",
+        "canonical": "7k/8/8/8/8/8/8/K7[] w - - 0 1"
+      },
+      {
+        "id": "CH-G4-REF-FEN-NONEMPTY-SLASH",
+        "input": "r3k2r/8/8/3pP3/8/2N~5/8/R3K2R/PNq w KQkq d6 0 42",
+        "canonical": "r3k2r/8/8/3pP3/8/2N~5/8/R3K2R[PNq] w KQkq d6 0 42"
+      },
+      {
+        "id": "CH-G4-REF-FEN-POCKET-ORDER",
+        "input": "7k/8/8/8/8/8/8/K7[qNPPnR] w - - 0 1",
+        "canonical": "7k/8/8/8/8/8/8/K7[PPNRnq] w - - 0 1"
+      }
+    ],
+    "negative_cases": [
+      {"id": "CH-G4-REF-FEN-UNTERMINATED-POCKET", "mutation": "[P without closing bracket"},
+      {"id": "CH-G4-REF-FEN-TRAILING-POCKET-TEXT", "mutation": "[P]x"},
+      {"id": "CH-G4-REF-FEN-DOUBLE-CLOSE", "mutation": "[P]]"},
+      {"id": "CH-G4-REF-FEN-DUPLICATE-POCKET-SOURCE", "mutation": "bracket and ninth-slash pocket both present"},
+      {"id": "CH-G4-REF-FEN-MISSING-POCKET", "mutation": "eight ranks without bracket or ninth-slash pocket"},
+      {"id": "CH-G4-REF-FEN-DASH-EMPTY", "mutation": "[-]"},
+      {"id": "CH-G4-REF-FEN-DASH-MIXED", "mutation": "[-P]"},
+      {"id": "CH-G4-REF-FEN-POCKET-KING", "mutation": "[K] or [k]"},
+      {"id": "CH-G4-REF-FEN-POCKET-PROMOTED", "mutation": "[N~], [q~], [P~] or [K~]"},
+      {"id": "CH-G4-REF-FEN-NUMERIC-POCKET", "mutation": "[2P]"},
+      {"id": "CH-G4-REF-FEN-FIELD-COUNT", "mutation": "five or seven logical FEN fields"},
+      {"id": "CH-G4-REF-FEN-NONASCII-OR-CONTROL", "mutation": "role confusable or embedded ASCII control character"}
+    ],
+    "atomic_failure_case": {
+      "id": "CH-G4-REF-FEN-FAILURE-ATOMIC",
+      "load_valid": "7k/8/8/8/8/8/8/K7[Q] w - - 0 1",
+      "then_reject": "7k/8/8/8/8/8/8/K7[K] w - - 0 1",
+      "must_remain_equal": ["canonical_fen", "pockets", "promoted_flags", "position_key", "ordered_history", "legal_moves", "terminal_result"]
+    }
+  },
+  "strict_bestmove_contract": {
+    "grammar": "bestmove <strict-crazyhouse-uci> [ponder <strict-crazyhouse-uci>] followed by one line terminator and no other token",
+    "positive_cases": [
+      {
+        "id": "CH-G4-REF-BESTMOVE-DROP-UPPER",
+        "fen": "7k/8/8/8/8/8/8/K7[N] w - - 0 1",
+        "line": "bestmove N@e4\n",
+        "canonical_move": "N@e4",
+        "final_fen": "7k/8/8/8/4N3/8/8/K7[] b - - 1 1"
+      },
+      {
+        "id": "CH-G4-REF-BESTMOVE-DROP-LOWER",
+        "fen": "7k/8/8/8/8/8/8/K7[N] w - - 0 1",
+        "line": "bestmove n@e4\n",
+        "canonical_move": "N@e4",
+        "final_fen": "7k/8/8/8/4N3/8/8/K7[] b - - 1 1"
+      },
+      {
+        "id": "CH-G4-REF-BESTMOVE-PONDER-VALID",
+        "fen": "7k/8/8/8/8/8/8/K7[N] w - - 0 1",
+        "line": "bestmove N@e4 ponder h8g8\n",
+        "canonical_move": "N@e4",
+        "canonical_ponder": "h8g8"
+      }
+    ],
+    "negative_cases": [
+      {"id": "CH-G4-REF-BESTMOVE-SAN", "line": "bestmove Qg7#\n"},
+      {"id": "CH-G4-REF-BESTMOVE-DECORATED-UCI", "line": "bestmove g6g7+\n"},
+      {"id": "CH-G4-REF-BESTMOVE-TRAILING-JUNK", "line": "bestmove g6g7 junk\n"},
+      {"id": "CH-G4-REF-BESTMOVE-MALFORMED-PONDER", "line": "bestmove N@e4 ponder\n"},
+      {"id": "CH-G4-REF-BESTMOVE-NONE-ONGOING", "line": "bestmove (none)\n"},
+      {"id": "CH-G4-REF-BESTMOVE-NO-TERMINATOR", "bytes": "bestmove g6g7", "line_terminator": false}
+    ],
+    "negative_result": "protocol_failure unless a syntactically valid strict UCI move is illegal, which is illegal_move"
+  },
+  "terminal_additions": [
+    {
+      "id": "CH-G4-REF-NO-SEVENTYFIVE",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 150 1",
+      "match_claim_proxy": "disabled",
+      "expected": {"ended": false, "reason": "ongoing", "result": "*"}
+    },
+    {
+      "id": "CH-G4-REF-THREEFOLD-NO-PROXY",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "history": ["a1a2", "h8h7", "a2a1", "h7h8", "a1a2", "h8h7", "a2a1", "h7h8"],
+      "occurrences": 3,
+      "match_claim_proxy": "disabled",
+      "expected": {"ended": false, "reason": "ongoing", "result": "*"}
+    }
+  ],
+  "repetition_identity_cases": [
+    {
+      "id": "CH-G4-REF-REP-POCKET-DISTINCT",
+      "state_a": "7k/8/8/8/8/8/8/K7[P] w - - 0 1",
+      "state_b": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "same_repetition_identity": false
+    },
+    {
+      "id": "CH-G4-REF-REP-PROMOTED-DISTINCT",
+      "state_a": "7k/8/8/8/8/8/Q~7/K7[] w - - 0 1",
+      "state_b": "7k/8/8/8/8/8/Q7/K7[] w - - 0 1",
+      "same_repetition_identity": false
+    },
+    {
+      "id": "CH-G4-REF-REP-LEGAL-EP-DISTINCT",
+      "state_a": "7k/8/8/3pP3/8/8/8/K7[] w - d6 0 2",
+      "state_b": "7k/8/8/3pP3/8/8/8/K7[] w - - 0 2",
+      "same_repetition_identity": false
+    },
+    {
+      "id": "CH-G4-REF-REP-ILLEGAL-EP-NORMALIZED-SAME",
+      "state_a": "4r2k/8/8/3pP3/8/8/8/4K3[] w - d6 0 2",
+      "state_b": "4r2k/8/8/3pP3/8/8/8/4K3[] w - - 0 2",
+      "same_repetition_identity": true,
+      "canonical_ep": "-"
+    },
+    {
+      "id": "CH-G4-REF-REP-COUNTERS-IGNORED",
+      "state_a": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "state_b": "7k/8/8/8/8/8/8/K7[] w - - 99 42",
+      "same_repetition_identity": true
+    }
+  ],
+  "pgn_contract": {
+    "semantic_tags": {
+      "Variant": "Crazyhouse",
+      "RefereeProfile": "LICHESS_CRAZYHOUSE_2026_08_12",
+      "RefereeProfileSHA256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "RefereeReason": "exact typed terminal token",
+      "HistorySHA256": "lowercase history digest"
+    },
+    "nondefault_start": "SetUp must equal 1 and FEN must be the canonical bracket-pocket six-field FEN",
+    "default_start": "SetUp and FEN tags must both be absent",
+    "typed_reason_source": "profile-owned typed result; never translated description or generic Termination text",
+    "replay_must_equal": ["every per-ply canonical FEN", "final FEN", "accepted canonical moves", "history payload", "history SHA-256", "result", "winner", "typed reason"],
+    "nonnormative": ["tag order", "whitespace layout", "movetext wrapping"]
+  },
+  "same_executable_join": {
+    "id": "CH-G4-REF-JOIN-PROBE-MATCH",
+    "executable": "one optimized executable with one SHA-256 for embedded conformance and ordinary match modes",
+    "root_input": "r3k2r/8/8/3pP3/8/2N~5/8/R3K2R/PNq w KQkq d6 0 42",
+    "canonical_root": "r3k2r/8/8/3pP3/8/2N~5/8/R3K2R[PNq] w KQkq d6 0 42",
+    "scripted_moves": ["e5d6", "Q@e7"],
+    "expected_san": ["exd6", "Q@e7+"],
+    "then": "white times out under a coarse real-process margin",
+    "expected": {
+      "states": [
+        "r3k2r/8/8/3pP3/8/2N~5/8/R3K2R[PNq] w KQkq d6 0 42",
+        "r3k2r/8/3P4/8/8/2N~5/8/R3K2R[PPNq] b KQkq - 0 42",
+        "r3k2r/4q3/3P4/8/8/2N~5/8/R3K2R[PPN] w KQkq - 1 43"
+      ],
+      "history_bytes": 306,
+      "history_sha256": "bb4975b777d102c2584f203d9e28b797b459e74cc758525857c478db26822bf2",
+      "final_fen": "r3k2r/4q3/3P4/8/8/2N~5/8/R3K2R[PPN] w KQkq - 1 43",
+      "result": "0-1",
+      "winner": "black",
+      "reason": "timeout",
+      "pgn_tags": {
+        "Variant": "Crazyhouse",
+        "SetUp": "1",
+        "FEN": "r3k2r/8/8/3pP3/8/2N~5/8/R3K2R[PNq] w KQkq d6 0 42",
+        "Result": "0-1",
+        "Termination": "time forfeit",
+        "RefereeProfile": "LICHESS_CRAZYHOUSE_2026_08_12",
+        "RefereeProfileSHA256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+        "RefereeReason": "timeout",
+        "HistorySHA256": "bb4975b777d102c2584f203d9e28b797b459e74cc758525857c478db26822bf2"
+      }
+    },
+    "required_artifacts": ["both_mode_invocations", "optimized_executable_sha256", "raw_engine_transcripts", "raw_pgn", "canonical_per_ply_states", "history_payload", "actor_sha256s", "profile_sha256"],
+    "source_join_receipt": "map both modes to the same board factory, FEN parser, strict move conversion, make/history, repetition, terminal, clock arbiter, notation, result and PGN symbols",
+    "forbidden_comparator_in_source_build_runtime_or_path": true,
+    "strength_claim": false
+  },
+  "mutation_requirements": [
+    "re-enable insufficient-material result",
+    "re-enable 50-move result",
+    "replace fivefold with threefold",
+    "omit pocket counts from repetition identity",
+    "omit promoted provenance from repetition identity",
+    "restore a fixed 256-move container",
+    "accept permissive SAN or decorated bestmove",
+    "accept stale or duplicate capability acknowledgement",
+    "let timeout callback delivery order change deadline equality",
+    "generate history digest from root and final state only",
+    "emit probe output from a sidecar implementation"
+  ],
+  "effective_fixture_status": "FROZEN_BEFORE_BEHAVIOR_CODE",
+  "gate_status": "OPEN",
+  "strength_claim": false,
+  "release_claim": false
+}

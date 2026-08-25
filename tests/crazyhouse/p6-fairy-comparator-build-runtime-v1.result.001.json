@@ -1,0 +1,132 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-build-runtime-result/v1",
+  "created_utc": "2026-08-23T18:28:44.6310275Z",
+  "evidence_class": "E1_ENGINEERING",
+  "source": {
+    "repository": "https://github.com/fairy-stockfish/Fairy-Stockfish.git",
+    "commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "tree": "aa4112ea6784cef03fb9b5f87bba632de6168faa",
+    "role": "external comparator only"
+  },
+  "product_boundary": {
+    "commit_after_diagnostic_preregistration": "b49f11bfe2935b667c3abaaba10e89b098f006e7",
+    "tree": "f8c437913be671223514f97c875ca41313b6cc17",
+    "src_tree_unchanged": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_used_as_product_source": false
+  },
+  "contracts": {
+    "base_fixture": {
+      "path": "tests/crazyhouse/p6-fairy-comparator-build-runtime-v1.json",
+      "bytes": 12519,
+      "sha256": "5c9682f9cb45851a6a944bafcb82341a14da1914587b148597dd3318a1e38e76",
+      "git_blob": "e4b69f425c63369caa3505307991d0aa1e06601a"
+    },
+    "perft_boundary_addendum": {
+      "path": "tests/crazyhouse/p6-fairy-comparator-build-runtime-v1.addendum.001.json",
+      "bytes": 3990,
+      "sha256": "f1c674aad2451a52a91ca16c59811d7d143c34853787a50641deb50ddb5422bf",
+      "git_blob": "a92bcc483591dcb802aac4edf06c38bed6073727",
+      "incident": "CH-223"
+    },
+    "termination_diagnostic": {
+      "path": "tests/crazyhouse/p6-fairy-comparator-termination-diagnostic-v1.json",
+      "bytes": 3431,
+      "sha256": "73bc047407e33c62bb6cdae89854b8e9c0e4c433370e7d11286fcce56b2fbaa3",
+      "git_blob": "90912acddb095bb3fc990e2ec0819d1aa9fff20b",
+      "commit": "b49f11bfe2935b667c3abaaba10e89b098f006e7"
+    }
+  },
+  "lease_264": {
+    "result": "NOT_EXECUTED_STATIC_CONTRACT_DEFECT",
+    "controller_started": false,
+    "build_started": false,
+    "engine_started": false,
+    "namespace_created": false,
+    "gate_credit": false,
+    "receipt": {
+      "path": "../../../receipts/resources/p6-fairy-comparator-build-runtime-t1-end-264.json",
+      "bytes": 4138,
+      "sha256": "9d18945f15cbe2af48814ff63216e06d26c6863869f05f4167970afb2b2b8f04"
+    }
+  },
+  "lease_265": {
+    "result": "REJECTED_FAIRY_COMPARATOR_BUILD_RUNTIME",
+    "source_blobs_authenticated_before": 111,
+    "source_blobs_reauthenticated_after_failure": 111,
+    "build": {
+      "exit_code": 0,
+      "elapsed_ms": 85846,
+      "warning_or_error_diagnostics": 0,
+      "stderr_bytes": 0,
+      "engine_bytes": 4530945,
+      "engine_sha256": "b79071634530b99f047a51a123b79bb7e14cfc225435f5fb6c50a9411a294183"
+    },
+    "runtime": {
+      "uci_inventory": "PASS_25_UNIQUE_OPTIONS",
+      "legacy_network_positive": {
+        "result": "PASS",
+        "network_bytes": 58534811,
+        "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+        "exact_nnue_marker": true,
+        "bestmove": "e2e4",
+        "fallback_observed": false
+      },
+      "missing_network_negative": {
+        "fatal_error_markers": 5,
+        "bestmove_observed": false,
+        "fallback_observed": false,
+        "spontaneous_exit_within_120_seconds": false,
+        "forced_cleanup": true
+      },
+      "cases_completed": 3,
+      "cases_unexecuted_after_stop": 36
+    },
+    "receipt": {
+      "path": "../../../receipts/resources/p6-fairy-comparator-build-runtime-t1-end-265.json",
+      "bytes": 5220,
+      "sha256": "dcc4ede6459e968425327465feb905e3002423bc4cc261b37efbd98c89fbcbe4"
+    },
+    "gate_credit": false
+  },
+  "lease_266": {
+    "result": "PASS_DIAGNOSTIC_THREAD_CONTEXT_DIFFERENTIAL",
+    "classification": "THREAD_CONTEXT_DIFFERENTIAL",
+    "normal_quit_control": "PASS_EXIT_0",
+    "missing_eval_main_thread": "PASS_SPONTANEOUS_EXIT_1_BEFORE_50_MS_SAMPLE",
+    "missing_go_worker_repetitions": "2_OF_2_ALIVE_THROUGH_10000_MS_AND_FORCED_CLEANUP",
+    "fatal_stdout_equal_across_eval_and_go": true,
+    "fatal_stdout_sha256": "70303653de67d6385590a33b617a60b50185e6d1149662b4cd4b2118847a2d38",
+    "observer_race_rejected": true,
+    "incident": "CH-224",
+    "receipt": {
+      "path": "../../../receipts/resources/p6-fairy-comparator-termination-diagnostic-t1-end-266.json",
+      "bytes": 4676,
+      "sha256": "871578bac96ae1c9db2a07ec132b1181626619a4fa8451adf330ba92e9a946aa"
+    },
+    "gate_credit": false
+  },
+  "decision": {
+    "raw_fairy_comparator": "REJECTED",
+    "reason": "The pinned engine loads and uses the exact legacy network on real search, but its fatal missing-network path does not terminate when verification runs on the search worker. Fatal text alone is not a lifecycle guarantee.",
+    "adapter_required": true,
+    "adapter_obligations": [
+      "own the exact child PID and all lifecycle operations",
+      "enforce crazyhouse variant, Use NNUE=true and the approved exact network identity",
+      "withhold match admission until the exact NNUE marker is observed",
+      "reject any classical marker, wrong binding, fatal marker, missing marker or unexpected exit",
+      "terminate only the exact child promptly on any rejection",
+      "preserve UCI traffic byte-for-byte apart from explicitly preregistered option enforcement",
+      "pass positive, missing, corrupt, incompatible, wrong-basename, capability and referee-join tests"
+    ]
+  },
+  "next_safe_action": "Implement and independently qualify the fail-closed comparator adapter. Do not run the local paired strength panel until the adapted comparator and exact network binding pass.",
+  "result": "REJECTED_RAW_FAIRY_COMPARATOR_ADAPTER_REQUIRED",
+  "gate_credit": false,
+  "raw_match_admission": false,
+  "paired_strength_test_authorized": false,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

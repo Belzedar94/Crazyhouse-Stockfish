@@ -1,0 +1,68 @@
+{
+  "schema": "crazyhouse-local-adapter-overhead-addendum/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING_TIMING_PREREGISTRATION",
+  "created_utc": "2026-08-23T22:21:42.1302196Z",
+  "status": "ACCEPTED_BEFORE_TIMING_EXECUTION",
+  "parent": {
+    "repository_commit": "b7b49ec72a92a76f1cef7fd42e21002d04d66b51",
+    "contract": {
+      "path": "tests/crazyhouse/p7-local-adapter-overhead-v1.json",
+      "bytes": 8932,
+      "sha256": "385c07fc45909d2a1a3981d090cdfa8676ca296e0183a35ea98b61586c84bafe"
+    }
+  },
+  "hardened": {
+    "contract": {
+      "path": "tests/crazyhouse/p7-local-adapter-overhead-v1.json",
+      "bytes": 10871,
+      "sha256": "cd91a1eaf7af4c34db0ea87974973fd2a264d70d69aed1ffcad28f82e2c3ffcf"
+    },
+    "measurement": {
+      "path": "tools/strength/measure_crazyhouse_local_panel_timing.py",
+      "bytes": 30261,
+      "sha256": "e8dce58e838cda3df856fe50f3973773e5563f22461c4b8a476d12678b9704b1"
+    },
+    "independent_verifier": {
+      "path": "tools/strength/verify_crazyhouse_local_adapter_overhead.py",
+      "bytes": 21642,
+      "sha256": "3880a6ea036c32eb652bff5dda9a660ee19923bb9d87ec0d90e52793460c65ce"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_local_adapter_overhead_verifier_unit.py",
+      "bytes": 4795,
+      "sha256": "26ff70e3656748b1a389fd6c5fbbc70c4b4171faacfb585001facf8153ea7034",
+      "tests_passed": 5,
+      "tests_failed": 0
+    }
+  },
+  "required_independent_checks": [
+    "authenticate every input and host receipt",
+    "reconstruct the frozen 64-row sample",
+    "authenticate all 16 transcript files",
+    "reconstruct all 64 measured and 4 warm-up searches per block",
+    "recompute every normalized search digest",
+    "re-pair all 512 raw/adapter measurements",
+    "recompute every metric, confidence bound and pass predicate"
+  ],
+  "process_boundary": "The formal measurement Python process and every descendant must inherit an exact Windows Job Object with KILL_ON_JOB_CLOSE from an authenticated outer supervisor.",
+  "unchanged": {
+    "inputs": true,
+    "sample": true,
+    "nodes": true,
+    "warmups": true,
+    "block_order": true,
+    "timer_boundary": true,
+    "normalization": true,
+    "metrics": true,
+    "thresholds": true,
+    "stopping_rule": true
+  },
+  "pre_execution_evidence": {
+    "timing_output_observed": false,
+    "game_result_consumed": false,
+    "threshold_changed": false
+  },
+  "effect": "A formal overhead result cannot authorize the strength panel until this independent verifier also passes. Host-clean and additive authorization requirements remain unchanged."
+}

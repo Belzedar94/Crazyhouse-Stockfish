@@ -1,0 +1,256 @@
+{
+  "schema": "crazyhouse-p7-local-opening-corpus-gate/v2",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "DESIGN_PREREGISTERED_IMPLEMENTATION_PENDING",
+  "frozen_utc": "2026-08-23T20:23:01.0187777Z",
+  "purpose": "Create a rules-only natural Crazyhouse opening corpus for the owner-required local same-network paired gate while keeping rare-rule correctness coverage distinct from match-book weighting.",
+  "authority_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "superseded_design": {
+    "path": "tests/crazyhouse/p7-local-opening-corpus-v1.json",
+    "bytes": 6971,
+    "sha256": "b3762857cf75047eaa399e839c2708d357b5f4c8687a6c811eebae07c34a09f3",
+    "status": "REJECTED_INVALID_V1_COVERAGE_CONTRACT",
+    "results": [
+      {
+        "path": "tests/crazyhouse/p7-local-opening-corpus-v1.result.001.json",
+        "bytes": 3531,
+        "sha256": "5f005352f2b24840e1e6135b230a064ec9f6c91ae80fdb3e041647d0dfd8c0df"
+      },
+      {
+        "path": "tests/crazyhouse/p7-local-opening-corpus-v1.result.002.json",
+        "bytes": 3175,
+        "sha256": "d7a8db1e0fb50d68ca46aad886bc843c2990615fef807ed5a5d82a3b670e4c4e",
+        "status": "REJECTED_INVALID_V1_COVERAGE_CONTRACT"
+      }
+    ],
+    "rewritten": false,
+    "may_execute": false
+  },
+  "correction_basis": {
+    "incident": "CH-232",
+    "preflight_receipt": {
+      "path": "../../../receipts/resources/p7-local-opening-corpus-preflight-end-274.json",
+      "bytes": 4984,
+      "sha256": "23a3859ed5f1c386878eaee1f38d1b3de52eb9f029c68bce10635d841ca86745"
+    },
+    "discovery_observation": {
+      "raw_ep_target_set": 121,
+      "pseudo_legal_en_passant_available": 4,
+      "legal_en_passant_available": 4
+    },
+    "disclosure": "These EP counts were observed during rules-only v1 engineering diagnostics before this v2 design. No engine output, network evaluation, match result, score, timing, Elo or strength information was observed or used.",
+    "threshold_changed_after_engine_result": false,
+    "optional_stopping": false
+  },
+  "source_boundary": {
+    "product_repository": "official Stockfish development descendant",
+    "design_parent_commit": "a587cddbdbf385a4433c13458251a4ed09139474",
+    "design_parent_tree": "fb271e49fa4c96740e006a2751002450dd17f64f",
+    "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_is_product_source": false,
+    "engine_source_used_to_select_openings": false
+  },
+  "reference": {
+    "repository": "https://github.com/niklasf/python-chess.git",
+    "commit": "9c24454dcea4f8a30259d811a2f10b26e911deb4",
+    "tree": "33627273cd58c1a5a20c3132548e5df7b85ff9d6",
+    "version": "1.11.2",
+    "license_spdx": "GPL-3.0-or-later",
+    "license_blob_object_id": "94a9ed024d3859793618152ea559a168bbcbb5e2",
+    "license_blob_bytes": 35147,
+    "license_blob_sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+    "required_checkout_state": "exact detached clean checkout with loaded module below that checkout",
+    "role": "authenticated rules-only generator reference",
+    "result_authority": false
+  },
+  "selection_contract": {
+    "seed_utf8": "Crazyhouse-Stockfish local same-network opening corpus v1",
+    "seed_sha256": "9e235b76909a42cc6bfad395fccf670cacab517a24c16d524536bbbe7dcfac53",
+    "seed_version_intentionally_unchanged": true,
+    "choice_algorithm": "Sort the complete legal move set by UCI text. Hash seed || NUL || uint64be(candidate_index) || uint16be(ply) with SHA-256. Interpret the full digest as a big-endian integer modulo the legal move count.",
+    "choice_algorithm_changed_from_v1": false,
+    "target_roots": 1024,
+    "target_depth_cycle": [12, 13, 14, 15, 16, 17, 18, 19],
+    "roots_per_depth": 128,
+    "candidate_index_start": 0,
+    "candidate_index_ceiling": 65535,
+    "terminal_rejections": [
+      "checkmate before or at target depth",
+      "stalemate before or at target depth",
+      "fivefold repetition before or at target depth"
+    ],
+    "duplicate_rejection_key": "board placement including promoted flags and pockets, turn, castling rights and legal en-passant field",
+    "canonical_output": "six-field bracket-pocket FEN with PNBRQpnbrq pocket order and legal-only en-passant",
+    "evaluator_used": false,
+    "network_used": false,
+    "engine_used": false,
+    "match_result_used": false
+  },
+  "ep_metric_definitions": {
+    "raw_ep_target_set": "python-chess board.ep_square is non-null after the immediately preceding double pawn step, irrespective of whether any capture is pseudo-legal or legal",
+    "pseudo_legal_en_passant_available": "python-chess board.has_pseudo_legal_en_passant() is true",
+    "legal_en_passant_available": "python-chess board.has_legal_en_passant() is true and the canonical legal-only FEN retains the target",
+    "canonical_identity_uses": "legal_en_passant_available only",
+    "metrics_are_interchangeable": false
+  },
+  "required_outputs": {
+    "book": {
+      "path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.epd",
+      "format": "EPD",
+      "encoding": "US-ASCII",
+      "line_endings": "LF",
+      "rows": 1024,
+      "required_operations": ["hmvc", "fmvn", "id"]
+    },
+    "trajectory_ledger": {
+      "path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.trajectories.jsonl",
+      "format": "JSONL",
+      "encoding": "UTF-8",
+      "line_endings": "LF",
+      "records": 1024,
+      "required_fields": [
+        "id",
+        "candidate_index",
+        "target_depth",
+        "moves",
+        "canonical_fen",
+        "physical_identity",
+        "pockets",
+        "promoted_squares",
+        "raw_ep_square",
+        "pseudo_legal_en_passant_available",
+        "legal_ep_square",
+        "legal_en_passant_available",
+        "history_counts"
+      ]
+    },
+    "manifest": {
+      "path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.manifest.json",
+      "schema": "crazyhouse-local-gate-opening-corpus/v2",
+      "must_pin": [
+        "generator",
+        "reference commit/tree/module/license blob and filtered checkout identity",
+        "seed and algorithm",
+        "book bytes/SHA-256",
+        "trajectory bytes/SHA-256",
+        "EP metric definitions and coverage",
+        "license and evidence boundaries"
+      ]
+    }
+  },
+  "coverage_requirements": {
+    "accepted_roots": 1024,
+    "full_fen_unique": 1024,
+    "physical_identity_unique": 1024,
+    "board_and_pocket_unique": 1024,
+    "white_to_move": 512,
+    "black_to_move": 512,
+    "depth_count_each": 128,
+    "capture_history_min": 400,
+    "drop_history_min": 250,
+    "final_nonempty_pocket_min": 200,
+    "promoted_state_min": 1,
+    "in_check_min": 8,
+    "raw_ep_target_set_exact": 121,
+    "pseudo_legal_en_passant_available_exact": 4,
+    "legal_en_passant_available_exact": 4
+  },
+  "rare_rule_correctness_boundary": {
+    "match_book_is_not_the_exhaustive_ep_corpus": true,
+    "reference_cases": {
+      "path": "tests/crazyhouse/reference-cases.json",
+      "bytes": 17810,
+      "sha256": "4a00bca20d3b149b5bbe3f4153a4a3ff5a20473126763c2d8125a4ba2d11742e",
+      "ep_case_ids": [
+        "CH-REF-EP-CREATION-LEGAL",
+        "CH-REF-EP-CREATION-NONCAPTURABLE",
+        "CH-REF-EP-PINNED-ILLEGAL",
+        "CH-REF-EP-LOAD-LEGAL",
+        "CH-REF-EP-LOAD-PINNED-ILLEGAL",
+        "CH-REF-EP-MIXED-SOURCES",
+        "CH-REF-EP-HORIZONTAL-DISCOVERY",
+        "CH-REF-EP-CHECK-EVASION"
+      ]
+    },
+    "transition_test": {
+      "path": "tests/crazyhouse_transitions.cpp",
+      "bytes": 7659,
+      "sha256": "d1e106750a0dfd5c4b4a0b3b2423a6b00347c7dbe62bf5651e956085b58b1abb",
+      "assertion": "legal en-passant capture pockets the captured pawn"
+    },
+    "search_test": {
+      "path": "tests/crazyhouse_conservative_search_verify.py",
+      "bytes": 17722,
+      "sha256": "0bf13e4fbe42385c5157bf9263cf400b49fb4b4392e9a9d39f9471fbd4652cbc",
+      "case_id": "en_passant_capture"
+    },
+    "comparator_adapter_case": {
+      "path": "tests/crazyhouse/p6-fairy-comparator-adapter-v1.json",
+      "bytes": 10144,
+      "sha256": "3c4649e0ad9b2e6222d999cd14a2320474ebb106d4c3b0b2142567dca2da68a8",
+      "case_id": "en-passant"
+    }
+  },
+  "implementation_contract": {
+    "generator_path": "tools/strength/generate_crazyhouse_opening_corpus.py",
+    "implementation_hash_frozen": false,
+    "allowed_changes_from_commit_6bc9ee77": [
+      "version output schema, artifact ID and default logical paths from v1 to v2",
+      "publish separate raw, pseudo-legal and legal EP fields",
+      "replace the invalid v1 legal_ep threshold with the exact v2 metric assertions above"
+    ],
+    "forbidden_changes": [
+      "seed or move-choice algorithm",
+      "target count, target depths or depth balance",
+      "terminal or duplicate rejection rules",
+      "reference commit, rule profile or canonical FEN policy",
+      "engine, evaluator, network or match-result input"
+    ],
+    "implementation_must_be_pinned_by_addendum_before_generation": true
+  },
+  "qualification_requirements": [
+    "Generate twice into one fresh formal namespace and require byte-identical EPD, JSONL and manifest outputs.",
+    "Run the generator verifier independently over both copies.",
+    "Replay every trajectory from the standard Crazyhouse start position in the exact pinned python-chess checkout.",
+    "Authenticate all 1024 EPD rows through the exact qualified referee conformance parser.",
+    "Run one fixed-node, non-timing referee dry pair from the generated book and prove the same opening with swapped colors.",
+    "Require the exact candidate and adapted comparator to load the exact legacy network and return a legal bestmove on the dry pair.",
+    "Preserve raw stdout, stderr, PGN, generated files and per-file SHA-256 in the formal completion."
+  ],
+  "generated_data_license": {
+    "spdx": "CC0-1.0",
+    "dedication": "To the extent possible under law, the Crazyhouse-Stockfish contributors waive all copyright and related or neighboring rights in this generated corpus.",
+    "reference_source_license_unchanged": true
+  },
+  "resource_contract": {
+    "intended_lease": 275,
+    "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+    "campaign_prefix": "CH-P7-LOCAL-OPENINGS-V2",
+    "cpu_threads": 1,
+    "priority": "Normal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": [],
+    "network": false,
+    "disk_ceiling_bytes": 268435456,
+    "timing_evidence": false,
+    "foreign_process_policy": "read-only; no stop, suspend, resume, affinity or priority changes"
+  },
+  "pass_effect": "Only the exact generated v2 opening corpus becomes eligible for the separately frozen local panel. Time control, adapter overhead, host cleanliness, match schedule and strength remain independent gates.",
+  "fail_effect": "Preserve the formal namespace, emit an immutable result, and do not substitute v1 or the quarantined historical book.",
+  "scientific_boundary": {
+    "canary_claim": false,
+    "timing_claim": false,
+    "elo_claim": false,
+    "strength_claim": false,
+    "openbench_claim": false,
+    "model_selection_claim": false,
+    "release_claim": false
+  }
+}

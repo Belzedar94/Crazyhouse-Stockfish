@@ -1,0 +1,91 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-training-admission-preregistration-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-24T17:40:19.5246751Z",
+  "status": "PASS_EXPECTED_RED_IMPLEMENTATION_AUTHORIZED_LOCALLY",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.json",
+    "commit": "b7de13a4a2998f7e27f3cb8aba95e06880bf4e78",
+    "bytes": 7640,
+    "sha256": "389a3c5f374e909e68208175bc43ed9c10e612eaa7a39514a531d5740ba5daea"
+  },
+  "formal_observation": {
+    "lease": 333,
+    "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+    "start_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-training-admission-expected-red-t1-start-333.json",
+      "bytes": 3052,
+      "sha256": "ccfb2bfcf7bb8a6287d66f8852284dd8d7a0813e4c6eabca699f19925a962464"
+    },
+    "pid_binding": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-training-admission-expected-red-t1-start-333.addendum.001.json",
+      "bytes": 409,
+      "sha256": "35bd34e1757fa39129f99a6deb1ec60c2c10b9da4c2566fe6ec7e2c52fc71c4e"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-training-admission-expected-red-333/completion.json",
+      "bytes": 3945,
+      "sha256": "6d2eb813f4ce36ca189329282695ad42eedb38ca1478076ea74c0e43c86689fd"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-training-admission-expected-red-t1-end-333.json",
+      "bytes": 727,
+      "sha256": "bb8261cb12f61c6ac5ef732448565fd04df1eec0544d5715463087268500449f"
+    },
+    "controller": {
+      "bytes": 20280,
+      "sha256": "8e48c1912713d3407ee30fe3377aabea6b65cb57f63845d20bd5bf108d72e39d"
+    },
+    "source_commit": "b7de13a4a2998f7e27f3cb8aba95e06880bf4e78",
+    "source_tree": "5d64de9628e6339c0696b8c8fdb18011fd76717e",
+    "source_src_tree": "0a191443efb389fdb914861bfa8faded6c2ae691",
+    "tracked_files": 507,
+    "archive_bytes": 6799360,
+    "archive_sha256": "6a07a869795813e2c6152c1a44bab0c8a3cb7c1dca0c793a7f35d1891c35cc94",
+    "archive_files": 507,
+    "make_arguments": [
+      "--old-file=.depend",
+      "-n",
+      "-C",
+      "source/src",
+      "crazyhouse_v2_training_admission_test"
+    ],
+    "make_exit_code": 2,
+    "exact_stderr": "make: *** No rule to make target 'crazyhouse_v2_training_admission_test'.  Stop.",
+    "depend_absent_before_and_after": true,
+    "compiler_or_linker_transcript_hits": 0,
+    "owned_processes_remaining": 0,
+    "namespace_bytes": 13190463,
+    "namespace_ceiling_bytes": 268435456,
+    "p7_supervisor_unchanged": true
+  },
+  "admission_effect": {
+    "dedicated_target_absence_proven": true,
+    "implementation_may_begin": true,
+    "frozen_target": "crazyhouse_v2_training_admission_test",
+    "frozen_contract_unchanged": true,
+    "implementation_files": [
+      "tools/nnue/crazyhouse_v2_training_admission.py",
+      "tests/crazyhouse_v2_training_admission_verify.py",
+      "src/Makefile"
+    ]
+  },
+  "claim_boundary": "This addendum proves only that the preregistered dedicated target was absent in a clean export before implementation. It gives no loader, real-dataset, training, model-selection, timing, strength, Fairy-Stockfish, OpenBench, G12, release or monitoring credit.",
+  "boundaries": {
+    "expected_red_proven": true,
+    "implementation_started": false,
+    "real_dataset_admitted": false,
+    "training_admissible": false,
+    "model_selection_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "fairy_stockfish_beaten": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

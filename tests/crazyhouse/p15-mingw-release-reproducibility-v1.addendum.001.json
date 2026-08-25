@@ -1,0 +1,88 @@
+{
+  "schema": "crazyhouse-p15-mingw-release-reproducibility-preregistration-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-24T18:43:45.2637526Z",
+  "status": "PASS_EXPECTED_RED_IMPLEMENTATION_AUTHORIZED_LOCALLY",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent": {
+    "path": "tests/crazyhouse/p15-mingw-release-reproducibility-v1.json",
+    "commit": "db0cbe9223b84bc970fface700485f34e1e3df0d",
+    "bytes": 5828,
+    "sha256": "41cfc74f0e66421c98fc6b7f4d372f5a5af6e0f99ec12752e4fd38bc7080988f"
+  },
+  "formal_observation": {
+    "lease": 336,
+    "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+    "start_receipt": {
+      "path": "../../../../receipts/resources/p15-mingw-reproducibility-expected-red-t1-start-336.json",
+      "bytes": 3092,
+      "sha256": "8711b7e4e0610ad319e4ef216a554e161968b3b3aace71019d848b3dcc868d39"
+    },
+    "pid_binding": {
+      "path": "../../../../receipts/resources/p15-mingw-reproducibility-expected-red-t1-start-336.addendum.001.json",
+      "bytes": 1208,
+      "sha256": "d10d2269e90a766de27b02e19753fca87f25e6bf047eed3260e27374e34b94f0"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p15-mingw-reproducibility-expected-red-336/completion.json",
+      "bytes": 4781,
+      "sha256": "59ee1ed923044402c7962ac471dbcf57b57deb6b1337226f75ff713bb50c89b2"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p15-mingw-reproducibility-expected-red-t1-end-336.json",
+      "bytes": 1034,
+      "sha256": "22de96aa297a6c032d0d0e856b8aa5b65491656a4bd5ba8dda8cd35e26f9b777"
+    },
+    "controller": {
+      "path": "../../../../control/p15-mingw-reproducibility-expected-red-336-controller.py",
+      "bytes": 12387,
+      "sha256": "f1319c555af7f98b74dac37da1b37c46d05c99dc60d3754ad2a581d8c0589681"
+    },
+    "source_commit": "db0cbe9223b84bc970fface700485f34e1e3df0d",
+    "source_tree": "990732a7403064a0bfcb1232c312734f531e8b61",
+    "source_src_tree": "36fa1995e984899db1b42fcce3e18c6b419fc49e",
+    "tracked_files": 515,
+    "archive_bytes": 6973440,
+    "archive_sha256": "f380ae51e8f9180bf29fc91c0924b2934ed7da89b271711738bb32722bed4dce",
+    "make_exit_code": 2,
+    "exact_stderr": "make: *** No rule to make target 'crazyhouse_mingw_reproducibility_probe'.  Stop.",
+    "compiler_or_linker_artifacts": 0,
+    "generated_make_parse_metadata_exact": true,
+    "owned_processes_remaining": 0,
+    "namespace_bytes": 13528727,
+    "namespace_ceiling_bytes": 268435456,
+    "p7_supervisor_unchanged": true
+  },
+  "admission_effect": {
+    "dedicated_target_absence_proven": true,
+    "implementation_may_begin": true,
+    "frozen_target": "crazyhouse_mingw_reproducibility_probe",
+    "frozen_variable": "mingw_reproducible",
+    "frozen_linker_flag": "-Wl,--no-insert-timestamp",
+    "frozen_contract_unchanged": true,
+    "implementation_files": [
+      "src/Makefile",
+      "tests/crazyhouse_mingw_reproducibility_verify.py"
+    ]
+  },
+  "claim_boundary": "This addendum proves only that the preregistered dedicated target and release mode were absent in a clean export before implementation. It gives no full-engine, archive, target-matrix, candidate, timing, strength, OpenBench, tag, draft, G15, release or monitoring credit.",
+  "boundaries": {
+    "expected_red_proven": true,
+    "implementation_started": false,
+    "release_build_mode_qualified": false,
+    "full_engine_reproducible": false,
+    "archive_reproducible": false,
+    "target_matrix_frozen": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "tag_created": false,
+    "draft_created": false,
+    "g15_authorized": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

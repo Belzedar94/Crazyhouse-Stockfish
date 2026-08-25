@@ -33,12 +33,88 @@
 
 namespace Stockfish {
 
+bool uses_growable_move_list_storage(const Position& pos) noexcept {
+#if defined(CRAZYHOUSE_GROWABLE_MOVE_LIST_CONTROL)
+    static_cast<void>(pos);
+    return true;
+#else
+    return uses_growable_move_storage(pos.ruleset());
+#endif
+}
+
+bool uses_growable_move_picker_storage(const Position& pos) noexcept {
+#if defined(CRAZYHOUSE_GROWABLE_MOVE_PICKER_CONTROL)
+    static_cast<void>(pos);
+    return true;
+#else
+    return uses_growable_move_storage(pos.ruleset());
+#endif
+}
+
 namespace {
+
+class FixedMoveSink {
+   public:
+    explicit FixedMoveSink(Move* initial) noexcept :
+        first(initial),
+        current(initial) {}
+
+    void push(Move move) noexcept { *current++ = move; }
+    void advance(usize count) noexcept { current += count; }
+
+    Move* end() const noexcept { return current; }
+    usize size() const noexcept { return current - first; }
+
+    Move& operator[](usize index) noexcept { return first[index]; }
+    Move& back() noexcept { return current[-1]; }
+
+    void pop_back() noexcept {
+        assert(current != first);
+        --current;
+    }
+
+   private:
+    Move* first;
+    Move* current;
+};
+
+class GrowableMoveSink {
+   public:
+    explicit GrowableMoveSink(GrowableMoveBuffer& targetStorage) noexcept :
+        storage(targetStorage) {}
+
+    void push(Move move) noexcept { storage.push_back(move); }
+
+    usize size() const noexcept { return storage.size(); }
+
+    Move& operator[](usize index) noexcept { return storage[index]; }
+    Move& back() noexcept { return storage.back(); }
+
+    void pop_back() noexcept { storage.pop_back(); }
+
+   private:
+    GrowableMoveBuffer& storage;
+};
+
+template<Direction offset, typename Sink>
+inline void splat_pawn_moves(Sink& sink, Bitboard to_bb) {
+    while (to_bb)
+    {
+        Square to = pop_lsb(to_bb);
+        sink.push(Move(to - offset, to));
+    }
+}
+
+template<typename Sink>
+inline void splat_moves(Sink& sink, Square from, Bitboard to_bb) {
+    while (to_bb)
+        sink.push(Move(from, pop_lsb(to_bb)));
+}
 
 #if defined(USE_AVX512ICL)
 
 template<Direction offset>
-inline Move* splat_pawn_moves(Move* moveList, Bitboard to_bb) {
+inline void splat_pawn_moves(FixedMoveSink& sink, Bitboard to_bb) {
     assert(popcount(to_bb) <= 8);  // <= 8 pawns per side
 
     const __m128i toSquares =
@@ -47,11 +123,11 @@ inline Move* splat_pawn_moves(Move* moveList, Bitboard to_bb) {
     const __m128i moves       = _mm_or_si128(_mm_slli_epi16(fromSquares, Move::FromSqShift),
                                              _mm_slli_epi16(toSquares, Move::ToSqShift));
 
-    _mm_storeu_si128(reinterpret_cast<__m128i*>(moveList), moves);
-    return moveList + popcount(to_bb);
+    _mm_storeu_si128(reinterpret_cast<__m128i*>(sink.end()), moves);
+    sink.advance(popcount(to_bb));
 }
 
-inline Move* splat_moves(Move* moveList, Square from, Bitboard to_bb) {
+inline void splat_moves(FixedMoveSink& sink, Square from, Bitboard to_bb) {
     assert(popcount(to_bb) <= 32);  // Q can attack up to 27 squares
 
     const __m512i fromVec = _mm512_set1_epi16(Move(from, SQUARE_ZERO).raw());
@@ -59,52 +135,32 @@ inline Move* splat_moves(Move* moveList, Square from, Bitboard to_bb) {
       _mm512_cvtepi8_epi16(_mm512_castsi512_si256(_mm512_maskz_compress_epi8(to_bb, AllSquares)));
     const __m512i moves = _mm512_or_si512(fromVec, _mm512_slli_epi16(toSquares, Move::ToSqShift));
 
-    _mm512_storeu_si512(moveList, moves);
-    return moveList + popcount(to_bb);
-}
-
-#else
-
-template<Direction offset>
-inline Move* splat_pawn_moves(Move* moveList, Bitboard to_bb) {
-    while (to_bb)
-    {
-        Square to   = pop_lsb(to_bb);
-        *moveList++ = Move(to - offset, to);
-    }
-    return moveList;
-}
-
-inline Move* splat_moves(Move* moveList, Square from, Bitboard to_bb) {
-    while (to_bb)
-        *moveList++ = Move(from, pop_lsb(to_bb));
-    return moveList;
+    _mm512_storeu_si512(sink.end(), moves);
+    sink.advance(popcount(to_bb));
 }
 
 #endif
 
-template<GenType Type, Direction D, bool Enemy>
-Move* make_promotions(Move* moveList, [[maybe_unused]] Square to) {
+template<GenType Type, Direction D, bool Enemy, typename Sink>
+void make_promotions(Sink& sink, [[maybe_unused]] Square to) {
 
     constexpr bool          all  = Type == EVASIONS || Type == NON_EVASIONS;
     [[maybe_unused]] Square from = to - D;
 
     if constexpr (Type == CAPTURES || all)
-        *moveList++ = Move::make<PROMOTION>(from, to, QUEEN);
+        sink.push(Move::make<PROMOTION>(from, to, QUEEN));
 
     if constexpr ((Type == CAPTURES && Enemy) || (Type == QUIETS && !Enemy) || all)
     {
-        *moveList++ = Move::make<PROMOTION>(from, to, ROOK);
-        *moveList++ = Move::make<PROMOTION>(from, to, BISHOP);
-        *moveList++ = Move::make<PROMOTION>(from, to, KNIGHT);
+        sink.push(Move::make<PROMOTION>(from, to, ROOK));
+        sink.push(Move::make<PROMOTION>(from, to, BISHOP));
+        sink.push(Move::make<PROMOTION>(from, to, KNIGHT));
     }
-
-    return moveList;
 }
 
 
-template<Color Us, GenType Type>
-Move* generate_pawn_moves(const Position& pos, Move* moveList, Bitboard target) {
+template<Color Us, GenType Type, typename Sink>
+void generate_pawn_moves(const Position& pos, Sink& sink, Bitboard target) {
 
     constexpr Color     Them     = ~Us;
     constexpr Bitboard  TRank7BB = (Us == WHITE ? Rank7BB : Rank2BB);
@@ -131,8 +187,8 @@ Move* generate_pawn_moves(const Position& pos, Move* moveList, Bitboard target) 
             b2 &= target;
         }
 
-        moveList = splat_pawn_moves<Up>(moveList, b1);
-        moveList = splat_pawn_moves<Up + Up>(moveList, b2);
+        splat_pawn_moves<Up>(sink, b1);
+        splat_pawn_moves<Up + Up>(sink, b2);
     }
 
     // Promotions and underpromotions
@@ -146,13 +202,13 @@ Move* generate_pawn_moves(const Position& pos, Move* moveList, Bitboard target) 
             b3 &= target;
 
         while (b1)
-            moveList = make_promotions<Type, UpRight, true>(moveList, pop_lsb(b1));
+            make_promotions<Type, UpRight, true>(sink, pop_lsb(b1));
 
         while (b2)
-            moveList = make_promotions<Type, UpLeft, true>(moveList, pop_lsb(b2));
+            make_promotions<Type, UpLeft, true>(sink, pop_lsb(b2));
 
         while (b3)
-            moveList = make_promotions<Type, Up, false>(moveList, pop_lsb(b3));
+            make_promotions<Type, Up, false>(sink, pop_lsb(b3));
     }
 
     // Standard and en passant captures
@@ -161,8 +217,8 @@ Move* generate_pawn_moves(const Position& pos, Move* moveList, Bitboard target) 
         Bitboard b1 = shift(pawnsNotOn7, UpRight) & enemies;
         Bitboard b2 = shift(pawnsNotOn7, UpLeft) & enemies;
 
-        moveList = splat_pawn_moves<UpRight>(moveList, b1);
-        moveList = splat_pawn_moves<UpLeft>(moveList, b2);
+        splat_pawn_moves<UpRight>(sink, b1);
+        splat_pawn_moves<UpLeft>(sink, b2);
 
         if (pos.ep_square() != SQ_NONE)
         {
@@ -170,23 +226,21 @@ Move* generate_pawn_moves(const Position& pos, Move* moveList, Bitboard target) 
 
             // An en passant capture cannot resolve a discovered check
             if (Type == EVASIONS && (target & (pos.ep_square() + Up)))
-                return moveList;
+                return;
 
             b1 = pawnsNotOn7 & Attacks::attacks_bb<PAWN>(pos.ep_square(), Them);
 
             assert(b1);
 
             while (b1)
-                *moveList++ = Move::make<EN_PASSANT>(pop_lsb(b1), pos.ep_square());
+                sink.push(Move::make<EN_PASSANT>(pop_lsb(b1), pos.ep_square()));
         }
     }
-
-    return moveList;
 }
 
 
-template<Color Us, PieceType Pt>
-Move* generate_moves(const Position& pos, Move* moveList, Bitboard target) {
+template<Color Us, PieceType Pt, typename Sink>
+void generate_moves(const Position& pos, Sink& sink, Bitboard target) {
 
     static_assert(Pt != KING && Pt != PAWN, "Unsupported piece type in generate_moves()");
 
@@ -197,15 +251,41 @@ Move* generate_moves(const Position& pos, Move* moveList, Bitboard target) {
         Square   from = pop_lsb(bb);
         Bitboard b    = Attacks::attacks_bb<Pt>(from, pos.pieces()) & target;
 
-        moveList = splat_moves(moveList, from, b);
+        splat_moves(sink, from, b);
     }
-
-    return moveList;
 }
 
 
-template<Color Us, GenType Type>
-Move* generate_all(const Position& pos, Move* moveList) {
+template<Color Us, GenType Type, typename Sink>
+void generate_drops(const Position& pos, Sink& sink, Bitboard target) {
+
+    static_assert(Type != LEGAL, "Unsupported type in generate_drops()");
+
+    if constexpr (Type == CAPTURES)
+        return;
+
+    if (pos.ruleset() != Ruleset::CRAZYHOUSE)
+        return;
+
+    const Bitboard emptyTargets = target & ~pos.pieces();
+
+    for (PieceType pt : Crazyhouse::PocketPieceTypes)
+    {
+        if (pos.pocket_count(Us, pt) == 0)
+            continue;
+
+        Bitboard destinations = emptyTargets;
+        if (pt == PAWN)
+            destinations &= ~(Rank1BB | Rank8BB);
+
+        while (destinations)
+            sink.push(Move::make_drop(pt, pop_lsb(destinations)));
+    }
+}
+
+
+template<Color Us, GenType Type, typename Sink>
+void generate_all(const Position& pos, Sink& sink) {
 
     static_assert(Type != LEGAL, "Unsupported type in generate_all()");
 
@@ -220,23 +300,71 @@ Move* generate_all(const Position& pos, Move* moveList) {
                : Type == CAPTURES     ? pos.pieces(~Us)
                                       : ~pos.pieces();  // QUIETS
 
-        moveList = generate_pawn_moves<Us, Type>(pos, moveList, target);
-        moveList = generate_moves<Us, KNIGHT>(pos, moveList, target);
-        moveList = generate_moves<Us, BISHOP>(pos, moveList, target);
-        moveList = generate_moves<Us, ROOK>(pos, moveList, target);
-        moveList = generate_moves<Us, QUEEN>(pos, moveList, target);
+        generate_pawn_moves<Us, Type>(pos, sink, target);
+        generate_moves<Us, KNIGHT>(pos, sink, target);
+        generate_moves<Us, BISHOP>(pos, sink, target);
+        generate_moves<Us, ROOK>(pos, sink, target);
+        generate_moves<Us, QUEEN>(pos, sink, target);
+        generate_drops<Us, Type>(pos, sink, target);
     }
 
     Bitboard b = Attacks::attacks_bb<KING>(ksq) & (Type == EVASIONS ? ~pos.pieces(Us) : target);
 
-    moveList = splat_moves(moveList, ksq, b);
+    splat_moves(sink, ksq, b);
 
     if ((Type == QUIETS || Type == NON_EVASIONS) && pos.can_castle(Us & ANY_CASTLING))
         for (CastlingRights cr : {Us & KING_SIDE, Us & QUEEN_SIDE})
             if (!pos.castling_impeded(cr) && pos.can_castle(cr))
-                *moveList++ = Move::make<CASTLING>(ksq, pos.castling_rook_square(cr));
+                sink.push(Move::make<CASTLING>(ksq, pos.castling_rook_square(cr)));
+}
 
-    return moveList;
+template<GenType Type, typename Sink>
+void generate_pseudo(const Position& pos, Sink& sink) {
+    static_assert(Type != LEGAL, "Unsupported type in generate_pseudo()");
+    assert((Type == EVASIONS) == bool(pos.checkers()));
+
+    Color us = pos.side_to_move();
+
+    if (us == WHITE)
+        generate_all<WHITE, Type>(pos, sink);
+    else
+        generate_all<BLACK, Type>(pos, sink);
+}
+
+template<typename Sink>
+void generate_legal(const Position& pos, Sink& sink) {
+    Color    us     = pos.side_to_move();
+    Bitboard pinned = pos.blockers_for_king(us) & pos.pieces(us);
+    Square   ksq    = pos.square<KING>(us);
+
+    if (pos.checkers())
+        generate_pseudo<EVASIONS>(pos, sink);
+    else
+        generate_pseudo<NON_EVASIONS>(pos, sink);
+
+    usize current = 0;
+    while (current != sink.size())
+    {
+        Move move = sink[current];
+        if ((move.is_drop()
+             || (pinned & move.from_sq()) || move.from_sq() == ksq
+             || move.type_of() == EN_PASSANT)
+            && !pos.legal(move))
+        {
+            sink[current] = sink.back();
+            sink.pop_back();
+        }
+        else
+            ++current;
+    }
+}
+
+template<GenType Type, typename Sink>
+void generate_into(const Position& pos, Sink& sink) {
+    if constexpr (Type == LEGAL)
+        generate_legal(pos, sink);
+    else
+        generate_pseudo<Type>(pos, sink);
 }
 
 }  // namespace
@@ -250,42 +378,30 @@ Move* generate_all(const Position& pos, Move* moveList) {
 // Returns a pointer to the end of the move list.
 template<GenType Type>
 Move* generate(const Position& pos, Move* moveList) {
-
-    static_assert(Type != LEGAL, "Unsupported type in generate()");
-    assert((Type == EVASIONS) == bool(pos.checkers()));
-
-    Color us = pos.side_to_move();
-
-    return us == WHITE ? generate_all<WHITE, Type>(pos, moveList)
-                       : generate_all<BLACK, Type>(pos, moveList);
+    FixedMoveSink sink(moveList);
+    generate_into<Type>(pos, sink);
+    return sink.end();
 }
 
-// Explicit template instantiations
+template<GenType Type>
+void generate(const Position& pos, GrowableMoveBuffer& moveList) {
+    moveList.clear();
+    GrowableMoveSink sink(moveList);
+    generate_into<Type>(pos, sink);
+}
+
+// Explicit template instantiations for the fixed official path.
 template Move* generate<CAPTURES>(const Position&, Move*);
 template Move* generate<QUIETS>(const Position&, Move*);
 template Move* generate<EVASIONS>(const Position&, Move*);
 template Move* generate<NON_EVASIONS>(const Position&, Move*);
+template Move* generate<LEGAL>(const Position&, Move*);
 
-// generate<LEGAL> generates all the legal moves in the given position
-
-template<>
-Move* generate<LEGAL>(const Position& pos, Move* moveList) {
-
-    Color    us     = pos.side_to_move();
-    Bitboard pinned = pos.blockers_for_king(us) & pos.pieces(us);
-    Square   ksq    = pos.square<KING>(us);
-    Move*    cur    = moveList;
-
-    moveList =
-      pos.checkers() ? generate<EVASIONS>(pos, moveList) : generate<NON_EVASIONS>(pos, moveList);
-    while (cur != moveList)
-        if (((pinned & cur->from_sq()) || cur->from_sq() == ksq || cur->type_of() == EN_PASSANT)
-            && !pos.legal(*cur))
-            *cur = *(--moveList);
-        else
-            ++cur;
-
-    return moveList;
-}
+// Explicit template instantiations for the checked growable path.
+template void generate<CAPTURES>(const Position&, GrowableMoveBuffer&);
+template void generate<QUIETS>(const Position&, GrowableMoveBuffer&);
+template void generate<EVASIONS>(const Position&, GrowableMoveBuffer&);
+template void generate<NON_EVASIONS>(const Position&, GrowableMoveBuffer&);
+template void generate<LEGAL>(const Position&, GrowableMoveBuffer&);
 
 }  // namespace Stockfish

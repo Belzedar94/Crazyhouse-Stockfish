@@ -30,8 +30,10 @@
 #include <variant>
 #include <vector>
 
+#include "engine_routing.h"
 #include "misc.h"
 #include "history.h"
+#include "nnue/crazyhouse_legacy_network.h"
 #include "nnue/network.h"
 #include "nnue/nnue_misc.h"
 #include "numa.h"
@@ -45,6 +47,12 @@
 
 namespace Stockfish {
 
+#ifdef CRAZYHOUSE_DATA_GENERATOR
+namespace CrazyhouseDatagen {
+int run(int argc, char* argv[]);
+}
+#endif
+
 constexpr int MaxHashMB = Is64Bit ? 33554432 : 2048;
 extern int    MaxThreads;
 
@@ -53,8 +61,10 @@ class Engine {
     using InfoShort = Search::InfoShort;
     using InfoFull  = Search::InfoFull;
     using InfoIter  = Search::InfoIteration;
+    using LegacyExecutionBackend = Eval::NNUE::LegacyCrazyhouseNetworkV1::ExecutionBackend;
 
-    Engine(std::optional<std::filesystem::path> path = std::nullopt);
+    Engine(std::optional<std::filesystem::path> path     = std::nullopt,
+           LegacyExecutionBackend legacyExecutionBackend = LegacyExecutionBackend::Scalar);
 
     // Cannot be movable due to components holding backreferences to fields
     Engine(const Engine&)            = delete;
@@ -65,6 +75,7 @@ class Engine {
     ~Engine() { wait_for_search_finished(); }
 
     std::variant<u64, PositionSetError> perft(const std::string& fen, Depth depth, bool isChess960);
+    std::variant<u64, EngineRouting::ErrorCode> routed_perft(Depth depth);
 
     // non blocking call to start searching
     void go(Search::LimitsType&);
@@ -76,6 +87,25 @@ class Engine {
     // set a new position, moves are in UCI format
     std::optional<PositionSetError> set_position(const std::string&              fen,
                                                  const std::vector<std::string>& moves);
+
+    // Route staging and ownership. UCI commands bind to this API separately.
+    bool stage_ruleset(std::string_view value);
+    void stage_chess960(bool value);
+    void stage_crazyhouse_profile(std::string value);
+    void stage_chess_eval_file(std::string value);
+    void stage_crazyhouse_eval_file(std::string value);
+
+    EngineRouting::ApplyResult    apply_pending_route();
+    EngineRouting::PositionResult set_routed_position(const std::string&              fen,
+                                                      const std::vector<std::string>& moves);
+    void                          invalidate_routed_position() noexcept;
+
+    const EngineRouting::Snapshot& routing_snapshot() const noexcept;
+    bool                           has_routed_official_network() const noexcept;
+    bool                           has_routed_legacy_network() const noexcept;
+    std::string_view               routed_legacy_evaluator_mode() const noexcept;
+    std::string_view               routed_legacy_simd_backend() const noexcept;
+    bool                           crazyhouse_multipv_valid() const noexcept;
 
     // modifiers
 
@@ -118,22 +148,42 @@ class Engine {
     std::string                          thread_binding_information_as_string() const;
 
    private:
+#ifdef CRAZYHOUSE_DATA_GENERATOR
+    friend int CrazyhouseDatagen::run(int argc, char* argv[]);
+#endif
+
+    struct PositionSlot {
+        explicit PositionSlot(Ruleset ruleset);
+
+        Position     position;
+        StateListPtr states;
+    };
+
     const std::filesystem::path binaryDirectory;
+    const LegacyExecutionBackend legacyExecutionBackend;
 
     NumaReplicationContext numaContext;
 
-    Position     pos;
-    StateListPtr states;
+    std::unique_ptr<PositionSlot> positionSlot;
 
-    OptionsMap                                        options;
-    ThreadPool                                        threads;
-    TranspositionTable                                tt;
-    Eval::NNUE::EvalFile                              networkFile;
-    LazyNumaReplicatedSystemWide<Eval::NNUE::Network> network;
+    std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1> legacyNetwork;
+    OptionsMap                                             options;
+    ThreadPool                                             threads;
+    TranspositionTable                                     tt;
+    Eval::NNUE::EvalFile                                   networkFile;
+    LazyNumaReplicatedSystemWide<Eval::NNUE::Network>      network;
+    EngineRouting::Snapshot                                routing;
+    bool                                                   officialRouteInstalled = false;
+    bool                                                   crazyhouseMultiPVValid  = true;
 
     Search::SearchManager::UpdateContext  updateContext;
     std::function<void(std::string_view)> onVerifyNetwork;
     std::map<NumaIndex, SharedHistories>  sharedHists;
+
+    void                 refresh_pending_dirty() noexcept;
+    void                 clear_routed_backends();
+    void                 clear_route_runtime_state();
+    EngineRouting::Epoch advance_route_epoch();
 };
 
 }  // namespace Stockfish

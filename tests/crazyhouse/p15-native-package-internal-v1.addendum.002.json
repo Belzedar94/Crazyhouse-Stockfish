@@ -1,0 +1,100 @@
+{
+  "schema": "crazyhouse-p15-native-package-dirty-diagnostic-preregistration/v1",
+  "created_utc": "2026-08-24T20:16:58.2080773Z",
+  "status": "PREREGISTERED_DIRTY_SOURCE_DIAGNOSTIC_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_contract": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.json",
+    "bytes": 8321,
+    "sha256": "97f8ec2666fd820c8c134f9c2ad58f88ac3a5ffa0e8709dc944b23601d93376b"
+  },
+  "expected_red_result": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.001.json",
+    "bytes": 2830,
+    "sha256": "ab2e304f7827e276678e1b462a40a2b3b9d728fa75c9ac5819294ce7b5a95306",
+    "lease": 342,
+    "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION"
+  },
+  "implementation_base": {
+    "commit": "92c36320354d4d60139072bca084129afcdb40be",
+    "tree": "2e3fdb09aa022cb4d9384f271915dff1de3fb091",
+    "src_tree": "1058720318d4e0ad9c3f61e6ee48675f2dd13b6b",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "exact_overlays": [
+    {
+      "path": "src/Makefile",
+      "bytes": 61826,
+      "sha256": "f49c3b889680692923c702f071a3c51cd2bd67702f473d3e44e58339a3a8e092"
+    },
+    {
+      "path": "tools/release/crazyhouse_release_native_package.py",
+      "bytes": 23223,
+      "sha256": "355615ac2419583275c97e7e13a38bc26693b08cecd545b88e9fa3736f79fb87"
+    },
+    {
+      "path": "tools/release/verify_crazyhouse_native_package.py",
+      "bytes": 25383,
+      "sha256": "24d79db3b8f15a57a40e364328d4b8f09cad174684c1a9ad1037d54b09401172"
+    },
+    {
+      "path": "tests/crazyhouse_release_native_package.py",
+      "bytes": 41799,
+      "sha256": "e28f3d5151da56d72272bf9f5daa2ba95bda477e6352bfa670f0a49fa5a47a7a"
+    }
+  ],
+  "diagnostic_matrix": {
+    "clean_base_export": 1,
+    "overlay_copy_and_rehash": true,
+    "python_profiles": [
+      "normal"
+    ],
+    "make_target": "crazyhouse_release_native_package_contract_test",
+    "command": "make --no-print-directory --old-file=.depend -C src crazyhouse_release_native_package_contract_test",
+    "required_summary": "PASS_NATIVE_PACKAGE_FIXTURES positive=4 negative=72 real_network=false full_engine=false release_claim=false",
+    "positive_small_fixture_cases": 4,
+    "negative_cases": 72,
+    "real_network_path_used": false,
+    "production_cli_network_override_exposed": false,
+    "independent_verifier_imports_assembler": false,
+    "compiler_linker_or_bytecode_artifacts": 0,
+    "timeouts_allowed": false,
+    "nonzero_exits_allowed": false
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 536870912,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_has_priority": true
+  },
+  "stopping_rule": "Stop and preserve the namespace on any base, overlay, source inventory, process, summary, generated-file, P7 identity or resource mismatch. Do not repair a failed diagnostic namespace in place.",
+  "pass_effect": "A pass is dirty-source diagnostic evidence only. It permits review and an exact implementation commit; it does not qualify formal tooling, real-network containment, product packages, a candidate, strength, OpenBench, a draft, G15 or release.",
+  "boundaries": {
+    "dirty_source_diagnostic_only": true,
+    "formal_credit": false,
+    "real_network_containment_verified": false,
+    "package_internal_layout_verified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "crazyhouse-local-strength-source-freshness/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "D0_DISCOVERY/E1_ENGINEERING",
+  "checked_utc": "2026-08-23T21:43:17.3227056Z",
+  "remote_query": "git ls-remote upstream refs/heads/master",
+  "official_stockfish": {
+    "remote": "https://github.com/official-stockfish/Stockfish.git",
+    "remote_master": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "local_upstream_master": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "remote_local_equal": true
+  },
+  "candidate_source": {
+    "commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "tree": "90b31388cdf8b2da61fb3d6bfaf1f5cfde1936b6",
+    "src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_remote_master_is_ancestor": true
+  },
+  "preregistration_parent": {
+    "commit": "b688184e4eb710084f0c1a5abec161ce3c9d3cf0",
+    "tree": "3a37e6329e69d9dcdeea05b51ceb1ec3ac093409",
+    "src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "src_diff_from_candidate": []
+  },
+  "result": "PASS_LATEST_OFFICIAL_MASTER_ANCESTOR_AND_UNCHANGED_PRODUCT_SRC",
+  "fairy_stockfish_product_base": false,
+  "game_results_consumed": false,
+  "strength_claim": false,
+  "openbench_claim": false,
+  "release_claim": false
+}

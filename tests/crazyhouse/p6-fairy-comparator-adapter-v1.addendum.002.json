@@ -1,0 +1,73 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-adapter-coverage-addendum/v1",
+  "created_utc": "2026-08-23T19:00:00.2962981Z",
+  "evidence_class": "E1_ENGINEERING",
+  "parent_fixture": {
+    "path": "tests/crazyhouse/p6-fairy-comparator-adapter-v1.json",
+    "commit": "c49c2dea5dba536f5ee7ed73988809d16812b02a",
+    "bytes": 10144,
+    "sha256": "3c4649e0ad9b2e6222d999cd14a2320474ebb106d4c3b0b2142567dca2da68a8",
+    "git_blob": "d4c91f1fe34834a7c79890ab73e356f891bf254c"
+  },
+  "identity_correction": {
+    "path": "tests/crazyhouse/p6-fairy-comparator-adapter-v1.addendum.001.json",
+    "commit": "7b50709058b98142397b861990df94b3bab48ebc",
+    "tree": "9e0937c632d3011eab1649ff78cf286e2b184d9b",
+    "bytes": 2419,
+    "sha256": "80e90bbdc926b4b174d7133af2990f79336e264d1184b2f7473ed0b72882c96c",
+    "git_blob": "e953740da6fbfc3b62579bb77e6ae0fa846bfec2"
+  },
+  "incident": "CH-226",
+  "reason": "Implementation review found that the parent text required exact child authentication and defined go perft as a rules-only marker exception, but its executable case lists contained neither negative engine/startup identity cases nor a raw-versus-adapted perft relay case. This addendum closes those coverage gaps before formal qualification.",
+  "startup_identity_cases": [
+    {
+      "id": "missing-engine",
+      "engine": "fresh missing path named stockfish.exe",
+      "expected_error": "info string ERROR startup code=fairy_adapter_engine_missing",
+      "expected_exit": 3,
+      "child_process_created": false
+    },
+    {
+      "id": "wrong-engine-identity",
+      "engine": "existing non-Fairy PE executable",
+      "expected_error": "info string ERROR startup code=fairy_adapter_engine_identity_mismatch",
+      "expected_exit": 3,
+      "child_process_created": false
+    },
+    {
+      "id": "startup-missing-network",
+      "network": "fresh missing path with approved basename",
+      "expected_error": "info string ERROR startup code=legacy_missing_file",
+      "expected_exit": 3,
+      "child_process_created": false
+    },
+    {
+      "id": "startup-wrong-network-basename",
+      "network": "byte-identical approved bytes under neutral_legacy.nnue",
+      "expected_error": "info string ERROR startup code=legacy_basename_mismatch",
+      "expected_exit": 3,
+      "child_process_created": false
+    }
+  ],
+  "perft_transparency": {
+    "id": "CH-REF-PERFT-001-ADAPTER-RELAY",
+    "position": "position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1",
+    "go": "go perft 4",
+    "expected_nodes": 197281,
+    "expected_terminal_line": "Nodes searched: 197281",
+    "raw_nnue_marker_count": 0,
+    "adapted_nnue_marker_count": 0,
+    "required": "Raw and adapted ordered perft output lines are byte-identical, with no evaluator marker, fatal marker, classical marker or bestmove."
+  },
+  "pass_rule_extension": "All four startup identity cases and the perft transparency case pass in addition to every parent and identity-correction requirement. No formal gate case may be omitted.",
+  "execution_boundary": {
+    "formal_adapter_gate_executed_before_this_addendum": false,
+    "referee_join_executed": false,
+    "strength_or_timing_run_executed": false,
+    "openbench_used": false
+  },
+  "strength_claim": false,
+  "timing_evidence": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

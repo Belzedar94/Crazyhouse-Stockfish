@@ -167,7 +167,8 @@ MovePicker::MovePicker(const Position&              p,
     sharedHistory(sh),
     ttMove(ttm),
     depth(d),
-    ply(pl) {
+    ply(pl),
+    moves(uses_growable_move_picker_storage(pos)) {
 
     if (pos.checkers())
         stage = EVASION_TT + !(ttm && pos.pseudo_legal(ttm));
@@ -182,7 +183,8 @@ MovePicker::MovePicker(const Position& p, Move ttm, int th, const CapturePieceTo
     pos(p),
     captureHistory(cph),
     ttMove(ttm),
-    threshold(th) {
+    threshold(th),
+    moves(uses_growable_move_picker_storage(pos)) {
     assert(!pos.checkers());
 
     stage = PROBCUT_TT + !(ttm && pos.capture_stage(ttm) && pos.pseudo_legal(ttm));
@@ -192,7 +194,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, int th, const CapturePieceTo
 // Captures are ordered by Most Valuable Victim (MVV), preferring captures
 // with a good history. Quiet moves are ordered using the history tables.
 template<GenType Type>
-ExtMove* MovePicker::score(const MoveList<Type>& ml) {
+usize MovePicker::score(const MoveList<Type>& ml) {
 
     static_assert(Type == CAPTURES || Type == QUIETS || Type == EVASIONS, "Wrong type");
 
@@ -209,13 +211,13 @@ ExtMove* MovePicker::score(const MoveList<Type>& ml) {
         threatByLesser[KING]  = 0;
     }
 
-    ExtMove* it = cur;
+    assert(cur == moves.size());
     for (auto move : ml)
     {
-        ExtMove& m = *it++;
+        ExtMove& m = moves.push_back(ExtMove{});
         m          = move;
 
-        const Square    from          = m.from_sq();
+        const Square    from          = m.is_drop() ? SQ_NONE : m.from_sq();
         const Square    to            = m.to_sq();
         const Piece     pc            = pos.moved_piece(m);
         const PieceType pt            = type_of(pc);
@@ -241,8 +243,11 @@ ExtMove* MovePicker::score(const MoveList<Type>& ml) {
 
             // penalty for moving to a square threatened by a lesser piece
             // or bonus for escaping an attack by a lesser piece.
-            int v = 20 * (bool(threatByLesser[pt] & from) - bool(threatByLesser[pt] & to));
-            m.value += PieceValue[pt] * v;
+            if (!m.is_drop())
+            {
+                int v = 20 * (bool(threatByLesser[pt] & from) - bool(threatByLesser[pt] & to));
+                m.value += PieceValue[pt] * v;
+            }
 
 
             if (ply < LOW_PLY_HISTORY_SIZE)
@@ -257,7 +262,7 @@ ExtMove* MovePicker::score(const MoveList<Type>& ml) {
                 m.value = (*mainHistory)[us][m.raw()] + (*continuationHistory[0])[pc][to];
         }
     }
-    return it;
+    return moves.size();
 }
 
 // Returns the next move satisfying a predicate function.
@@ -266,8 +271,14 @@ template<typename Pred>
 Move MovePicker::select(Pred filter) {
 
     for (; cur < endCur; ++cur)
-        if (*cur != ttMove && filter())
-            return *cur++;
+    {
+        ExtMove& move = moves[cur];
+        if (move != ttMove && filter(move))
+        {
+            ++cur;
+            return move;
+        }
+    }
 
     return Move::none();
 }
@@ -294,25 +305,29 @@ top:
     case QCAPTURE_INIT : {
         MoveList<CAPTURES> ml(pos);
 
-        cur = endBadCaptures = moves;
+        moves.clear();
+        cur = endBadCaptures = 0;
         endCur = endCaptures = score<CAPTURES>(ml);
 
-        partial_insertion_sort(cur, endCur, std::numeric_limits<int>::min());
+        partial_insertion_sort(moves.data() + cur, moves.data() + endCur,
+                               std::numeric_limits<int>::min());
         ++stage;
         goto top;
     }
 
-    case GOOD_CAPTURE :
-        if (select([&]() {
-                if (pos.see_ge(*cur, -cur->value / 18))
-                    return true;
-                std::swap(*endBadCaptures++, *cur);
-                return false;
-            }))
-            return *(cur - 1);
+    case GOOD_CAPTURE : {
+        Move selected = select([&](ExtMove& move) {
+            if (pos.see_ge(move, -move.value / 18))
+                return true;
+            std::swap(moves[endBadCaptures++], move);
+            return false;
+        });
+        if (selected)
+            return selected;
 
         ++stage;
         [[fallthrough]];
+    }
 
     case QUIET_INIT :
         if (!skipQuiets)
@@ -321,57 +336,63 @@ top:
 
             endCur = endGenerated = score<QUIETS>(ml);
 
-            partial_insertion_sort(cur, endCur, -3560 * depth);
+            partial_insertion_sort(moves.data() + cur, moves.data() + endCur, -3560 * depth);
         }
 
         ++stage;
         [[fallthrough]];
 
     case GOOD_QUIET :
-        if (!skipQuiets && select([&]() { return cur->value > goodQuietThreshold; }))
-            return *(cur - 1);
+        if (!skipQuiets)
+            if (Move selected =
+                  select([&](const ExtMove& move) { return move.value > goodQuietThreshold; }))
+                return selected;
 
-        // Prepare the pointers to loop over the bad captures
-        cur    = moves;
+        // Prepare the indices to loop over the bad captures
+        cur    = 0;
         endCur = endBadCaptures;
 
         ++stage;
         [[fallthrough]];
 
-    case BAD_CAPTURE :
-        if (select([]() { return true; }))
-            return *(cur - 1);
+    case BAD_CAPTURE : {
+        Move selected = select([](const ExtMove&) { return true; });
+        if (selected)
+            return selected;
 
-        // Prepare the pointers to loop over quiets again
+        // Prepare the indices to loop over quiets again
         cur    = endCaptures;
         endCur = endGenerated;
 
         ++stage;
         [[fallthrough]];
+    }
 
     case BAD_QUIET :
         if (!skipQuiets)
-            return select([&]() { return cur->value <= goodQuietThreshold; });
+            return select([&](const ExtMove& move) { return move.value <= goodQuietThreshold; });
 
         return Move::none();
 
     case EVASION_INIT : {
         MoveList<EVASIONS> ml(pos);
 
-        cur    = moves;
+        moves.clear();
+        cur    = 0;
         endCur = endGenerated = score<EVASIONS>(ml);
 
-        partial_insertion_sort(cur, endCur, std::numeric_limits<int>::min());
+        partial_insertion_sort(moves.data() + cur, moves.data() + endCur,
+                               std::numeric_limits<int>::min());
         ++stage;
         [[fallthrough]];
     }
 
     case EVASION :
     case QCAPTURE :
-        return select([]() { return true; });
+        return select([](const ExtMove&) { return true; });
 
     case PROBCUT :
-        return select([&]() { return pos.see_ge(*cur, threshold); });
+        return select([&](const ExtMove& move) { return pos.see_ge(move, threshold); });
     }
 
     assert(false);

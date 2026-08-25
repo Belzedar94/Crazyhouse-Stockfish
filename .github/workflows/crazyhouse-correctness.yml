@@ -1,0 +1,436 @@
+name: Crazyhouse correctness
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crazyhouse-correctness-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12.0"
+  LEGACY_NETWORK_URL: https://media.githubusercontent.com/media/lichess-org/lila/13895e5856db0f854f6ab76394fffce852ebd5c9/public/lifat/nnue/crazyhouse-8ebf84784ad2.nnue
+
+jobs:
+  network-tooling:
+    name: Network identity and tooling
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Verify physical datagen schema and goldens
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/datagen/crazyhouse_physical_v1.py \
+            tests/crazyhouse_physical_v1_unit.py \
+            tests/crazyhouse_physical_v1_independent_verify.py
+          python -m unittest -v tests.crazyhouse_physical_v1_unit
+          python tests/crazyhouse_physical_v1_independent_verify.py
+
+      - name: Test fail-closed network tooling
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/ci/fetch_crazyhouse_legacy_network.py \
+            tools/ci/aggregate_crazyhouse_ci_artifacts.py \
+            tests/crazyhouse_ci_network_fetch_unit.py \
+            tests/crazyhouse_ci_artifact_aggregate_unit.py
+          python -m unittest -v \
+            tests.crazyhouse_ci_network_fetch_unit \
+            tests.crazyhouse_ci_artifact_aggregate_unit
+
+      - name: Test synthetic release monitoring and rollback contract
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/release/crazyhouse_release_monitor.py \
+            tools/release/verify_crazyhouse_monitor_chain.py \
+            tests/crazyhouse_release_monitor.py
+          make --no-print-directory --old-file=.depend -C src \
+            crazyhouse_p16_monitoring_contract_test
+          python -O -B tests/crazyhouse_release_monitor.py
+
+      - name: Test release engine identity contract
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/release/verify_crazyhouse_engine_identity.py \
+            tests/crazyhouse_release_engine_identity.py
+          make --no-print-directory --old-file=.depend -C src \
+            crazyhouse_p15_release_engine_identity_test
+          python -O -B tests/crazyhouse_release_engine_identity.py
+
+      - name: Test fail-closed G15 release workflow guard
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/release/verify_crazyhouse_release_workflow_guard.py \
+            tests/crazyhouse_release_workflow_guard.py
+          python -B tools/release/verify_crazyhouse_release_workflow_guard.py \
+            --contract tests/crazyhouse/p15-release-workflow-guard-v1.json \
+            --workflow .github/workflows/official_release.yml
+          python -B tests/crazyhouse_release_workflow_guard.py
+          python -O -B tests/crazyhouse_release_workflow_guard.py
+
+      - name: Test fail-closed post-G15 publisher tooling
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/release/crazyhouse_g15_publisher.py \
+            tests/crazyhouse_g15_publisher.py
+          python -B tests/crazyhouse_g15_publisher.py
+          python -O -B tests/crazyhouse_g15_publisher.py
+
+      - name: Materialize exact registered legacy network
+        run: |
+          set -euo pipefail
+          mkdir -p .ci/network
+          python tools/ci/fetch_crazyhouse_legacy_network.py \
+            --url "$LEGACY_NETWORK_URL" \
+            --output .ci/network/Crazyhouse_v1.nnue \
+            --manifest .ci/network/network-materialization.json \
+            --timeout-seconds 120 \
+            | tee .ci/network/materialization.stdout.log
+          python tools/ci/fetch_crazyhouse_legacy_network.py \
+            --verify-existing .ci/network/Crazyhouse_v1.nnue \
+            | tee .ci/network/verification.stdout.log
+          test -z "$(find .ci/network -maxdepth 1 -name '*.partial-*' -print -quit)"
+
+      - name: Publish exact CI input artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: crazyhouse-legacy-network-${{ github.sha }}
+          path: .ci/network/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 1
+
+  correctness-linux:
+    name: Linux ${{ matrix.backend }} correctness
+    needs: network-tooling
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [scalar, simd]
+    env:
+      CRAZYHOUSE_BACKEND: ${{ matrix.backend }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: crazyhouse-legacy-network-${{ github.sha }}
+          path: .ci/network
+
+      - name: Reauthenticate CI input
+        run: |
+          set -euo pipefail
+          python tools/ci/fetch_crazyhouse_legacy_network.py \
+            --verify-existing .ci/network/Crazyhouse_v1.nnue
+
+      - name: Build exact backend
+        run: |
+          set -euo pipefail
+          mkdir -p .ci/evidence
+          g++ --version | tee .ci/evidence/compiler.log
+          make --version | tee .ci/evidence/make.log
+          python --version 2>&1 | tee .ci/evidence/python.log
+          make -C src -j2 build \
+            ARCH=x86-64-avx2 COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND="$CRAZYHOUSE_BACKEND" \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/build.log
+
+      - name: Run routed engine correctness
+        run: |
+          set -euo pipefail
+          python tests/crazyhouse_capability_handshake.py \
+            --engine src/stockfish \
+            --net .ci/network/Crazyhouse_v1.nnue \
+            --fixture tests/crazyhouse/capability-handshake-v1.json \
+            --artifact-dir .ci/evidence/capability \
+            2>&1 | tee .ci/evidence/capability.log
+          python tests/crazyhouse_conservative_search_verify.py \
+            --mode green \
+            --source-root . \
+            --engine src/stockfish \
+            --legacy-network .ci/network/Crazyhouse_v1.nnue \
+            --output .ci/evidence/conservative-search.json \
+            2>&1 | tee .ci/evidence/conservative-search.log
+
+      - name: Run scalar incremental parity
+        if: matrix.backend == 'scalar'
+        run: |
+          set -euo pipefail
+          make -C src -f Makefile -f ../tools/ci/crazyhouse_ci_targets.mk \
+            -j2 crazyhouse-legacy-parser-ci \
+            ARCH=x86-64-avx2 COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND=scalar \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/parser-build.log
+          src/crazyhouse-legacy-parser-ci \
+            .ci/network/Crazyhouse_v1.nnue \
+            2>&1 | tee .ci/evidence/parser-verify.log
+          make -C src -j2 crazyhouse-legacy-incremental-tests \
+            ARCH=x86-64-avx2 COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND=scalar \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/incremental-build.log
+          python tests/crazyhouse_legacy_incremental_verify.py \
+            --oracle src/crazyhouse-legacy-incremental-tests \
+            --network .ci/network/Crazyhouse_v1.nnue \
+            --fixture tests/crazyhouse/legacy-incremental-cases-v1.json \
+            2>&1 | tee .ci/evidence/incremental-verify.log
+
+      - name: Run SIMD parity
+        if: matrix.backend == 'simd'
+        run: |
+          set -euo pipefail
+          make -C src -j2 crazyhouse-legacy-simd-tests \
+            ARCH=x86-64-avx2 COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND=simd \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/simd-build.log
+          python tests/crazyhouse_legacy_simd_verify.py \
+            --oracle src/crazyhouse-legacy-simd-tests \
+            --network .ci/network/Crazyhouse_v1.nnue \
+            --fixture tests/crazyhouse/legacy-incremental-cases-v1.json \
+            --contract tests/crazyhouse/legacy-v1-simd-parity-contract-v1.json \
+            --expected-backend avx2 \
+            2>&1 | tee .ci/evidence/simd-verify.log
+
+      - name: Seal Linux evidence
+        run: |
+          set -euo pipefail
+          cp src/stockfish ".ci/evidence/stockfish-linux-$CRAZYHOUSE_BACKEND"
+          git rev-parse HEAD > .ci/evidence/git-commit.txt
+          git rev-parse 'HEAD^{tree}' > .ci/evidence/git-tree.txt
+          git rev-parse 'HEAD:src' > .ci/evidence/git-src-tree.txt
+          sha256sum .ci/evidence/stockfish-* > .ci/evidence/engine.SHA256SUMS
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Publish Linux correctness evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: crazyhouse-correctness-linux-${{ matrix.backend }}
+          path: .ci/evidence/
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
+
+  sanitizers:
+    name: Linux ${{ matrix.sanitizer }} sanitizer
+    needs: network-tooling
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [address, undefined]
+    env:
+      SANITIZER: ${{ matrix.sanitizer }}
+      ASAN_OPTIONS: halt_on_error=1:abort_on_error=1:detect_leaks=0
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: crazyhouse-legacy-network-${{ github.sha }}
+          path: .ci/network
+
+      - name: Build instrumented scalar engine
+        run: |
+          set -euo pipefail
+          mkdir -p .ci/evidence
+          python tools/ci/fetch_crazyhouse_legacy_network.py \
+            --verify-existing .ci/network/Crazyhouse_v1.nnue
+          export CXXFLAGS="-O1 -fno-inline -fno-omit-frame-pointer -Werror"
+          make -C src -j2 build \
+            ARCH=x86-64-sse41-popcnt COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND=scalar \
+            debug=yes optimize=no sanitize="$SANITIZER" \
+            2>&1 | tee .ci/evidence/build.log
+
+      - name: Run instrumented routing and special states
+        run: |
+          set -euo pipefail
+          python tests/crazyhouse_capability_handshake.py \
+            --engine src/stockfish \
+            --net .ci/network/Crazyhouse_v1.nnue \
+            --fixture tests/crazyhouse/capability-handshake-v1.json \
+            --artifact-dir .ci/evidence/capability \
+            --timeout-scale 40 \
+            2>&1 | tee .ci/evidence/capability.log
+          python tests/crazyhouse_conservative_search_verify.py \
+            --mode green \
+            --source-root . \
+            --engine src/stockfish \
+            --legacy-network .ci/network/Crazyhouse_v1.nnue \
+            --timeout 300 \
+            --output .ci/evidence/conservative-search.json \
+            2>&1 | tee .ci/evidence/conservative-search.log
+
+      - name: Seal sanitizer evidence
+        run: |
+          set -euo pipefail
+          cp src/stockfish ".ci/evidence/stockfish-$SANITIZER"
+          git rev-parse HEAD > .ci/evidence/git-commit.txt
+          git rev-parse 'HEAD^{tree}' > .ci/evidence/git-tree.txt
+          git rev-parse 'HEAD:src' > .ci/evidence/git-src-tree.txt
+          sha256sum .ci/evidence/stockfish-* > .ci/evidence/engine.SHA256SUMS
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Publish sanitizer evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: crazyhouse-correctness-sanitizer-${{ matrix.sanitizer }}
+          path: .ci/evidence/
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
+
+  correctness-windows:
+    name: Windows scalar correctness
+    needs: network-tooling
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: msys2/setup-msys2@e9898307ac31d1a803454791be09ab9973336e1c # v2.31.1
+        with:
+          msystem: MINGW64
+          install: mingw-w64-x86_64-gcc make git
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: crazyhouse-legacy-network-${{ github.sha }}
+          path: .ci/network
+
+      - name: Build and run Windows correctness
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          mkdir -p .ci/evidence
+          python tools/ci/fetch_crazyhouse_legacy_network.py \
+            --verify-existing .ci/network/Crazyhouse_v1.nnue
+          g++ --version | tee .ci/evidence/compiler.log
+          make --version | tee .ci/evidence/make.log
+          python --version 2>&1 | tee .ci/evidence/python.log
+          make -C src -j2 build \
+            ARCH=x86-64-avx2 COMP=mingw \
+            CRAZYHOUSE_LEGACY_BACKEND=scalar \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/build.log
+          python tests/crazyhouse_capability_handshake.py \
+            --engine src/stockfish.exe \
+            --net .ci/network/Crazyhouse_v1.nnue \
+            --fixture tests/crazyhouse/capability-handshake-v1.json \
+            --artifact-dir .ci/evidence/capability \
+            2>&1 | tee .ci/evidence/capability.log
+          python tests/crazyhouse_conservative_search_verify.py \
+            --mode green \
+            --source-root . \
+            --engine src/stockfish.exe \
+            --legacy-network .ci/network/Crazyhouse_v1.nnue \
+            --output .ci/evidence/conservative-search.json \
+            2>&1 | tee .ci/evidence/conservative-search.log
+          cp src/stockfish.exe .ci/evidence/stockfish-windows-scalar.exe
+          git rev-parse HEAD > .ci/evidence/git-commit.txt
+          git rev-parse 'HEAD^{tree}' > .ci/evidence/git-tree.txt
+          git rev-parse 'HEAD:src' > .ci/evidence/git-src-tree.txt
+          sha256sum .ci/evidence/stockfish-windows-scalar.exe \
+            > .ci/evidence/engine.SHA256SUMS
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Publish Windows correctness evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: crazyhouse-correctness-windows-scalar
+          path: .ci/evidence/
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
+
+  evidence:
+    name: Aggregate required evidence
+    needs: [correctness-linux, sanitizers, correctness-windows]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: crazyhouse-correctness-*
+          path: .ci/all
+          merge-multiple: false
+
+      - name: Authenticate and aggregate all required lanes
+        run: |
+          set -euo pipefail
+          python tools/ci/aggregate_crazyhouse_ci_artifacts.py \
+            --repository . \
+            --input-root .ci/all \
+            --output-dir .ci/aggregate \
+            --expected-artifact crazyhouse-correctness-linux-scalar \
+            --expected-artifact crazyhouse-correctness-linux-simd \
+            --expected-artifact crazyhouse-correctness-sanitizer-address \
+            --expected-artifact crazyhouse-correctness-sanitizer-undefined \
+            --expected-artifact crazyhouse-correctness-windows-scalar
+
+      - name: Publish aggregate correctness receipt
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: crazyhouse-correctness-aggregate-${{ github.sha }}
+          path: |
+            .ci/all/
+            .ci/aggregate/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30

@@ -1,0 +1,44 @@
+{
+  "schema": "crazyhouse-preregistration-metadata-correction/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-23T02:51:00Z",
+  "immutable": true,
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct only the manually entered created_utc metadata of the immutable SIMD Worker and routing preregistration documents. Their scientific fields, identities, expected-red boundary, stopping rules and expected protocol remain unchanged.",
+  "pins": {
+    "worker_search_addendum_004": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.004.json",
+      "bytes": 8165,
+      "sha256": "2078c8018a5f55e508eaee3ceac1f365cd9cc063edf3a3f2a35f2575e6795ef5"
+    },
+    "routing_addendum_005": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.005.json",
+      "bytes": 7114,
+      "sha256": "9f6738bdb9a28e731c1e71aebe56072500ed389a894e893cbab05abd18fa1c53"
+    },
+    "freeze_commit": {
+      "commit": "ec277a25b3c43908679aa4c70bff760a29def58e",
+      "tree": "a13fc5b348d41bf7bd1082b4dd7ed70d6549619b",
+      "commit_time": "2026-08-23T04:47:24+02:00",
+      "commit_time_utc": "2026-08-23T02:47:24Z"
+    }
+  },
+  "corrections": [
+    {
+      "document": "worker-search-contract-v1.addendum.004.json",
+      "field": "created_utc",
+      "recorded_invalid_value": "2026-08-23T09:20:00Z",
+      "correct_interpretation": "The document was frozen no later than freeze_commit.commit_time_utc; do not use the recorded future timestamp as evidence."
+    },
+    {
+      "document": "routing-contract-v1.addendum.005.json",
+      "field": "created_utc",
+      "recorded_invalid_value": "2026-08-23T09:21:00Z",
+      "correct_interpretation": "The document was frozen no later than freeze_commit.commit_time_utc; do not use the recorded future timestamp as evidence."
+    }
+  ],
+  "scientific_contract_changed": false,
+  "expected_red_changed": false,
+  "stopping_rule_changed": false,
+  "expected_protocol_sha256_changed": false
+}

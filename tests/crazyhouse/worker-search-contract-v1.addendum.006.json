@@ -1,0 +1,113 @@
+{
+  "schema": "crazyhouse-worker-search-contract-addendum/v1",
+  "addendum": 6,
+  "created_utc": "2026-08-23T04:04:51.7158203Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Rebase only the ordinary default-scalar Worker source-provenance pin for src/uci.cpp after the separately expected-red and corrected failed-route admission state machine. Worker cases, evaluator mode, build default, route telemetry and routing digest remain unchanged.",
+  "pins": {
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "worker_search_addendum_005": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.005.json",
+      "bytes": 6267,
+      "sha256": "e2cb31fe1c2879a5c0515fbbc9e95c65be052dc348d6b48247ddbbdba6fd557c"
+    },
+    "formal_rejection_end_receipt": {
+      "path": "../../../receipts/resources/p5-worker-simd-integration-t1-end-231.json",
+      "bytes": 4988,
+      "sha256": "7ec2e36d393b289a3d3e68b433c2a8bf37ceaf97fd47574c26be4af2855c7006"
+    },
+    "failed_route_expected_red_record": {
+      "path": "../../../receipts/private/p5-worker-simd-fail-closed-expected-red-record-146.json",
+      "bytes": 4140,
+      "sha256": "ef3138b79f14ac6068cee559a13675f176ff0dc006901c233b4d1de782908971"
+    }
+  },
+  "source_rebase": {
+    "descendant_commit": "f945846c31ee802d2493e53f573414f94d4bd03e",
+    "descendant_tree": "c667c1b7cbc5c05672acbf34f52c3cf49135b6fb",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "changed_source_pin_count": 1,
+    "changed_source_pin_path": "src/uci.cpp",
+    "unchanged_source_pin_paths": [
+      "src/Makefile",
+      "src/search.cpp",
+      "src/search.h",
+      "src/nnue/crazyhouse_legacy_network.h",
+      "src/nnue/crazyhouse_legacy_network.cpp",
+      "src/engine.h",
+      "src/engine.cpp",
+      "src/engine_routing.h",
+      "src/engine_routing.cpp"
+    ],
+    "replaced_pin": {
+      "before": {
+        "path": "src/uci.cpp",
+        "bytes": 31968,
+        "sha256": "1dbe169ed9f527effa900e216dadfd91318ad20f91b60c9952fdb3a69de37a6e",
+        "git_blob": "319da3f88976698ece6667a8e8a2582e43366422"
+      },
+      "after": {
+        "path": "src/uci.cpp",
+        "bytes": 32437,
+        "sha256": "6d90eccf1cd3f4fdba2cb9971b2ee1b1f858502eeaac91eb22c36e25f471012c",
+        "git_blob": "b873c6e9d71b2a50562f0fd346c1ce99546f635f"
+      }
+    },
+    "exact_behavior_transition": {
+      "from": "A clean failed route bypassed the position barrier and later search reported backend_not_ready.",
+      "to": "Position and search both reject a clean failed route with its stored activeError; only isready may retry it.",
+      "required_error": "legacy_simd_unavailable",
+      "position_epoch_must_remain_invalid": true,
+      "worker_evaluator_semantics_changed": false,
+      "worker_search_semantics_changed": false,
+      "routing_success_digest_changed": false,
+      "fallback_allowed": false,
+      "strength_claim": false
+    }
+  },
+  "single_variable_transition": {
+    "variable": "Worker source-provenance pin for the admitted failed-route UCI correction",
+    "from": {
+      "worker_mode": "INCREMENTAL_SCALAR",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "uci_source_sha256": "1dbe169ed9f527effa900e216dadfd91318ad20f91b60c9952fdb3a69de37a6e"
+    },
+    "to": {
+      "worker_mode": "INCREMENTAL_SCALAR",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "uci_source_sha256": "6d90eccf1cd3f4fdba2cb9971b2ee1b1f858502eeaac91eb22c36e25f471012c",
+      "build_selector_supplied": false,
+      "make_default": "CRAZYHOUSE_LEGACY_BACKEND=scalar",
+      "fallback_allowed": false,
+      "strength_claim": false
+    }
+  },
+  "expected_red": {
+    "pre_support_required_failure": "Worker addendum number mismatch",
+    "engine_must_not_start": true
+  },
+  "runtime_replay": {
+    "base_cases_unchanged": true,
+    "case_count": 2,
+    "runs": 4,
+    "route_backend": "legacy-v1",
+    "route_identity_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "required_route_token": "evaluator=incremental-scalar",
+    "forbidden_route_tokens": ["evaluator=incremental-simd", "simd_backend="],
+    "required_worker_summary": "PASS crazyhouse_worker_search cases=2 runs=4 backend=legacy-v1 evaluator=incremental-scalar route_telemetry=PASS worker_binding=PASS scalar_default_unchanged=true strength_claim=false",
+    "source_to_binary_binding_required": true,
+    "same_target_routing_correction_required": true,
+    "exact_standard_control_required": true
+  },
+  "stopping_rule": "Require the pre-support verifier to reject addendum 006 before engine launch. Then authenticate every unchanged addendum 005 source pin plus the sole src/uci.cpp replacement, require a fresh x86-64-avx2 default-scalar build to pass all four unchanged Worker runs with exact scalar telemetry, and require the separately pinned routing correction plus exact official standard control. Any other source drift, selector leak, SIMD token, fallback, stderr, crash or timeout rejects the slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

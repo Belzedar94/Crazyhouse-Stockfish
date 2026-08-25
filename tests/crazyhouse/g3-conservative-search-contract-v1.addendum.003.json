@@ -1,0 +1,126 @@
+{
+  "schema": "crazyhouse-g3-conservative-search-contract-addendum/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-23T06:27:13.5739758Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Admit the frozen conservative Crazyhouse search-policy implementation after an authenticated clean build, the ten-case special-state matrix, and exact standard-chess control.",
+  "pins": {
+    "base_contract": {
+      "path": "tests/crazyhouse/g3-conservative-search-contract-v1.json",
+      "bytes": 4895,
+      "sha256": "a1bac6a21398fe80824ab592d2271dc40a416615f1a6a79d8be736d5f1e9aa5e",
+      "git_blob": "013928c643bfd17d58a9cbe831280214254f4a6b"
+    },
+    "verifier_addendum_001": {
+      "path": "tests/crazyhouse/g3-conservative-search-contract-v1.addendum.001.json",
+      "bytes": 3043,
+      "sha256": "b3be38750edadef786ecda125ed7bc5c48c8c3241ee1dcfbf0631f8ea6ac8a4e",
+      "git_blob": "f4586505121bddcc7dab79b5cffb6db06269fe28"
+    },
+    "green_admission_addendum_002": {
+      "path": "tests/crazyhouse/g3-conservative-search-contract-v1.addendum.002.json",
+      "bytes": 4832,
+      "sha256": "63836d0f709eaa25203b67082d1fbc040a41b4cbbd3ceb14a4979e8939f5ed6c",
+      "git_blob": "cc8e7f33bff4c1d4188cd8215bfd2632b8205756"
+    },
+    "corrected_verifier": {
+      "path": "tests/crazyhouse_conservative_search_verify.py",
+      "bytes": 17722,
+      "sha256": "0bf13e4fbe42385c5157bf9263cf400b49fb4b4392e9a9d39f9471fbd4652cbc",
+      "git_blob": "71e063449773b09f96342473ea963be5b92b48b0"
+    },
+    "private_gate_record": {
+      "path": "../../../receipts/private/p3-conservative-search-green-record-154.json",
+      "bytes": 7238,
+      "sha256": "a681cf971719cf06db1b17aa4c5a0d59d622d7a7ebda90fc3ae9936990e744a9"
+    }
+  },
+  "validated_source": {
+    "commit": "f3c470280c231b433383c64ae1897a67b9ac04bd",
+    "tree": "483726407c6e154b07a82bb6b7967c327b7f7787",
+    "behavior_commit": "5d1bee77ac96b3fe95fa28717d428693b56297c1",
+    "verifier_correction_commit": "941813fe32fd37a7b6b788e1710e567b89b8e7ef",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "changed_behavior_source_files": [
+      {
+        "path": "src/search.cpp",
+        "bytes": 96025,
+        "sha256": "fb899f14d1f363bd4befe861c04186dfa8ba3cb980295ca433dfb3566a835e9c",
+        "git_blob": "2ffb6da42d9d2f584d6789c1dca3f229045429f1"
+      }
+    ],
+    "changed_behavior_source_file_count": 1
+  },
+  "clean_green_lease": {
+    "id": 238,
+    "source_archive": {
+      "bytes": 3000320,
+      "sha256": "51fb5fdca98c6a7cb227f020bdea71fcbc6841dbd270f5bfde6b049a4ecbb910"
+    },
+    "source_blob_authentication": {
+      "bytes": 903,
+      "sha256": "44d87ddec569df79f74f22c8bf0a393d35db8b4191c5a0c13e0349d4af1306c7",
+      "expected_blob_count": 275,
+      "authenticated_blob_count": 275,
+      "result": "PASS_ALL_EXPORTED_FILES_MATCH_GIT_BLOBS"
+    },
+    "source_manifest": {
+      "bytes": 66484,
+      "sha256": "881e676c34fb0947a0b5a7596ded43ae799e9834563305dec9014f2fc002e265"
+    },
+    "engine": {
+      "target": "x86-64-avx2",
+      "compiler": "digest-pinned MinGW GCC",
+      "warning_strict": true,
+      "bytes": 103064599,
+      "sha256": "831470300476aaa8501d9bd7e698176b238ca7bb47c98b898a8f023251ba5c22"
+    },
+    "green_observation": {
+      "bytes": 4694,
+      "sha256": "22f13df0f765660842429911aec2213604720fc92dfdbc7cda3a2cf4f48cc286",
+      "result": "PASS_CONSERVATIVE_SEARCH_POLICY_GREEN",
+      "static_gap_count": 0,
+      "runtime_case_count": 10,
+      "runtime_status": "PASS_SPECIAL_STATE_SEARCH_MATRIX",
+      "stderr_bytes": 0
+    },
+    "standard_control": {
+      "bytes": 10241,
+      "sha256": "3e203887accb3eea83bbcccd053891174a459ca552eba78cef7c67522be9f5f0",
+      "result": "PASS_EXACT_OFFICIAL_STANDARD_CONTROL",
+      "official_runs": 3,
+      "product_runs": 3,
+      "product_equals_exact_official": true,
+      "deterministic_signature_sha256": "28ec174ed2f5dd775ec50e4c6bf8de360d66c3693c90a9ac877edadf4caa255e"
+    },
+    "completion": {
+      "bytes": 24118,
+      "sha256": "2652156ebca40e55bf6f3d1d68510fc426aeab01a4e64a5095187e6731e91194",
+      "result": "PASS_CONSERVATIVE_SEARCH_GREEN_AND_EXACT_STANDARD_CONTROL"
+    },
+    "controller_exit": 0,
+    "timeouts": 0,
+    "crashes": 0,
+    "owned_residual_processes": 0,
+    "fallback_observed": false
+  },
+  "admission": {
+    "typed_rule50_tt_policy": "PASS",
+    "high_counter_tt_cutoff_policy": "PASS",
+    "crazyhouse_null_move_policy": "PASS",
+    "crazyhouse_full_probcut_policy": "PASS",
+    "crazyhouse_shared_shallow_pruning_policy": "PASS",
+    "special_state_search_matrix": "PASS",
+    "exact_standard_chess_control": "PASS",
+    "conservative_search_policy_sub_boundary": "PASS",
+    "g3_status": "IN_PROGRESS",
+    "g3_remaining": "affected-source sanitizer replay and reconciliation of all remaining G3 predicates"
+  },
+  "interpretation": "This addendum admits an E1 correctness boundary only. It does not measure speed, Elo, OpenBench strength, model selection, release readiness, or production monitoring.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

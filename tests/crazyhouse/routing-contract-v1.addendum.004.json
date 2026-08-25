@@ -1,0 +1,96 @@
+{
+  "schema": "crazyhouse-worker-search-routing-addendum/v1",
+  "addendum": 4,
+  "created_utc": "2026-08-22T22:45:21.2867643Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Extend the frozen incremental Worker routing replay with one exact engine-authored evaluator-mode field, preventing a behaviorally equal historical full-refresh binary from being mislabeled as incremental.",
+  "pins": {
+    "routing_contract_v1": {
+      "path": "tests/crazyhouse/routing-contract-v1.json",
+      "bytes": 6646,
+      "sha256": "f98828dcf79211bc8f547b1562cea2f282adc71669256383309ba43f85b69dfd"
+    },
+    "routing_addendum_001": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.001.json",
+      "bytes": 4023,
+      "sha256": "569ef378350be65fddac2a2897f30fd7587eed2fc88e6cc6728fc1bab8f67fd6"
+    },
+    "routing_addendum_002": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.002.json",
+      "bytes": 3257,
+      "sha256": "725a4abc353e1567e79e49d69cf0520f1412b0bd6c844f0789b982f4f7a1243f"
+    },
+    "routing_addendum_003": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.003.json",
+      "bytes": 4324,
+      "sha256": "61d240cc6911da345de7357643a32a5ad49234acc149e9b8fe0ac6228d722109"
+    },
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "worker_search_addendum_002": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.002.json",
+      "bytes": 4062,
+      "sha256": "fd0f2c182504cfc67d1ae647ba90b149d1de2451b188132ca78d6761de3c11f6"
+    },
+    "routing_verifier_before_runtime_telemetry_support": {
+      "path": "tests/crazyhouse_uci_routing_verify.py",
+      "bytes": 33278,
+      "sha256": "76e2d38f57922f0252211d5f63586fc54b5c5c2203aed73cf8563f12a3c36df0",
+      "git_blob": "9080cad2df387df0ad3ee905aea5fbf96b3a260d"
+    },
+    "uci_source_before_runtime_telemetry": {
+      "path": "src/uci.cpp",
+      "bytes": 31005,
+      "sha256": "55fbfa3eb05ba5617eb4055038e525d93df970359e867034f9604dea2c936e54",
+      "git_blob": "2f95926d6aa4fe0a747950bdbfca89f0e12d7556"
+    },
+    "historical_full_refresh_transcript": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p5-worker-search-green-217/uci-routing-transcript.jsonl",
+      "bytes": 4994,
+      "sha256": "f8da7eb942fa36fce66ec4801053cded6f73a999212e5372f4df5001920bf007"
+    }
+  },
+  "single_variable_transition": {
+    "variable": "successful Crazyhouse route-commit evaluator telemetry",
+    "from": {
+      "crazyhouse_search": "BOUND_LEGACY_V1_INCREMENTAL_SCALAR",
+      "route_commit_evaluator_field": null,
+      "routing_addendum": 3
+    },
+    "to": {
+      "crazyhouse_search": "BOUND_LEGACY_V1_INCREMENTAL_SCALAR_AUTHENTICATED",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "required_ruleset": "crazyhouse",
+      "required_backend": "legacy-v1",
+      "required_backend_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "required_worker_addendum": 2,
+      "fallback_allowed": false,
+      "incremental_scalar_claim": true,
+      "simd_claim": false
+    }
+  },
+  "replayed_scenario": {
+    "scenario_count": 11,
+    "marker_count": 32,
+    "historical_protocol_sha256": "9828804516bb0629cede024403c79ae69e2b9fc3985b9e5bba0e81bf3012120e",
+    "crazyhouse_route_commit_markers_changed": 5,
+    "transformation": "append exactly one ASCII token ' evaluator=incremental-scalar' to every successful Crazyhouse route_commit marker and change no other marker",
+    "expected_protocol_sha256": "aef709f821942c38b1437d6c9647cb7ca69a83642a6cf10c4843b80d2efb505f",
+    "chess_route_markers_unchanged": true,
+    "non_search_refusals_unchanged": true,
+    "standard_control_unchanged": true
+  },
+  "stale_binary_negative_control": {
+    "binary_sha256": "91314cafd16841f4d3c7ca803a624c1f9f93f69b134ff972e701a512ef033043",
+    "historical_gate": "PASS_BOUNDED_LEGACY_V1_FULL_REFRESH",
+    "required_result": "FAIL_MISSING_INCREMENTAL_ROUTE_TELEMETRY"
+  },
+  "stopping_rule": "Require the exact 32-marker transformed digest and the evaluator token on every successful Crazyhouse route commit from the fresh product binary. Require the historical full-refresh binary to fail specifically for the missing token. Preserve every Chess route marker, command refusal, legal bestmove and exact official standard control. Any mismatch rejects this observability slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

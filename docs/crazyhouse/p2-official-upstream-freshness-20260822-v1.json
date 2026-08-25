@@ -1,0 +1,168 @@
+{
+  "schema": "crazyhouse-upstream-freshness/v1",
+  "project": "Crazyhouse-Stockfish",
+  "created_utc": "2026-08-22T05:03:21.4220129Z",
+  "evidence_class": "D0_DISCOVERY",
+  "scope": "Read-only freshness observation; no fetch, rebase, merge, source edit, architecture selection, strength claim, or release claim.",
+  "source_authority": {
+    "repository": "https://github.com/official-stockfish/Stockfish",
+    "branch": "master",
+    "git_ls_remote_sha": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "commit_api": {
+      "url": "https://api.github.com/repos/official-stockfish/Stockfish/commits/229f6339e537a097a79831cd06dbfdb3e623d4ac",
+      "status_code": 200,
+      "etag": "W/\"9b85e85c894fe1619e0065e511dbc9bf9cdd33195ad48de3b85e3eecfeee78be\"",
+      "last_modified": "Wed, 19 Aug 2026 16:48:49 GMT",
+      "content_bytes_utf8": 21609,
+      "content_sha256_utf8": "6208dfc7f6e1538335202da2738d9beace3702a82310aeca4ccc78aebd055632"
+    },
+    "compare_api": {
+      "url": "https://api.github.com/repos/official-stockfish/Stockfish/compare/5062aee519a1ba262d472d8ab139851ced56573e...229f6339e537a097a79831cd06dbfdb3e623d4ac",
+      "status_code": 200,
+      "etag": "W/\"9e1c64e7b29e9ebb3f7dfe53d4f7e598ae51129d9275be9bed374f42e13d7840\"",
+      "last_modified": "Wed, 19 Aug 2026 16:48:49 GMT",
+      "content_bytes_utf8": 220303,
+      "content_sha256_utf8": "240e57ba7ff73174d9d1256cc611c770aa70d3f1ee0c45ff2252f201ff3bb6d6"
+    }
+  },
+  "frozen_product_base": {
+    "commit": "5062aee519a1ba262d472d8ab139851ced56573e",
+    "tree": "3b51a6c6d0e5d0fc44a4fde457d270340cb35280",
+    "committed_utc": "2026-08-10T13:10:12Z",
+    "subject": "Place continuation history on large pages.",
+    "latest_verified_at_selection": true,
+    "selection_verified_utc_date": "2026-08-13",
+    "current_product_head": "86eca353e5bab340f86b2eb7f05011670b7b4f79",
+    "current_product_tree": "b408c6383677123e379c5dedd54105a412c33536",
+    "base_is_product_ancestor": true,
+    "retired_fairy_base_is_product_ancestor": false
+  },
+  "observed_official_master": {
+    "commit": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "tree": "11ff8e5aeaa5c0d19c085cdd92b5c8f9321199e6",
+    "authored_utc": "2026-08-19T16:48:49Z",
+    "committed_utc": "2026-08-19T16:48:49Z",
+    "subject": "Update Release Creation",
+    "parent": "ae3db60f534d3fedb384da388d8222d114909c2f",
+    "comparison_status": "ahead",
+    "ahead_by": 19,
+    "behind_by": 0,
+    "merge_base": "5062aee519a1ba262d472d8ab139851ced56573e",
+    "changed_files": 26
+  },
+  "upstream_commits": [
+    { "commit": "ee515ad9b6bd7e928db808c3a2e9ca81d49819c1", "subject": "[bugfix] Allow root move PV to be longer than MAX_PLY plies" },
+    { "commit": "f21610e51a436b69fabdcc89d8fe25ff0c2d5731", "subject": "Update network: faster training with AdamW optimizer" },
+    { "commit": "5f7348f03f820038f5d246b82de544cbc1d8ffd2", "subject": "Reduce LMR less aggressively in loose alpha windows" },
+    { "commit": "0c8c71f32717253b4d7aa798c78950bf156cad20", "subject": "Extract perspective transform logic into a separate function" },
+    { "commit": "6d215a03063d79782333970a67abcb6aea32912c", "subject": "Simplify Away Second Razoring Number" },
+    { "commit": "68f7925d5ca0f6806aed5d1a5fe57505d3ed2890", "subject": "simplify FullThreats::append_active_indices" },
+    { "commit": "a3a8372b1b5841fb1d1a66fe8f3cb492b0c4f3dc", "subject": "More nnue_accumulator.cpp cleanup" },
+    { "commit": "e37429bb6de9b2e861411dff79768746d9357d38", "subject": "Simplify sliding_attack loop in attacks.h" },
+    { "commit": "7c37212ec7eba49be3c89887640f646215269526", "subject": "Refuse a failed large-page allocation" },
+    { "commit": "5fd94536751fc8aafb7e24f18a5e1815a07afb68", "subject": "Harden the tablebase reader against corrupted files" },
+    { "commit": "92c90f41e3175e8f0c4ef399dec70dde015015e1", "subject": "Initialise time budgets on every path" },
+    { "commit": "49f8e667c0ebf146f3ce5a1ea2d49ac78b9f777e", "subject": "Avoid UB decoding LEB128, and guard against corrupted files" },
+    { "commit": "d68041e3201e6c5fc37d1219168f568647f0f93c", "subject": "Read hash_bytes tail bytes as unsigned" },
+    { "commit": "ceb059eb48fb8e556df8feff6f8a24e45d03fa11", "subject": "Convert movetime when nodestime is in force" },
+    { "commit": "50221673b29b8f1d52261f3e53dbbef471bb7dfc", "subject": "Initialize shared continuation history once per NUMA node" },
+    { "commit": "30290aa0fffa491046ca95a285ce2a505d9c34cc", "subject": "Clamp speedtest inputs to valid ranges" },
+    { "commit": "1b1b5f49a5b9f9d564120fc4ef513557267f1e4a", "subject": "Simplify Position::update_piece_threats()" },
+    { "commit": "ae3db60f534d3fedb384da388d8222d114909c2f", "subject": "Align and collapse shared NNUE mappings" },
+    { "commit": "229f6339e537a097a79831cd06dbfdb3e623d4ac", "subject": "Update Release Creation" }
+  ],
+  "upstream_changed_files": [
+    ".github/workflows/official_release.yml",
+    ".github/workflows/stockfish.yml",
+    ".github/workflows/upload_binaries.yml",
+    "AUTHORS",
+    "src/attacks.h",
+    "src/benchmark.cpp",
+    "src/bitboard.h",
+    "src/engine.cpp",
+    "src/engine.h",
+    "src/evaluate.h",
+    "src/memory.h",
+    "src/misc.cpp",
+    "src/movegen.cpp",
+    "src/nnue/features/full_threats.cpp",
+    "src/nnue/network.cpp",
+    "src/nnue/nnue_accumulator.cpp",
+    "src/nnue/nnue_common.h",
+    "src/nnue/nnue_feature_transformer.h",
+    "src/position.cpp",
+    "src/search.cpp",
+    "src/search.h",
+    "src/shm_unix.h",
+    "src/syzygy/tbprobe.cpp",
+    "src/timeman.cpp",
+    "src/timeman.h",
+    "tests/instrumented.py"
+  ],
+  "product_overlap": {
+    "product_changed_files_since_base": 111,
+    "overlap_count": 7,
+    "files": [
+      "src/engine.cpp",
+      "src/engine.h",
+      "src/movegen.cpp",
+      "src/position.cpp",
+      "src/search.cpp",
+      "src/search.h",
+      "src/syzygy/tbprobe.cpp"
+    ],
+    "additional_future_contract_surfaces": [
+      "src/nnue/network.cpp",
+      "src/nnue/nnue_accumulator.cpp",
+      "src/nnue/nnue_common.h",
+      "src/nnue/nnue_feature_transformer.h",
+      "src/timeman.cpp",
+      "src/timeman.h"
+    ],
+    "interpretation": "The delta contains correctness, robustness, search, time-management and NNUE changes. It is not safe to classify as release-workflow-only or to rebase mechanically without a frozen decision and full gate replay."
+  },
+  "method_references": [
+    {
+      "project": "Atomic-Stockfish",
+      "head": "13a1cf845c51eee3507ed6baa080895014de9e8b",
+      "status_lines": 0,
+      "official_merge_base": "eca43a97efd2cf0c9b7153c71b85f35e0fd1f5ca",
+      "official_merge_base_tree": "d811835e919b2cc98bc3cdb7bd375d1aed11c7ba",
+      "official_merge_base_date": "2026-07-06T09:38:27Z",
+      "variant_commits_after_base": 63,
+      "authority": false,
+      "inheritance": false
+    },
+    {
+      "project": "Horde-Stockfish",
+      "head": "83521c3b9ff2c9e195b8fe75c3b8ec4917bd0e02",
+      "status_lines": 0,
+      "official_merge_base": "762dd1da9a5db458180b2c5db6c53dc40ec61e1a",
+      "official_merge_base_tree": "982f4cb562d003607c9570fad4a148d3f1bcb648",
+      "official_merge_base_date": "2026-08-03T19:52:34Z",
+      "variant_commits_after_base": 126,
+      "authority": false,
+      "inheritance": false
+    }
+  ],
+  "decision_boundary": {
+    "frozen_base_was_latest_at_selection": true,
+    "frozen_base_is_latest_now": false,
+    "baseline_manifest_rewritten": false,
+    "g2_reopened": false,
+    "reason_g2_not_automatically_reopened": "A moving upstream does not retroactively invalidate an authenticated snapshot selected as latest at its decision boundary.",
+    "oracle_required_before_rebase_decision": true,
+    "source_change_allowed": false,
+    "required_review_question": "Whether to replay P2-P5 on official master 229f6339 now, or preserve 5062aee5 through current correctness closure and require an independently gated upstream-sync branch before R4.",
+    "required_if_rebase_selected": [
+      "new addendum superseding ADR-0001 exact release ancestry",
+      "clean upstream object and archive authentication",
+      "conflict map for all seven direct overlaps and future NNUE/time seams",
+      "full P2-P5 correctness and deterministic-control replay",
+      "no strength carry-over across source identities"
+    ]
+  },
+  "openbench_evidence": false,
+  "strength_claim": false,
+  "release_claim": false
+}

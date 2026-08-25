@@ -1,0 +1,104 @@
+{
+  "schema": "crazyhouse-p15-release-bundle-formal-result/v1",
+  "created_utc": "2026-08-24T19:49:22.8570474Z",
+  "status": "PASS_RELEASE_BUNDLE_TOOLING_FORMAL",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "lease": 341,
+  "source": {
+    "commit": "96cbd63eb7d70615fab6da47035717d4701be0e0",
+    "tree": "b4d5f5c741d6b39d743de16aad06345ad022c336",
+    "src_tree": "1058720318d4e0ad9c3f61e6ee48675f2dd13b6b",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 535
+  },
+  "contract": {
+    "path": "tests/crazyhouse/p15-release-bundle-contract-v1.json",
+    "bytes": 7953,
+    "sha256": "8f179d4051129b0a2452e8a26af9947bc5d38475f1b06d93862518a563a548f6"
+  },
+  "formal_preregistration": {
+    "path": "tests/crazyhouse/p15-release-bundle-contract-v1.addendum.002.json",
+    "bytes": 4297,
+    "sha256": "0f5f0f38e5df492a836a7d080c1c1c4e3c271dcd6ade4626b5083adc415fe62c"
+  },
+  "expected_red": {
+    "lease": 340,
+    "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+    "completion_bytes": 4377,
+    "completion_sha256": "4b60821661e965703713f82ad853c7e6a5c588c44cfbdb36d67339385078c257",
+    "end_receipt_bytes": 3017,
+    "end_receipt_sha256": "b8ac69a538d66f5e00dffd2cbfd95084c1830ff1c6e1f19a3d9239f9101a77d4"
+  },
+  "formal_replay": {
+    "clean_exports": 2,
+    "profiles": 4,
+    "profiles_per_export": ["python-normal", "python-optimized"],
+    "positive_cases_per_profile": 5,
+    "negative_cases_per_profile": 49,
+    "total_positive_case_executions": 20,
+    "total_negative_case_executions": 196,
+    "stderr_bytes_each": 0,
+    "nonzero_exits": 0,
+    "timeouts": 0,
+    "compiler_linker_or_bytecode_artifacts": 0,
+    "allowed_generated_paths_each": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "source_archive_bytes_each": 7127040,
+    "source_archive_sha256_each": "015492dd992a251370ba25d9bdf461c7bf2ba1f07a52ac814e4c1abb805813f2",
+    "source_archives_byte_identical": true,
+    "normalized_summary_bytes_each": 100,
+    "normalized_summary_sha256_each": "1038efa7137b569575ca42945a3f50c4dc856ac65182e1182b3b92c7a2863bb6",
+    "all_normalized_summaries_byte_identical": true
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-release-bundle-formal-341/completion.json",
+    "bytes": 9389,
+    "sha256": "534fa8f84bdd3476318bc0667ba5ec544ddb0b104db540cbdc406eea32e5d229"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-release-bundle-formal-t1-end-341.json",
+    "bytes": 3442,
+    "sha256": "78c439b0388c94226f08ee6847f1fb33b51deaaa17897ebdedb473d5a2b0bdf3"
+  },
+  "resource_restoration": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 1093,
+    "namespace_bytes": 27655385,
+    "namespace_ceiling_bytes": 268435456,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_alive": true
+  },
+  "effect": "The exact synthetic global inventory, per-asset provenance, copy-and-rehash assembly, deterministic manifest, strict SHA256SUMS and downloaded-byte verification tooling is formally qualified.",
+  "boundaries": {
+    "fixture_tooling_qualified": true,
+    "synthetic_fixture_only": true,
+    "package_internal_layout_verified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}
+

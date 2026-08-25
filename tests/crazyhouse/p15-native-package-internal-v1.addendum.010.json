@@ -1,0 +1,135 @@
+{
+  "schema": "crazyhouse-p15-native-package-real-network-result/v1",
+  "created_utc": "2026-08-24T21:12:34.5489749Z",
+  "status": "PASS_REAL_NETWORK_CONTAINMENT_FIXTURE_ENGINE",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.009.json",
+    "bytes": 6228,
+    "sha256": "93127e9b93df708d6b665f8f3ed92db40daf27d55b69f374a70fe889c0124bc9"
+  },
+  "lease": 348,
+  "source": {
+    "commit": "d1fa06246cf9bfdc5dde8a180f04ee931b2c77f6",
+    "tree": "3302176a1b67a70145a95fe312232f327feeaf0d",
+    "src_tree": "fef67c6603c479439c33baaec496115dba293a0c",
+    "implementation_commit": "fc759b5efa5c865e4e5e30c17438712d47295d38",
+    "implementation_tree": "5b72c3ed696c429f672801650c46e04ca102f088",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 551
+  },
+  "external_network": {
+    "source_path_publicly_disclosed": false,
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "links": 1,
+    "unchanged_before_after": true,
+    "mutation_authorized": false
+  },
+  "fixture": {
+    "version": "0.0.0",
+    "release_asset": false,
+    "full_engine": false,
+    "executable_bytes": 46,
+    "executable_sha256": "22307cdda437178de97c0a830daa335d9c0949a6509ce0e41090b8104963db7d"
+  },
+  "matrix": {
+    "production_policy_archives": 4,
+    "assembler_cli_passes": 4,
+    "independent_verifier_cli_passes": 4,
+    "independent_packaged_network_member_passes": 4,
+    "byte_identical_pairs": 2,
+    "positive_stderr_bytes": 0,
+    "negative_nonzero_exits": 2,
+    "negative_output_archives": 0,
+    "persistent_archives": 4
+  },
+  "archives": [
+    {
+      "target": "windows-x86-64",
+      "replicas": 2,
+      "bytes": 58544575,
+      "sha256": "fd56218e36830666c9899dd150db04e688ac8158423f9d26d3600203245f0c08",
+      "pair_byte_identical": true
+    },
+    {
+      "target": "windows-x86-64-avx2",
+      "replicas": 2,
+      "bytes": 58544595,
+      "sha256": "c7cb0ca233f604ef7419b0aff57251c364b7d8c8858255490e07b10bf378e9ab",
+      "pair_byte_identical": true
+    }
+  ],
+  "packaged_network": {
+    "member": "Crazyhouse-Stockfish-0.0.0/networks/Crazyhouse_v1.nnue",
+    "checks": 4,
+    "bytes_per_archive": 58534811,
+    "compressed_bytes_per_archive": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+  },
+  "negative_controls": [
+    {
+      "case": "missing external network",
+      "returncode": 1,
+      "stdout_bytes": 0,
+      "output_archive_created": false
+    },
+    {
+      "case": "wrong external network bytes",
+      "returncode": 1,
+      "stdout_bytes": 0,
+      "output_archive_created": false
+    }
+  ],
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-native-package-real-network-348/completion.json",
+    "bytes": 14162,
+    "sha256": "8278ab7f13391d5705900489b6156138536dfc951cf48b6b01796d2cce3038f4"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-native-package-real-network-t1-end-348.json",
+    "bytes": 5541,
+    "sha256": "ab626518dd9bbc37ba5c52c73d65ebbfe2148eb3fc978933e58759de51f12563"
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 630,
+    "namespace_bytes": 248366412,
+    "namespace_ceiling_bytes": 536870912,
+    "scratch_files_after": 0,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_alive": true,
+    "p7_foreign_count": 5
+  },
+  "effect": "Qualifies exact production-policy legacy-network containment and fail-closed missing/wrong inputs in deterministic fixture-engine ZIPs for both frozen Windows targets.",
+  "boundaries": {
+    "real_network_containment_verified": true,
+    "small_fixture_engine_only": true,
+    "package_internal_layout_verified_for_release": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

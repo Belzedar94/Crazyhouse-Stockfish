@@ -1,0 +1,77 @@
+{
+  "schema": "crazyhouse-local-strength-panel-addendum/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING_PREREGISTRATION",
+  "created_utc": "2026-08-23T22:21:42.1302196Z",
+  "status": "ACCEPTED_BEFORE_ADAPTER_TIMING_AND_STRENGTH_EXECUTION",
+  "parent": {
+    "repository_commit": "1dffb82d3b64c4834c2aab6ea2d6bbe0f7a8009f",
+    "contract": {
+      "path": "tests/crazyhouse/p7-local-strength-panel-v2.json",
+      "bytes": 15372,
+      "sha256": "f1b9a25b38b5bcad4a4becc2257b0da8b9ae1b294010b85c8bfcc2216efcaabe"
+    },
+    "addendum_001": {
+      "path": "tests/crazyhouse/p7-local-strength-panel-v2.addendum.001.json",
+      "bytes": 3643,
+      "sha256": "78d31936c4a6aa446a8aa6b0fac275bff7997c94c08033f73a14bb331e569682"
+    }
+  },
+  "hardened": {
+    "contract": {
+      "path": "tests/crazyhouse/p7-local-strength-panel-v2.json",
+      "bytes": 15979,
+      "sha256": "c82f08981b09494aa09ccdc6ed8ce7ca56c26cd7b659a9fb0bcccb9ced46b44e"
+    },
+    "runner": {
+      "path": "tools/strength/run_crazyhouse_local_strength_panel.py",
+      "bytes": 52674,
+      "sha256": "799742b25ed7899ab7a228f513919f1080840278cdf9de6abbdb6cef3d42dcc6"
+    },
+    "independent_strength_verifier": {
+      "path": "tools/strength/verify_crazyhouse_local_strength_panel.py",
+      "bytes": 44058,
+      "sha256": "b2f88fac7c27395b8a635f470cc78d709749a6dcb1d17efe19a93b3d80397daa"
+    },
+    "adapter_overhead_contract": {
+      "path": "tests/crazyhouse/p7-local-adapter-overhead-v1.json",
+      "bytes": 10871,
+      "sha256": "cd91a1eaf7af4c34db0ea87974973fd2a264d70d69aed1ffcad28f82e2c3ffcf"
+    },
+    "adapter_overhead_addendum": {
+      "path": "tests/crazyhouse/p7-local-adapter-overhead-v1.addendum.001.json",
+      "bytes": 2633,
+      "sha256": "da60b20bef4a1b4617eca6a9f6bbf8b00d559eae8c250b7f6f8b478080b1a28e"
+    }
+  },
+  "new_precondition": {
+    "required_result": "PASS_ADAPTER_OVERHEAD_INDEPENDENTLY_VERIFIED",
+    "authorization_must_pin": [
+      "corrected strength contract",
+      "formal adapter overhead result",
+      "independent adapter overhead verification",
+      "unchanged time-control ladder"
+    ],
+    "runner_enforced": true,
+    "independent_strength_verifier_enforced": true
+  },
+  "unchanged_strength_variables": [
+    "candidate, comparator and network",
+    "referee and opening corpus",
+    "2+0.02, 10+0.1 and 30+0.3",
+    "seeds and paired colours",
+    "Threads 1, Hash 64 MiB and concurrency 8",
+    "50-game first batches and 16-game continuations",
+    "displayed historical WLD LOS endpoints 0.0/100.0",
+    "2048-game cap",
+    "invalidation and no-optional-stopping rules"
+  ],
+  "pre_execution_evidence": {
+    "adapter_timing_output_observed": false,
+    "strength_game_result_observed": false,
+    "plumbing_canary_score_consumed": false,
+    "threshold_changed": false
+  },
+  "effect": "The already qualified plumbing canary remains valid. Formal adapter timing needs the new independent verification, and the unchanged strength ladder still needs both that result and a fresh clean-host attestation."
+}

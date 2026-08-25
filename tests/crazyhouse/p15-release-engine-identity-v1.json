@@ -1,0 +1,177 @@
+{
+  "schema": "crazyhouse-release-engine-identity/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE",
+  "status": "PREREGISTERED_EXPECTED_RED_AWAITING_CHAMPION",
+  "frozen_utc": "2026-08-24T22:09:55.8926307Z",
+  "authority": {
+    "oracle_review": "WAIVED_BY_OWNER",
+    "stable_publication_decision": "NOT_REQUESTED",
+    "stable_publication_authorized": false,
+    "adr": {
+      "path": "docs/crazyhouse/adr-0020-release-engine-identity-v1.md",
+      "bytes": 4842,
+      "sha256": "efc4f06d10c6251d2eb9426518a6035dbd6ad5588e7910dfc41f4ab6bc5d6bde"
+    }
+  },
+  "observed_p7_identity": {
+    "role": "unchanged pre-OpenBench same-network strength candidate only",
+    "source_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "source_tree": "90b31388cdf8b2da61fb3d6bfaf1f5cfde1936b6",
+    "src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "executable": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-engine-capability-green-247/source/src/stockfish.exe",
+      "bytes": 103068074,
+      "sha256": "aef7a64760c9f4f23cb15b4402130dd6a51c0843a3f8cb00af76e90bb813004b"
+    },
+    "transcript": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-engine-capability-green-247/capability-handshake/positive.jsonl",
+      "bytes": 4651,
+      "sha256": "e233079759761eebcfc487a0ae2e0e3b15e7df7b62f90e6df299baed1b5853a9",
+      "startup_line": "Stockfish dev-20260823-nogit by the Stockfish developers (see AUTHORS file)",
+      "uci_id_name": "id name Stockfish dev-20260823-nogit",
+      "uci_id_author": "id author the Stockfish developers (see AUTHORS file)"
+    },
+    "stable_release_eligible": false,
+    "reason": "P7 is a frozen pre-OpenBench filter and the authenticated executable has a development Stockfish identity."
+  },
+  "prospective_stable_identity": {
+    "semantic_version": "1.0.0",
+    "tag": "v1.0.0",
+    "archive_version": "1.0.0",
+    "startup_line": "Crazyhouse-Stockfish 1.0.0 by the Crazyhouse-Stockfish developers (see AUTHORS file)",
+    "uci_id_name": "id name Crazyhouse-Stockfish 1.0.0",
+    "uci_id_author": "id author the Crazyhouse-Stockfish developers (see AUTHORS file)",
+    "source_authority": {
+      "path": "src/crazyhouse_version.h",
+      "major_constant": {
+        "name": "CrazyhouseVersionMajor",
+        "value": 1
+      },
+      "minor_constant": {
+        "name": "CrazyhouseVersionMinor",
+        "value": 0
+      },
+      "patch_constant": {
+        "name": "CrazyhouseVersionPatch",
+        "value": 0
+      },
+      "string_constant": {
+        "name": "CrazyhouseVersionString",
+        "value": "1.0.0"
+      },
+      "tracked_at_stable_commit": true,
+      "build_override_allowed": false
+    },
+    "development_identity": {
+      "name_prefix": "Crazyhouse-Stockfish dev-",
+      "git_export_suffix_allowed": "nogit",
+      "stable_asset_allowed": false
+    }
+  },
+  "candidate_exactness": {
+    "p7_contract": {
+      "path": "tests/crazyhouse/p7-local-strength-panel-v2.json",
+      "bytes": 15979,
+      "sha256": "c82f08981b09494aa09ccdc6ed8ce7ca56c26cd7b659a9fb0bcccb9ced46b44e",
+      "may_be_rewritten": false,
+      "stable_release_credit": false
+    },
+    "required_final_panel_phase": "P14",
+    "required_final_panel_binary_relation": "BYTE_IDENTICAL_TO_EVERY_PACKAGED_NATIVE_EXECUTABLE_OF_THE_SAME_TARGET",
+    "semantic_equivalence_substitution_allowed": false,
+    "filename_only_branding_allowed": false,
+    "post_panel_relink_allowed": false,
+    "post_panel_executable_change_effect": "INVALIDATE_FINAL_PANEL_AND_REPEAT_WITH_NEW_EXACT_BYTES",
+    "packaging_only_change_effect": "REPEAT_REPRODUCIBILITY_ASSEMBLY_AND_DOWNLOADED_BYTE_AUTHENTICATION"
+  },
+  "ancestry_requirements": {
+    "p7_candidate_is_ancestor_of_stable_commit": true,
+    "all_accepted_strength_winners_are_ancestors_of_stable_commit": true,
+    "stable_commit_is_ancestor_of_admitted_origin_main": true,
+    "annotated_tag_peels_directly_to_admitted_commit": true,
+    "tag_may_move": false
+  },
+  "artifact_requirements": {
+    "native_package_contract": "tests/crazyhouse/p15-release-bundle-contract-v1.json",
+    "both_native_packages_report_exact_target_uci_identity": true,
+    "package_executable_digest_matches_final_panel_by_target": true,
+    "source_archive_contains_exact_version_authority": true,
+    "manifest_tag_version_package_and_notes_agree": true,
+    "two_clean_exports_per_target": true,
+    "deterministic_bench_required": true,
+    "downloaded_assets_reauthenticated": true,
+    "authors_preserve_complete_upstream_attribution": true
+  },
+  "method_reference": {
+    "project": "Atomic-Stockfish",
+    "role": "method only; no value or result inherited",
+    "local_commit": "f8e9ea268317b1f85d6ae522e87d05e6e1e5f9cb",
+    "local_tree": "50fd7317de07f9f3866e598a6266770da2815d8e",
+    "files": [
+      {
+        "path": "src/atomic_version.h",
+        "bytes": 647,
+        "sha256": "b04121647bbf32d7473e8ac088d6af843ee26345f0dfa7480f3d2f9dabdbe32e"
+      },
+      {
+        "path": "src/misc.cpp",
+        "bytes": 16402,
+        "sha256": "3abc9c6a04d1adf2e1706b5caf89c1afc07984a6101bf179fb12a57677adcc3d"
+      },
+      {
+        "path": "docs/atomic/release-1.0-checklist.md",
+        "bytes": 9626,
+        "sha256": "3eba0d88c7bbebe6d45237e6fa37b2865b402f278058bee1e5ab6696f9de376b"
+      }
+    ],
+    "inherited_values": []
+  },
+  "qualification": {
+    "verifier_target": "tools/release/verify_crazyhouse_engine_identity.py",
+    "make_target": "crazyhouse_p15_release_engine_identity_test",
+    "current_target_state": "ABSENT_EXPECTED_RED",
+    "required_clean_exports": 2,
+    "required_profiles_per_export": [
+      "normal",
+      "python_optimized"
+    ],
+    "required_real_runtime_transcript": true,
+    "required_package_member_verification": true,
+    "required_negative_classes": [
+      "duplicate JSON key",
+      "missing version header",
+      "version integer/string disagreement",
+      "build-time override",
+      "development identity in stable asset",
+      "wrong product name",
+      "wrong author line",
+      "tag/version disagreement",
+      "P7 winner not ancestor",
+      "stable commit not admitted on origin/main",
+      "lightweight or nested tag",
+      "panel/package executable mismatch",
+      "post-panel executable change",
+      "missing upstream attribution"
+    ],
+    "tooling_pass_effect": "R4 identity tooling only; no strength, artifact, publication, G15 or monitoring credit"
+  },
+  "current_blockers": [
+    "P7 has not produced a valid result.",
+    "No final champion has been selected.",
+    "The stable version authority and verifier targets are intentionally absent.",
+    "No exact stable executable has passed the final P14 panel.",
+    "No public repository, origin/main admission, annotated tag or draft release is authenticated.",
+    "The owner has not been asked for or granted G15 stable-publication authorization."
+  ],
+  "gate_effect": {
+    "G7": "UNCHANGED_OPEN",
+    "G14": "UNCHANGED_OPEN",
+    "G15": "UNCHANGED_OPEN_EXPECTED_RED",
+    "G16": "UNCHANGED_OPEN",
+    "openbench_authorized": false,
+    "public_write_authorized": false,
+    "stable_publication_authorized": false
+  }
+}

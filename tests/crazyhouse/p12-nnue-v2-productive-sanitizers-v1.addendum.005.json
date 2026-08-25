@@ -1,0 +1,76 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-preregistration-addendum/v1",
+  "addendum": 5,
+  "created_utc": "2026-08-24T14:47:51.935Z",
+  "status": "PREREGISTERED_MSVC_ASAN_STACK_RESERVE_CORRECTION_BEFORE_LEASE_325",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Replace only the rejected lease and the MSVC ASan verifier PE stack reserve. Preserve the scientific hypothesis, sanitizer toolchains, source product, matrices, stopping rule, resources, asynchronous pipe protocol, unique translation-unit objects and claim boundaries.",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.004.json",
+    "commit": "c5e2fb08e28d7e40a8cb947a623be807b59d3914",
+    "bytes": 3170,
+    "sha256": "fb9d5a3e75f4f1a75176b12bd6bde9bf0962597945e013659741bbcf799cf557"
+  },
+  "rejected_lease_324": {
+    "status": "REJECTED_ENGINEERING_OR_ORCHESTRATION",
+    "incident": "CH-295",
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-end-324.json",
+      "bytes": 5551,
+      "sha256": "4bc718ebb969f71bd20590ca87dd9d2b88ba3fd655d29290dd68fa21dbba086f"
+    },
+    "causal_diagnostic": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-asan-stack-diagnostic-324.json",
+      "bytes": 3819,
+      "sha256": "2a7955d216fe0ce0346119f6c01f04b7817fd44036e5fef75fa624208f815e11"
+    },
+    "product_binaries_linked_and_asan_imported": true,
+    "first_positive_parity_completed": false,
+    "scientific_result_observed": false,
+    "gate_credit": false
+  },
+  "single_operational_change": {
+    "old_lease": 324,
+    "new_lease": 325,
+    "old_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-324",
+    "new_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-325",
+    "link_requirement": "Add /STACK:8388608 to the explicit MSVC ASan link response for every test executable.",
+    "runtime_admission": "Before any verifier starts, dumpbin /headers must report exactly 800000 size of stack reserve for control, scalar and incremental ASan executables."
+  },
+  "formal_source_admission": {
+    "effective_base_commit": "c5e2fb08e28d7e40a8cb947a623be807b59d3914",
+    "permitted_difference_from_effective_base": [
+      "docs/crazyhouse/incident-ledger.md",
+      "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.005.json"
+    ],
+    "exact_src_tree_required": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "clean_worktree_required": true
+  },
+  "preserved": {
+    "hypothesis": true,
+    "single_variable": true,
+    "frozen_inputs": true,
+    "toolchains": true,
+    "resource_contract": true,
+    "clean_export_contract": true,
+    "sanitizer_lanes": true,
+    "runtime_matrix": true,
+    "asynchronous_pipe_protocol": true,
+    "large_bidirectional_pipe_preflight": true,
+    "unique_translation_unit_object_plan": true,
+    "linker_warnings_are_errors": true,
+    "stopping_rule": true,
+    "pass_effect": true,
+    "boundaries": true
+  },
+  "boundaries": {
+    "sanitizer_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

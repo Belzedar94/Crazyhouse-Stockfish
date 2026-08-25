@@ -1,0 +1,218 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-training-admission-result/v1",
+  "created_utc": "2026-08-24T18:23:13.8902841Z",
+  "status": "PASS_FIXTURE_TRAINING_ADMISSION_FORMAL_REAL_DATA_PENDING",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "contracts": [
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.json",
+      "commit": "b7de13a4a2998f7e27f3cb8aba95e06880bf4e78",
+      "bytes": 7640,
+      "sha256": "389a3c5f374e909e68208175bc43ed9c10e612eaa7a39514a531d5740ba5daea"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.addendum.001.json",
+      "commit": "3f91a50689a3c1741eb0340221caa19acb90ab06",
+      "bytes": 3751,
+      "sha256": "91425c2a8bc748cf0e829380c7e12480f30b3a29f9b78303a2d5145600f0af70",
+      "note": "Hash-pinned clean-export expected-red result."
+    }
+  ],
+  "source": {
+    "implementation_commit": "ddf2d58beb0f22519a3ab0cf3b602f6af6295c4b",
+    "formal_source_commit": "ddf2d58beb0f22519a3ab0cf3b602f6af6295c4b",
+    "formal_source_tree": "6732bf50ca7b16554adb4956bdaa0c4b30f999f5",
+    "formal_src_tree": "36fa1995e984899db1b42fcce3e18c6b419fc49e",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true
+  },
+  "implementation": {
+    "loader": {
+      "path": "tools/nnue/crazyhouse_v2_training_admission.py",
+      "bytes": 73805,
+      "sha256": "759b6a42d84d26d3884c7e7de0fd2c0a526fb3e72d884ccafc23554492ed3b02"
+    },
+    "independent_verifier": {
+      "path": "tests/crazyhouse_v2_training_admission_verify.py",
+      "bytes": 56886,
+      "sha256": "d40d96a461ba24560bfa6da76a60a2b0ef24be6ca358993f2b9ce1e04dbb570f"
+    },
+    "makefile": {
+      "path": "src/Makefile",
+      "bytes": 60724,
+      "sha256": "be12eb7c011748f3cf4407e51aed9d5b1f7a612d5062b7f327ed943b8f825c56",
+      "target": "crazyhouse_v2_training_admission_test"
+    }
+  },
+  "rejected_formal_attempt": {
+    "lease": 334,
+    "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+    "classification": "FORMAL_HARNESS_FALSE_ASSUMPTION_MAKE_PARSE_METADATA",
+    "failure": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-training-admission-formal-334/failure.json",
+      "bytes": 8068,
+      "sha256": "e53cfe09646b096878f2953c20ab7e44ee2b1b8fb5f0b9f2af3308ee6688f7fd"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-training-admission-formal-t1-end-334.json",
+      "bytes": 681,
+      "sha256": "df11af7b7308fed1b5843484d54752e12806fe0752c8ec02670bcd2ce0661ad4"
+    },
+    "controller": {
+      "path": "../../../../control/p12-nnue-v2-training-admission-formal-334-controller.py",
+      "bytes": 33542,
+      "sha256": "554937bc39925b2b815f2a834db874d2ae0b5ed1a85dccf838a247d6b745e20f"
+    },
+    "target_passed_before_harness_postcheck": true,
+    "source_or_target_defect_observed": false,
+    "namespace_reused": false,
+    "incident": "CH-302"
+  },
+  "accepted_formal_lease": {
+    "lease": 335,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-training-admission-formal-335",
+    "start_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-training-admission-formal-t1-start-335.json",
+      "bytes": 2902,
+      "sha256": "dcbe1d754d0cb6703cb5ed0052f1a9266afdc0bbcdc6150b74e18ca706c429fe"
+    },
+    "pid_binding": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-training-admission-formal-t1-start-335.addendum.001.json",
+      "bytes": 829,
+      "sha256": "a86bce27472a4bb01c96b2228828d439b391520542b058e071b8ef5241afc49a"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-training-admission-formal-335/completion.json",
+      "bytes": 34458,
+      "sha256": "7ad1cc842d3a562385832ad90c342e865210e8cc2124ec06bf2b9fb3fcd90caa"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-training-admission-formal-t1-end-335.json",
+      "bytes": 716,
+      "sha256": "7e6a8da8f0663e079562abc083572f527d3bc0c6416d8f1c405a88cd56e99377"
+    },
+    "controller": {
+      "path": "../../../../control/p12-nnue-v2-training-admission-formal-335-controller.py",
+      "bytes": 5380,
+      "sha256": "1121bdfac47a6fec78c0ae29e4fe5511ab2a6b3b0f8179ec067d9a8138b3167c"
+    },
+    "controller_exit": 0
+  },
+  "clean_exports": {
+    "count": 2,
+    "archive_bytes_each": 6942720,
+    "archive_sha256": "927f4881749613e9904c6b954dfe38ef5764910617e8287e90065a0b5b99153b",
+    "archives_byte_equal": true,
+    "independent_export_manifests_equal": true
+  },
+  "formal_fixture_matrix": {
+    "profiles": 4,
+    "profile_names": [
+      "export-a/python-normal",
+      "export-a/python-optimized",
+      "export-b/python-normal",
+      "export-b/python-optimized"
+    ],
+    "records_each": 44,
+    "trajectories_each": 12,
+    "negative_cases_each": 40,
+    "identity_intersection_selftest_cases_each": 5,
+    "normalized_result_bytes_each": 1729,
+    "normalized_result_sha256": "ac5daac718b6660a1e836fba258ab442994cfe8431b3e69b63e5fe568586af1c",
+    "normalized_results_byte_equal": true,
+    "all_required_actual_intersections_zero": true,
+    "transactional_failure_cleanup": true,
+    "variant_and_label_coverage_complete": true,
+    "fixture_mode_explicit": true,
+    "fixture_production_training_admissible": false
+  },
+  "semantic_scope": {
+    "canonical_input": "authenticated physical Crazyhouse records",
+    "derived_rows": "disposable evaluator-specific projection",
+    "labels": "raw transport only; no blend, loss or mate-score mapping",
+    "partition_unit": "complete trajectory",
+    "audited_cross_role_identities": [
+      "raw record",
+      "physical position",
+      "V2 model input",
+      "game",
+      "trajectory"
+    ],
+    "required_variant_state": [
+      "pockets",
+      "drops",
+      "promoted provenance",
+      "capture of promoted unit",
+      "castling rights",
+      "effective en-passant",
+      "repetition history",
+      "checkmate",
+      "draw terminal"
+    ]
+  },
+  "authenticated_make_parse_metadata": {
+    "src/.build_sha.txt": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "src/.build_date.txt": {
+      "bytes": 9,
+      "sha256": "5dc23b28b74f601044af40f7cd484f96f6580b104e464816261308122065d0ef"
+    },
+    "src/.build_diffindex.txt": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "allowlist_exact": true,
+    "tracked_source_mutations": 0
+  },
+  "execution_audit": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_bytes": 27246104,
+    "namespace_ceiling_bytes": 536870912,
+    "resources_released": true,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_supervisor_unchanged": true
+  },
+  "gate_effect": {
+    "fixture_loader_and_independent_verifier": "PASS",
+    "raw_label_transport": "PASS_FIXTURE",
+    "physical_to_v2_projection": "PASS_FIXTURE",
+    "complete_trajectory_partition": "PASS_FIXTURE",
+    "exact_split_decontamination": "PASS_FIXTURE",
+    "real_dataset": "NOT_ADMITTED",
+    "production_training": "NOT_AUTHORIZED",
+    "g12": "OPEN",
+    "remaining": [
+      "authorized real production chunks",
+      "exact aggregate chunk-set receipt",
+      "semantic engine replay",
+      "record and trajectory split audit on the real corpus",
+      "separately preregistered deterministic production training"
+    ]
+  },
+  "boundaries": {
+    "fixture_loader_qualified": true,
+    "real_dataset_admitted": false,
+    "training_admissible": false,
+    "production_training_authorized": false,
+    "model_selected": false,
+    "timing_evidence": false,
+    "strength_claimed": false,
+    "fairy_stockfish_beaten": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

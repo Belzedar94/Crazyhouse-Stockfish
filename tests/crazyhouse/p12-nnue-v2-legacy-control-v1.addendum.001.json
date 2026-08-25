@@ -1,0 +1,77 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-legacy-control-preregistration-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-24T16:03:28.6176408Z",
+  "status": "PREREGISTERED_TOOLCHAIN_CORRECTION_BEFORE_RETRY",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "base_contract": {
+    "path": "tests/crazyhouse/p12-nnue-v2-legacy-control-v1.json",
+    "commit": "a9d91853684cc7afc27309259a64f98d6d92ec6a",
+    "bytes": 10295,
+    "sha256": "b66bf705ab28b78479e6606c6b203acba337275ba687ac55a5c80f9d3569a19f"
+  },
+  "rejected_observation": {
+    "lease": 328,
+    "status": "REJECTED_ENGINEERING_OR_ORCHESTRATION",
+    "incident": "CH-298",
+    "repeats_prior_incident": "CH-267",
+    "start_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-expected-red-t1-start-328.json",
+      "bytes": 2806,
+      "sha256": "d268e07d1c8fff10e460ac70ecb16a112866c6df00baccb1b79010d303fc8bbf"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-expected-red-t1-end-328.json",
+      "bytes": 3497,
+      "sha256": "a4c5842277d512554ddfa8a9baa7a3cf9d0a109e98b5f046de3a8169e29de521"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-legacy-control-expected-red-328/completion.json",
+      "bytes": 3775,
+      "sha256": "5b400585cd3acdec4186c9478a1eef72ed0f3f13ac98d5f583e7d0c07e079491"
+    },
+    "make_exit_code": 2,
+    "missing_target_fragment_observed": true,
+    "compiler_or_linker_command_hits": 0,
+    "unexpected_environment_errors": 5,
+    "formal_expected_red_credit": false
+  },
+  "demonstrated_cause": "The direct PowerShell launch pinned Make by absolute path but did not prepend C:/msys64/usr/bin to the exact child PATH. Make therefore could not resolve uname, cut or grep and emitted a mixed-cause red transcript. This repeats the already recorded CH-267 condition and demonstrates that prose-only prevention was not enforced in the new launcher.",
+  "corrected_toolchain_admission": {
+    "exact_child_path_prefix": "C:/msys64/usr/bin",
+    "utilities": [
+      {"name": "make", "path": "C:/msys64/usr/bin/make.exe", "bytes": 229856, "sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22"},
+      {"name": "sh", "path": "C:/msys64/usr/bin/sh.exe", "bytes": 2333443, "sha256": "83d4722c7c0d4de4ea07d8ad40bf90285deb1dc018c689be48909270965c6cbc"},
+      {"name": "uname", "path": "C:/msys64/usr/bin/uname.exe", "bytes": 35876, "sha256": "1cba275ff8e0c81f48898f017758c558ee5951cb0448c36628580beffdf4ef89"},
+      {"name": "cut", "path": "C:/msys64/usr/bin/cut.exe", "bytes": 45102, "sha256": "63fcfb76c80d57538312a9637429d5a4b99ac83e8b00d95684609b4c045471e9"},
+      {"name": "grep", "path": "C:/msys64/usr/bin/grep.exe", "bytes": 213710, "sha256": "497202418334f8a48d9f34cd2e1b2c03c4f957e02304b613e10931c0457e8d4a"}
+    ],
+    "pre_namespace_checks": [
+      "each exact utility byte count and SHA-256 matches",
+      "each utility resolves through the exact child PATH to the frozen absolute path",
+      "uname, cut and grep functional probes exit zero with empty stderr",
+      "target namespace does not exist",
+      "source worktree and frozen contract identities match"
+    ],
+    "retry_lease": 329,
+    "retry_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-legacy-control-expected-red-329",
+    "accepted_stderr": "the single Make missing-target diagnostic only",
+    "accepted_stdout": "Make entering and leaving directory lines only",
+    "compiler_or_linker_command_hits": 0
+  },
+  "stopping_rule": "Lease 328 remains rejected with zero gate credit. Lease 329 may create its namespace only after every corrected toolchain admission check passes. Any additional stderr cause, utility drift, child PATH mismatch, compiler command, target presence or source drift rejects the new lease without reuse.",
+  "boundaries": {
+    "expected_red_proven": false,
+    "legacy_control_proven": false,
+    "training_admissible": false,
+    "model_selection_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

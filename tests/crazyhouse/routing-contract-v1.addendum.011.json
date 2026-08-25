@@ -1,0 +1,79 @@
+{
+  "schema": "crazyhouse-worker-search-routing-addendum/v1",
+  "addendum": 11,
+  "created_utc": "2026-08-23T04:44:36.8780549Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct the current-source Worker provenance after restoring the immutable failed-replacement routing semantics: an evaluator failure blocks readiness and search without fallback, while position parsing and perft remain rule-only. The exact successful default-scalar routing protocol remains unchanged.",
+  "pins": {
+    "routing_addendum_010": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.010.json",
+      "bytes": 3636,
+      "sha256": "3837b517ebd9f9050230943f1654c04a91d52efcd0253aec863c6d3fa38d1c45"
+    },
+    "worker_search_addendum_008": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.008.json",
+      "bytes": 5420,
+      "sha256": "6a79595ee499257175f129cda4bbf61c9cbc690ba840e9026eacc0e9c386fe85"
+    },
+    "rule_only_expected_red_record": {
+      "path": "../../../receipts/private/p5-worker-simd-rule-only-failed-backend-expected-red-record-148.json",
+      "bytes": 4140,
+      "sha256": "794c8c2e90a2c93b1021b9bfe9e4aafd43e2eeec9c98e4c2aaf4a03bb326a1fa"
+    }
+  },
+  "preserved_routing_control": {
+    "predecessor_addendum": 10,
+    "rewritten": false,
+    "target_arch": "x86-64-avx2",
+    "expected_protocol_sha256": "df375512dda60f4cab1545287197c1b407a3d4f7c0e9f4415e0f36fcb3905d35",
+    "required_route_token": "evaluator=incremental-scalar",
+    "successful_crazyhouse_route_commits": 5,
+    "no_active_route_position_error": "position_requires_committed_route",
+    "failed_replacement_rule_only_perft_nodes": 20,
+    "failed_replacement_search_error": "stored activeError",
+    "routing_expectation_changed": false
+  },
+  "worker_provenance_correction": {
+    "superseded_positive_pin": {
+      "addendum": 7,
+      "status_on_current_source": "FAIL_UCI_SOURCE_PIN_MISMATCH",
+      "search_started": false
+    },
+    "current_positive_pin": {
+      "addendum": 8,
+      "source_descendant_commit": "2e64efd6c32abaa6740494d48d80c9c85534afa7",
+      "source_descendant_tree": "239371fd309e04ffa2aabd7d79cf010e15438e3d",
+      "changed_source_pin_path": "src/uci.cpp",
+      "target_arch": "x86-64-avx2",
+      "build_selector_supplied": false,
+      "required_route_token": "evaluator=incremental-scalar",
+      "forbidden_route_tokens": ["evaluator=incremental-simd", "simd_backend="],
+      "required_worker_summary": "PASS crazyhouse_worker_search cases=2 runs=4 backend=legacy-v1 evaluator=incremental-scalar route_telemetry=PASS worker_binding=PASS scalar_default_unchanged=true strength_claim=false"
+    }
+  },
+  "formal_replay": {
+    "routing_addendum": 11,
+    "worker_addendum": 8,
+    "same_clean_export_required": true,
+    "backend_make_variable_omitted": true,
+    "corrected_unavailable_simd_negative_required": true,
+    "failed_replacement_rule_only_perft_required": true,
+    "failed_route_search_error_required": true,
+    "no_active_route_refusal_preserved": true,
+    "exact_standard_control_required": true,
+    "zero_stderr_required": true,
+    "zero_timeout_required": true,
+    "zero_residual_processes_required": true
+  },
+  "expected_red": {
+    "record": 148,
+    "required_failure": "rule-only position was refused after unavailable SIMD",
+    "engine_started": true,
+    "fallback_observed": false
+  },
+  "stopping_rule": "Use addendum 011 only with current-source Worker addendum 008 and the unchanged routing protocol inherited through addendum 010. Require both contracts on the same fresh x86-64-avx2 default-scalar export, require the corrected general-64 negative to admit exactly rule-only perft while refusing search with legacy_simd_unavailable, require the original no-active-route refusal and the failed-replacement perft scenario, then require exact official standard control. Any source-pin drift, routing digest drift, evaluator-backed search admission, selector leak, fallback, stderr, crash or timeout rejects the slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

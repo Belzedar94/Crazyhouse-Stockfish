@@ -1,0 +1,91 @@
+{
+  "schema": "crazyhouse-referee-missing-capability-expected-red/v1",
+  "created_utc": "2026-08-22T14:59:00.0000000Z",
+  "evidence_class": "E1_ENGINEERING",
+  "profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "source_boundary": {
+    "product_parent_commit": "6790cd24ec54e044f8c93caf8576548098e055ed",
+    "referee": {
+      "repository": "https://github.com/AndyGrant/cutechess.git",
+      "branch": "crazyhouse/profile-conformance",
+      "commit": "aa28b85724fb477d24438579ee9d17a882b086fc",
+      "tree": "5b3c956f0b2db6f3457524d9cedd069f890e4e01",
+      "status_lines": 0,
+      "selected_for_official_matches": false
+    },
+    "authenticated_cli": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-integrated-nongrid-194/cutechess-cli.exe",
+      "bytes": 55390536,
+      "sha256": "2b4906c2c031d70697352571b0085564b5f0873302e742afea67b1d0bdc1995e",
+      "build_receipt": "../../../receipts/resources/p4-referee-integrated-nongrid-t1-end-194.json",
+      "build_receipt_bytes": 6429,
+      "build_receipt_sha256": "34d52bd8039ca3cf84ab6b581db25695e31180ca5e8a890e52bb6f94bbfea0ec"
+    }
+  },
+  "historical_attempt": {
+    "fixture_path": "D:/Crazyhouse-Stockfish/control/p4-referee-match-capability-red-167-fixture.json",
+    "fixture_bytes": 2399,
+    "fixture_sha256": "847060abe0367cbf60f0bfc280d976f302d8e44a485c4e3bf9acc74ad4dd4419",
+    "actor_path": "D:/Crazyhouse-Stockfish/control/p4-referee-match-capability-red-167-actor.py",
+    "actor_bytes": 1957,
+    "actor_sha256": "ef22757c3c5e0f8d238671cb66d3449813d081b7ba53a19d9d688a766ff97e8e",
+    "receipt": "../../../receipts/resources/p4-referee-match-capability-red-t1-end-167.json",
+    "receipt_bytes": 7583,
+    "receipt_sha256": "e0c2c2df1bc415e4f88e8e9d041a7e0b7f350d0284dc1060b0fe49209cef0495",
+    "result": "REJECTED_PRE_CAPABILITY_ACTOR_STARTUP_TIMEOUT_AND_REFEREE_ASSERT",
+    "capability_evidence": false
+  },
+  "actor": {
+    "path": "tests/crazyhouse/referee-missing-capability-actor.py",
+    "expected_bytes": 1957,
+    "expected_sha256": "ef22757c3c5e0f8d238671cb66d3449813d081b7ba53a19d9d688a766ff97e8e",
+    "byte_identical_to_historical_actor": true,
+    "role": "deterministic rule-free UCI process",
+    "actors": 2,
+    "advertises": [
+      "option name UCI_Variant type combo default chess var chess var crazyhouse"
+    ],
+    "deliberately_omits": [
+      "CrazyhouseProfile",
+      "CrazyhouseCapabilityNonce"
+    ]
+  },
+  "case": {
+    "id": "CH-G4-REF-MATCH-MISSING-PROFILE-CAPABILITY-REPLAY",
+    "variant": "crazyhouse",
+    "games": 1,
+    "rounds": 1,
+    "concurrency": 1,
+    "time_control": "60+0",
+    "time_margin_ms": 1000,
+    "colors": "fixed; missing-white versus missing-black",
+    "actor_first_move": "0000",
+    "actor_first_move_role": "terminate the diagnostic after the forbidden capability boundary; not a Crazyhouse rule expectation",
+    "whole_process_timeout_ms": 300000
+  },
+  "expected_red": {
+    "cli_exit_code": 0,
+    "timed_out": false,
+    "both_actors_complete_uci_discovery": true,
+    "both_actors_advertise_crazyhouse": true,
+    "both_actors_omit_profile_and_nonce": true,
+    "both_actors_receive_variant_crazyhouse": true,
+    "both_actors_receive_ucinewgame": true,
+    "at_least_one_actor_receives_position_and_go": true,
+    "started_game_marker": true,
+    "finished_game_marker": true,
+    "pgn_variant_exact": "crazyhouse",
+    "pgn_result": "0-1",
+    "pgn_termination": "illegal move"
+  },
+  "causal_interpretation": "PASS_EXPECTED_RED proves only that the current authenticated referee fails to enforce the required profile/capability barrier and crosses into game setup. It is a required negative baseline, not a green capability result.",
+  "pass_rule": "Every expected-red predicate must be observed from both fresh actor logs, raw CLI streams and the fresh PGN. A missing actor, timeout, assertion, absent artifact or predicate mismatch rejects the observation. Do not retry or change referee source within the lease.",
+  "next_boundary": "After PASS_EXPECTED_RED, freeze a negative and positive capability-ingress matrix before changing referee behavior.",
+  "optional_stopping": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -102,11 +102,12 @@ Option::Option(OnChange f) :
     type("button"),
     on_change(std::move(f)) {}
 
-Option::Option(int v, int minv, int maxv, OnChange f) :
+Option::Option(int v, int minv, int maxv, OnChange f, OnInvalid invalid) :
     type("spin"),
     min(minv),
     max(maxv),
-    on_change(std::move(f)) {
+    on_change(std::move(f)),
+    on_invalid(std::move(invalid)) {
     defaultValue = currentValue = std::to_string(v);
 }
 
@@ -152,10 +153,20 @@ Option& Option::operator=(const std::string& v) {
 
     assert(!type.empty());
 
+    auto reject = [&]() -> Option& {
+        if (on_invalid)
+        {
+            const auto ret = on_invalid(v);
+            if (ret && parent != nullptr && parent->info != nullptr)
+                parent->info(ret);
+        }
+        return *this;
+    };
+
     if ((type != "button" && type != "string" && v.empty())
         || (type == "check" && v != "true" && v != "false")
         || (type == "spin" && !value_in_range(v, min, max)))
-        return *this;
+        return reject();
 
     if (type == "combo")
     {
@@ -163,9 +174,10 @@ Option& Option::operator=(const std::string& v) {
         std::string        token;
         std::istringstream ss(defaultValue);
         while (ss >> token)
-            comboMap.add(token, Option());
+            if (token != "var" && !comboMap.count(token))
+                comboMap.add(token, Option());
         if (!comboMap.count(v) || v == "var")
-            return *this;
+            return reject();
     }
 
     if (type == "string")

@@ -1,0 +1,139 @@
+{
+  "schema": "crazyhouse-legacy-v1-simd-parity-contract/v1",
+  "contract_id": "CRAZYHOUSE_LEGACY_V1_SIMD_PARITY_2026_08_23",
+  "created_utc": "2026-08-23T01:38:35.2451649Z",
+  "immutable": true,
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P5",
+  "gate": "G5_SIMD_SCALAR_PARITY",
+  "evidence_class": "E1_ENGINEERING",
+  "baseline": {
+    "commit": "0649db695d63b0c4a1612a795be8745953b3220f",
+    "tree": "fe41c1743d97e81c567654a3d0358e6bf0a300cd",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false,
+    "production_evaluator": "incremental-scalar"
+  },
+  "legacy_network": {
+    "path": "C:/Users/djime/Documents/Chess_variants/Match script/crazyhouse_run15rl_e190_l03.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "public_alias_candidate": "Crazyhouse_v1.nnue",
+    "alias_may_differ": false
+  },
+  "frozen_corpus": {
+    "path": "tests/crazyhouse/legacy-incremental-cases-v1.json",
+    "bytes": 6814,
+    "sha256": "ba18990faaadcb4fe92b87f8396441f249cf31c1cc6bc98d8912af0a04aa841b",
+    "addendum_path": "tests/crazyhouse/legacy-incremental-cases-v1.addendum.001.json",
+    "addendum_bytes": 3761,
+    "addendum_sha256": "784fffe5ba8f0121a567bb8de8bba8fd5f6a31ea6fd26dc0c8f9210b17b527bf",
+    "scalar_oracle_path": "tests/crazyhouse_legacy_incremental.cpp",
+    "scalar_oracle_bytes": 12252,
+    "scalar_oracle_sha256": "b75d723cb9bf097883d648a85a2e0b97a47bf2691fc8ac143fcdccbd847e81bf",
+    "cases": 20,
+    "transitions_per_backend": 27,
+    "undos_per_backend": 27,
+    "null_cases_per_backend": 1,
+    "boundary_rejections_per_backend": 3,
+    "required_trace_digest": "ccc566b7c58a917a"
+  },
+  "proposed_api": {
+    "enum": "LegacyCrazyhouseNetworkV1::ExecutionBackend",
+    "values": ["Scalar", "Simd"],
+    "constructor_default": "Scalar",
+    "identity_method": "LegacyCrazyhouseNetworkV1::compiled_simd_backend",
+    "identity_fail_closed_value": "none",
+    "required_test_lanes": [
+      {
+        "arch": "x86-64",
+        "expected_backend": "sse2"
+      },
+      {
+        "arch": "x86-64-avx2",
+        "expected_backend": "avx2"
+      }
+    ]
+  },
+  "required_exact_equalities": [
+    "scalar_full == scalar_incremental after every covered state",
+    "simd_full == simd_incremental after every covered state",
+    "scalar all-bucket raw outputs == simd all-bucket raw outputs after every covered state",
+    "scalar legacy adapter fields == simd legacy adapter fields after every covered state",
+    "scalar trace digest == simd trace digest == ccc566b7c58a917a",
+    "debug == release within each architecture",
+    "sse2 == avx2 normalized protocol"
+  ],
+  "arithmetic": {
+    "transformer": "modulo-2^16 add/sub followed by signed-i16 clamp to [0,127]",
+    "psqt": "modulo-2^32 add/sub and signed-i32 difference divided by 2",
+    "dense": "exact signed-int8 by unsigned-u8 products with int32 results",
+    "canonical_parser_tensors_retained": true,
+    "optimized_runtime_layout_serialized": false
+  },
+  "fixture_first_expected_red": {
+    "required": true,
+    "expected_stage": "compile",
+    "expected_missing_symbols": [
+      "LegacyCrazyhouseNetworkV1::ExecutionBackend",
+      "LegacyCrazyhouseNetworkV1::compiled_simd_backend"
+    ],
+    "source_change_before_red_observation_allowed": false
+  },
+  "post_implementation_controls": {
+    "fresh_exports_per_architecture": 2,
+    "debug_and_release": true,
+    "warnings_as_errors": true,
+    "legacy_network_hash_before_after": true,
+    "source_clean_after": true,
+    "worker_routing_replay_required_before_dispatch": true,
+    "exact_standard_control_required_before_dispatch": true,
+    "production_route_change_in_this_gate": false
+  },
+  "pinned_official_implementation_references": [
+    {
+      "path": "src/nnue/layers/affine_transform.h",
+      "bytes": 16937,
+      "sha256": "b0a30ba12d1f11e8fddab66d8592c42ac3ca56233d0117ccf3bb9a9c27fefda2"
+    },
+    {
+      "path": "src/nnue/simd.h",
+      "bytes": 18476,
+      "sha256": "3581a018aa6bafa18e130b7ca4c65c27bd59abb987a580ae96c0815e31e2da14"
+    }
+  ],
+  "method_references_only": [
+    {
+      "project": "Horde-Stockfish",
+      "commit": "83521c3b9ff2c9e195b8fe75c3b8ec4917bd0e02",
+      "path": "src/nnue/horde_legacy_network.cpp",
+      "bytes": 18762,
+      "sha256": "586dd0a81f9665d79fb34d6e7fc6ba2586e55ece0cd8e413669fbcf71c2811d3",
+      "inherited_results": false
+    },
+    {
+      "project": "Atomic-Stockfish",
+      "commit": "13a1cf845c51eee3507ed6baa080895014de9e8b",
+      "path": ".github/workflows/avx2_compilers.yml",
+      "bytes": 3692,
+      "sha256": "32f23b2e4a873a69ced5daee3598d8db70d7751fd1061f81b462cf55f7df0e0d",
+      "inherited_results": false
+    }
+  ],
+  "evidence_separation": {
+    "engineering_correctness": true,
+    "timing": false,
+    "elo": false,
+    "model_selection": false,
+    "openbench": false,
+    "release": false,
+    "monitoring": false
+  },
+  "stop_conditions": [
+    "any scalar versus SIMD bit mismatch",
+    "any backend identity mismatch or silent scalar fallback",
+    "any optimized-layout load failure that retains an earlier backend",
+    "any corpus, network, source or toolchain identity mismatch",
+    "any unexpected timeout, crash, sanitizer report or residual owned process"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "crazyhouse-repetition-terminal-fixture/v1",
+  "profile": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "authority": {
+    "source": "retired/fairy-stockfish-baseline-no-go:tests/crazyhouse/reference-cases.json",
+    "blob": "69ff656153aa7bb1847eca364ec14047267a6fab",
+    "role": "portable frozen cross-reference corpus; no donor engine source is admitted"
+  },
+  "identity": [
+    "board pieces and colors",
+    "side to move",
+    "castling rights",
+    "legally relevant en-passant",
+    "pockets by owner, type and exact count",
+    "promoted-origin markers"
+  ],
+  "history_horizon": "pliesFromNull; never rule50 for Crazyhouse",
+  "automatic_repetition_occurrences": 5,
+  "optional_match_claim_proxy_occurrences": 3,
+  "disabled": [
+    "50-move result",
+    "75-move result",
+    "insufficient-material result",
+    "orthodox upcoming-repetition cuckoo shortcut",
+    "Syzygy root or interior probes"
+  ],
+  "terminal_precedence": [
+    "checkmate",
+    "future profile-specific win",
+    "stalemate",
+    "fivefold repetition",
+    "optional threefold immediate-claim proxy"
+  ],
+  "cases": [
+    {
+      "id": "CH-TERM-MATE",
+      "fen": "k7/1Q6/2K5/8/8/8/8/8[] b - - 0 1",
+      "expected": "checkmate",
+      "winner": "white"
+    },
+    {
+      "id": "CH-TERM-STALEMATE",
+      "fen": "k7/2Q5/2K5/8/8/8/8/8[] b - - 0 1",
+      "expected": "stalemate"
+    },
+    {
+      "id": "CH-TERM-POCKET-PREVENTS-STALEMATE",
+      "fen": "k7/2Q5/2K5/8/8/8/8/8[n] b - - 0 1",
+      "expected": "ongoing",
+      "required_move": "N@a1"
+    },
+    {
+      "id": "CH-TERM-NO-50-NO-INSUFFICIENT",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 100 1",
+      "expected": "ongoing"
+    },
+    {
+      "id": "CH-REP-THREEFOLD-CLAIM-ONLY",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "cycle": ["a1a2", "h8h7", "a2a1", "h7h8"],
+      "cycles": 2,
+      "occurrences": 3,
+      "automatic": "ongoing",
+      "claim_proxy": "threefold_repetition_claim"
+    },
+    {
+      "id": "CH-REP-FIVEFOLD-AUTOMATIC",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "cycle": ["a1a2", "h8h7", "a2a1", "h7h8"],
+      "cycles": 4,
+      "occurrences": 5,
+      "automatic": "fivefold_repetition"
+    },
+    {
+      "id": "CH-REP-CASTLING-RIGHTS-DISTINCT",
+      "fen": "r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1",
+      "moves": ["e1f1", "e8f8", "f1e1", "f8e8", "e1f1", "e8f8", "f1e1", "f8e8"],
+      "occurrences": 2,
+      "expected": "ongoing"
+    }
+  ]
+}

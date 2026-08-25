@@ -1,0 +1,116 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-clean-export-diagnostic-result/v1",
+  "created_utc": "2026-08-24T23:40:30.3450568Z",
+  "status": "PASS_CLEAN_EXPORT_FIXTURE_AUTHORITY_DIAGNOSTIC",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.005.json",
+    "bytes": 4411,
+    "sha256": "2e3a9234802e9fac27ee7c39fe2d6012512aeaf003ef7ed711d27bae9f6bf20d"
+  },
+  "lease": 353,
+  "source": {
+    "commit": "8dfc02702660295ecf7f4cb73279b6c032605754",
+    "tree": "a0e71c264c1f67490c0c51d14c5046d4dca95f16",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "p7_ancestor": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 575
+  },
+  "fixture_git_authority": {
+    "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/.worktrees/crazyhouse-release-foundation-v1",
+    "head": "8dfc02702660295ecf7f4cb73279b6c032605754",
+    "official_to_p7_ancestry": true,
+    "p7_to_head_ancestry": true,
+    "network_fallback": false
+  },
+  "profile": {
+    "name": "python-normal",
+    "elapsed_ms": 339797,
+    "returncode": 0,
+    "timed_out": false,
+    "stdout_bytes": 226,
+    "stdout_sha256": "67255bf35139277cdd30b2a5cc231cb4664970c4eef76d93bb60b4ecaf8f8488",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "summary": "PASS_RELEASE_ENGINE_IDENTITY_FIXTURES positive=3 negative=25 proposed=true tagged=true public_mutation=false",
+    "normalized_bytes": 109,
+    "normalized_sha256": "ca8a3e3d882330b12430251236c11e1fc6357dbea1bbb1abce4b8eae1c899c0f",
+    "positive_cases": 3,
+    "negative_cases": 25,
+    "scratch_entries_after": 0
+  },
+  "source_archive": {
+    "bytes": 7546880,
+    "sha256": "66a02809cef881542c430f21c855b582abd9d9df9d54adf75fd8684d09590649"
+  },
+  "generated_paths": [
+    "src/.build_date.txt",
+    "src/.build_diffindex.txt",
+    "src/.build_sha.txt"
+  ],
+  "compiler_linker_engine_or_bytecode_artifacts": 0,
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-release-engine-identity-clean-export-diagnostic-353/completion.json",
+    "bytes": 5977,
+    "sha256": "f429b3dab2ec7e6e49848bdfe76b00661b2de61c1ed2e183e97c08ea8f90ffe1"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-release-engine-identity-clean-export-diagnostic-t1-end-353.json",
+    "bytes": 4279,
+    "sha256": "7130f801dbe73ba11ff73c41a012202c6c4e33d51cfddbc999aa4e25677d3fc8"
+  },
+  "independent_verification": {
+    "status": "PASS_INDEPENDENT_CLEAN_EXPORT_DIAGNOSTIC_VERIFICATION",
+    "path": "receipts/verification/p15-release-engine-identity-clean-export-diagnostic-353.json",
+    "bytes": 1241,
+    "sha256": "fbd7caa453e87f998db37ad4b42ede980d3bb6343b8b4e30b73fe9843e2cd456",
+    "duplicate_key_safe": true,
+    "raw_streams_rehashed": true,
+    "export_inventory_recomputed": true,
+    "ancestry_recomputed": true,
+    "process_and_p7_restoration_rechecked": true
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 585,
+    "namespace_bytes": 14639409,
+    "namespace_ceiling_bytes": 268435456,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_stage": "WAITING_HOST_TIMING_CLEAN",
+    "p7_foreign_count": 3,
+    "p7_crazyhouse_count": 0
+  },
+  "incident_closed": "CH-316",
+  "effect": "Closes the clean-export Git-authority defect and permits a separately preregistered formal two-export/four-profile replay. It grants no formal-tooling, runtime, package, strength, OpenBench, draft, tag, G15, G16 or release credit.",
+  "boundaries": {
+    "diagnostic_executed": true,
+    "ch316_closed": true,
+    "formal_replay_permitted": true,
+    "synthetic_identity_tooling_qualified": false,
+    "stable_runtime_identity_authenticated": false,
+    "full_engine_builds_executed": false,
+    "final_p14_panel_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

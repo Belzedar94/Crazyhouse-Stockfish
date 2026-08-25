@@ -1,0 +1,59 @@
+{
+  "schema": "crazyhouse-p11-selfplay-formal-g0-result/v1",
+  "recorded_utc": "2026-08-24T06:11:20Z",
+  "status": "REJECTED_LOCAL_PRECONDITION_DIAGNOSTIC",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "lease": 291,
+  "source_archive": {
+    "commit": "697a257f54333aba977e8b92a9ae305e16c7472a",
+    "tree": "ef1c326134596aee839487490199a45b607b1c02",
+    "src_tree": "834827c801093b49bc1616a866757de5a994a06a",
+    "archive_started": false
+  },
+  "controller": {
+    "bytes": 5623,
+    "sha256": "a7f6f27e4056aabe1ca7a39adb63d884b33a3ce16c420826e97d49038d58599d",
+    "template_bytes": 32130,
+    "template_sha256": "f68390e418839f964314b1ce227104532d6a2505fb5265afa78d01e151e6668f",
+    "compose_only_status": "PASS_COMPOSE_ONLY",
+    "composed_bytes": 32616,
+    "composed_sha256": "6717fa788fbdee53c7e659cd67df0acc5f21d4652e6da4ac682ab1f595a20e60"
+  },
+  "observation": {
+    "completed_child": "git-status-admission",
+    "child_exit_code": 0,
+    "child_residual": false,
+    "failure": "The variable '$script:Steps' cannot be retrieved because it has not been set.",
+    "builds_started": 0,
+    "harness_started": false,
+    "owned_processes_at_close": 0,
+    "foreign_process_mutation": false,
+    "network_calls": false,
+    "openbench_actions": false
+  },
+  "root_cause": {
+    "incident": "CH-261",
+    "cause": "The dynamic ScriptBlock and wrapper file do not share the same local/script scope relationship as direct execution of the immutable template.",
+    "repair": "Bind initialization, helper append and completion serialization to one lease-specific script-scope variable in a new controller."
+  },
+  "receipts": {
+    "handoff_start_bytes": 4201,
+    "handoff_start_sha256": "6fbf037dce4383408fedda161bea698d31aa221de8e7f2a6c19a61afbc6b2738",
+    "completion_bytes": 2888,
+    "completion_sha256": "d6ef064bf00847b04e67dbd16af9152dbec81f381d6a3d6dfc0370e0b4d3a81c",
+    "handoff_end_bytes": 1121,
+    "handoff_end_sha256": "c872df090e6779b6b54df46d74bff8b8daa0c313d51ca147483f4739d82b36d6"
+  },
+  "claim_boundary": {
+    "gate_credit": false,
+    "training_admissible": false,
+    "official_openbench_evidence": false,
+    "strength_evidence": false,
+    "model_evidence": false,
+    "release_evidence": false
+  },
+  "next_safe_action": "Freeze addendum 007 and execute a compose-only-validated lease-292 controller in a fresh namespace with a single explicit step-collection scope."
+}

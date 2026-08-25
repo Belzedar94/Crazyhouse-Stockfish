@@ -1,0 +1,154 @@
+{
+  "schema": "crazyhouse-g4-referee-current-match-path-map-addendum/v1",
+  "addendum": 4,
+  "created_utc": "2026-08-22T14:57:00.0000000Z",
+  "evidence_class": "E1_ENGINEERING",
+  "reason": "The pre-game null-side failure boundary, legacy Crazyhouse chessboard-fixture migration and integrated non-Grid regression are complete. This addendum preserves rejected harness and fixture-contract attempts, pins their corrections, and advances only to the still-unobserved real-process missing-capability expected red.",
+  "pins": {
+    "addendum_003": {
+      "path": "tests/crazyhouse/g4-referee-match-path-current-v1.addendum.003.json",
+      "bytes": 6545,
+      "sha256": "a06a80f03c40f37534b3ba5a204ab0ed64113f0afa88628d434a3a0e65d73d6b",
+      "git_blob": "15b9dafd4131f14bdf260877781776aeecc8f7c2",
+      "commit": "72916052510fd4f84e0073339b9d7e52ff7777f8"
+    },
+    "pregame_rejected_harness": {
+      "path": "../../../receipts/resources/p4-referee-pregame-red-t1-end-186.json",
+      "bytes": 5339,
+      "sha256": "aa237d7615b93de7a93f4d40351df5b54809d1bb796d8a40fd0601f4e3930761",
+      "result": "REJECTED_HARNESS_OUTPUT_NOT_OBSERVED",
+      "gate_credit": false
+    },
+    "pregame_expected_red": {
+      "path": "../../../receipts/resources/p4-referee-pregame-red-replay-t1-end-187.json",
+      "bytes": 4952,
+      "sha256": "3f1224c3bf49ad1ee4738c05f92067eda9e9ae1af58aa1c686ca1b7482bbb679",
+      "result": "PASS_EXPECTED_RED_REPRODUCED"
+    },
+    "pregame_green": {
+      "path": "../../../receipts/resources/p4-referee-pregame-green-t1-end-188.json",
+      "bytes": 5534,
+      "sha256": "d8d10a090c8248128532f2b3f9259c084e344886d1de96862cf6f5a3b7b4871a",
+      "result": "PASS_PREGAME_FAILURE_BOUNDARY"
+    },
+    "rejected_unclassified_integration": {
+      "path": "../../../receipts/resources/p4-referee-integrated-regression-t1-end-189.json",
+      "bytes": 5561,
+      "sha256": "5a91d1632f6de985d9b844129efc4b5e87afecd9a3344c9f43dc3e619ce20b16",
+      "result": "REJECTED_INTEGRATED_REGRESSION_11_OF_12",
+      "gate_credit": false
+    },
+    "chessboard_diagnostic": {
+      "path": "../../../receipts/resources/p4-referee-chessboard-diagnostic-t1-end-190.json",
+      "bytes": 5190,
+      "sha256": "813ad4302775d05ef6c0beddd753f99bde783f7ef43ee0ba2a33c1310a932353"
+    },
+    "chessboard_parent_differential": {
+      "path": "../../../receipts/resources/p4-referee-chessboard-parent-t1-end-191.json",
+      "bytes": 5597,
+      "sha256": "7ccda797c2444d6d5685986904a89f358ce4d09a8aab004ad360f9942e7f8ad5",
+      "result": "PASS_PARENT_FAILURE_SET_MATCHES_CANDIDATE"
+    },
+    "temporary_parent_worktree_close": {
+      "path": "../../../receipts/private/p4-referee-parent-comparison-worktree-close-116.json",
+      "bytes": 1869,
+      "sha256": "1a3a353ae623e2f721ca1b40a1d2dcfa3646ea8ad9e9fb2deafdb7a00cd16595",
+      "removed_cleanly": true,
+      "recoverable_from_commit": true
+    },
+    "rejected_fixture_contract": {
+      "path": "../../../receipts/resources/p4-referee-chessboard-migration-green-t1-end-192.json",
+      "bytes": 5973,
+      "sha256": "3d7ab844d7be1266163a5ae062f8cf184bbdfa77681635b18bc52ccc68bdeba7",
+      "result": "REJECTED_FIXTURE_CONTRACT_UNDERSPECIFIED",
+      "gate_credit": false
+    },
+    "fixture_migration_green": {
+      "path": "../../../receipts/resources/p4-referee-chessboard-migration-green-replay-t1-end-193.json",
+      "bytes": 6554,
+      "sha256": "83cad4534fdc5cc370169cf4290435492b1454f9b44466400c8aaecd60af9a1d",
+      "result": "PASS_CRAZYHOUSE_MIGRATION_GRID_CONTROL_PRESERVED"
+    },
+    "integrated_nongrid_green": {
+      "path": "../../../receipts/resources/p4-referee-integrated-nongrid-t1-end-194.json",
+      "bytes": 6429,
+      "sha256": "34d52bd8039ca3cf84ab6b581db25695e31180ca5e8a890e52bb6f94bbfea0ec",
+      "result": "PASS_INTEGRATED_NONGRID_11_PLUS_CRAZYHOUSE_9"
+    },
+    "incident_ledger": {
+      "path": "../../../LESSONS_LEARNED.md",
+      "latest_entry": 67,
+      "bytes": 24751,
+      "sha256": "14edbab827b26c72525d78983d78f8a3e4a923ab09ed28eb108003d09bfe9d64"
+    }
+  },
+  "referee_candidate": {
+    "repository": "https://github.com/AndyGrant/cutechess.git",
+    "branch": "crazyhouse/profile-conformance",
+    "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "candidate_commit": "aa28b85724fb477d24438579ee9d17a882b086fc",
+    "candidate_tree": "5b3c956f0b2db6f3457524d9cedd069f890e4e01",
+    "commits_above_clean_root": 19,
+    "status_lines": 0,
+    "forbidden_horde_ancestor_present": false,
+    "cli": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-integrated-nongrid-194/cutechess-cli.exe",
+      "bytes": 55390536,
+      "sha256": "2b4906c2c031d70697352571b0085564b5f0873302e742afea67b1d0bdc1995e"
+    }
+  },
+  "pre_game_boundary": {
+    "fixture_commit": "4aa41c3eb2d96fa11bdb7968c2a475f89899f029",
+    "behavior_parent": "4aa41c3eb2d96fa11bdb7968c2a475f89899f029",
+    "behavior_commit": "439eedbca773b4933bda5c94a5e6780b9a5610e5",
+    "fixture_sha256": "9f2439cdc3c1dc90f93f0e145ab3d58d421642e7403c9295230166d4029e7428",
+    "test_sha256": "4c969c5f851c26016124ada7f2e203bbbf383485acb323242ecd75761a309f1f",
+    "source_sha256": "709377385ea108c10421dd77a1a667b0ee305be9142eebee742749a8bb9337b3",
+    "expected_red": { "passed": 4, "failed": 2, "skipped": 0 },
+    "required_green": { "passed": 6, "failed": 0, "skipped": 0 },
+    "pre_game_result_winner": "NoSide",
+    "single_result_emission": true,
+    "in_game_controls_preserved": true,
+    "status": "PASS"
+  },
+  "legacy_fixture_boundary": {
+    "base_contract_commit": "c9e60f7fb5d27f7cd8b4600ba13fd9316ad84eca",
+    "first_fixture_commit": "bd8694c1763040dc34c31c9205c009e8030ada46",
+    "addendum_commit": "efda1c1c5b4a2b46e7cb82c52ace0e40568ada03",
+    "final_fixture_commit": "066cf50bfdc586d3db962b21ff0d9f5fd94be026",
+    "effective_substitutions": 9,
+    "selected": { "passed": 9, "failed": 0, "skipped": 0 },
+    "full_control": { "passed": 274, "failed": 1, "skipped": 0 },
+    "full_only_failure": "tst_Board::perft(grid pos2)",
+    "grid_parent_reproduced": true,
+    "grid_changed": false,
+    "status": "PASS"
+  },
+  "integrated_boundary": {
+    "contract_commit": "aa28b85724fb477d24438579ee9d17a882b086fc",
+    "ctest_inventory_exact": 12,
+    "nongrid_ctest": { "passed": 11, "failed": 0 },
+    "selected_crazyhouse": { "passed": 9, "failed": 0, "skipped": 0 },
+    "artifact_inventory_count": 13,
+    "artifacts_byte_stable_before_after": true,
+    "grid_status": "PREEXISTING_RED_DECLARED_NOT_HIDDEN",
+    "ci_green_claim": false,
+    "status": "PASS"
+  },
+  "boundary_status": {
+    "conformance_lf_only_stream": "PASS",
+    "pre_game_null_side_failure": "PASS",
+    "legacy_crazyhouse_chessboard_fixtures": "PASS",
+    "integrated_nongrid_regression": "PASS",
+    "missing_profile_capability_expected_red": "NOT_OBSERVED",
+    "profile_capability_ingress": "RED",
+    "strict_bestmove_and_legality": "RED",
+    "deadline_history_pgn_identity_join": "RED",
+    "referee_selected_for_official_matches": false,
+    "g4": "IN_PROGRESS"
+  },
+  "next_action": "Freeze and execute the unchanged two-actor rule-free missing-capability expected-red case against the exact authenticated CLI from lease 194. Require both actors to complete UCI discovery and prove that the current referee crosses the forbidden post-discovery boundary before implementing capability enforcement.",
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

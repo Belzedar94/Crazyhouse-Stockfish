@@ -1,0 +1,100 @@
+{
+  "schema": "crazyhouse-g3-conservative-search-contract-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-23T06:11:49.4780744Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Freeze the single-source behavior implementation and clean-green admission after expected-red record 153 and verifier addendum 001. This addendum changes no scientific predicate after observing results.",
+  "pins": {
+    "base_contract": {
+      "path": "tests/crazyhouse/g3-conservative-search-contract-v1.json",
+      "bytes": 4895,
+      "sha256": "a1bac6a21398fe80824ab592d2271dc40a416615f1a6a79d8be736d5f1e9aa5e",
+      "git_blob": "013928c643bfd17d58a9cbe831280214254f4a6b"
+    },
+    "verifier_addendum_001": {
+      "path": "tests/crazyhouse/g3-conservative-search-contract-v1.addendum.001.json",
+      "bytes": 3043,
+      "sha256": "b3be38750edadef786ecda125ed7bc5c48c8c3241ee1dcfbf0631f8ea6ac8a4e",
+      "git_blob": "f4586505121bddcc7dab79b5cffb6db06269fe28"
+    },
+    "corrected_verifier": {
+      "path": "tests/crazyhouse_conservative_search_verify.py",
+      "correction_commit": "941813fe32fd37a7b6b788e1710e567b89b8e7ef",
+      "bytes": 17722,
+      "sha256": "0bf13e4fbe42385c5157bf9263cf400b49fb4b4392e9a9d39f9471fbd4652cbc",
+      "git_blob": "71e063449773b09f96342473ea963be5b92b48b0"
+    },
+    "expected_red_record": {
+      "path": "../../../receipts/private/p3-conservative-search-expected-red-record-153.json",
+      "bytes": 4467,
+      "sha256": "9f33069211f91435e6289bc3f941db4b055afdf859d81c2fdf56f48bffa3e0df",
+      "result": "PASS_EXPECTED_RED_CONSERVATIVE_SEARCH_POLICY_GAPS"
+    },
+    "standard_control_verifier": {
+      "path": "tests/crazyhouse_upstream_sync_control.py",
+      "bytes": 13557,
+      "sha256": "51ff1c0acd44d5e98976f0a6204f83b805642374495c0233f47a03c5fcd3f082",
+      "git_blob": "3ab0c0902db148a3e0fff73d1a39bfe68559e4ec"
+    },
+    "standard_control_contract": {
+      "path": "tests/crazyhouse/upstream-sync-standard-control-v1.addendum.001.json",
+      "bytes": 3163,
+      "sha256": "d7e5eefa946cccf5c3fe7699917603d051ec7924025aadc70620a0ae8278d420",
+      "git_blob": "773e93a92aea36a389749b4cacedd5af920ffc70"
+    }
+  },
+  "behavior": {
+    "commit": "5d1bee77ac96b3fe95fa28717d428693b56297c1",
+    "tree": "3f2696c93b20483bc8a8b4791ff114bfac20289f",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "changed_source_files": [
+      {
+        "path": "src/search.cpp",
+        "bytes": 96025,
+        "sha256": "fb899f14d1f363bd4befe861c04186dfa8ba3cb980295ca433dfb3566a835e9c",
+        "git_blob": "2ffb6da42d9d2f584d6789c1dca3f229045429f1"
+      }
+    ],
+    "changed_source_file_count": 1,
+    "typed_policy_declarations": 2,
+    "rule50_tt_decode_calls": 2,
+    "rule50_downgrade_guards": 4,
+    "high_counter_cutoff_variant_guarded": true,
+    "crazyhouse_null_move_disabled": true,
+    "crazyhouse_full_probcut_disabled": true,
+    "crazyhouse_shared_shallow_pruning_disabled": true,
+    "qsearch_generation_changed": false,
+    "history_or_ordering_changed": false,
+    "chess_conditions_semantically_changed": false
+  },
+  "green_admission": {
+    "validation_source": "a clean committed descendant containing this addendum and no source change after behavior commit 5d1bee77ac96b3fe95fa28717d428693b56297c1",
+    "clean_git_archive_required": true,
+    "archive_blob_authentication": "git ls-tree object IDs versus git hash-object --no-filters for every extracted file",
+    "build": {
+      "target": "x86-64-avx2",
+      "compiler": "pinned MinGW GCC",
+      "jobs": 1,
+      "priority": "BelowNormal",
+      "warning_strict": true,
+      "stdin": "redirected and closed as EOF",
+      "make_net_exact_validation_marker_required": true
+    },
+    "green_verifier_mode": "green",
+    "runtime_special_state_cases": 10,
+    "exact_standard_control_runs": "3 official + 3 product",
+    "expected_standard_signature": "28ec174ed2f5dd775ec50e4c6bf8de360d66c3693c90a9ac877edadf4caa255e",
+    "source_to_binary_binding_required": true,
+    "stderr_bytes": 0,
+    "timeouts": 0,
+    "fallback_allowed": false,
+    "owned_residual_processes": 0
+  },
+  "stopping_rule": "Build only a fresh authenticated export of a clean committed descendant containing this addendum and the exact behavior commit. Require exact source pins, warning-clean net/build steps, all ten special-state searches, corrected static-policy verification, exact standard-chess equality and clean postexit. Any source drift, old marker, missing guard, compiler warning, standard drift, stderr, timeout, crash, fallback or residual owned process rejects the slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

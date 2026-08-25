@@ -1,0 +1,122 @@
+{
+  "schema": "crazyhouse-p16-monitoring-formal-preregistration/v1",
+  "created_utc": "2026-08-24T21:48:51.3689089Z",
+  "status": "PREREGISTERED_FORMAL_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_contract": {
+    "path": "tests/crazyhouse/p16-monitoring-rollback-v1.json",
+    "bytes": 8594,
+    "sha256": "9d00fd165599ea3f641c3996a70ac68a2647a8513642db80f8533f0403f14531"
+  },
+  "parent_expected_red_result": {
+    "path": "tests/crazyhouse/p16-monitoring-rollback-v1.addendum.002.json",
+    "bytes": 2919,
+    "sha256": "9fe98f35fc0fb09da52c03491759c046433817401cdc767495f7d1b7c7b65323"
+  },
+  "implementation": {
+    "commit": "bea2a26cbdb8171de0243ab39a7a9b7184bffec2",
+    "tree": "a30a246ff805037f68be9209b853417e95b117c5",
+    "src_tree": "9d769751748870c6b1e7af21dfa1ea12040fc2a4",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "tracked_files": 559,
+    "files": [
+      {
+        "path": "tools/release/crazyhouse_release_monitor.py",
+        "bytes": 35469,
+        "sha256": "e55b5db5dc1276bce49d7f3cb597ba4b26740605f7d779c300c985a2c1515eb2"
+      },
+      {
+        "path": "tools/release/verify_crazyhouse_monitor_chain.py",
+        "bytes": 33230,
+        "sha256": "d57b30914c979a8c059c076b64d3b9fee7ab5818af59df6cd6bc813f1aff7375"
+      },
+      {
+        "path": "tests/crazyhouse_release_monitor.py",
+        "bytes": 20998,
+        "sha256": "94cbbe571f4b71082625159e1dae5676c32550dfa290b761a65c64c788078c23"
+      },
+      {
+        "path": "src/Makefile",
+        "bytes": 61964,
+        "sha256": "2afaf004721214db825efacd377943e27efe54c6a89ee668b12ec352016a28bb"
+      },
+      {
+        "path": ".github/workflows/crazyhouse-correctness.yml",
+        "bytes": 16081,
+        "sha256": "44d4ffd2914b1127203c92daf74f66a4a73c8ef572a849fa822397c3f5c49228"
+      }
+    ]
+  },
+  "diagnostic_only": {
+    "profiles": [
+      "CPython 3.12 normal direct",
+      "CPython 3.12 optimized direct"
+    ],
+    "summary_per_profile": "PASS_MONITORING_ROLLBACK_FIXTURES positive=6 negative=40 real_publication=false tag=false release_claim=false",
+    "formal_credit": false
+  },
+  "formal": {
+    "lease": 350,
+    "target": "D:/Crazyhouse-Stockfish/leases/p16-monitoring-formal-350",
+    "clean_exports": 2,
+    "profiles_per_export": [
+      "Make-routed CPython 3.12 normal",
+      "direct CPython 3.12 optimized"
+    ],
+    "harness_executions": 4,
+    "positive_cases_per_execution": 6,
+    "negative_cases_per_execution": 40,
+    "total_positive_case_executions": 24,
+    "total_negative_case_executions": 160,
+    "expected_summary": "PASS_MONITORING_ROLLBACK_FIXTURES positive=6 negative=40 real_publication=false tag=false release_claim=false",
+    "make_target": "crazyhouse_p16_monitoring_contract_test",
+    "make_recipe_line": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe -B ../tests/crazyhouse_release_monitor.py",
+    "make_stdout_lines": 2,
+    "direct_optimized_stdout_lines": 1,
+    "stderr_bytes": 0,
+    "timeouts_allowed": false,
+    "allowed_generated_paths_per_export": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "compiler_linker_engine_or_bytecode_artifacts": 0,
+    "source_worktree_clean_before_after": true,
+    "export_file_inventory_exact_before_make": true,
+    "independent_export_payloads_required": true,
+    "terminal_child_policy": "zero or one exact direct C:/Windows/System32/conhost.exe created with the supervisor; every compute, Make, shell, Python or unknown descendant must be gone"
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 536870912,
+    "minimum_d_free_bytes": 10737418240,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764
+  },
+  "stopping_rule": "Stop and preserve lease 350 on any source, contract, addendum, implementation pin, clean-export, profile, transcript, count, label, canonicalization, hash-chain, package-verifier composition, runtime-ingestion, issue-query, process, P7, namespace or restoration mismatch. Never repair the formal namespace in place.",
+  "pass_effect": "Qualifies the synthetic P16 monitoring and rollback tooling only. It grants no real publication, tag, asset, runtime, strength, G15, G16 or RELEASED_MONITORED credit.",
+  "boundaries": {
+    "formal_not_executed": true,
+    "implementation_present": true,
+    "expected_red_proven": true,
+    "synthetic_monitor_qualified": false,
+    "real_release_monitored": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "crazyhouse-legacy-incremental-cases-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-22T22:08:39.8359327Z",
+  "evidence_class": "E1_ENGINEERING",
+  "incident": "CH-160",
+  "purpose": "Correct one self-contradictory verifier-local move-count value discovered by a disposable clean-export preflight after the immutable expected-red observation.",
+  "pins": {
+    "base_fixture": {
+      "path": "tests/crazyhouse/legacy-incremental-cases-v1.json",
+      "bytes": 6814,
+      "sha256": "ba18990faaadcb4fe92b87f8396441f249cf31c1cc6bc98d8912af0a04aa841b"
+    },
+    "frozen_cpp_fixture": {
+      "path": "tests/crazyhouse_legacy_incremental.cpp",
+      "bytes": 12252,
+      "sha256": "b75d723cb9bf097883d648a85a2e0b97a47bf2691fc8ac143fcdccbd847e81bf",
+      "git_blob": "8cf3a4acf4cc17677f38e1cb4f127b8c19217199"
+    },
+    "verifier_before_correction": {
+      "path": "tests/crazyhouse_legacy_incremental_verify.py",
+      "bytes": 6764,
+      "sha256": "192ad7fcf514e310626c1acef1628c97e771e41ed5f8547c00f111d1626c5d0d",
+      "git_blob": "7f137f1a6222270242d88d0f97bfd20510fdc793"
+    },
+    "fixture_commit": "7e267ac077af29d5148d4d1c8662b3096f107fb4",
+    "implementation_commit": {
+      "commit": "15bfa0f8c12c1b61f88f3148fef23c89f1f91dc4",
+      "tree": "1701d0bb3d9b0413ab0db592bfd3cf18c5cbe800"
+    },
+    "expected_red": {
+      "end_receipt_path": "../../../receipts/resources/p5-legacy-incremental-red-t1-end-220.json",
+      "end_receipt_bytes": 2653,
+      "end_receipt_sha256": "15fdf09f38618a5bb6be3e5c23aa8693f72639a81b014197fd201999c905a2bb",
+      "gate_record_path": "../../../receipts/private/p5-legacy-incremental-red-gate-record-123.json",
+      "gate_record_bytes": 985,
+      "gate_record_sha256": "4fc523f14b81fbb603486dc538591f841b29d7a41e5e5234e46c46eef084b5d7"
+    },
+    "disposable_preflight": {
+      "target": "D:/Crazyhouse-Stockfish/preflight/p5-legacy-incremental-15bfa0f8-001",
+      "source_archive_sha256": "915e9d9cf15411d0d88f2e6aa0204052fc81a4ac4ab0d9a7e6723617614ff83f",
+      "test_executable_bytes": 102346891,
+      "test_executable_sha256": "4a5d3a11b5535f5e04851aa6cd52183535957fbe652f12aa98ce3f8dd7786980",
+      "stdout_bytes": 9671,
+      "stdout_sha256": "b086f23621517cfd75da74dfb65d8208249600f8542a97936ab8ebe79d6cf482",
+      "stderr_bytes": 105,
+      "stderr_sha256": "ebb1e78af6fa3f6cfb1578ed1b13aac407d699d0e6f814b92c372ca7c8ab9eb0",
+      "exit_code": 1,
+      "gate_evidence": false
+    }
+  },
+  "single_variable_correction": {
+    "location": "expected_counters() unsynchronized branch",
+    "before": "return 0, 1, 0, 0",
+    "after": "return 0, 1, 0, 1",
+    "meaning": "delta_updates=0, same_frame_reuses=1, max_source_distance=0, move_count=1",
+    "reason": "The case contract requires exactly one physical move without a stack push. Returning zero only for the helper's internal move-count value made the verifier reject its own valid one-move fixture before launching the C++ oracle.",
+    "unchanged": [
+      "all 20 fixture cases and expected FENs",
+      "all counter expectations consumed by the C++ fixture",
+      "frozen C++ fixture bytes",
+      "expected-red receipts and interpretation",
+      "implementation bytes",
+      "network identity",
+      "all parity, fail-closed, determinism and no-strength stopping rules"
+    ]
+  },
+  "stopping_rule": "A fresh clean export must build the unchanged C++ fixture and pass all 20 cases twice with empty stderr and byte-identical protocol. Any further fixture or verifier defect requires another hash-pinned addendum and a new namespace; this preflight and all its artifacts remain non-gate evidence.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

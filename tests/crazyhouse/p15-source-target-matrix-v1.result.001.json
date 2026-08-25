@@ -1,0 +1,115 @@
+{
+  "schema": "crazyhouse-p15-source-target-matrix-formal-result/v1",
+  "created_utc": "2026-08-24T19:18:19.5322427Z",
+  "status": "PASS_SOURCE_TARGET_MATRIX",
+  "evidence_class": "R4_RELEASE",
+  "claim_scope": "SOURCE_TARGET_DECISION_ONLY",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "source": {
+    "commit": "4bdf6923bc726a422047182db24e4d23912cb9f7",
+    "tree": "a5554f716dedba870649ce94343951b649243e02",
+    "src_tree": "15e5245b0910bbb5ffa79b3bb67943b8bff24803",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_after": true
+  },
+  "formal_lease": {
+    "lease": 339,
+    "completion": {
+      "bytes": 9792,
+      "sha256": "f95e721d24bde4ade9936fa8b38bae64fb36ae756c408d69977407090353aa89"
+    },
+    "end_receipt": {
+      "bytes": 3075,
+      "sha256": "c5d4d4ddc2e8327779b2f006e65971d889d3f659efa5033193e232d1bd25d64d"
+    },
+    "namespace_bytes_after_completion": 27326854
+  },
+  "matrix": {
+    "targets": [
+      {
+        "id": "windows-x86-64",
+        "arch": "x86-64",
+        "effective_make_features": {
+          "bits": "64",
+          "sse2": "yes",
+          "ssse3": "no",
+          "sse41": "no",
+          "avx2": "no",
+          "pext": "no",
+          "popcnt": "no"
+        }
+      },
+      {
+        "id": "windows-x86-64-avx2",
+        "arch": "x86-64-avx2",
+        "effective_make_features": {
+          "bits": "64",
+          "sse2": "yes",
+          "ssse3": "yes",
+          "sse41": "yes",
+          "avx2": "yes",
+          "pext": "no",
+          "popcnt": "yes"
+        }
+      }
+    ],
+    "target_values_inherited_from_atomic_or_horde": false,
+    "common_platform": "windows",
+    "compiler_assignment": "COMP=gcc",
+    "reproducibility_assignment": "mingw_reproducible=yes",
+    "enabled_link_flag_count": 1,
+    "disabled_link_flag_count": 0,
+    "legacy_backend_assignment_present": false
+  },
+  "formal_matrix": {
+    "clean_exports": 2,
+    "profiles": ["python-normal", "python-optimized"],
+    "profiles_total": 4,
+    "make_feature_probes_per_profile": 4,
+    "make_feature_probes_total": 16,
+    "full_engine_builds": 0,
+    "compiler_artifacts": 0,
+    "normalized_results_byte_equal": true,
+    "normalized_result": {
+      "bytes": 6743,
+      "sha256": "0ddaf3ce25972ec3899f4d55c1ba4c38f3786af6495e20abadbbe193f74faab1"
+    },
+    "source_archives": {
+      "bytes_each": 7034880,
+      "sha256_each": "4d88e1facf8d191b62c314c01c72ea67d32b0991d6696705dacb0e567eb6d5c0",
+      "byte_identical": true
+    }
+  },
+  "network": {
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "candidate_public_alias": "Crazyhouse_v1.nnue",
+    "alias_must_be_byte_identical": true,
+    "source_default_changed": false,
+    "license": "CC0-1.0"
+  },
+  "terminal_process_audit": {
+    "supervisor_pid": 9644,
+    "allowed_platform_console_hosts": 1,
+    "disallowed_descendants": 0,
+    "compute_descendants": 0,
+    "foreign_process_mutation": false
+  },
+  "pass_effect": "The two Crazyhouse-owned prospective Windows source targets, their feature floors, recipes and exclusions are frozen. Exact-candidate full builds remain mandatory.",
+  "boundaries": {
+    "source_target_matrix_frozen": true,
+    "full_engine_reproducible": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

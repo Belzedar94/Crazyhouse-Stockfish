@@ -1,0 +1,88 @@
+{
+  "schema": "crazyhouse-p7-local-opening-corpus-result/v1",
+  "created_utc": "2026-08-23T20:13:01.4294440Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "E1_ENGINEERING_ORCHESTRATION_REJECTION",
+  "lease": 271,
+  "namespace": "D:/Crazyhouse-Stockfish/leases/p7-local-opening-corpus-271",
+  "product_identity_at_execution": {
+    "commit": "725d4f7dcb82d45d425fd9df6747ab549f4ee3cc",
+    "tree": "566ef33c4b73a93e58ea3cfa74aefe277d9d07d9",
+    "src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_is_product_source": false
+  },
+  "contracts": {
+    "base": {
+      "path": "tests/crazyhouse/p7-local-opening-corpus-v1.json",
+      "bytes": 6971,
+      "sha256": "b3762857cf75047eaa399e839c2708d357b5f4c8687a6c811eebae07c34a09f3"
+    },
+    "qualification": {
+      "path": "tests/crazyhouse/p7-local-opening-corpus-v1.addendum.001.json",
+      "bytes": 5920,
+      "sha256": "2cbda0331cfe44fcd93521509ba513cdd80b26197e970510259e7e446e1164d9"
+    },
+    "timestamp_correction": {
+      "path": "tests/crazyhouse/p7-local-opening-corpus-v1.addendum.002.json",
+      "bytes": 2058,
+      "sha256": "83372823a9b5c9a62f3e5ad65fe6d3c417597d484d9f6d2166c2ad31d8e961dd"
+    }
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p7-local-opening-corpus-271/completion.json",
+    "bytes": 151432,
+    "sha256": "43046d2d9e449df983408ceb773e7c2b12e6e295ff6f33949d4046d10d55e260",
+    "status": "REJECTED_LOCAL_OPENING_CORPUS_QUALIFICATION",
+    "failure": "generate-a exited 1",
+    "elapsed_ms": 1646
+  },
+  "end_receipt": {
+    "path": "../../../receipts/resources/p7-local-opening-corpus-t1-end-271.json",
+    "bytes": 5569,
+    "sha256": "16b00ea2ad476733103599fc993b39e79fcfac21d0d709ba09d2b045314ce75f"
+  },
+  "observed": {
+    "generator_children_started": 1,
+    "generator_exit_code": 1,
+    "generator_stderr_exact": "ERROR: python-chess license bytes drifted\r\n",
+    "book_created": false,
+    "trajectory_ledger_created": false,
+    "manifest_created": false,
+    "generator_verify_runs": 0,
+    "referee_conformance_rows": 0,
+    "dry_pair_games": 0,
+    "owned_process_residue": 0
+  },
+  "incident": {
+    "id": "CH-231",
+    "cause": "The generator authenticated a canonical Git-blob digest against the CRLF-filtered working-tree license bytes under core.autocrlf=true.",
+    "canonical_license_blob": {
+      "object_id": "94a9ed024d3859793618152ea559a168bbcbb5e2",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    "filtered_license_worktree": {
+      "bytes": 35821,
+      "sha256": "0b383d5a63da644f628d99c33976ea6487ed89aaa59f0b3257992deac1171e6b"
+    },
+    "source_or_license_drift_observed": false,
+    "generator_selection_algorithm_observed": false,
+    "opening_content_observed": false
+  },
+  "result": "REJECTED_REFERENCE_AUTHENTICATION_ORCHESTRATION",
+  "gate_credit": false,
+  "partial_artifacts_reused": false,
+  "opening_corpus_qualified": false,
+  "local_strength_panel_authorized": false,
+  "openbench_authorized": false,
+  "next_safe_action": "Authenticate the license through the pinned Git blob, freeze the changed generator and qualification contract additively, and repeat the entire gate in a fresh namespace.",
+  "scientific_boundary": {
+    "timing_evidence": false,
+    "elo_claim": false,
+    "strength_claim": false,
+    "openbench_claim": false,
+    "release_claim": false
+  }
+}

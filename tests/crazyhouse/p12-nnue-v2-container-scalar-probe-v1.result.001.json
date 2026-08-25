@@ -1,0 +1,121 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-container-scalar-probe-result/v1",
+  "created_utc": "2026-08-24T08:03:13.4407364Z",
+  "status": "PASS_CONTAINER_SCALAR_CHECKPOINT_WITH_OPEN_SANITIZER_GAP",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "preregistration": {
+    "path": "tests/crazyhouse/p12-nnue-v2-container-scalar-probe-v1.json",
+    "bytes": 3636,
+    "sha256": "3610b737bd5396c64a88450590b77b80b48cd052b72e8622b2e02ec7fa1c93c4"
+  },
+  "artifact_pin": {
+    "path": "tests/crazyhouse/p12-nnue-v2-container-scalar-probe-v1.addendum.001.json",
+    "commit": "bb6c8b158294b9106604cf0ec94f34480373e6d5",
+    "implementation_commit": "3a56dd04a0892831f3adc2654e262a7af8981498",
+    "implementation_tree": "b69c09304a7afd16c017fff62af714a5225dcb9a",
+    "implementation_src_tree": "b11a0fc955458ff2402c880be0fd8641fdb1cf47"
+  },
+  "formal_lease": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-container-scalar-formal-295",
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-container-scalar-formal-295/completion.json",
+      "bytes": 8177,
+      "sha256": "a8b850a3357d4493807f7f25567d31efc639d4c9ab1d3a8d87f7bd26282a63a1"
+    },
+    "independent_verifier": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-container-scalar-formal-295/artifacts/verify-completion.py",
+      "bytes": 5914,
+      "sha256": "89d1e88698b5c01a9625e3d73473384a4b7cbc5fc2f8cfe669e2effe9d17d2af"
+    },
+    "verification": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-container-scalar-formal-295/artifacts/completion-verification.json",
+      "bytes": 521,
+      "sha256": "050d41de19af453ea13a4af375a7be01c80ef5437158d789fc121b103fd9011d",
+      "status": "PASS"
+    },
+    "source_archive_sha256": "0a005b52b63f692dbf5f77091e31829178e155a097e2840802a211999fcbe699",
+    "source_manifest_files": 447,
+    "source_manifest_sha256": "5c557f3de3e681eee929ac4384b9a54fb93f56c73dcdf4f6f97d78d2de966a6d",
+    "release_export_match": true,
+    "debug_export_match": true
+  },
+  "container": {
+    "format": "crazyhouse-v2-scalar-probe-container-v1",
+    "bytes": 30992,
+    "sha256": "fdd55e1a6af735cf1e999af31341c249c52f444f553454606195124a34b07d12",
+    "feature_dimensions": 902,
+    "declared_maximum_active": 138,
+    "maximum_physically_valid_active_observed": 136,
+    "output_lanes": 17,
+    "weights": "signed-int16-little-endian",
+    "biases_and_accumulator": "signed-int32-little-endian",
+    "python_roundtrip": "byte-exact",
+    "training_admissible": false,
+    "strength_admissible": false
+  },
+  "parity": {
+    "release": "PASS",
+    "debug_assertions": "PASS",
+    "release_debug_protocol_byte_equal": true,
+    "frozen_goldens": 42,
+    "semantic_controls": 5,
+    "capacity_controls": 1,
+    "valid_records": 48,
+    "perspectives": 96,
+    "lane_values": 1632,
+    "negative_mutations": 30,
+    "protocol_sha256": "f7017ceeadb90259f05caa78b72409b3377f1722dc4fc25d9ba670620c9770bd",
+    "rejection_sha256": "a3b4483e644a9d4c8bcc5b15f387de0be2c6085dda91ebc385193aff18c65d76",
+    "ordered_feature_rows": "exact",
+    "integer_outputs": "exact",
+    "failed_parse_exposes_ready_network": false,
+    "fallback": false
+  },
+  "normal_engine_control": {
+    "build": "PASS_AFTER_REJECTED_WRONG_RECIPE_WAS_CONTAINED",
+    "backend": "legacy-v1",
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "bench_nodes": 113485,
+    "v2_binary_string_patterns_checked": 4,
+    "v2_binary_string_hits": 0,
+    "probe_linked": false,
+    "incident": "CH-264"
+  },
+  "incident": {
+    "id": "CH-264",
+    "symptom": "The first normal-control recipe omitted OPENBENCH_PLAY_BUILD=1, downloaded a standard Stockfish network, and built an inadmissible binary.",
+    "receipt": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-container-scalar-formal-295/artifacts/rejected-normal-control-001.json",
+    "formal_credit": false,
+    "containment": "The rejected log and hashes were preserved, the exact export was cleaned, the downloaded net was removed, and a fresh admitted legacy build passed routing and bench."
+  },
+  "sanitizer": {
+    "incident": "CH-263",
+    "status": "OPEN_NO_CREDIT",
+    "rerun": false,
+    "waived": false
+  },
+  "gate_effect": {
+    "checkpoint": "PASS",
+    "g12": "OPEN",
+    "remaining": [
+      "admitted sanitizer runtime execution",
+      "productive V2 topology and trainer",
+      "SIMD and scalar parity",
+      "incremental and full-refresh parity across make/undo/null/drop/capture/promotion",
+      "deterministic authenticated resume",
+      "legacy control through the new productive datapath"
+    ]
+  },
+  "boundaries": {
+    "training_started": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true,
+    "foreign_process_mutated": false
+  }
+}

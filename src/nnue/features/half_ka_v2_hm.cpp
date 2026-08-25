@@ -93,7 +93,8 @@ IndexType HalfKAv2_hm::make_index(Color perspective, Square s, Piece pc, Square 
 
 void HalfKAv2_hm::append_changed_indices(
   Color perspective, Square ksq, const DiffType& diff, IndexList& removed, IndexList& added) {
-    removed.push_back(make_index(perspective, diff.from, diff.pc, ksq));
+    if (diff.from != SQ_NONE)
+        removed.push_back(make_index(perspective, diff.from, diff.pc, ksq));
     if (diff.to != SQ_NONE)
         added.push_back(make_index(perspective, diff.to, diff.pc, ksq));
 

@@ -1,0 +1,327 @@
+{
+  "schema": "crazyhouse-local-strength-panel/v2",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "S3_STRENGTH",
+  "status": "PREREGISTERED_ADDENDUM_002_AWAITING_ADAPTER_OVERHEAD_AND_HOST",
+  "frozen_utc": "2026-08-23T21:33:13.1988967Z",
+  "corrected_utc": "2026-08-23T22:07:47.9850338Z",
+  "correction_lineage": {
+    "parent_repository_commit": "b7b49ec72a92a76f1cef7fd42e21002d04d66b51",
+    "parent_contract": {
+      "bytes": 14124,
+      "sha256": "62aeb65e403f85cae5873b6686e89064fbeac52e727dbe593549703592a28914"
+    },
+    "parent_preregistration_receipt": {
+      "path": "receipts/resources/p7-local-los-v2-preregistered-276.json",
+      "bytes": 5213,
+      "sha256": "2366bea4862ae4857e65197874f3034fcf6ffcf29564ef76edab616b42b1bc9c"
+    },
+    "rejected_canary_receipt": {
+      "path": "receipts/resources/p7-local-plumbing-canary-t1-end-277.json",
+      "bytes": 3826,
+      "sha256": "0c6794be0e2b69c841c311101ae16b04d54379a1b6e0c7caa4565329a20f7d3c"
+    },
+    "incident": "CH-239",
+    "scope": "Only nonce transcript recognition changed: both independent regexes now use multiline anchors and accept the authenticated optional numeric cutechess debug timestamp prefix plus CRLF. No engine, network, referee, opening, time control, seed, concurrency, invalidation, statistic, stopping rule or resource ceiling changed.",
+    "prior_canary_score_consumed": false
+  },
+  "pre_execution_hardening": {
+    "created_utc": "2026-08-23T22:21:42.1302196Z",
+    "parent_contract": {
+      "bytes": 15372,
+      "sha256": "f1b9a25b38b5bcad4a4becc2257b0da8b9ae1b294010b85c8bfcc2216efcaabe"
+    },
+    "scope": "Require independent transcript-level verification and an outer exact Job Object for the adapter overhead result before it can authorize this unchanged strength ladder.",
+    "strength_variables_changed": [],
+    "timing_output_observed": false,
+    "game_result_consumed": false
+  },
+  "purpose": "Determine whether the exact Stockfish-dev-derived Crazyhouse candidate beats the current Fairy-Stockfish comparator while both load the exact same legacy network bytes, before any OpenBench submission.",
+  "authority": {
+    "decision": "The owner explicitly fixed the local ladder to 2, 10 and 30 second controls, displayed LOS endpoints 0/100, and a minimum of 50 games on 2026-08-23.",
+    "interpretation": "The historical local methodology resolves those controls as 2+0.02, 10+0.1 and 30+0.3 seconds. Each control is evaluated at complete-pair batch boundaries no earlier than 50 games, stops at displayed one-decimal WLD LOS 0.0% or 100.0%, and passes only at 100.0%.",
+    "oracle_review": "WAIVED_BY_OWNER",
+    "fairy_stockfish_product_base": "NO_GO",
+    "stockfish_dev_product_base": "MANDATORY"
+  },
+  "source_boundary": {
+    "candidate_source_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "candidate_source_tree": "90b31388cdf8b2da61fb3d6bfaf1f5cfde1936b6",
+    "candidate_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_master_reverified_utc": "2026-08-23T21:43:17.3227056Z",
+    "official_master_reverified_commit": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "freshness_record": {
+      "path": "tests/crazyhouse/p7-local-strength-source-freshness-v1.json",
+      "bytes": 1276,
+      "sha256": "9ba8684bbf7e6b6b613cb085185914ee9b4a5397f1e53cd45cfbdea060c9582a"
+    },
+    "fairy_stockfish_is_product_ancestry": false,
+    "fairy_stockfish_role": "external comparator only"
+  },
+  "implementation": {
+    "path": "tools/strength/run_crazyhouse_local_strength_panel.py",
+    "bytes": 52674,
+    "sha256": "799742b25ed7899ab7a228f513919f1080840278cdf9de6abbdb6cef3d42dcc6",
+    "language": "Python 3.12"
+  },
+  "verification": {
+    "implementation": {
+      "path": "tools/strength/verify_crazyhouse_local_strength_panel.py",
+      "bytes": 44058,
+      "sha256": "b2f88fac7c27395b8a635f470cc78d709749a6dcb1d17efe19a93b3d80397daa"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_local_strength_panel_unit.py",
+      "bytes": 12205,
+      "sha256": "bac2931cdfab224227ed9893b329953e150475c14d68d9b7f64d72120234958a",
+      "known_reference": "WLD 50-22-38 must reproduce +90.426093607 Elo and displayed LOS 100.0%; expired or producer-drifted host attestations fail closed; timestamp-prefixed CRLF/LF nonce transcripts match identically in runner and verifier."
+    },
+    "required": true,
+    "runner_cannot_authorize_openbench": true
+  },
+  "inputs": {
+    "candidate": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-engine-capability-green-247/source/src/stockfish.exe",
+      "bytes": 103068074,
+      "sha256": "aef7a64760c9f4f23cb15b4402130dd6a51c0843a3f8cb00af76e90bb813004b",
+      "backend": "legacy-v1",
+      "evaluator": "incremental-scalar",
+      "source_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c"
+    },
+    "adapter": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-adapter-270/build-a/fairy-crazyhouse-adapter.exe",
+      "bytes": 3352494,
+      "sha256": "7707e2a120e9ae4d21507aaca5df4edcdaa2751309529dad4b306ab22f636a5f",
+      "qualification_result": "tests/crazyhouse/p6-fairy-comparator-adapter-v1.result.004.json"
+    },
+    "raw_fairy": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-build-runtime-265/source/src/stockfish.exe",
+      "bytes": 4530945,
+      "sha256": "b79071634530b99f047a51a123b79bb7e14cfc225435f5fb6c50a9411a294183",
+      "source_commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+      "source_tree": "aa4112ea6784cef03fb9b5f87bba632de6168faa",
+      "role": "external comparator implementation only"
+    },
+    "network": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Match script/crazyhouse_run15rl_e190_l03.nnue",
+      "basename": "crazyhouse_run15rl_e190_l03.nnue",
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "same_exact_bytes_for_candidate_and_comparator": true
+    },
+    "referee": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-referee-current-qualification-261/build/cutechess-cli.exe",
+      "bytes": 2293660,
+      "sha256": "f465025b2ad21526e2cbab2b7da1a231ff3d64f6e8a01a0be5963f525a0bddae",
+      "source_commit": "d25294c1b1084f8854c0dc026ca3b150c911b4ee",
+      "source_tree": "208335f2040d7aac3e5c3b869cadf46b18fb5503"
+    },
+    "book": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/Crazyhouse-Stockfish/tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.epd",
+      "bytes": 100204,
+      "sha256": "a8976a380a6cc4b3a1a6aae3bf14249b2ab6d1bac6cf4a2715625d7c01747603",
+      "roots": 1024,
+      "engine_selected": false,
+      "match_result_selected": false
+    }
+  },
+  "opening_reference": {
+    "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/Crazyhouse-Stockfish/tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.trajectories.jsonl",
+    "bytes": 1107568,
+    "sha256": "be24d4ecf561e79c63b584cba3673d0108ef8f77e32c58297a67e19c6ae8d06d",
+    "rows": 1024,
+    "manifest": {
+      "path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.manifest.json",
+      "bytes": 4706,
+      "sha256": "5dae74427029e0a15379f09febecaf5db84009047896405a0aeb6043943c25ac"
+    }
+  },
+  "reference_runtime": {
+    "checkout": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/.cache/crazyhouse/references/python-chess",
+    "commit": "9c24454dcea4f8a30259d811a2f10b26e911deb4",
+    "tree": "33627273cd58c1a5a20c3132548e5df7b85ff9d6",
+    "version": "1.11.2",
+    "module": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/.cache/crazyhouse/references/python-chess/chess/__init__.py",
+      "bytes": 159061,
+      "sha256": "1286ff19809df5ad3b649493c8b2afb516aafb1d9c7784b6e22e6c3d57e06e1a"
+    }
+  },
+  "method_references": {
+    "atomic_los_gate_document": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Atomic Project/Atomic-Stockfish/docs/atomic/los-gate-runner.md",
+      "bytes": 5599,
+      "sha256": "ba5cd674e30ae6f74260c57e566ce154d80e204a1fc7709f392d6410e0be3d85"
+    },
+    "historical_statistics": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Match script/stat_util.py",
+      "bytes": 4476,
+      "sha256": "06af2f59cc22eb17213f67d243bafc0fb2e4bb6627026787ede9d4cf337387ea"
+    },
+    "historical_match_runner": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Match script/variantfishtest_new1.py",
+      "bytes": 22676,
+      "sha256": "37d1790096520d9f3a1003746cdfbed59d2cc125a9b3d3192ff3399295ec9d70"
+    },
+    "horde_method_schema": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Horde Project/Horde-Stockfish/schemas/horde-v2-c3-representation-qualification-v1.json",
+      "bytes": 10859,
+      "sha256": "33f48b363ab6b4b20303e586e484db7f45bf6bdbbfb5df82c9fb034542a7b7da"
+    },
+    "role": "method context only; no foreign engine, net, book, seed, game result or source value enters the product"
+  },
+  "rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "time_controls": [
+    {
+      "id": "vstc-2s",
+      "cutechess_tc": "2+0.02",
+      "base_seconds": 2.0,
+      "increment_seconds": 0.02,
+      "srand": 2026082301
+    },
+    {
+      "id": "stc-10s",
+      "cutechess_tc": "10+0.1",
+      "base_seconds": 10.0,
+      "increment_seconds": 0.1,
+      "srand": 2026082302
+    },
+    {
+      "id": "ltc-30s",
+      "cutechess_tc": "30+0.3",
+      "base_seconds": 30.0,
+      "increment_seconds": 0.3,
+      "srand": 2026082303
+    }
+  ],
+  "engine_settings": {
+    "threads": 1,
+    "hash_mib": 64,
+    "ponder": false,
+    "multipv": 1,
+    "move_overhead_ms": 25,
+    "time_margin_ms": 250,
+    "syzygy_probe_limit": 0,
+    "uci_show_wdl": false,
+    "same_for_both_roles": true
+  },
+  "execution": {
+    "concurrency": 8,
+    "paired_colours": true,
+    "repeat": true,
+    "opening_order": "sequential",
+    "minimum_games_before_los_decision": 50,
+    "initial_batch_games": 50,
+    "continuation_batch_games": 16,
+    "maximum_games_per_rung": 2048,
+    "maximum_pairs_per_rung": 1024,
+    "maximum_reason": "The frozen corpus has exactly 1024 unique roots, so the cap consumes every root once as one colour-swapped pair and never recycles an opening.",
+    "rung_order": [
+      "vstc-2s",
+      "stc-10s",
+      "ltc-30s"
+    ],
+    "advance_rule": "Advance only when the completed rung reaches displayed historical WLD LOS 100.0%.",
+    "reject_rule": "Displayed historical WLD LOS 0.0% is a valid strength rejection and stops the ladder.",
+    "cap_rule": "No endpoint at 2048 games is a valid but inconclusive result and stops the ladder without extension.",
+    "no_optional_stopping": true
+  },
+  "canary": {
+    "games": 2,
+    "pairs": 1,
+    "time_control": "2+0.02",
+    "srand": 2026082399,
+    "debug": true,
+    "score_interpretation": false,
+    "required_proof": "Exact profile, nonce acknowledgement, candidate legacy-v1 incremental-scalar route, comparator fairy-external halfkav2variants route, exact network identity, variant command and legal complete pair."
+  },
+  "adjudication": {
+    "resign": false,
+    "draw_score": false,
+    "tablebases": false,
+    "safety_max_fullmoves": 400,
+    "safety_max_hit_policy": "INVALIDATE_THE_ENTIRE_PANEL",
+    "timeloss_policy": "INVALIDATE_THE_ENTIRE_PANEL",
+    "crash_illegal_disconnect_stall_policy": "INVALIDATE_THE_ENTIRE_PANEL"
+  },
+  "reporting": {
+    "rating_interval_games": 50,
+    "outcome_interval_games": 2,
+    "required": [
+      "raw cutechess logs",
+      "raw PGNs",
+      "WLD candidate POV",
+      "pentanomial candidate POV",
+      "historical WLD Elo and one-decimal LOS",
+      "OpenBench-method pentanomial Elo, 95% CI and LOS",
+      "defect ledger",
+      "terminal reason inventory"
+    ]
+  },
+  "runtime": {
+    "platform": "Windows x86-64",
+    "python": {
+      "path": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/.venv-crazyhouse/Scripts/python.exe",
+      "version": "3.12.0",
+      "bytes": 270616,
+      "sha256": "d55736b9f3d6b4ca7985b82db8ce11edfa09994cf93ce31c6b506543b74f32eb"
+    },
+    "path_prepend": [
+      "C:/msys64/mingw64/bin"
+    ],
+    "environment": {
+      "QT_QPA_PLATFORM": "offscreen",
+      "QT_PLUGIN_PATH": "C:/msys64/mingw64/share/qt5/plugins",
+      "QT_QPA_PLATFORM_PLUGIN_PATH": "C:/msys64/mingw64/share/qt5/plugins/platforms",
+      "TZ": "UTC"
+    },
+    "no_progress_timeout_seconds": 900,
+    "batch_timeout_seconds": 7200,
+    "formal_output_directory_must_be_absent": true,
+    "engine_stderr_must_be_empty": true,
+    "referee_exit_must_be_zero": true,
+    "process_tree_boundary": "Each referee and only its descendants are assigned to a Windows Job Object with JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE; normal and exceptional exits close the exact job so no local engine child survives.",
+    "host_attestation_required": true,
+    "no_foreign_process_mutation": true
+  },
+  "host_precondition": {
+    "attestation_producer": {
+      "path": "tools/strength/attest_crazyhouse_local_host.ps1",
+      "bytes": 8405,
+      "sha256": "51f3803bc56643a014f1346751b2565fd517eb2700b23d356cef0bed3997ef1b"
+    },
+    "strength_ready_required": true,
+    "cpu_utilization_preflight": "At least 60 consecutive seconds below 5 percent total CPU after foreign timing-sensitive process trees and prior Crazyhouse panel processes are absent.",
+    "start_window": "The panel must start no earlier than captured_utc and no later than valid_until_utc in the authenticated formal attestation.",
+    "foreign_workers_must_have_ended_naturally": true,
+    "priority_affinity_suspension_or_lifecycle_mutation_forbidden": true
+  },
+  "adapter_overhead_precondition": {
+    "contract": {
+      "path": "tests/crazyhouse/p7-local-adapter-overhead-v1.json",
+      "bytes": 10871,
+      "sha256": "cd91a1eaf7af4c34db0ea87974973fd2a264d70d69aed1ffcad28f82e2c3ffcf"
+    },
+    "required_result": "PASS_ADAPTER_OVERHEAD",
+    "required_independent_verification": "PASS_ADAPTER_OVERHEAD_INDEPENDENTLY_VERIFIED",
+    "clock_compensation_allowed": false,
+    "authorization_addendum_required": true
+  },
+  "stopping_rule": "For each rung, run exactly 50 games in the first complete-pair batch. If the historical one-decimal WLD LOS is neither 0.0% nor 100.0%, run fixed 16-game complete-pair batches, except for an even final remainder at the 2048-game corpus cap. Stop at the first completed batch whose eligible display is 0.0% or 100.0%. Never extend a rung past its first endpoint or beyond the cap. Advance only on 100.0%; stop the ladder on 0.0%, infrastructure invalidity or no endpoint at the cap.",
+  "pass_rule": "All three ordered rungs independently reach displayed historical WLD LOS 100.0% after at least 50 valid games, with zero infrastructure defects, exact shared network bytes, paired colours, authenticated sequential openings, legal terminal PGNs and independent verification.",
+  "pass_effect": "The local prerequisite for an OpenBench canary is unlocked for the exact candidate/comparator/network/book/referee identities. It is not itself OpenBench evidence, a release decision or permission to alter the champion.",
+  "fail_effect": "Do not submit this candidate to OpenBench. Preserve all artifacts and classify the valid rejection, inconclusive cap, or infrastructure defect without optional extension.",
+  "scientific_boundary": {
+    "canary_is_strength": false,
+    "same_network_equal_time_local_strength": true,
+    "openbench_claim": false,
+    "release_claim": false,
+    "champion_claim": false,
+    "monitoring_claim": false
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-decoder-scalar-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T07:03:35.0313904Z",
+  "status": "FROZEN_BEFORE_CORRECTED_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-decoder-scalar-v1.json",
+    "bytes": 3547,
+    "sha256": "40595818d916166c504592194bf86662b02cd71f1755e6b1245a58aca3c9601f"
+  },
+  "trigger": {
+    "observed_boundary": "The first release compilation completed all new translation units without warnings, then the test-only link attempted to embed the absent orthodox default network nn-1a298aa575a0.nnue.",
+    "classification": "TEST_FIXTURE_LINK_RECIPE_NOT_DECODER_FAILURE",
+    "credit": false
+  },
+  "frozen_corrections": {
+    "test_only_link_recipe": "Compile the dedicated fixture with NNUE_EMBEDDING_OFF. This does not alter the normal engine recipe or evaluator routing.",
+    "clock_error": "Add a distinct CLOCKS decoder error and a repaired-CRC fullmove_number=0 mutation instead of classifying that invalid field as TERMINAL_REASON.",
+    "expected_valid_cases": 47,
+    "expected_invalid_cases": 26
+  },
+  "unchanged": [
+    "physical schema and golden identities",
+    "902-row feature inventory",
+    "138-row conservative active capacity",
+    "Legacy V1 productive default",
+    "no training, OpenBench, G12, strength or release claim"
+  ]
+}

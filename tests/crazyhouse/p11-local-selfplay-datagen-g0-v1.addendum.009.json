@@ -1,0 +1,67 @@
+{
+  "schema": "crazyhouse-p11-local-selfplay-datagen-g0-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T06:24:46Z",
+  "status": "frozen-after-section-length-implementation-before-corrected-formal-run",
+  "effect": "strictly-additive-corrected-harness-source-and-oracle-pin",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "corrected_source_archive": {
+    "commit": "dbd7d044b9ebddc68faf1cec932f781922753505",
+    "tree": "0e2f5e3c44d20f05804ea6ad668e709faaf4cafd",
+    "src_tree": "834827c801093b49bc1616a866757de5a994a06a",
+    "src_tree_changed_from_lease_292": false
+  },
+  "corrected_harness": {
+    "path": "tests/crazyhouse_selfplay_datagen_g0.py",
+    "bytes": 55627,
+    "sha256": "caa32ac8c9b8196a8377e2a2f8d8052eb2f4094fe15bb84868929d5dce0cf2d9",
+    "git_blob": "98fa94a00de40e0dd062c16df92b581ce789d32e",
+    "py_compile": "PASS",
+    "cli_parse": "PASS"
+  },
+  "frozen_formal_section_oracle": {
+    "header_bytes": 256,
+    "capability_bytes": 1683,
+    "provenance_bytes": 3370,
+    "physical_chunk_bytes": 1408,
+    "footer_bytes": 128,
+    "derived_bundle_bytes": 6845,
+    "formula": "256 + 1683 + 3370 + 1408 + 128 = 6845",
+    "asserted_from_each_independent_result": [
+      "bundle_bytes",
+      "capability_bytes",
+      "provenance_bytes",
+      "chunk_bytes"
+    ]
+  },
+  "unchanged_product_and_scientific_inputs": {
+    "src_tree": "834827c801093b49bc1616a866757de5a994a06a",
+    "network_bytes": 58534811,
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "network_basename": "crazyhouse_run15rl_e190_l03.nnue",
+    "book_bytes": 158,
+    "book_sha256": "f99f8211316813924e52fb13fbb65a5bc27dcd585e2e32a86d90db0d113fd2f6",
+    "build_recipe_sha256": "ae0cbe11e13677221dcafc6d2ee88eb6d4a53071968351649885ba4a9fbe56be",
+    "toolchain_sha256": "9c2d13f47a8690dff907e83ddde127e3ef43599e518973b7542e4ac48edba052",
+    "records": 4,
+    "trajectories": 2,
+    "depth": 1,
+    "threads": 1,
+    "hash_mib": 16
+  },
+  "next_formal_run": {
+    "lease": 293,
+    "fresh_namespace_required": true,
+    "new_controller_required": true,
+    "lease_specific_step_scope_required": true,
+    "canonical_network_basename_required": true,
+    "two_new_source_exports_required": true,
+    "three_new_builds_required": true,
+    "full_matrix_from_row_zero_required": true,
+    "partial_credit_from_leases_290_291_292": false
+  },
+  "stopping_rule": "Lease 293 passes only if the complete formal matrix, closing Git status and owned-process closure pass from the pinned corrected source archive. Any new failed row remains a fresh rejection and receives another additive record.",
+  "claim_boundary": "This identity freeze does not itself close the P11 local precondition or authorize training, OpenBench, strength, model selection or release."
+}

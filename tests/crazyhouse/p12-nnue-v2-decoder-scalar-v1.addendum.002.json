@@ -1,0 +1,70 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-decoder-scalar-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T07:08:06.5414717Z",
+  "status": "IMPLEMENTATION_PINNED_BEFORE_FORMAL_RUN",
+  "evidence_class": "E1_ENGINEERING",
+  "parents": [
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-decoder-scalar-v1.json",
+      "bytes": 3547,
+      "sha256": "40595818d916166c504592194bf86662b02cd71f1755e6b1245a58aca3c9601f"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-decoder-scalar-v1.addendum.001.json",
+      "bytes": 1391,
+      "sha256": "7f223ca4516ea16ee7d9594accdead6e6570658a645565c0a40af7244b69cbd4"
+    }
+  ],
+  "implementation": {
+    "commit": "1a455429ddd9d39060db2b914f93c898558b0391",
+    "tree": "a563788c45dec014f4355b97e9202be227af9ad6",
+    "src_tree": "958e5fa2707e60147884f43ed1bfe1c7f29ca230",
+    "source_dirty": false,
+    "files": [
+      {"path": "src/Makefile", "bytes": 54574, "sha256": "9003a99ecf9139824ffa4b2147bde44ef4c73d54ad3c0dfd55702b54a6d1c7ad"},
+      {"path": "src/nnue/crazyhouse_v2_physical.h", "bytes": 3494, "sha256": "4427a9effac4e51777c25ee9f5f4ca9316b2ee4e123701af5c0a43af6d8fd273"},
+      {"path": "src/nnue/crazyhouse_v2_physical.cpp", "bytes": 27534, "sha256": "d7bace342fbdf30f5dc29e9060b21a6b66b4ab0de45638dbd70bfcc943a45508"},
+      {"path": "src/nnue/crazyhouse_v2_features.h", "bytes": 2513, "sha256": "cc2763cb0731dbf00cafe7f315536038be1a7334080a8f947e09c12032b34d26"},
+      {"path": "src/nnue/crazyhouse_v2_features.cpp", "bytes": 7368, "sha256": "17e1acb2cf40d216cfb1408a6f6bb72d2175aa86200fe784bf9de7ea52574b98"},
+      {"path": "tests/crazyhouse_v2_decoder_scalar.cpp", "bytes": 7777, "sha256": "11a7f51de7ebc657ca5133fb246e750db72768ba90c74ca9d641b7f9421f493e"},
+      {"path": "tests/crazyhouse_v2_decoder_scalar_verify.py", "bytes": 18222, "sha256": "096f3cd788c27bf47e1141451b5ed2413b92bdaa8f8119d448265fa66d02627d"}
+    ]
+  },
+  "toolchain": {
+    "compiler_identity": "x86_64-w64-mingw32-c++.exe (Rev5, Built by MSYS2 project) 16.1.0",
+    "compiler_path": "C:/msys64/mingw64/bin/x86_64-w64-mingw32-c++.exe",
+    "compiler_bytes": 3312964,
+    "compiler_sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb",
+    "make_path": "C:/msys64/usr/bin/make.exe",
+    "make_bytes": 229856,
+    "make_sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22",
+    "shell_path": "C:/msys64/usr/bin/sh.exe",
+    "shell_bytes": 2333443,
+    "shell_sha256": "83d4722c7c0d4de4ea07d8ad40bf90285deb1dc018c689be48909270965c6cbc"
+  },
+  "formal_run": {
+    "lease": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-decoder-scalar-formal-294",
+    "source_export": "git archive of the pinned implementation commit, extracted independently for each build profile",
+    "release_recipe": "make -C src -j1 ARCH=x86-64 COMP=mingw crazyhouse-v2-decoder-scalar-tests",
+    "debug_recipe": "make -C src -j1 ARCH=x86-64 COMP=mingw debug=yes optimize=no crazyhouse-v2-decoder-scalar-tests",
+    "ubsan_recipe": "make -C src -j1 ARCH=x86-64 COMP=mingw debug=yes optimize=no sanitize=undefined crazyhouse-v2-decoder-scalar-tests",
+    "verifier_recipe": "python tests/crazyhouse_v2_decoder_scalar_verify.py --fixture src/crazyhouse-v2-decoder-scalar-tests.exe",
+    "expected_valid_cases": 47,
+    "expected_frozen_goldens": 42,
+    "expected_perspectives": 94,
+    "expected_invalid_cases": 26,
+    "expected_dimensions": 902,
+    "expected_maximum_active": 138,
+    "expected_protocol_sha256": "de9a61c9f0233d4c33cdca60d9a846c31686a444e56a45fc4bea4b035843d605"
+  },
+  "diagnostic_boundary": "The expected protocol digest was observed only in a non-credit development run before this implementation pin. Formal credit requires all clean exports and profiles to reproduce it.",
+  "boundaries": {
+    "normal_engine_links_v2": false,
+    "legacy_v1_remains_default": true,
+    "training_authorized": false,
+    "openbench_authorized": false,
+    "g12_closure_claimed": false,
+    "strength_claimed": false,
+    "release_claimed": false
+  }
+}

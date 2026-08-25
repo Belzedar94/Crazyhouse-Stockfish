@@ -1,0 +1,67 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-preregistration-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-24T13:57:22.507Z",
+  "status": "PREREGISTERED_OPERATIONAL_CORRECTION_BEFORE_LEASE_322",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Replace only the failed pre-start lease and launcher working-directory framing. Preserve the scientific hypothesis, sanitizer toolchains, source product, matrices, stopping rule, resources and claim boundaries from the parent preregistration.",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.json",
+    "commit": "c77b66249c9b44ce635171014a4e26ce7e96fcb9",
+    "bytes": 10588,
+    "sha256": "3e569fd73e95253890679fd9c2a59d36fb95a3df2be151bd5cef3b6710011ce3"
+  },
+  "rejected_lease_321": {
+    "status": "ABORTED_PRE_START_NO_PID_NO_NAMESPACE",
+    "incident": "CH-292",
+    "abort_receipt": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-start-321.correction.001.json",
+      "bytes": 2972,
+      "sha256": "d2025d932948358d84da0e2381fb62c0d8d7213862ebb3f0c97c4e89c75933ce"
+    },
+    "source_or_toolchain_observed": false,
+    "compiler_started": false,
+    "verifier_started": false,
+    "scientific_result_observed": false,
+    "gate_credit": false
+  },
+  "single_operational_change": {
+    "old_lease": 321,
+    "new_lease": 322,
+    "old_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-321",
+    "new_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-322",
+    "launcher_requirement": "The PowerShell launcher defines and validates the absolute project working directory before Start-Process and persists the returned supervisor PID before polling ready."
+  },
+  "formal_source_admission": {
+    "base_commit": "c77b66249c9b44ce635171014a4e26ce7e96fcb9",
+    "permitted_difference_from_base": [
+      "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.001.json"
+    ],
+    "exact_src_tree_required": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "clean_worktree_required": true
+  },
+  "preserved_contract": {
+    "hypothesis": true,
+    "single_variable": true,
+    "frozen_inputs": true,
+    "toolchains": true,
+    "resource_contract": true,
+    "clean_export_contract": true,
+    "asan_lane": true,
+    "ubsan_trap_lane": true,
+    "runtime_matrix": true,
+    "stopping_rule": true,
+    "pass_effect": true,
+    "boundaries": true
+  },
+  "boundaries": {
+    "sanitizer_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

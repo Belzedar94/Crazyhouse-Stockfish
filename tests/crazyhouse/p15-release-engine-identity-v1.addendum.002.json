@@ -1,0 +1,92 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-expected-red-result/v1",
+  "created_utc": "2026-08-24T22:21:23.0788606Z",
+  "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.001.json",
+    "bytes": 2792,
+    "sha256": "4c2147f356d7bc3ebe620ddb58c2cfa5d744d5fb51e2436b18da1de928f0e7ee"
+  },
+  "lease": 351,
+  "source": {
+    "commit": "c9987bbec059af9bb7c1beb35c57341eb1f0bf93",
+    "tree": "61e2e3636a5da3ef93b1e1aed8832e2c4b6055f0",
+    "src_tree": "9d769751748870c6b1e7af21dfa1ea12040fc2a4",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 565
+  },
+  "observed_red": {
+    "make_target": "crazyhouse_p15_release_engine_identity_test",
+    "returncode": 2,
+    "stdout_bytes": 0,
+    "stderr_lines": 1,
+    "stderr": "make: *** No rule to make target 'crazyhouse_p15_release_engine_identity_test'.  Stop.",
+    "implementation_paths_present": 0,
+    "compiler_linker_engine_or_bytecode_artifacts": 0,
+    "generated_make_parse_metadata_paths": 3,
+    "clean_exports": 1,
+    "timeouts": 0
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-release-engine-identity-expected-red-351/completion.json",
+    "bytes": 5870,
+    "sha256": "00233c1c59f4110e7edacff23a7effdad28a4ccf8c2776e71642e280adb2efd6"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-release-engine-identity-expected-red-t1-end-351.json",
+    "bytes": 4533,
+    "sha256": "5df03acf3776e79d0423b0fe5f728a63e5337c65bcb25b15da713331f2df1911"
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 574,
+    "namespace_bytes": 14461422,
+    "namespace_ceiling_bytes": 268435456,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_alive": true,
+    "p7_stage": "WAITING_HOST_TIMING_CLEAN",
+    "p7_foreign_count": 3
+  },
+  "independent_verification": {
+    "status": "PASS",
+    "accepted_stdout": "INDEPENDENT_EXPECTED_RED_OK",
+    "first_invocation": "NOT_EXECUTED_SYNTAX_ERROR_CH_313",
+    "duplicate_key_safe": true,
+    "raw_stream_hashes_rechecked": true,
+    "absent_paths_rechecked": true,
+    "forbidden_artifacts_rechecked": true
+  },
+  "non_contaminating_incidents": [
+    "CH-313"
+  ],
+  "effect": "Permits implementation of the tracked release version authority, independent identity verifier and synthetic harness in a new source commit. It grants no stable runtime identity, final panel, strength, package, draft, publication, G15, G16 or RELEASED_MONITORED credit.",
+  "boundaries": {
+    "expected_red_proven": true,
+    "implementation_present": false,
+    "stable_runtime_identity_authenticated": false,
+    "final_p14_panel_executed": false,
+    "release_artifacts_built": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

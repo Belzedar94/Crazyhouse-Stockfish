@@ -1,0 +1,129 @@
+{
+  "schema": "crazyhouse-g4-referee-cases/v1",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "evidence_class": "E1_ENGINEERING",
+  "fixture_policy": "expectations are frozen before referee implementation output; corrections require a new addendum",
+  "clock_policy": {
+    "unit_boundary": "injectable deterministic clock",
+    "integration_boundary": "coarse real clock with wide margins",
+    "scheduler_sensitive_millisecond_race_is_sufficient": false
+  },
+  "cases": [
+    {
+      "id": "CH-G4-REF-PROFILE-MISSING",
+      "family": "configuration",
+      "variant": "crazyhouse",
+      "profile": null,
+      "expected": {"start_engines": false, "reason": "configuration_failure"}
+    },
+    {
+      "id": "CH-G4-REF-PROFILE-UNKNOWN",
+      "family": "configuration",
+      "variant": "crazyhouse",
+      "profile": "UNKNOWN_PROFILE",
+      "expected": {"start_engines": false, "reason": "configuration_failure"}
+    },
+    {
+      "id": "CH-G4-REF-PROFILE-MISMATCH",
+      "family": "configuration",
+      "variant": "chess",
+      "profile": "LICHESS_CRAZYHOUSE_2026_08_12",
+      "expected": {"start_engines": false, "reason": "configuration_failure"}
+    },
+    {
+      "id": "CH-G4-REF-NO-INSUFFICIENT",
+      "family": "terminal",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "history": [],
+      "expected": {"ended": false, "reason": "ongoing", "result": "*"}
+    },
+    {
+      "id": "CH-G4-REF-NO-HALFMOVE",
+      "family": "terminal",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 100 1",
+      "history": [],
+      "expected": {"ended": false, "reason": "ongoing", "result": "*"}
+    },
+    {
+      "id": "CH-G4-REF-REP-BELOW-AUTO",
+      "family": "history",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "history": ["a1a2", "h8h7", "a2a1", "h7h8", "a1a2", "h8h7", "a2a1", "h7h8", "a1a2", "h8h7", "a2a1", "h7h8"],
+      "occurrences": 4,
+      "expected": {"ended": false, "reason": "ongoing", "result": "*"}
+    },
+    {
+      "id": "CH-G4-REF-REP-AUTO",
+      "family": "history",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "history": ["a1a2", "h8h7", "a2a1", "h7h8", "a1a2", "h8h7", "a2a1", "h7h8", "a1a2", "h8h7", "a2a1", "h7h8", "a1a2", "h8h7", "a2a1", "h7h8"],
+      "occurrences": 5,
+      "expected": {"ended": true, "reason": "fivefold_repetition", "result": "1/2-1/2"}
+    },
+    {
+      "id": "CH-G4-REF-INITIAL-MATE",
+      "family": "terminal",
+      "fen": "k7/1Q6/2K5/8/8/8/8/8[] b - - 0 1",
+      "history": [],
+      "expected": {"ended": true, "reason": "checkmate", "winner": "white", "result": "1-0"}
+    },
+    {
+      "id": "CH-G4-REF-INITIAL-STALEMATE",
+      "family": "terminal",
+      "fen": "k7/2Q5/2K5/8/8/8/8/8[] b - - 0 1",
+      "history": [],
+      "expected": {"ended": true, "reason": "stalemate", "winner": null, "result": "1/2-1/2"}
+    },
+    {
+      "id": "CH-G4-REF-TIMEOUT-KINGS-ONLY",
+      "family": "clock",
+      "fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1",
+      "history": [],
+      "flagging_side": "white",
+      "expected": {"ended": true, "reason": "timeout", "winner": "black", "result": "0-1"},
+      "authority_basis": "scalachess Crazyhouse.opponentHasInsufficientMaterial is always false"
+    },
+    {
+      "id": "CH-G4-REF-MOVE-BEFORE-DEADLINE",
+      "family": "clock",
+      "clock_event": "complete_legal_move_before_deadline",
+      "expected": {"accept_move": true, "timeout": false}
+    },
+    {
+      "id": "CH-G4-REF-MOVE-AFTER-DEADLINE",
+      "family": "clock",
+      "clock_event": "move_arrives_after_deadline",
+      "expected": {"accept_move": false, "reason": "timeout"}
+    },
+    {
+      "id": "CH-G4-REF-SEQUENTIAL-ISOLATION",
+      "family": "isolation",
+      "games": [
+        {"fen": "7k/8/8/8/8/8/8/K7[Q] w - - 0 1", "history": []},
+        {"fen": "7k/8/8/8/8/8/8/K7[] w - - 0 1", "history": []}
+      ],
+      "expected": {"pocket_leak": false, "history_leak": false, "profile_leak": false, "clock_leak": false}
+    },
+    {
+      "id": "CH-G4-REF-CONCURRENT-ISOLATION",
+      "family": "isolation",
+      "games": [
+        {"fen": "7k/8/8/8/8/8/8/K7[N] w - - 0 1", "history": []},
+        {"fen": "7k/8/8/8/8/8/8/K7[p] w - - 0 1", "history": []}
+      ],
+      "expected": {"pocket_leak": false, "history_leak": false, "profile_leak": false, "clock_leak": false}
+    }
+  ],
+  "mandatory_match_artifacts": [
+    "raw_referee_command",
+    "raw_engine_transcripts",
+    "raw_pgn",
+    "normalized_semantic_trace",
+    "referee_sha256",
+    "scripted_actor_sha256s",
+    "profile_sha256",
+    "root_fen",
+    "final_fen",
+    "typed_terminal_reason"
+  ]
+}

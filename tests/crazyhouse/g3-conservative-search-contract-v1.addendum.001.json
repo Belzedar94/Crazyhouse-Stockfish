@@ -1,0 +1,56 @@
+{
+  "schema": "crazyhouse-g3-conservative-search-contract-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-23T06:09:30.6664366Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct one whitespace-normalization counter in the frozen verifier after expected-red record 153 and before any behavior commit. The scientific predicates, source target, runtime matrix and stopping rule are unchanged.",
+  "pins": {
+    "base_contract": {
+      "path": "tests/crazyhouse/g3-conservative-search-contract-v1.json",
+      "bytes": 4895,
+      "sha256": "a1bac6a21398fe80824ab592d2271dc40a416615f1a6a79d8be736d5f1e9aa5e",
+      "git_blob": "013928c643bfd17d58a9cbe831280214254f4a6b"
+    },
+    "frozen_verifier": {
+      "path": "tests/crazyhouse_conservative_search_verify.py",
+      "commit": "e0faec0c3797948fdaa642c5a5ffac9b5cdce1cb",
+      "bytes": 17727,
+      "sha256": "bd4f211a3e5a4a3765a7cc1a882e14108a0ea2afc58c00092495b7711676e904",
+      "git_blob": "ee0d6d81ad2f64764003103165ecc9dbed64a8ab"
+    },
+    "expected_red_record": {
+      "path": "../../../receipts/private/p3-conservative-search-expected-red-record-153.json",
+      "bytes": 4467,
+      "sha256": "9f33069211f91435e6289bc3f941db4b055afdf859d81c2fdf56f48bffa3e0df",
+      "result": "PASS_EXPECTED_RED_CONSERVATIVE_SEARCH_POLICY_GAPS"
+    }
+  },
+  "observed_harness_gap": {
+    "stage": "post-implementation static preflight before behavior commit",
+    "symptom": "orthodox_policy_instances was zero while every other target marker passed",
+    "false_inference_rejected": "the two typed policy declarations are absent from the formatted source",
+    "cause": "the verifier normalized whitespace into variable s but counted the declaration pattern against raw variable search; clang-format aligns the local declarations with multiple spaces",
+    "behavior_source_committed_at_observation": false,
+    "expected_red_affected": false,
+    "runtime_matrix_affected": false
+  },
+  "single_correction": {
+    "before": "search.count(\"const bool orthodoxSearch = pos.ruleset() == Ruleset::CHESS;\")",
+    "after": "s.count(\"const bool orthodoxSearch = pos.ruleset() == Ruleset::CHESS;\")",
+    "corrected_verifier_bytes": 17722,
+    "corrected_verifier_sha256": "0bf13e4fbe42385c5157bf9263cf400b49fb4b4392e9a9d39f9471fbd4652cbc",
+    "expected_orthodox_policy_instances": 2
+  },
+  "unchanged": {
+    "expected_red_static_gap_ids": 5,
+    "runtime_special_state_cases": 10,
+    "target_source_contract": true,
+    "exact_standard_control_required": true,
+    "fallback_allowed": false,
+    "timing_evidence": false,
+    "strength_claim": false,
+    "openbench_evidence": false,
+    "release_claim": false
+  },
+  "stopping_rule": "Authenticate expected-red record 153 and the frozen verifier before accepting this one-line normalization correction. The corrected verifier must report exactly two typed policy declarations and a complete target on the proposed source diff. Any other verifier, fixture or behavior change requires another additive contract boundary."
+}

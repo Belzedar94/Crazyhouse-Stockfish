@@ -1,0 +1,159 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-simd-incremental-probe-result/v1",
+  "created_utc": "2026-08-24T08:40:59.4680789Z",
+  "status": "PASS_SIMD_INCREMENTAL_CHECKPOINT_WITH_OPEN_SANITIZER_GAP",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "preregistration": {
+    "path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.json",
+    "commit": "41d65b34859004fd380173105dba534e3194f6c2",
+    "bytes": 7034,
+    "sha256": "1f93f28118478e46362b4254df7e2fa366b851f698f7c1075676a973f7e80a34"
+  },
+  "implementation_pin": {
+    "path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.addendum.001.json",
+    "bytes": 2698,
+    "sha256": "61259653bb89430a4bf6a3a1151955ca1801649ca857b94e019e9f799e7d2ddb",
+    "implementation_commit": "84a30c996db31f5f5d76cd824096d137c4b7d690",
+    "implementation_tree": "8157f9d2b82c29028435c4d50031fd53cec4d585",
+    "implementation_src_tree": "5940f07ad6e0e66af0a91d4eb37337cf63ac9005",
+    "formal_source_commit": "72a49a9bd8cdd17b53b5f6994c243cff200f127a",
+    "formal_source_tree": "5398653619020813bced448f9ae2f4da9a159b2a"
+  },
+  "expected_red": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-simd-incremental-prereg-296/expected-red.log",
+    "bytes": 730,
+    "sha256": "064fd85a37e91bc1df356387746d75f8d3118953fcd82b617a8dd67d81a5f21a",
+    "exit_code": 2,
+    "signal": "No rule to make target",
+    "formal_credit": false
+  },
+  "formal_lease": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-simd-incremental-formal-297",
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-simd-incremental-formal-297/completion.json",
+      "bytes": 7190,
+      "sha256": "7739fe640f62220c02a2469675b0227f0b7c751305b1e3a88514d4d83409dee6"
+    },
+    "independent_verifier": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-simd-incremental-formal-297/verify_completion.py",
+      "bytes": 5540,
+      "sha256": "0c21e55c2b51ff48013d989e998e6958908abecb8cadb2b68a0874f37f8e59f7"
+    },
+    "verification": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-simd-incremental-formal-297/independent-verification.json",
+      "bytes": 436,
+      "sha256": "0e128029018448933ac34d8b473d60ad7018be4dfcd0aa3f9fe35c790bc256d4",
+      "status": "PASS"
+    },
+    "source_archive": {
+      "bytes": 6154240,
+      "sha256": "2170d9c572f5a06678a95a9c215a9d5d303ac57478eb6291a1afd7eef35c8359"
+    },
+    "source_manifest_files": 453,
+    "source_manifest_sha256": "e90a136126456f65496a0b7f4e4b464dd28fafbc97cf1d85e1a5640af54c4903",
+    "release_export_match_before_after": true,
+    "debug_export_match_before_after": true,
+    "release_debug_export_match": true,
+    "warning_hits": 0
+  },
+  "simd_parity": {
+    "backend": "sse2-x16-scalar-tail1",
+    "fallback": false,
+    "accumulator_semantics": "signed-int64-then-checked-int32",
+    "feature_dimensions": 902,
+    "declared_maximum_active": 138,
+    "output_lanes": 17,
+    "single_row_lane_comparisons": 30668,
+    "bias_lane_comparisons": 34,
+    "multirow_lane_comparisons": 102,
+    "transition_lane_comparisons": 1666,
+    "feature_negative_controls": 6,
+    "release": "PASS",
+    "debug_assertions": "PASS"
+  },
+  "incremental_parity": {
+    "cases": 13,
+    "moves": 17,
+    "undos": 17,
+    "null_moves": 1,
+    "null_undos": 1,
+    "position_checkpoints": 49,
+    "perspective_checkpoints": 98,
+    "lane_comparisons": 1666,
+    "negative_controls": 5,
+    "source_authentication": "exact-membership-both-perspectives",
+    "transactional_failure_mutation": false,
+    "transitions": [
+      "quiet",
+      "king",
+      "capture-to-pocket",
+      "promoted-origin-capture",
+      "white-drop",
+      "black-drop",
+      "successive-pocket-consumption",
+      "en-passant",
+      "promotion",
+      "promoted-marker-motion",
+      "castling",
+      "capture-drop-chain",
+      "make-undo",
+      "null-null-undo"
+    ]
+  },
+  "protocol": {
+    "artifact_bytes": 30992,
+    "artifact_sha256": "fdd55e1a6af735cf1e999af31341c249c52f444f553454606195124a34b07d12",
+    "stream_sha256": "bb0d0f058d785adc6593500899620d96642031c2650e75edf1f8fe28972e24a9",
+    "protocol_sha256": "6a4d0e6412f60ea401d59d350dcf8c907f93df92046f5a69a1f0eb47dc8a1216",
+    "two_run_byte_identical": true,
+    "release_debug_byte_identical": true
+  },
+  "scalar_container_regression": {
+    "status": "PASS_UNCHANGED_PROTOCOL",
+    "release_debug_byte_identical": true,
+    "protocol_sha256": "f7017ceeadb90259f05caa78b72409b3377f1722dc4fc25d9ba670620c9770bd",
+    "rejection_sha256": "a3b4483e644a9d4c8bcc5b15f387de0be2c6085dda91ebc385193aff18c65d76"
+  },
+  "normal_engine_control": {
+    "build": "PASS_EXACT_LEGACY_EMBED_RECIPE",
+    "backend": "legacy-v1",
+    "evaluator": "incremental-scalar",
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "network_downloads": 0,
+    "uci_ready": true,
+    "bestmove_non_none": true,
+    "v2_binary_string_patterns_checked": 3,
+    "v2_binary_string_hits": 0,
+    "probe_linked": false,
+    "engine_bytes": 63050751,
+    "engine_sha256": "df400801b7346fd285a98c60e4455d525e60ae04eb3553ec9183816aadd8adee"
+  },
+  "sanitizer": {
+    "incident": "CH-263",
+    "status": "OPEN_NO_CREDIT",
+    "rerun": false,
+    "waived": false
+  },
+  "gate_effect": {
+    "checkpoint": "PASS",
+    "g12": "OPEN",
+    "remaining": [
+      "admitted sanitizer runtime execution",
+      "productive V2 topology and trainer",
+      "deterministic authenticated resume",
+      "legacy control through the new productive datapath"
+    ]
+  },
+  "boundaries": {
+    "training_started": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true,
+    "foreign_process_mutated": false
+  }
+}

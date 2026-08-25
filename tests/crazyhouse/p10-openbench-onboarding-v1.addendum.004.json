@@ -1,0 +1,83 @@
+{
+  "schema": "crazyhouse-openbench-onboarding-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T03:38:54.1296235Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P10",
+  "gate": "G10",
+  "evidence_class": "E1_ENGINEERING_CORRECTION",
+  "status": "PREREGISTERED_BEFORE_CLEAN_EXPORT_RETRY",
+  "parent": {
+    "path": "tests/crazyhouse/p10-openbench-onboarding-v1.addendum.003.json",
+    "bytes": 3205,
+    "sha256": "1fd9037cf619ea8cf8f6f3ce81b532e20f29ee84cd0e9ec057eeab0b02bbf34e",
+    "commit": "207347e376434a27287e45e75ca798d1b23b1314",
+    "tree": "965364003614cd526c024076cc24082cb72c5af0"
+  },
+  "rejected_lease": {
+    "lease": 285,
+    "status": "REJECTED_OPENBENCH_ENGINE_CLEAN_EXPORTS",
+    "gate_credit": false,
+    "start_receipt": {
+      "path": "receipts/resources/p10-openbench-engine-clean-t1-start-285.json",
+      "bytes": 5344,
+      "sha256": "f24f4f0f9c442483733cec8335bfca4d2e29fcea33a1095fa1d2a2ff8225aa7d"
+    },
+    "result": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-engine-clean-285/result.json",
+      "bytes": 11146,
+      "sha256": "148f3a47794bc642c5790dc868284cf47a43889833b1a4aed3008f845e8a3e84"
+    },
+    "end_receipt": {
+      "path": "receipts/resources/p10-openbench-engine-clean-t1-end-285.json",
+      "bytes": 944,
+      "sha256": "4cc7e43dd6768475cb6f9614fb355fe5cbcc84d12a974b5e9bd1078ae6d7b682"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-engine-clean-285/completion.json",
+      "bytes": 1015,
+      "sha256": "cb2d95cbbdc8d97e3d3192309b587eb992441382c1d1d666b0c6ab6dfcf13f40"
+    },
+    "completed_steps": [
+      "archive-a",
+      "archive-b",
+      "unit-a",
+      "build-a",
+      "verify-a"
+    ],
+    "export_a_diagnostic": {
+      "bench_nodes": [113485, 113485],
+      "network_identity": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "fallback_observed": false,
+      "strength_claim": false,
+      "complete_two_export_signature": false
+    },
+    "foreign_processes_mutated": false
+  },
+  "correction": {
+    "single_changed_engineering_field": "clean_export_harness.post_build_source_authentication_scope",
+    "before": "reject any generated file not present in the clean archive",
+    "after": "rehash every tracked archive path exactly while inventorying generated build outputs separately",
+    "reason": "A successful build necessarily adds ignored object, dependency and executable artifacts. Their presence is not a mutation of the authenticated tracked source files.",
+    "frozen_before_retry_lease": 286
+  },
+  "unchanged": {
+    "source_commit_for_rejected_lease": "207347e376434a27287e45e75ca798d1b23b1314",
+    "target_arch": "x86-64",
+    "legacy_evaluator": "scalar",
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "benchmark_limit": 4,
+    "benchmark_positions": 12,
+    "benchmark_expected_nodes": null,
+    "clean_exports_required": 2,
+    "bench_runs_per_export": 2,
+    "build_jobs": 1,
+    "strength_claim": false,
+    "openbench_official_claim": false,
+    "release_claim": false
+  },
+  "owner_boundaries": {
+    "local_strength_gate_passed": false,
+    "official_openbench_canary_authorized": false,
+    "publication_authorized": false
+  }
+}

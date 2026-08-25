@@ -1,0 +1,249 @@
+{
+  "schema": "crazyhouse-p15-release-bundle-contract/v1",
+  "created_utc": "2026-08-24T19:27:51.9926324Z",
+  "status": "PREREGISTERED_EXPECTED_RED_NOT_EXECUTED",
+  "evidence_class": "R4_RELEASE",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "decision_parent": {
+    "commit": "36bcf6a8c2a51e29aade6dccb97cbc79d28c5da1",
+    "tree": "a760dfaa9603d2ba8104c63e2f24217e0d954182",
+    "src_tree": "15e5245b0910bbb5ffa79b3bb67943b8bff24803",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "architecture_decision": "docs/crazyhouse/adr-0018-release-bundle-authentication-v1.md",
+  "expected_red": {
+    "make_target": "crazyhouse_release_bundle_contract_test",
+    "required_exit_code": 2,
+    "required_stderr": "make: *** No rule to make target 'crazyhouse_release_bundle_contract_test'.  Stop.",
+    "compiler_or_linker_artifacts": 0,
+    "implementation_paths_must_be_absent": [
+      "tools/release/crazyhouse_release_manifest.py",
+      "tools/release/crazyhouse_release_provenance.py",
+      "tools/release/verify_crazyhouse_release_download.py",
+      "tests/crazyhouse_release_bundle_contract.py"
+    ]
+  },
+  "version_contract": {
+    "format": "X.Y.Z",
+    "regex": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+    "tag_format": "v${VERSION}",
+    "stable_tag_movable": false
+  },
+  "public_inventory": {
+    "payload_assets": [
+      {
+        "kind": "native",
+        "target": "windows-x86-64",
+        "pattern": "crazyhouse-stockfish-${VERSION}-windows-x86-64.zip"
+      },
+      {
+        "kind": "native",
+        "target": "windows-x86-64-avx2",
+        "pattern": "crazyhouse-stockfish-${VERSION}-windows-x86-64-avx2.zip"
+      },
+      {
+        "kind": "source",
+        "target": "corresponding-source",
+        "pattern": "crazyhouse-stockfish-${VERSION}-source.tar.xz"
+      }
+    ],
+    "global_manifest": "crazyhouse-stockfish-release-manifest.json",
+    "checksums": "SHA256SUMS",
+    "provenance_input_suffix": ".provenance.json",
+    "provenance_inputs_are_public_assets": false,
+    "extra_files_allowed": false
+  },
+  "targets": [
+    {
+      "id": "windows-x86-64",
+      "platform": "windows",
+      "architecture": "x86-64",
+      "make_arch": "x86-64",
+      "feature_floor": ["x86-64", "sse2"]
+    },
+    {
+      "id": "windows-x86-64-avx2",
+      "platform": "windows",
+      "architecture": "x86-64-avx2",
+      "make_arch": "x86-64-avx2",
+      "feature_floor": ["x86-64", "avx2", "bmi1", "popcnt", "sse4.1", "ssse3", "sse2"]
+    }
+  ],
+  "network": {
+    "canonical_basename": "crazyhouse_run15rl_e190_l03.nnue",
+    "package_alias": "Crazyhouse_v1.nnue",
+    "package_path": "networks/Crazyhouse_v1.nnue",
+    "delivery_mode": "external-file-in-each-native-archive",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "license": "CC0-1.0",
+    "lila_asset_blob": "ad269c33db13ecae295ec66ee9f438462498c623",
+    "lila_license_readme_blob": "c94bf53d0cd54599d899a51f0aa4c1e01e4f0b94",
+    "alias_byte_identical_required": true,
+    "embedded_allowed": false,
+    "source_default_change_allowed": false,
+    "runtime_option": "CrazyhouseEvalFile",
+    "missing_or_invalid_fallback_allowed": false
+  },
+  "testing_book": {
+    "distributed": false,
+    "path": "tests/crazyhouse/data/crazyhouse-local-gate-openings-v2.epd",
+    "bytes": 100204,
+    "sha256": "a8976a380a6cc4b3a1a6aae3bf14249b2ab6d1bac6cf4a2715625d7c01747603",
+    "roots": 1024,
+    "license": "CC0-1.0"
+  },
+  "native_package_required_paths": [
+    "AUTHORS",
+    "CITATION.cff",
+    "Copying.txt",
+    "README.md",
+    "SOURCE.md",
+    "bin/crazyhouse-stockfish.exe",
+    "docs/RELEASE_NOTES_DRAFT.md",
+    "docs/RULE_PROFILE.md",
+    "inventory/FILES.json",
+    "inventory/SBOM.spdx.json",
+    "licenses/CC0-1.0-NOTICE.md",
+    "networks/README.md",
+    "networks/Crazyhouse_v1.nnue"
+  ],
+  "native_provenance_required_keys": [
+    "schemaVersion",
+    "asset",
+    "version",
+    "tag",
+    "commit",
+    "tree",
+    "sourceDateEpoch",
+    "kind",
+    "target",
+    "platform",
+    "architecture",
+    "makeArch",
+    "featureFloor",
+    "toolchain",
+    "buildCommand",
+    "executableBytes",
+    "executableSha256",
+    "packageInventorySha256",
+    "sbomSha256",
+    "networkAlias",
+    "networkBytes",
+    "networkSha256",
+    "networkLicense",
+    "networkAssetBlob",
+    "networkLicenseBlob",
+    "testingBookBytes",
+    "testingBookSha256",
+    "testingBookRoots",
+    "testingBookLicense",
+    "correspondingSourceAsset",
+    "sha256"
+  ],
+  "source_provenance_required_keys": [
+    "schemaVersion",
+    "asset",
+    "version",
+    "tag",
+    "commit",
+    "tree",
+    "sourceDateEpoch",
+    "kind",
+    "target",
+    "license",
+    "correspondingSource",
+    "archiveCommand",
+    "sha256"
+  ],
+  "global_manifest_required_keys": [
+    "schemaVersion",
+    "project",
+    "version",
+    "tag",
+    "commit",
+    "tree",
+    "sourceDateEpoch",
+    "network",
+    "testingBook",
+    "artifacts"
+  ],
+  "fixture_matrix": {
+    "positive": [
+      "exact inventory assembly",
+      "two independent input roots emit byte-identical manifest and SHA256SUMS",
+      "all three copied assets match source bytes size and SHA-256",
+      "both native assets bind the one source asset",
+      "downloaded draft exact byte-for-byte reauthentication"
+    ],
+    "negative": [
+      "missing native archive",
+      "missing source archive",
+      "extra asset",
+      "case-colliding asset name",
+      "unsafe asset name",
+      "linked asset",
+      "missing provenance",
+      "orphaned provenance",
+      "duplicate provenance JSON key",
+      "extra provenance key",
+      "missing provenance key",
+      "wrong version",
+      "wrong tag",
+      "wrong commit",
+      "wrong tree",
+      "wrong source epoch",
+      "wrong target",
+      "wrong architecture",
+      "wrong feature floor",
+      "wrong network alias",
+      "wrong network bytes",
+      "wrong network digest",
+      "wrong network license or authority blobs",
+      "wrong testing-book identity or license",
+      "wrong corresponding-source asset",
+      "tampered payload after provenance",
+      "existing output directory",
+      "download missing asset",
+      "download extra asset",
+      "download altered byte",
+      "SHA256SUMS missing",
+      "SHA256SUMS malformed row",
+      "SHA256SUMS duplicate name",
+      "SHA256SUMS path-bearing name",
+      "SHA256SUMS file-list drift",
+      "SHA256SUMS digest mismatch"
+    ]
+  },
+  "method_references_only": {
+    "atomic_commit": "f8e9ea268317b1f85d6ae522e87d05e6e1e5f9cb",
+    "atomic_manifest_sha256": "dcff9597992a04de3814fae6691c1c00e70f665412f5e3562b12b57084ec13b0",
+    "atomic_download_verifier_sha256": "0d49b2827cb3fb28a0bcd8492a48bec7e7eaba5af97c0f58d78d498745207798",
+    "horde_commit": "0721737232b57b05dbf3a1bb8c624225c25f7a45",
+    "horde_manifest_sha256": "3e028168a75e7f6ab5f5bc67f39df9e5f1f913210609bf3b0e5d66e3a72ed161",
+    "values_or_artifacts_inherited": false
+  },
+  "stopping_rule": "The expected-red must match exactly before implementation. Fixture qualification stops on any inventory, provenance, identity, deterministic-output, checksum, no-overwrite or downloaded-byte mismatch. Failed namespaces are never repaired in place.",
+  "boundaries": {
+    "delivery_mode_frozen": true,
+    "public_inventory_frozen": true,
+    "expected_red_executed": false,
+    "tooling_implemented": false,
+    "fixture_tooling_qualified": false,
+    "full_engine_builds_executed": false,
+    "release_executable_reproducible": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}
+

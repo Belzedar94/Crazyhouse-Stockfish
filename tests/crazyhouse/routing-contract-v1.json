@@ -1,0 +1,216 @@
+{
+  "schema": "crazyhouse-uci-routing-contract/v1",
+  "profile": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "profile_token": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "official_source_commit": "5062aee519a1ba262d472d8ab139851ced56573e",
+  "legacy_network": {
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+  },
+  "start_fen": {
+    "chess": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "crazyhouse": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1"
+  },
+  "options": {
+    "ordered_names": [
+      "Debug Log File",
+      "NumaPolicy",
+      "Threads",
+      "Hash",
+      "Clear Hash",
+      "Ponder",
+      "MultiPV",
+      "Skill Level",
+      "Move Overhead",
+      "nodestime",
+      "UCI_Chess960",
+      "UCI_Variant",
+      "CrazyhouseProfile",
+      "UCI_LimitStrength",
+      "UCI_Elo",
+      "UCI_ShowWDL",
+      "SyzygyPath",
+      "SyzygyProbeDepth",
+      "Syzygy50MoveRule",
+      "SyzygyProbeLimit",
+      "EvalFile",
+      "CrazyhouseEvalFile"
+    ],
+    "uci_variant_line": "option name UCI_Variant type combo default crazyhouse var chess var crazyhouse",
+    "crazyhouse_profile_line": "option name CrazyhouseProfile type string default LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "crazyhouse_eval_file_line": "option name CrazyhouseEvalFile type string default <empty>",
+    "eval_file_default": "nn-ab28990d4ea3.nnue",
+    "initial_requested_ruleset": "crazyhouse",
+    "initial_requested_profile": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "initial_route_committed": false
+  },
+  "backend": {
+    "kinds": ["none", "official-chess", "legacy-v1"],
+    "readiness": ["none", "ready", "failed"],
+    "crazyhouse_search_bound": false,
+    "crazyhouse_eval_bound": false
+  },
+  "stable_codes": [
+    "invalid_variant",
+    "crazyhouse_profile_missing",
+    "crazyhouse_profile_unknown",
+    "crazyhouse_profile_hash_mismatch",
+    "crazyhouse_chess960_rejected",
+    "route_pending",
+    "crazyhouse_eval_file_empty",
+    "legacy_missing_file",
+    "legacy_file_read_failure",
+    "legacy_truncated_file",
+    "legacy_oversized_file",
+    "legacy_version_mismatch",
+    "legacy_network_hash_mismatch",
+    "legacy_description_length_mismatch",
+    "legacy_description_mismatch",
+    "legacy_transformer_hash_mismatch",
+    "legacy_architecture_hash_mismatch",
+    "legacy_tensor_layout_mismatch",
+    "legacy_digest_mismatch",
+    "official_eval_not_loaded",
+    "position_requires_committed_route",
+    "invalid_fen",
+    "malformed_position",
+    "illegal_move",
+    "position_epoch_invalid",
+    "backend_not_ready",
+    "backend_route_mismatch",
+    "crazyhouse_search_not_bound",
+    "crazyhouse_eval_not_bound",
+    "crazyhouse_bench_not_bound",
+    "crazyhouse_speedtest_not_bound",
+    "crazyhouse_export_net_not_bound"
+  ],
+  "state_cases": [
+    {
+      "id": "startup",
+      "pending_ruleset": "crazyhouse",
+      "pending_dirty": true,
+      "active_ruleset": null,
+      "backend": "none",
+      "backend_readiness": "none",
+      "position_valid": false
+    },
+    {
+      "id": "empty_legacy_apply_failure",
+      "active_ruleset": "crazyhouse",
+      "backend": "none",
+      "backend_readiness": "failed",
+      "error": "crazyhouse_eval_file_empty",
+      "position_valid": false,
+      "readyok": false
+    },
+    {
+      "id": "missing_profile_apply_failure",
+      "active_ruleset": null,
+      "backend": "none",
+      "backend_readiness": "failed",
+      "error": "crazyhouse_profile_missing",
+      "position_valid": false,
+      "readyok": false
+    },
+    {
+      "id": "unknown_profile_apply_failure",
+      "active_ruleset": null,
+      "backend": "none",
+      "backend_readiness": "failed",
+      "error": "crazyhouse_profile_unknown",
+      "position_valid": false,
+      "readyok": false
+    },
+    {
+      "id": "profile_hash_mismatch_apply_failure",
+      "active_ruleset": null,
+      "backend": "none",
+      "backend_readiness": "failed",
+      "error": "crazyhouse_profile_hash_mismatch",
+      "position_valid": false,
+      "readyok": false
+    },
+    {
+      "id": "valid_legacy_apply",
+      "active_ruleset": "crazyhouse",
+      "backend": "legacy-v1",
+      "backend_readiness": "ready",
+      "backend_identity": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "position_valid": false,
+      "readyok": true
+    },
+    {
+      "id": "failed_replacement",
+      "active_ruleset": "crazyhouse",
+      "backend": "none",
+      "backend_readiness": "failed",
+      "position_valid": false,
+      "stale_backend_usable": false,
+      "readyok": false
+    },
+    {
+      "id": "perft_position_after_backend_failure",
+      "active_ruleset": "crazyhouse",
+      "backend": "none",
+      "backend_readiness": "failed",
+      "position_valid": true,
+      "perft_allowed": true,
+      "search_allowed": false
+    },
+    {
+      "id": "successful_retry",
+      "active_ruleset": "crazyhouse",
+      "backend": "legacy-v1",
+      "backend_readiness": "ready",
+      "position_valid": false,
+      "epoch_advances": true,
+      "readyok": true
+    },
+    {
+      "id": "crazyhouse_chess960",
+      "active_ruleset": null,
+      "backend": "none",
+      "backend_readiness": "failed",
+      "error": "crazyhouse_chess960_rejected",
+      "position_valid": false,
+      "readyok": false
+    },
+    {
+      "id": "valid_chess_apply",
+      "active_ruleset": "chess",
+      "backend": "official-chess",
+      "backend_readiness": "ready",
+      "position_valid": false,
+      "readyok": true
+    }
+  ],
+  "command_policy": {
+    "crazyhouse_without_backend": {
+      "position": true,
+      "perft": true,
+      "display": true,
+      "eval": false,
+      "search": false,
+      "bench": false,
+      "speedtest": false,
+      "export_net": false,
+      "syzygy": false,
+      "wdl": false
+    },
+    "transactional_position": {
+      "physical_slot_preserved_on_failure": true,
+      "position_epoch_invalidated_on_failure": true,
+      "recovery_requires_complete_valid_position": true
+    }
+  },
+  "standard_control": {
+    "explicit_variant": "chess",
+    "baseline_option_count": 19,
+    "routed_option_count": 22,
+    "bench_command": "bench 16 1 13 default depth",
+    "bench_nodes": 2884956,
+    "bench_bestmoves": 51,
+    "bench_signature_sha256": "78751f6d2a1146c15dac46875b52c4548deb3ca87475f478eebef5906f2d9259"
+  }
+}

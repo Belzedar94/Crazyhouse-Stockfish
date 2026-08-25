@@ -40,6 +40,7 @@
     #include <cstddef>
     #include <cstdint>
     #include "misc.h"
+    #include "ruleset.h"
 
     #if defined(_MSC_VER)
         // Disable some silly and noisy warnings from MSVC compiler
@@ -428,6 +429,18 @@ enum MoveType : u16 {
     CASTLING   = 3 << 14
 };
 
+enum class MoveKind : u8 {
+    INVALID,
+    NORMAL,
+    PROMOTION,
+    EN_PASSANT,
+    CASTLING,
+    DROP
+};
+
+constexpr u16 DROP_TAG         = 0x3000;
+constexpr int DROP_SOURCE_BASE = 56;
+
 // A move needs 16 bits to be stored
 //
 // bit  0- 5: destination square (from 0 to 63)
@@ -454,19 +467,81 @@ class Move {
         return Move(T + ((pt - KNIGHT) << 12) + (from << 6) + to);
     }
 
+    static constexpr Move make_drop(PieceType pt, Square to) {
+        assert(pt >= PAWN && pt <= QUEEN);
+        assert(Stockfish::is_ok(to));
+        return Move(DROP_TAG + ((DROP_SOURCE_BASE + pt - PAWN) << 6) + to);
+    }
+
     constexpr Square from_sq() const {
         assert(is_ok());
+        assert(kind() != MoveKind::DROP && kind() != MoveKind::INVALID);
         return Square((data >> 6) & 0x3F);
     }
 
     constexpr Square to_sq() const {
         assert(is_ok());
+        assert(kind() != MoveKind::INVALID);
         return Square(data & 0x3F);
     }
 
     constexpr MoveType type_of() const { return MoveType(data & (3 << 14)); }
 
-    constexpr PieceType promotion_type() const { return PieceType(((data >> 12) & 3) + KNIGHT); }
+    constexpr PieceType promotion_type() const {
+        assert(kind() == MoveKind::PROMOTION);
+        return PieceType(((data >> 12) & 3) + KNIGHT);
+    }
+
+    constexpr MoveKind kind() const {
+        if (!is_ok())
+            return MoveKind::INVALID;
+
+        const u16 payload = data & DROP_TAG;
+
+        switch (type_of())
+        {
+        case NORMAL :
+            if (payload == 0)
+                return MoveKind::NORMAL;
+            if (payload == DROP_TAG)
+            {
+                const int source = (data >> FromSqShift) & 0x3F;
+                if (source >= DROP_SOURCE_BASE && source < DROP_SOURCE_BASE + 5)
+                    return MoveKind::DROP;
+            }
+            return MoveKind::INVALID;
+        case PROMOTION :
+            return MoveKind::PROMOTION;
+        case EN_PASSANT :
+            return payload == 0 ? MoveKind::EN_PASSANT : MoveKind::INVALID;
+        case CASTLING :
+            return payload == 0 ? MoveKind::CASTLING : MoveKind::INVALID;
+        }
+
+        return MoveKind::INVALID;
+    }
+
+    constexpr bool is_drop() const { return kind() == MoveKind::DROP; }
+
+    constexpr PieceType drop_piece_type() const {
+        assert(is_drop());
+        return PieceType(PAWN + (((data >> FromSqShift) & 0x3F) - DROP_SOURCE_BASE));
+    }
+
+    bool is_structurally_valid(Ruleset ruleset) const noexcept {
+        ruleset = validate_ruleset(ruleset, "Move::is_structurally_valid");
+
+        if (data == none().data || data == null().data)
+            return true;
+
+        const MoveKind semanticKind = kind();
+        if (semanticKind == MoveKind::INVALID)
+            return false;
+        if (semanticKind == MoveKind::DROP)
+            return ruleset == Ruleset::CRAZYHOUSE;
+
+        return ((data >> FromSqShift) & 0x3F) != (data & 0x3F);
+    }
 
     constexpr bool is_ok() const { return none().data != data && null().data != data; }
 

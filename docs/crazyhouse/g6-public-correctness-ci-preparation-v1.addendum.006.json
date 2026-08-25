@@ -1,0 +1,143 @@
+{
+  "schema": "crazyhouse-public-correctness-ci-preparation-result/v1",
+  "addendum": 6,
+  "created_utc": "2026-08-25T03:21:23.3441474Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P6",
+  "gate": "G6",
+  "evidence_class": "E1_ENGINEERING_LOCAL_RESULT",
+  "status": "PASS_LOCAL_G15_PUBLISHER_CI_INTEGRATION_AWAITING_PUBLIC_EXECUTION",
+  "source": {
+    "commit": "345a70eaf07d8aadf7cd9577780c1aae5b4527dc",
+    "tree": "89ff70cea18d65eba82f1c9917c663da2b6abe99",
+    "parent_commit": "0813342cc3e4fbeb57caead52e71a4e02aa181bf",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "src_tree_changed": false,
+    "commit_subject": "ci: test post-G15 publisher tooling"
+  },
+  "preregistration": {
+    "path": "docs/crazyhouse/g6-public-correctness-ci-preparation-v1.addendum.004.json",
+    "bytes": 4127,
+    "sha256": "1cf9bc6fd19f0047add9710180c2660ee763f488039a87094738c0886fe60da3"
+  },
+  "validation_correction": {
+    "path": "docs/crazyhouse/g6-public-correctness-ci-preparation-v1.addendum.005.json",
+    "bytes": 3230,
+    "sha256": "ffd6e3f617d3373e51aaa01edb13d636f4a7deb2fa528015abca434c3e3f1851",
+    "incident": "CH-329"
+  },
+  "workflow_change": {
+    "path": ".github/workflows/crazyhouse-correctness.yml",
+    "only_path_changed_in_source_commit": true,
+    "before": {
+      "commit": "0813342cc3e4fbeb57caead52e71a4e02aa181bf",
+      "bytes": 17128,
+      "sha256": "0442f0449467fb53c277ff0df1624887f95f9614740a5efd5eae7faf15122c79"
+    },
+    "after": {
+      "commit": "345a70eaf07d8aadf7cd9577780c1aae5b4527dc",
+      "bytes": 17476,
+      "sha256": "d18a67386b76cb424621efe7babb6451a6fe79c97a57d320ebd28d15965c812c"
+    },
+    "job": "network-tooling",
+    "position": "after Test fail-closed G15 release workflow guard and before Materialize exact registered legacy network",
+    "step_name": "Test fail-closed post-G15 publisher tooling",
+    "step_instances": 1,
+    "commands": [
+      "python -m py_compile tools/release/crazyhouse_g15_publisher.py tests/crazyhouse_g15_publisher.py",
+      "python -B tests/crazyhouse_g15_publisher.py",
+      "python -O -B tests/crazyhouse_g15_publisher.py"
+    ],
+    "publisher_cli_invoked": false,
+    "new_job": false,
+    "new_runner": false,
+    "new_matrix": false,
+    "new_permission": false,
+    "new_secret": false,
+    "new_environment_variable": false,
+    "new_network_input": false,
+    "public_mutation_path_added": false
+  },
+  "qualified_inputs": {
+    "publisher_result": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.005.json",
+      "bytes": 5117,
+      "sha256": "946d94c3e7000237b49b27362f7d97eaab7cf159a06a8c03a92164e67e234535"
+    },
+    "publisher": {
+      "path": "tools/release/crazyhouse_g15_publisher.py",
+      "bytes": 41192,
+      "sha256": "f984016ef12c57263994dacd3f1765bb352fda46fe7334bb94817353f45ff2e0"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_g15_publisher.py",
+      "bytes": 30535,
+      "sha256": "9612e15552223d126b8f098556940f51fada57d352dc28820da084d43c878a77"
+    }
+  },
+  "verification": {
+    "python": "3.12.0",
+    "py_compile": "PASS",
+    "unit_profiles": [
+      {
+        "profile": "normal",
+        "tests_passed": 11,
+        "tests_failed": 0,
+        "positive_cases": 3,
+        "negative_cases": 89
+      },
+      {
+        "profile": "optimized",
+        "tests_passed": 11,
+        "tests_failed": 0,
+        "positive_cases": 3,
+        "negative_cases": 89
+      }
+    ],
+    "yaml_base_loader": {
+      "status": "PASS_EXACT_JOB_INVENTORY_AND_ONE_PUBLISHER_STEP",
+      "jobs": [
+        "network-tooling",
+        "correctness-linux",
+        "sanitizers",
+        "correctness-windows",
+        "evidence"
+      ],
+      "step_instances": 1,
+      "neighbors_exact": true,
+      "run_bytes_exact": true
+    },
+    "actionlint": {
+      "version": "1.7.12",
+      "bytes": 6432768,
+      "sha256": "54ca21be3de4c7cfa26914aa8b61bd76bf573ef3caac5f80d110558cdf241718",
+      "errors": 0
+    },
+    "post_commit_reauthentication": "PASS",
+    "repository_clean_after_source_commit": true,
+    "p7": {
+      "supervisor_pid": 44764,
+      "stage": "WAITING_HOST_TIMING_CLEAN",
+      "captured_utc": "2026-08-25T03:20:39.7583262Z",
+      "foreign_count": 3,
+      "crazyhouse_count": 0,
+      "openbench_authorized": false,
+      "foreign_processes_mutated": false
+    }
+  },
+  "claim_boundary": {
+    "local_ci_integration_executed": true,
+    "public_workflow_pushed": false,
+    "public_workflow_run_observed": false,
+    "public_artifacts_observed": false,
+    "G6": "OPEN",
+    "G15": "OPEN",
+    "owner_decision_recorded": false,
+    "public_write_authorized": false,
+    "stable_publication_authorized": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false
+  },
+  "pass_effect": "The prepared local correctness workflow now runs the formally qualified post-G15 publisher unit suite in normal and optimized profiles without invoking the publisher CLI. G6 remains open until public execution and artifact reauthentication; G15 remains open until every release prerequisite and the exact owner publication decision."
+}

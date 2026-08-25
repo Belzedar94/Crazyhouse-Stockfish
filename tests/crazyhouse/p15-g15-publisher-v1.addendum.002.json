@@ -1,0 +1,206 @@
+{
+  "schema": "crazyhouse-g15-publisher-preimplementation-addendum/v1",
+  "created_utc": "2026-08-25T02:34:14.1611824Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE_PREREGISTRATION",
+  "status": "ACCEPTED_PREIMPLEMENTATION_SCHEMA_HARDENING",
+  "source": {
+    "commit": "2ecc8b3cc098799ff94a582eabf5aaa7eb6da530",
+    "tree": "82beb66f35d66b1668ec5a00625d1c7a36c48570",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "parents": {
+    "contract": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.json",
+      "bytes": 6979,
+      "sha256": "35e8462357ae2e4014853cdff132c01361b2120d0af0b6b12ea5ac0187b5f0b5"
+    },
+    "expected_red": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.001.json",
+      "bytes": 3969,
+      "sha256": "3a1c787065a93192488b066e0f7d7ab9871dc8835c3d4d5ae10f990db76fae3e"
+    }
+  },
+  "reason": "The base contract freezes the decision keys and transaction order but intentionally does not define the independently verified local-draft receipt schema, subprocess response schema or exact output-path contract. These must be executable and mutation-testable before implementation.",
+  "draft_verification_receipt": {
+    "schema": "crazyhouse-g15-draft-verification/v1",
+    "exact_keys": [
+      "schema",
+      "project",
+      "status",
+      "version",
+      "tag",
+      "candidate_commit",
+      "candidate_tree",
+      "tag_target_commit",
+      "tag_target_tree",
+      "source_date_epoch",
+      "release_notes",
+      "assets",
+      "independent_verifier"
+    ],
+    "status": "PASS_COMPLETE_LOCAL_DRAFT_INDEPENDENTLY_VERIFIED",
+    "asset_entry_exact_keys": [
+      "name",
+      "bytes",
+      "sha256"
+    ],
+    "release_notes_exact_keys": [
+      "bytes",
+      "sha256"
+    ],
+    "independent_verifier_exact_keys": [
+      "path",
+      "bytes",
+      "sha256",
+      "result"
+    ],
+    "independent_verifier_result": "PASS_LOCAL_DRAFT_INDEPENDENT",
+    "asset_order_matches_base_contract": true,
+    "decision_and_draft_receipt_values_must_match": true
+  },
+  "decision_nested_schemas": {
+    "file_pin_exact_keys": [
+      "path",
+      "bytes",
+      "sha256"
+    ],
+    "asset_pin_exact_keys": [
+      "name",
+      "path",
+      "bytes",
+      "sha256"
+    ],
+    "tagger_exact_keys": [
+      "name",
+      "email",
+      "date"
+    ],
+    "tagger_date_equals_decided_utc": true,
+    "assets_share_one_exact_directory": true,
+    "asset_directory_contains_only_frozen_assets": true,
+    "release_notes_outside_asset_directory": true,
+    "draft_receipt_outside_asset_directory": true
+  },
+  "cli": {
+    "required": [
+      "--contract",
+      "--addendum",
+      "--decision",
+      "--git-root",
+      "--journal",
+      "--result",
+      "--download-dir"
+    ],
+    "execute_flag": "--execute",
+    "default_mode": "READ_ONLY_PLAN",
+    "execute_requires_absent_journal_result_and_download": true,
+    "plan_creates_files": false,
+    "environment_or_token_arguments": false
+  },
+  "git": {
+    "accepted_origin_url": "https://github.com/Belzedar94/Crazyhouse-Stockfish.git",
+    "object_format": "sha1",
+    "zero_object_id": "0000000000000000000000000000000000000000",
+    "tag_payload_lines": [
+      "object <tag_target_commit>",
+      "type commit",
+      "tag v1.0.0",
+      "tagger <name> <email> <unix_epoch> +0000",
+      "",
+      "Crazyhouse-Stockfish 1.0.0"
+    ],
+    "tag_payload_trailing_lf": true,
+    "create_object_command": [
+      "git",
+      "mktag"
+    ],
+    "create_ref_command_prefix": [
+      "git",
+      "update-ref",
+      "refs/tags/v1.0.0"
+    ],
+    "create_ref_requires_zero_old_oid": true,
+    "push_command_exact_from_parent": true,
+    "force_or_delete_syntax_rejected": true
+  },
+  "github_query": {
+    "transport": "gh api --paginate --slurp",
+    "endpoint": "repos/Belzedar94/Crazyhouse-Stockfish/releases?per_page=100",
+    "matching_tag_count_before": 0,
+    "matching_tag_count_after_draft": 1,
+    "matching_tag_count_after_publication": 1,
+    "required_release_fields": [
+      "id",
+      "tag_name",
+      "name",
+      "draft",
+      "prerelease",
+      "published_at",
+      "assets"
+    ],
+    "required_asset_fields": [
+      "name",
+      "size",
+      "digest",
+      "state"
+    ],
+    "asset_state": "uploaded",
+    "asset_digest_prefix": "sha256:"
+  },
+  "independent_download_verifier": {
+    "path": "tools/release/verify_crazyhouse_release_download.py",
+    "bytes": 12362,
+    "sha256": "ec3e225149873e4720910094dbd53f0ff97266b45602366696d9070bdee9366b",
+    "direct_function": "verify_release_download",
+    "expected_file_count": 5
+  },
+  "journal": {
+    "entry_exact_keys": [
+      "schema",
+      "index",
+      "captured_utc",
+      "stage",
+      "previous_sha256",
+      "details",
+      "entry_sha256"
+    ],
+    "entry_schema": "crazyhouse-g15-publisher-journal-entry/v1",
+    "genesis_previous_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "entry_sha256_covers_entry_without_entry_sha256": true,
+    "append_flush_and_fsync": true,
+    "raw_commands_or_environment_recorded": false
+  },
+  "result": {
+    "success": "PASS_STABLE_PUBLICATION_TRANSACTION_MONITOR_T0_PENDING",
+    "preflight_failure": "FAIL_PREFLIGHT_NO_PUBLIC_MUTATION",
+    "partial_failure": "PARTIAL_PUBLICATION_REQUIRES_ADDITIVE_RECOVERY",
+    "result_file_write_once": true,
+    "monitor_handoff_includes_release_id_published_at_tag_object_peeled_commit_assets_and_journal_tip": true
+  },
+  "qualification_transport": {
+    "runner_interface": "argv plus optional stdin; returns exit code, stdout and stderr",
+    "fake_transport_in_test_only": true,
+    "fake_mutation_log_exact_order": true,
+    "real_subprocesses_in_formal_qualification": 0,
+    "network_calls": 0,
+    "github_writes": 0,
+    "git_remote_writes": 0
+  },
+  "unchanged": {
+    "implementation_paths_present": false,
+    "owner_decision_recorded": false,
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "dispatchable_workflow": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_published": false,
+    "G15": "OPEN",
+    "G16": "OPEN",
+    "strength_credit": false,
+    "openbench_used": false,
+    "p7_candidate_changed": false
+  }
+}

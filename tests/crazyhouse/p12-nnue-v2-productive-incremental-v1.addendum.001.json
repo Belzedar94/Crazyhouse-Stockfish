@@ -1,0 +1,91 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-incremental-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-24T12:35:33.982Z",
+  "status": "EXPECTED_RED_AUTHENTICATED_IMPLEMENTATION_AUTHORIZED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Authenticate that the dedicated productive incremental target was absent at the frozen preregistration source before implementing the single preregistered transactional accumulator variable.",
+  "pins": {
+    "preregistration": {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-incremental-v1.json",
+      "introduced_commit": "f6e032c9d9ef9cdc5d4e46e08031c0c03713adca",
+      "frozen_source_commit": "2fbf9341cec0c6bf53c4420a5d9f9ed3763e99d7",
+      "bytes": 8983,
+      "sha256": "9d34b494aea9715fed462e3610380c983f5a98c18aa685c7e6eebe30c07b2973"
+    },
+    "frozen_source": {
+      "commit": "2fbf9341cec0c6bf53c4420a5d9f9ed3763e99d7",
+      "tree": "86a057c1748eae7fe18aa5d95403b084c325ad1e",
+      "src_tree": "d3c328edfac440fbb2ec125e1a3fec85e2cef7c4",
+      "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+    },
+    "expected_red_start": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-expected-red-t1-start-316.json",
+      "bytes": 4484,
+      "sha256": "b218324fae2d370f59537637a88615e0ca4c37c1a515e114b88287bc84313317"
+    },
+    "timestamp_correction": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-expected-red-t1-start-316.correction.001.json",
+      "bytes": 1487,
+      "sha256": "ddaccff1affa39e098141acd99fa91c7bdbe455ee9ea606d293e64fa2344aae5",
+      "incident": "CH-288",
+      "pre_go": true
+    },
+    "expected_red_pid_binding": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-expected-red-t1-start-316.addendum.001.json",
+      "bytes": 2029,
+      "sha256": "cc4d4caa07a2847cb72473986429264ad88f1818cd54eb5db3c4339b857554a1"
+    },
+    "expected_red_completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-incremental-expected-red-316/completion.json",
+      "bytes": 3758,
+      "sha256": "a773d4b7b0d6f39d1e86f2939d27f914732580e05cbe7e78caa9fad186b0c485"
+    },
+    "expected_red_end": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-expected-red-t1-end-316.json",
+      "bytes": 3404,
+      "sha256": "e6134daad789496b1b4fc8e6582f65d414c3c8163b8a4256f8c14ea9f6b44d95"
+    }
+  },
+  "authenticated_observation": {
+    "clean_export": true,
+    "target": "crazyhouse_v2_productive_incremental_test",
+    "exit_code": 2,
+    "stdout_bytes": 0,
+    "stderr_bytes": 85,
+    "stderr_sha256": "7088d7536aa3d840aa36441e51dcb8b0b9cd37ef4878308cfa18127ccbd5844f",
+    "stderr_exact_line": "make: *** No rule to make target 'crazyhouse_v2_productive_incremental_test'.  Stop.",
+    "other_errors": 0,
+    "compiler_artifacts": 0,
+    "source_clean_before": true,
+    "source_clean_after": true,
+    "owned_processes_remaining": 0
+  },
+  "implementation_transition": {
+    "expected_red_credit": true,
+    "implementation_may_begin": true,
+    "single_variable": "productive V2 transformer state: repeated full refresh to transactional source/target inventory delta accumulation",
+    "simd_backend_changes_allowed": false,
+    "dense_path_changes_allowed": false,
+    "container_changes_allowed": false,
+    "architecture_changes_allowed": false,
+    "quantization_changes_allowed": false,
+    "trainer_changes_allowed": false,
+    "normal_engine_routing_changes_allowed": false,
+    "legacy_default_changes_allowed": false
+  },
+  "boundaries": {
+    "formal_productive_incremental_credit": false,
+    "incremental_productive_proven": false,
+    "sanitizer_productive_proven": false,
+    "training_admissible": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

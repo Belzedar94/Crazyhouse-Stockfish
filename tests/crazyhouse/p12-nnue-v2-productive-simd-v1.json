@@ -1,0 +1,158 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-simd-preregistration/v1",
+  "created_utc": "2026-08-24T11:28:49.3022507Z",
+  "status": "PREREGISTERED_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "hypothesis": "An SSE2 transformer accumulation backend can be integrated into the frozen productive V2 evaluator with exact scalar parity and no change to topology, quantization, container bytes, provenance, dense arithmetic, trainer, physical features, or the legacy default.",
+  "single_variable": "productive transformer accumulation backend: scalar to explicit SSE2 x8 int16-to-int32 blocks",
+  "frozen_source": {
+    "commit": "5a918655ad6485cec02149a06eafd23bbd073fa5",
+    "tree": "a2c3caf5da591f2f5c26aad40d4d3c68ea1e2492",
+    "src_tree": "fe8eb2a71df570bf30e5bcdd70fc565a914bd801",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean": true
+  },
+  "frozen_inputs": [
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-scalar-trainer-v1.result.001.json",
+      "bytes": 6765,
+      "sha256": "65fca6fc6aa00eedba646aaffdde1dc075b1f6dbc70b13380d7a2470a1ccc630"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-scalar-trainer-v1.result.001.addendum.001.json",
+      "bytes": 1728,
+      "sha256": "4d5220ebeffd7f95fd1cd98044bb19fb5a30dae84ab3f0df1ade64583737b2ff"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.result.001.json",
+      "bytes": 5883,
+      "sha256": "fe6f8addacdf2ede25bf3a973dfefd2e2000394091e8dc4d2fdb32b86bff820b"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.result.001.addendum.001.json",
+      "bytes": 2023,
+      "sha256": "bf5f7b066c2c5bf52fb3536bcd1a74e09cffd6f70a0b779095513347eeab6728"
+    },
+    {
+      "path": "tests/crazyhouse/data/crazyhouse-physical-v1-goldens.json",
+      "bytes": 8383,
+      "sha256": "94cd50961d8e51478e55a82cd4e0770d418a30483b3c5d120a470f7eb2efccac"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-scalar-trainer-v1.json",
+      "bytes": 6076,
+      "sha256": "d521795e18fe51ad561a13deacf217d6e9632caa1ea7071bf9fd966df00e67a5"
+    }
+  ],
+  "frozen_implementation_inputs": [
+    {
+      "path": "src/nnue/crazyhouse_v2_productive.h",
+      "bytes": 6786,
+      "sha256": "c905e757b7251a4b40084eb0d5e1891e0f52f3964b294b762d7196a0f370416e"
+    },
+    {
+      "path": "src/nnue/crazyhouse_v2_productive.cpp",
+      "bytes": 34104,
+      "sha256": "6ff68cb0ce66a357c3f89a8af0f3367158ac764abdffa1c63270735783adc9b3"
+    },
+    {
+      "path": "tests/crazyhouse_v2_productive.cpp",
+      "bytes": 9430,
+      "sha256": "767c7b161c1ecff6337ade7cb74bc23e6cc1260abb7ce227caf7cdd3d95987b4"
+    },
+    {
+      "path": "tests/crazyhouse_v2_productive_verify.py",
+      "bytes": 36655,
+      "sha256": "da402296dd16af01493c172de161e243bd64c6a58fc82145f20a6ed11e98cebb"
+    },
+    {
+      "path": "tools/nnue/crazyhouse_v2_productive_reference.py",
+      "bytes": 30244,
+      "sha256": "6436fb5363264936b91d4436d32c9059555893cfe6cecdfe1fbfcc0e8f6d379e"
+    }
+  ],
+  "expected_red": {
+    "make_target": "crazyhouse_v2_productive_simd_test",
+    "required_observation": "No rule to make target",
+    "compiler_children": 0,
+    "formal_credit": false
+  },
+  "implementation_contract": {
+    "backend_name": "sse2-x8-int16-to-int32",
+    "compile_capability": "USE_SSE2",
+    "fallback_in_admitted_x86_64_profile": false,
+    "transformer_weight_layout": "feature-major contiguous 512 int16 lanes",
+    "accumulator_layout": "512 signed int32 lanes per perspective",
+    "arithmetic": "bias int32 plus sign-extended int16 rows using SSE2 int32 addition",
+    "overflow_argument": "The already authenticated load-time transformer interval bounds cover every subset up to MaximumActive and therefore admit int32 intermediate accumulation in any row order.",
+    "activation": "unchanged clipped ReLU 0..127",
+    "dense_layers": "unchanged scalar productive path",
+    "container_bytes": 960324,
+    "architecture_identity_changes": false,
+    "quantization_identity_changes": false,
+    "trainer_changes": false,
+    "feature_contract_changes": false,
+    "normal_engine_routing_changes": false,
+    "legacy_default_changes": false
+  },
+  "test_matrix": {
+    "backend_marker_required": "sse2-x8-int16-to-int32",
+    "negative_error_cases": 6,
+    "bias_only_evaluations": 2,
+    "single_row_evaluations": 3608,
+    "maximum_active_evaluations": 2,
+    "physical_golden_evaluations": 84,
+    "total_scalar_simd_evaluations": 3696,
+    "trace_values_compared_per_evaluation": 2178,
+    "total_trace_values_compared": 8049888,
+    "single_row_coverage": "all 902 rows, each owning perspective, both side-to-move orders",
+    "maximum_active": 138,
+    "physical_goldens": 42,
+    "physical_perspectives": 84,
+    "scalar_default_protocol_regression": "The existing productive scalar verifier must remain semantically unchanged and pass.",
+    "simd_trace_protocol": "All 84 physical-golden trace rows must be byte-identical to the scalar rows; only the SIMD summary may add its backend marker."
+  },
+  "formal_replay": {
+    "clean_exports": 2,
+    "profiles": [
+      "release",
+      "debug-assertions"
+    ],
+    "warning_hits_allowed": 0,
+    "new_verifier_exit": 0,
+    "new_verifier_stderr_bytes": 0,
+    "cross_profile_result_byte_equal": true,
+    "existing_productive_scalar_regression_required": true,
+    "normal_engine_control": {
+      "backend": "legacy-v1",
+      "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "bench_nodes": 113485,
+      "productive_v2_identity_hits": 0
+    }
+  },
+  "resource_boundary": {
+    "cpu_threads": 1,
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "ports": 0,
+    "bulk_output_drive": "D:"
+  },
+  "stopping_rule": "Stop at the first source, expected-red, compile, warning, backend, scalar-parity, protocol, regression, isolation, resource, or provenance failure. A failed namespace is never repaired or reinterpreted in place.",
+  "boundaries": {
+    "incremental_productive_proven": false,
+    "sanitizer_productive_proven": false,
+    "training_admissible": false,
+    "production_training_authorized": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

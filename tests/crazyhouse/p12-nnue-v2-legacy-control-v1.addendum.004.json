@@ -1,0 +1,75 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-legacy-control-preregistration-addendum/v1",
+  "addendum": 4,
+  "created_utc": "2026-08-24T16:20:47.6388384Z",
+  "status": "PASS_EXPECTED_RED_IMPLEMENTATION_AUTHORIZED_LOCALLY",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_addendum": {
+    "path": "tests/crazyhouse/p12-nnue-v2-legacy-control-v1.addendum.003.json",
+    "commit": "791483eb39efd2a2364af3c2052b8764367b4e44",
+    "bytes": 4447,
+    "sha256": "7ca192e5b257f1ece4ecb792f3a8d2e8ddee476b652c481a6aceec8f4b5e5265"
+  },
+  "formal_observation": {
+    "lease": 331,
+    "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+    "start_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-expected-red-t1-start-331.json",
+      "bytes": 5335,
+      "sha256": "4a1494a731a63d12b6d8093eadfda95c3b1c7c3b27c8e11de064db8058068898"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-expected-red-t1-end-331.json",
+      "bytes": 2971,
+      "sha256": "a74e9b5bfc38134cf96c29e9a596a5c39e5e454e0f28b0c212ed0497d351deff"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-legacy-control-expected-red-331/completion.json",
+      "bytes": 3831,
+      "sha256": "e92d238f74b1ff28d25c8f3cf4fe66f2e685644e7fac3ddc3067f6010055dd3e"
+    },
+    "source_commit": "791483eb39efd2a2364af3c2052b8764367b4e44",
+    "source_tree": "f3807deaa56bf2fdf4035760328cd41710e61292",
+    "source_src_tree": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "tracked_files": 495,
+    "archive_bytes": 6635520,
+    "archive_sha256": "a9d4b19e0d595b0e049a67729d847c56e02cb7b88a4ba1f6cc699eab0305a628",
+    "archive_and_relative_tar_passed": true,
+    "make_arguments": ["--old-file=.depend", "-n", "-C", "source/src", "crazyhouse_v2_legacy_control_test"],
+    "make_exit_code": 2,
+    "stderr_lines": 1,
+    "exact_stderr": "make: *** No rule to make target 'crazyhouse_v2_legacy_control_test'.  Stop.",
+    "depend_absent_before_and_after": true,
+    "compiler_or_linker_transcript_hits": 0,
+    "p7_supervisor_preserved": true
+  },
+  "admission_effect": {
+    "dedicated_target_absence_proven": true,
+    "implementation_may_begin": true,
+    "frozen_target": "crazyhouse_v2_legacy_control_test",
+    "frozen_contract_unchanged": true,
+    "implementation_files": [
+      "tools/nnue/crazyhouse_v2_legacy_control.py",
+      "src/nnue/crazyhouse_v2_legacy_control.h",
+      "src/nnue/crazyhouse_v2_legacy_control.cpp",
+      "tests/crazyhouse_v2_legacy_control.cpp",
+      "tests/crazyhouse_v2_legacy_control_verify.py",
+      "src/Makefile"
+    ]
+  },
+  "claim_boundary": "This addendum proves only that the preregistered dedicated target was absent before implementation under a clean, side-effect-suppressed Make lookup. It gives no implementation, parser, numerical, sanitizer, timing, strength, OpenBench, model-selection, training, G12, release or monitoring credit.",
+  "boundaries": {
+    "expected_red_proven": true,
+    "legacy_control_proven": false,
+    "training_admissible": false,
+    "model_selection_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "schema": "crazyhouse-uci-routing-contract-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-22T12:08:26.1108224Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Bind the unchanged transactional Crazyhouse UCI routing scenarios to the exact official Stockfish dev dependency selected by the post-sync standard-control gate. The historical base contract and its receipts remain immutable.",
+  "pins": {
+    "routing_contract_v1": {
+      "path": "tests/crazyhouse/routing-contract-v1.json",
+      "bytes": 6646,
+      "sha256": "f98828dcf79211bc8f547b1562cea2f282adc71669256383309ba43f85b69dfd"
+    },
+    "upstream_standard_control_v1": {
+      "path": "tests/crazyhouse/upstream-sync-standard-control-v1.json",
+      "bytes": 2447,
+      "sha256": "06d7e4d5236df4dd7147b68c8d07ce04250fbd7ca9e9237b041316a53e806f02"
+    },
+    "upstream_standard_gate_record": {
+      "path": "../../../receipts/private/p2-upstream-replay-172-gate-record-091.json",
+      "bytes": 3668,
+      "sha256": "0f7162069acfca7ba09e5656239f7a759fcf806d80cfd218c6b2e406e4bd8725"
+    },
+    "upstream_standard_resource_end": {
+      "path": "../../../receipts/resources/p2-upstream-sync-standard-t1-end-172.json",
+      "bytes": 8596,
+      "sha256": "2e0154e04322499b9b06fcef8c70d036fcba257d47e711102a66b06f6abda6c8"
+    }
+  },
+  "single_variable_transition": {
+    "variable": "official Stockfish source and its byte-matched default NNUE dependency",
+    "from": {
+      "official_source_commit": "5062aee519a1ba262d472d8ab139851ced56573e",
+      "eval_file_default": "nn-ab28990d4ea3.nnue",
+      "official_network_sha256": "ab28990d4ea3d5c97f7d3918bc5dd5061609330369fe00c2d93a34d4777b5552"
+    },
+    "to": {
+      "official_source_commit": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+      "official_source_tree": "11ff8e5aeaa5c0d19c085cdd92b5c8f9321199e6",
+      "eval_file_default": "nn-1a298aa575a0.nnue",
+      "official_network_sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2"
+    }
+  },
+  "official_network": {
+    "filename": "nn-1a298aa575a0.nnue",
+    "bytes": 98511183,
+    "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2",
+    "authority": "https://tests.stockfishchess.org/api/nn/nn-1a298aa575a0.nnue",
+    "must_load_as": "official-chess",
+    "must_fail_as_crazyhouse_legacy": true
+  },
+  "option_inventory": {
+    "expected_count": 22,
+    "expected_eval_file_line": "option name EvalFile type string default nn-1a298aa575a0.nnue",
+    "all_ordered_names_and_custom_option_lines": "unchanged from the pinned base contract"
+  },
+  "routing_scenarios": {
+    "expected_count": 11,
+    "semantics": "unchanged from the pinned base contract",
+    "ids": [
+      "inventory",
+      "initial_failure",
+      "invalid_variant",
+      "profile_failure_and_recovery",
+      "crazyhouse_rule_route_and_command_refusals",
+      "crossed_routes",
+      "failed_replacement_and_recovery",
+      "crazyhouse_chess960_rejection",
+      "transactional_position",
+      "option_persistence_across_variant_and_ucinewgame",
+      "standard_chess_control"
+    ]
+  },
+  "verifier_contract": {
+    "base_contract_hash_must_match": true,
+    "context_hash_must_be_preregistered_by_the_runtime_lease": true,
+    "official_network_name_size_and_sha256_must_match": true,
+    "eval_file_inventory_line_must_match": true,
+    "historical_base_only_invocation_must_remain_supported": true,
+    "no_benchmark_value_is_relearned_or_edited_by_this_slice": true
+  },
+  "stopping_rule": "Run every routing scenario once inside one fresh T1 lease. Any identity, inventory, readiness, persistence, rule-route, refusal, recovery, perft or standard-search mismatch fails the slice. A timeout is ambiguous until process and artifact inspection; no source, fixture or bound may be edited inside the lease.",
+  "expected_terminal": "PASS_POST_SYNC_UCI_ROUTING_AND_OPTION_PERSISTENCE",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,116 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum": 11,
+  "created_utc": "2026-08-23T10:59:00.0000000Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Preregister an opt-in timeout scale for the capability harness after the authenticated ASan binary exceeded the historical ten-second UCI wait before route configuration. Preserve historical defaults and all scientific predicates, then require both full sanitizer lanes in a fresh namespace.",
+  "pins": {
+    "schema_correction_addendum_010": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.010.json",
+      "bytes": 3796,
+      "sha256": "091f03bc01f96dfccdcde72b99593a85f6c6c483142cdfac26551a404adae34a"
+    },
+    "lease_252_start_receipt": {
+      "path": "../../../receipts/resources/p4-capability-sanitizer-t1-start-252.json",
+      "bytes": 4776,
+      "sha256": "cfc5d4184505a50f93d035c931903bbee22663631d3fed35f214789914ac0c64"
+    },
+    "lease_252_end_receipt": {
+      "path": "../../../receipts/resources/p4-capability-sanitizer-t1-end-252.json",
+      "bytes": 4643,
+      "sha256": "9127973cd6de9ce41af1a02fdd6bea1f8426c6ba72837ad1a286466748c88578"
+    },
+    "lease_252_rejection_record": {
+      "path": "../../../receipts/private/p4-capability-sanitizer-timeout-rejection-record-167.json",
+      "bytes": 3431,
+      "sha256": "b76ea9fac8506da783facb58067378fe989439c6834b0cf0e9116f5a1269ed21"
+    },
+    "lease_252_completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-252/completion.json",
+      "bytes": 21518,
+      "sha256": "0444a010dd1391eb18b73c56e9e7ea3eef5b2eec7099c26529bb7afbe6c47f00"
+    },
+    "lease_252_asan_positive_transcript": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-252/asan-capability-handshake/positive.jsonl",
+      "bytes": 209,
+      "sha256": "37ee0abc41f6d3671b775fb6e041a5cf56afbcade483279d241fe25a8f575028"
+    },
+    "lease_252_asan_conservative_observation": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-252/asan-observation.json",
+      "bytes": 4697,
+      "sha256": "605728e15400318e981044987c81b54dd96541da6a97214f17e5a10639f6d1c4"
+    }
+  },
+  "rejection_admission": {
+    "lease": 252,
+    "result": "REJECTED_SANITIZER_HARNESS_FIXED_UCI_TIMEOUT",
+    "asan_build_passed": true,
+    "asan_runtime_import_authenticated": true,
+    "asan_conservative_cases_passed": 10,
+    "capability_harness_failed_before_uciok": true,
+    "route_configuration_started": false,
+    "sanitizer_diagnostic_observed": false,
+    "engine_crash_observed": false,
+    "ubsan_started": false,
+    "whole_gate_credit": false,
+    "namespace_reuse_allowed": false
+  },
+  "single_variable_correction": {
+    "variable": "capability harness wait budget",
+    "new_cli_argument": "--timeout-scale",
+    "type": "positive finite float",
+    "historical_default": 1.0,
+    "sanitizer_value": 12.0,
+    "base_timeouts_seconds": {
+      "uci": 10,
+      "ready": 20,
+      "invalid_observation": 3
+    },
+    "scaled_timeouts_seconds": {
+      "uci": 120,
+      "ready": 240,
+      "invalid_observation": 36
+    },
+    "outer_step_timeout_seconds": 1800,
+    "case_predicates_changed": false,
+    "engine_source_changed": false,
+    "normal_unsanitized_invocation_changed": false
+  },
+  "implementation_requirements": {
+    "scale_must_be_validated_before_engine_launch": true,
+    "default_invocation_must_preserve_exact_historical_timeouts": true,
+    "summary_must_record_timeout_scale_and_effective_timeouts": true,
+    "fixture_semantics_must_remain_unchanged": true,
+    "failure_transcripts_must_remain_written": true,
+    "no_timeout_may_be_reclassified_as_engine_failure": true
+  },
+  "retry_preregistration": {
+    "fixture_parent_commit": "628daf790b3c0c97ef104ec50205dcc704a056a9",
+    "fixture_parent_tree": "c18d5eb8568aaf1b274323bc6ee75f9de388d914",
+    "product_src_tree": "e5a751edfa52b219fea00c919a2180fade576377",
+    "capability_behavior_commit": "c0c11978abbe0cc7c4d80c90426b00eae0aa712c",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false,
+    "expected_git_blobs_each_after_fixture_commit": 292,
+    "fresh_lease": 253,
+    "fresh_namespace": "D:/Crazyhouse-Stockfish/leases/p4-capability-sanitizer-green-253"
+  },
+  "preserved_full_matrix": {
+    "clean_exports": 2,
+    "sequential_one_thread_lanes": true,
+    "process_priority": "Normal",
+    "asan_conservative_cases": 10,
+    "asan_capability_fixture_cases": 5,
+    "ubsan_conservative_cases": 10,
+    "ubsan_capability_fixture_cases": 5,
+    "fallback_allowed": false,
+    "stderr_bytes": 0,
+    "timeouts": 0,
+    "sanitizer_diagnostics": 0
+  },
+  "stopping_rule": "Implement only the opt-in timeout scale with default 1.0, then run both full lanes in lease 253 with scale 12. Reject on any product-src drift, timeout-contract drift, export mismatch, warning, sanitizer diagnostic, runtime predicate failure, fallback, stderr, timeout, disk-floor breach, owned residual process or foreign-process mutation.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

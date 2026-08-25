@@ -1,0 +1,98 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-clean-export-diagnostic-preregistration/v1",
+  "created_utc": "2026-08-24T23:27:48.4616895Z",
+  "status": "PREREGISTERED_DIAGNOSTIC_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "failed_formal_result": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.004.json",
+    "bytes": 4028,
+    "sha256": "440621fe4cbc7885bfea107eafb72dce46e0b09ac46b16d598639357ccb782e9",
+    "lease": 352,
+    "incident": "CH-316"
+  },
+  "implementation_parent": {
+    "commit": "3f2fe5e399ed1b4f52d222272f42102a477320a2",
+    "tree": "276b6c8ff20d37b275049be12d437a48cdb9f9b9",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "corrected_path": {
+      "path": "tests/crazyhouse_release_engine_identity.py",
+      "bytes": 27466,
+      "sha256": "4f47bf17fb8df3b4535e3e51679a1b272cad811027ff0dd177aeea7a5e2a04f8"
+    }
+  },
+  "single_variable": {
+    "name": "fixture Git authority selection",
+    "before": "The harness always cloned its source root, which is not a Git repository inside a clean export.",
+    "after": "The harness accepts one explicit local absolute worktree path through CRAZYHOUSE_IDENTITY_FIXTURE_REPOSITORY, authenticates official-to-P7-to-HEAD ancestry, and clones only that local authority for synthetic genealogy.",
+    "unchanged": [
+      "release identity verifier",
+      "development/proposed/tagged positive fixtures",
+      "25 mutation-negative fixtures",
+      "expected summary",
+      "stable identity rules",
+      "public mutation prohibition"
+    ]
+  },
+  "diagnostic_matrix": {
+    "lease": 353,
+    "clean_exports": 1,
+    "profiles": [
+      "python-normal"
+    ],
+    "entrypoint": "C:/msys64/usr/bin/make.exe --no-print-directory --old-file=.depend -C src crazyhouse_p15_release_engine_identity_test",
+    "python": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+    "python_version": "3.12.0",
+    "pythonhashseed": "0",
+    "fixture_git_authority": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/.worktrees/crazyhouse-release-foundation-v1",
+    "fixture_authority_must_equal_tested_source_commit": true,
+    "fixture_authority_must_be_local_absolute_worktree": true,
+    "network_fallback_allowed": false,
+    "required_summary": "PASS_RELEASE_ENGINE_IDENTITY_FIXTURES positive=3 negative=25 proposed=true tagged=true public_mutation=false",
+    "positive_count": 3,
+    "negative_count": 25,
+    "profile_temp_namespace_must_restore_empty": true,
+    "allowed_generated_paths": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "compiler_linker_engine_or_bytecode_artifacts": 0,
+    "timeouts_allowed": false,
+    "nonzero_exits_allowed": false
+  },
+  "resource_contract": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 268435456,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764
+  },
+  "stopping_rule": "Stop and preserve the fresh namespace on any source, failed-result, implementation pin, local-authority identity, ancestry, profile exit, stream, summary, scratch restoration, generated-file, resource, P7 or source-restoration mismatch. Never repair or rerun lease 353 in place.",
+  "pass_effect": "A pass closes only the CH-316 clean-export diagnostic and permits a separately preregistered two-export/four-profile formal replay. It grants no formal-tooling, runtime, package, strength, OpenBench, draft, tag, G15, G16 or release credit.",
+  "boundaries": {
+    "diagnostic_executed": false,
+    "ch316_closed": false,
+    "formal_replay_permitted": false,
+    "synthetic_identity_tooling_qualified": false,
+    "stable_runtime_identity_authenticated": false,
+    "full_engine_builds_executed": false,
+    "final_p14_panel_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "schema": "crazyhouse-g4-participant-matrix-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-14T05:50:15.9564973Z",
+  "evidence_class": "E1_ENGINEERING",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "pins": {
+    "matrix_v1": {
+      "path": "tests/crazyhouse/g4-participant-matrix-v1.json",
+      "bytes": 5184,
+      "sha256": "f0ad7131f7a607e03cf5dc0ededb0b3a46301772e8910eb2553235a919fb32dc"
+    },
+    "matrix_addendum_001": {
+      "path": "tests/crazyhouse/g4-participant-matrix-v1.addendum.001.json",
+      "bytes": 3606,
+      "sha256": "5e0745ead28293b1927d7d01f180b98762acf7965907704b7506ce17c44a6078"
+    },
+    "referee_cases_v1": {
+      "path": "tests/crazyhouse/g4-referee-cases-v1.json",
+      "bytes": 4572,
+      "sha256": "6768fa3fb0ff5f3128fe55e1e1beea96aa0e479adf6a8c774dc50b77839f5d7b"
+    },
+    "referee_cases_addendum_001": {
+      "path": "tests/crazyhouse/g4-referee-cases-v1.addendum.001.json",
+      "bytes": 19947,
+      "sha256": "e984177d4e377bfa2864ce94a9b59b0f50fc23d2a2e96650493b38c3fa8fa551"
+    },
+    "referee_source_map": {
+      "path": "tests/crazyhouse/g4-referee-source-map-v1.json",
+      "bytes": 15041,
+      "sha256": "51a5dd5b5ca052a3dd8d49de4e593cf632074638af61d2877ebc7892e2d17863"
+    }
+  },
+  "reason": "The clean-source map and advisory review exposed capability, clock arbitration, strict protocol, FEN atomicity, history digest and PGN join requirements that were not closed by the original 14 referee cases. This addendum assigns the new frozen cases without rewriting either prior matrix artifact.",
+  "participant_assignments": [
+    {
+      "id": "scalachess",
+      "mandatory": [
+        "terminal_additions:all",
+        "repetition_identity_cases:all",
+        "fen_and_pocket_contract:profile_semantics",
+        "same_executable_join:canonical_physical_states_and_terminal_policy"
+      ],
+      "not_applicable": ["UCI wire framing", "capability nonce protocol", "Qt callback ordering", "CuteChess PGN formatting"],
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "python-chess",
+      "mandatory": [
+        "history_digest_contract:golden_vector_states",
+        "fen_and_pocket_contract:positive_canonicalization",
+        "strict_bestmove_contract:drop_case_semantics",
+        "repetition_identity_cases:all",
+        "deadline_equal_legal:move_and_terminal_semantics"
+      ],
+      "not_applicable": ["profile-owned native terminal voting", "capability wire protocol", "clock event arbitration"],
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "chessops",
+      "mandatory": [
+        "history_digest_contract:golden_vector_states",
+        "fen_and_pocket_contract:positive_canonicalization",
+        "strict_bestmove_contract:drop_case_semantics",
+        "repetition_identity_cases:all",
+        "deadline_equal_legal:move_and_terminal_semantics"
+      ],
+      "not_applicable": ["profile-owned native terminal voting", "capability wire protocol", "clock event arbitration"],
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "official_base_engine_uci",
+      "mandatory": [
+        "engine_capability_contract:all_advertisement_acknowledgement_and_failure_cases",
+        "strict_bestmove_contract:canonical_move_codec_control",
+        "same_executable_join:engine_side_raw_transcript"
+      ],
+      "crazyhouse_search_must_remain": "disabled_until_later_gate",
+      "standard_chess_fallback_allowed": false,
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "exact_referee_probe",
+      "mandatory": [
+        "base_referee_cases:all",
+        "clock_contract:all_injected_cases",
+        "history_digest_contract:all",
+        "engine_capability_contract:all",
+        "fen_and_pocket_contract:all",
+        "strict_bestmove_contract:all",
+        "terminal_additions:all",
+        "repetition_identity_cases:all",
+        "pgn_contract:semantic_serialization_and_replay",
+        "same_executable_join:probe_leg"
+      ],
+      "runtime_skips_allowed": false,
+      "separate_test_rule_implementation_allowed": false
+    },
+    {
+      "id": "exact_referee_match",
+      "mandatory": [
+        "base_referee_cases:all_match_applicable",
+        "clock_contract:broad_real_process_before_and_after",
+        "engine_capability_contract:positive_and_every_failure_boundary",
+        "fen_and_pocket_contract:production_ingress_and_atomic_failure",
+        "strict_bestmove_contract:production_engine_line_path",
+        "terminal_additions:all",
+        "pgn_contract:all",
+        "same_executable_join:match_leg",
+        "sequential_and_concurrent_isolation"
+      ],
+      "scheduler_sensitive_deadline_equality_required": false,
+      "runtime_skips_allowed": false
+    },
+    {
+      "id": "deterministic_rule_free_uci_actors",
+      "mandatory": [
+        "engine_capability_contract:all_transcript_mutations",
+        "strict_bestmove_contract:all_line_mutations",
+        "clock_contract:broad_real_process_cases",
+        "same_executable_join:match_leg"
+      ],
+      "actor_binaries_and_sources_hash_pinned": true,
+      "may_supply_rule_expectations": false
+    },
+    {
+      "id": "retired_horde_derived_referee_binary",
+      "mandatory": [],
+      "role": "optional isolated red comparator only",
+      "may_supply_expected_values": false,
+      "may_enter_candidate_source_build_runtime_path_or_fallback": false
+    }
+  ],
+  "same_executable_join": {
+    "optimized_executable_sha256_equal_between_probe_and_match": true,
+    "required_shared_paths": [
+      "board_factory",
+      "fen_pockets_and_promoted_state",
+      "strict_uci_move_conversion",
+      "move_generation_and_storage",
+      "make_undo_and_history",
+      "repetition_identity",
+      "terminal_result_policy",
+      "clock_and_timeout_arbiter",
+      "notation",
+      "pgn_and_replay"
+    ],
+    "source_symbol_mapping_receipt_required": true,
+    "sidecar_or_debug_only_probe_allowed": false
+  },
+  "fixture_freeze_status": "CLOSED_BEFORE_BEHAVIOR_CODE",
+  "candidate_referee_branch_created": false,
+  "next_safe_action": "create a linear candidate branch from clean upstream commit 24d4301152fb92ac442425e083a2658225f80720 and add only fixture-mapped Crazyhouse behavior",
+  "effective_gate_status": "OPEN",
+  "strength_claim": false,
+  "release_claim": false
+}

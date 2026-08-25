@@ -1,0 +1,147 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum": 8,
+  "created_utc": "2026-08-23T07:02:29.0347994Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Admit the immutable current-source sanitizer evidence from fresh lease 240 after independent post-exit authentication, without extending its correctness-only claim boundary.",
+  "pins": {
+    "current_source_replay_addendum_006": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.006.json",
+      "bytes": 7302,
+      "sha256": "460dbd6906ebf80a133b34808bdb82f65eb19c3b45ff2655760901d83bd78f87",
+      "git_blob": "be1301068bb7e46bd28addc8b86a29a2307412e2"
+    },
+    "orchestration_correction_addendum_007": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.007.json",
+      "bytes": 4153,
+      "sha256": "48cf821fe8aa44dd4c3655a253f31a0fc04003ae381b2867a2742cdb8732c80e",
+      "git_blob": "f66a981c79f52010f85fd43d524e8ac3bc6fd019"
+    },
+    "rejected_lease_239_record": {
+      "path": "../../../receipts/private/p3-current-source-sanitizer-rejection-record-155.json",
+      "bytes": 4135,
+      "sha256": "226512605d73cefc4ba94c0ad36bbe63cb5e295047ad2a12bbf815952b105311",
+      "gate_credit": false
+    },
+    "lease_240_start_receipt": {
+      "path": "../../../receipts/resources/p3-current-source-sanitizer-t1-start-240.json",
+      "bytes": 6042,
+      "sha256": "867bbb09a308d0cc70cf36efc22e4556a8a9c6dd7ddf06d4fb558163217a5123"
+    },
+    "lease_240_end_receipt": {
+      "path": "../../../receipts/resources/p3-current-source-sanitizer-t1-end-240.json",
+      "bytes": 7593,
+      "sha256": "bcaa3b548615a9f47b6ca5d6337f6ecd4f16f306faf9369ec4441fcb170c5cc5"
+    },
+    "lease_240_private_green_record": {
+      "path": "../../../receipts/private/p3-current-source-sanitizer-green-record-156.json",
+      "bytes": 8436,
+      "sha256": "8e8b0ac6222eeedaa5cb16808cd17291cd693185f4da4e0fc57b1277a3e5257d"
+    }
+  },
+  "validated_source": {
+    "commit": "272cd4ede68f4dc6583e390f5517e400994eda2c",
+    "tree": "42f835d7db0709a41227417aefa5e465bccd7037",
+    "behavior_commit": "5d1bee77ac96b3fe95fa28717d428693b56297c1",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false,
+    "product_source_changed_after_behavior_commit": false,
+    "repository_clean_before_and_after": true
+  },
+  "clean_export_authentication": {
+    "independent_exports": 2,
+    "expected_git_blobs_each": 278,
+    "asan_manifest": {
+      "bytes": 67157,
+      "sha256": "4990084edcc7d48e33ccd7d3a09152119856afb643a40f3afe1977024e15e24d",
+      "authenticated_blobs": 278,
+      "independently_reauthenticated_blobs": 278,
+      "mismatches": 0
+    },
+    "ubsan_manifest": {
+      "bytes": 67158,
+      "sha256": "73358d308d3081dd7bdd03dad531ff6a086e62935af65ed0378416fbfc1020ae",
+      "authenticated_blobs": 278,
+      "independently_reauthenticated_blobs": 278,
+      "mismatches": 0
+    },
+    "archive_sha256_each": "d73c6b0eb5ee5803e75bcaea67aa5a61800350ade6c32f540e083d0fa35074c6"
+  },
+  "instrumentation_authentication": {
+    "asan": {
+      "engine_bytes": 4992512,
+      "engine_sha256": "8061f008b491ca2a361996d756f623a31e28fe9715558cde0287c4cdccb70010",
+      "runtime_import_present": "clang_rt.asan_dynamic-x86_64.dll",
+      "import_log_bytes": 16858,
+      "import_log_sha256": "a07ffb37afec009d367cd2cd55bcfab71b4778ddb070d175f82b218e4f101589"
+    },
+    "ubsan": {
+      "engine_bytes": 186471057,
+      "engine_sha256": "f52b34b53fba722a2d4e54bfed770fe5aea1d288993249777c1d92bf41a8611f",
+      "recorded_trap_count": 70924,
+      "independently_recomputed_trap_count": 70924,
+      "trap_scan_bytes": 2907884,
+      "trap_scan_sha256": "0a7a4462c199fc82a98b84a3235aa9b1d636a93e179c230991182943f94c96f7"
+    }
+  },
+  "runtime_admission": {
+    "asan": {
+      "observation_bytes": 4701,
+      "observation_sha256": "63cbfb7585fc0a1524339a2d1fb99f08d53a96215341cd113f441e8ab348d0b1",
+      "result": "PASS_CONSERVATIVE_SEARCH_POLICY_GREEN",
+      "static_gaps": 0,
+      "target_complete": true,
+      "special_state_cases": 10,
+      "stderr_bytes": 0,
+      "exit_code": 0
+    },
+    "ubsan": {
+      "observation_bytes": 4705,
+      "observation_sha256": "725c2da7f32a50f0a5eb980304958816cb66bb942acc2c52ffbc5b542adb8aad",
+      "result": "PASS_CONSERVATIVE_SEARCH_POLICY_GREEN",
+      "static_gaps": 0,
+      "target_complete": true,
+      "special_state_cases": 10,
+      "stderr_bytes": 0,
+      "exit_code": 0
+    },
+    "legacy_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "fallback_observed": false,
+    "sanitizer_diagnostic_observed": false
+  },
+  "operational_admission": {
+    "completion": {
+      "bytes": 27910,
+      "sha256": "c68a8c9d79df65002cea07f649c36fd5c321cb9cfb059c9c567efee0573354a1",
+      "result": "PASS_CURRENT_SOURCE_ASAN_UBSAN_CONSERVATIVE_SEARCH",
+      "steps": 14,
+      "failed_steps": 0,
+      "timeouts": 0,
+      "stderr_nonempty_steps": 0
+    },
+    "postexit_artifact_checks": 41,
+    "postexit_artifact_mismatches": 0,
+    "owned_residual_processes": 0,
+    "foreign_processes_mutated": false,
+    "disk_floors_preserved": true,
+    "gpu_used": false,
+    "workers_used": false,
+    "network_used": false
+  },
+  "cross_evidence_binding": {
+    "unsanitized_exact_standard_control_lease": 238,
+    "unsanitized_exact_standard_signature_sha256": "28ec174ed2f5dd775ec50e4c6bf8de360d66c3693c90a9ac877edadf4caa255e",
+    "sanitized_standard_control_run": false,
+    "prior_full_sanitizer_product_pass_inherited": false,
+    "prior_toolchain_capability_inherited": true
+  },
+  "result": "PASS_CURRENT_SOURCE_ASAN_UBSAN_CONSERVATIVE_SEARCH",
+  "gate_effect": "The affected-source sanitizer replay sub-boundary of G3 is admitted as PASS. Whole-gate reconciliation remains a separate required action.",
+  "claim_boundary": "This is E1 correctness evidence for the current conservative Crazyhouse search source under authenticated ASan and UBSan-trap builds. It is not timing, Elo, OpenBench, model-selection, release or monitoring evidence.",
+  "stopping_rule": "Do not reinterpret this admission as strength or release evidence. Any later product-source change requires a new affected-source sanitizer assessment; any correction to this immutable evidence must be additive and hash-pinned.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

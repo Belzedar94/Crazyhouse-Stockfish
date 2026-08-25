@@ -101,6 +101,25 @@ const std::vector<std::string> Defaults = {
 };
 // clang-format on
 
+// This order and content are frozen by the immutable P10 preregistration plus
+// its hash-pinned correction addenda. They exercise the product Crazyhouse
+// search path and must not be replaced by the orthodox bench corpus.
+const std::vector<std::string> CrazyhouseDefaults = {
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1",
+  "rnb1k1nr/3p1ppp/ppp5/4p3/Pb5q/2P3PN/RP1PPP2/1NBQKB1R[p] b Kkq - 0 7",
+  "rnbqkb2/1ppppp1r/1p5p/p5P1/1P6/6nN/P1PPPKP1/RNBQ1B1R[P] w q - 0 9",
+  "4k3/2p2n2/8/3P4/4B3/8/1R3P2/4K3[PNq] w - - 0 1",
+  "4k3/1r3p2/8/4b3/3p4/8/2P2N2/4K3[Qpn] b - - 0 1",
+  "4r2k/8/8/8/8/8/8/4K3[N] w - - 0 1",
+  "7k/8/8/8/8/8/Q~6r/K7[] b - - 0 1",
+  "7k/8/8/3pP3/8/8/8/K7[] w - d6 0 2",
+  "7k/P7/8/8/8/8/8/K7[] w - - 0 1",
+  "r3k2r/8/8/8/8/8/8/R3K2R[] w KQkq - 0 1",
+  "rnbq1rk1/p1pp1p1p/7b/pp2p1p1/2B5/N1P2P1N/P2P1RPP/R1BQK3[Np] b Q - 0 10",
+  "k7/2Q5/2K5/8/8/8/8/8[n] b - - 0 1",
+};
+// clang-format on
+
 // clang-format off
 // human-randomly picked 5 games with <60 moves from
 // https://tests.stockfishchess.org/tests/view/665c71f9fd45fb0f907c21e0
@@ -392,22 +411,24 @@ namespace Stockfish::Benchmark {
 // bench 64 1 100000 default nodes  : search default positions for 100K nodes each
 // bench 64 4 5000 current movetime : search current position with 4 threads for 5 sec
 // bench 16 1 5 blah perft          : run a perft 5 on positions in file "blah"
-std::vector<std::string> setup_bench(const std::string& currentFen, std::istream& is) {
+std::vector<std::string>
+setup_bench(const std::string& currentFen, Ruleset ruleset, std::istream& is) {
 
     std::vector<std::string> fens, list;
     std::string              go, token;
+    const bool               crazyhouse = ruleset == Ruleset::CRAZYHOUSE;
 
     // Assign default values to missing arguments
     std::string ttSize    = (is >> token) ? token : "16";
     std::string threads   = (is >> token) ? token : "1";
-    std::string limit     = (is >> token) ? token : "13";
+    std::string limit     = (is >> token) ? token : (crazyhouse ? "4" : "13");
     std::string fenFile   = (is >> token) ? token : "default";
     std::string limitType = (is >> token) ? token : "depth";
 
     go = limitType == "eval" ? "eval" : "go " + limitType + " " + limit;
 
     if (fenFile == "default")
-        fens = Defaults;
+        fens = crazyhouse ? CrazyhouseDefaults : Defaults;
 
     else if (fenFile == "current")
         fens.push_back(currentFen);

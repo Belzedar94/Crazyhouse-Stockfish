@@ -1,0 +1,72 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-training-admission-preregistration-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-24T18:24:47.1724878Z",
+  "status": "PASS_FORMAL_FIXTURE_REAL_DATA_PENDING",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.addendum.001.json",
+    "commit": "3f91a50689a3c1741eb0340221caa19acb90ab06",
+    "bytes": 3751,
+    "sha256": "91425c2a8bc748cf0e829380c7e12480f30b3a29f9b78303a2d5145600f0af70"
+  },
+  "implementation": {
+    "commit": "ddf2d58beb0f22519a3ab0cf3b602f6af6295c4b",
+    "tree": "6732bf50ca7b16554adb4956bdaa0c4b30f999f5",
+    "src_tree": "36fa1995e984899db1b42fcce3e18c6b419fc49e"
+  },
+  "formal_result": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.result.001.json",
+    "bytes": 8048,
+    "sha256": "38c90c8a21829550771fdf77e1834264d78f62ed54c6152b5ab1cee967773abf"
+  },
+  "decision_record": {
+    "path": "docs/crazyhouse/adr-0015-addendum-001-formal-fixture-result.md",
+    "bytes": 3568,
+    "sha256": "37bef184c90d81b7fa10cc86b34aefb1a8dbca4719d33fa0e41166843e21bbd0"
+  },
+  "accepted_formal_lease": {
+    "lease": 335,
+    "completion_bytes": 34458,
+    "completion_sha256": "7ad1cc842d3a562385832ad90c342e865210e8cc2124ec06bf2b9fb3fcd90caa",
+    "end_receipt_bytes": 716,
+    "end_receipt_sha256": "7e6a8da8f0663e079562abc083572f527d3bc0c6416d8f1c405a88cd56e99377",
+    "profiles": 4,
+    "records_each": 44,
+    "trajectories_each": 12,
+    "negative_cases_each": 40,
+    "identity_intersection_cases_each": 5,
+    "all_required_actual_intersections_zero": true,
+    "normalized_results_byte_equal": true
+  },
+  "predecessor": {
+    "lease": 334,
+    "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+    "classification": "FORMAL_HARNESS_FALSE_ASSUMPTION_MAKE_PARSE_METADATA",
+    "failure_bytes": 8068,
+    "failure_sha256": "e53cfe09646b096878f2953c20ab7e44ee2b1b8fb5f0b9f2af3308ee6688f7fd",
+    "end_receipt_bytes": 681,
+    "end_receipt_sha256": "df11af7b7308fed1b5843484d54752e12806fe0752c8ec02670bcd2ce0661ad4",
+    "namespace_reused": false,
+    "source_or_target_defect_observed": false,
+    "incident": "CH-302"
+  },
+  "claim_boundary": "This addendum qualifies only the fixture-tested training admission loader, raw-label transport, physical-to-V2 projection, complete-trajectory partition and exact split audit. It gives no real-dataset, production-training, model-selection, timing, strength, Fairy-Stockfish, OpenBench, G12, release or monitoring credit.",
+  "boundaries": {
+    "fixture_loader_qualified": true,
+    "real_dataset_admitted": false,
+    "training_admissible": false,
+    "production_training_authorized": false,
+    "model_selection_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "fairy_stockfish_beaten": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

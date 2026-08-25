@@ -1,0 +1,114 @@
+{
+  "schema": "crazyhouse-openbench-onboarding-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T03:08:37.0325824Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P10",
+  "gate": "G10",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "PREREGISTRATION_CORRECTED_BEFORE_COMPLETE_REVISED_CORPUS_RESULT",
+  "parent": {
+    "path": "tests/crazyhouse/p10-openbench-onboarding-v1.addendum.001.json",
+    "bytes": 3127,
+    "sha256": "50101e3a8a447e7684f9d4f828aedc48eadec228c6482f965468230b57234218",
+    "commit": "9acb1f91be4fac5c7c2413ec66c716004bfc00c5",
+    "tree": "d84c704c0c3d813c92f95568f9f8b7d3dcef7acb"
+  },
+  "diagnostics_before_correction": [
+    {
+      "status": "INCONCLUSIVE_DEPTH4_CORPUS_TIMEOUT_BEFORE_COMPLETE_SIGNATURE",
+      "incident": "CH-251",
+      "command": "verify_crazyhouse_openbench_engine.py --engine <dirty-development-build> --runs 2 --timeout 180",
+      "development_engine": {
+        "bytes": 66826703,
+        "sha256": "6ebf407ce4135baad8abced146df01b058c7d1219b887251b0de7401aacfb8bc",
+        "dirty_source_build": true,
+        "optimized": false,
+        "threads": 1
+      },
+      "owned_engine_pid": 47732,
+      "owned_engine_terminated_by_its_verifier_timeout": true,
+      "foreign_processes_mutated": false,
+      "complete_corpus_node_signature_observed": false,
+      "partial_node_value_consumed": false,
+      "gate_credit": false
+    },
+    {
+      "status": "PATHOLOGICAL_FIXTURE_ISOLATED",
+      "incident": "CH-251",
+      "limit": {
+        "type": "depth",
+        "value": 4,
+        "threads": 1,
+        "hash_mib": 16,
+        "timeout_seconds_each": 35
+      },
+      "capability": {
+        "profile": "LICHESS_CRAZYHOUSE_2026_08_12",
+        "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+        "valid_nonce_acknowledged": true,
+        "route_committed": true,
+        "network_identity": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+        "errors": []
+      },
+      "before_fixture": {
+        "id": "rich_two_sided_pockets",
+        "source": "CH-REF-PERFT-002",
+        "fen": "2k5/8/8/8/8/8/8/4K3[QRBNPqrbnp] w - - 0 1",
+        "position_count": 1,
+        "status": "TIMEOUT_KILLED_OWNED_PROCESS",
+        "elapsed_seconds": 35.031,
+        "complete_node_signature_observed": false
+      },
+      "after_fixture_diagnostic": {
+        "id": "realistic_two_sided_pockets",
+        "source": "CHLG-0048",
+        "source_book_sha256": "a8976a380a6cc4b3a1a6aae3bf14249b2ab6d1bac6cf4a2715625d7c01747603",
+        "source_book_line": 48,
+        "fen": "rnbq1rk1/p1pp1p1p/7b/pp2p1p1/2B5/N1P2P1N/P2P1RPP/R1BQK3[Np] b Q - 0 10",
+        "position_count": 1,
+        "status": "COMPLETE",
+        "elapsed_seconds": 2.969,
+        "diagnostic_nodes": 691,
+        "diagnostic_nodes_are_not_corpus_signature": true
+      },
+      "foreign_processes_mutated": false,
+      "gate_credit": false
+    }
+  ],
+  "correction": {
+    "single_changed_scientific_field": "benchmark.positions[10]",
+    "before": {
+      "id": "rich_two_sided_pockets",
+      "source": "CH-REF-PERFT-002",
+      "fen": "2k5/8/8/8/8/8/8/4K3[QRBNPqrbnp] w - - 0 1"
+    },
+    "after": {
+      "id": "realistic_two_sided_pockets",
+      "source": "CHLG-0048",
+      "fen": "rnbq1rk1/p1pp1p1p/7b/pp2p1p1/2B5/N1P2P1N/P2P1RPP/R1BQK3[Np] b Q - 0 10"
+    },
+    "reason": "Keep two-sided pocket coverage while separating the existing pathological perft stress fixture from the bounded OpenBench search benchmark.",
+    "frozen_before_complete_revised_corpus_signature": true
+  },
+  "unchanged": {
+    "position_count": 12,
+    "position_order_except_index_10": true,
+    "limit_type": "depth",
+    "limit": 4,
+    "threads": 1,
+    "hash_mib": 16,
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "rule_profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "rule_profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "expected_nodes": null,
+    "expected_nodes_policy": "Freeze only after two clean optimized exports agree.",
+    "strength_claim": false,
+    "openbench_official_claim": false,
+    "release_claim": false
+  },
+  "owner_boundaries": {
+    "local_strength_gate_passed": false,
+    "official_openbench_canary_authorized": false,
+    "publication_authorized": false
+  }
+}

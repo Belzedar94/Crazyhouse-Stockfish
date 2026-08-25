@@ -1,0 +1,110 @@
+{
+  "schema": "crazyhouse-g3-conservative-search-contract/v1",
+  "created_utc": "2026-08-23T05:58:36.1178640Z",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "FROZEN_FIXTURE_FIRST_EXPECTED_RED_REQUIRED",
+  "lineage": {
+    "branch": "sync/official-229f6339",
+    "pre_behavior_commit": "507e581d0e06a5a0edb6ab3eb491ebf7e037b63a",
+    "pre_behavior_tree": "2d7872f0ecfedec15cc39e93a659fb03bf245c97",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false,
+    "oracle_waiver_receipt": "../../../receipts/private/project-owner-waiver-oracle-resume-082.json"
+  },
+  "pins": {
+    "current_map": {
+      "path": "tests/crazyhouse/g3-conservative-search-current-map-v1.json",
+      "bytes": 10709,
+      "sha256": "02ac761a2cb90c65797f0be2b60ca5e9748eaa76eb1281100aa5df4cac389ce8"
+    },
+    "architecture": {
+      "path": "docs/crazyhouse/adr-0001-addendum-005-conservative-search-policy.md",
+      "bytes": 4777,
+      "sha256": "a10b7356a26eb7d69fc03e0ec295da65c044b4c14b4e00f6712434d2721cba7f"
+    },
+    "verifier": {
+      "path": "tests/crazyhouse_conservative_search_verify.py",
+      "bytes": 17727,
+      "sha256": "bd4f211a3e5a4a3765a7cc1a882e14108a0ea2afc58c00092495b7711676e904"
+    },
+    "search_primitives": {
+      "path": "tests/crazyhouse/search-primitives-v1.json",
+      "bytes": 1723,
+      "sha256": "7ee83f598a942e11fc8242985eb2fccf17ea815e2a863e3677e04fd90755ae77",
+      "git_blob": "423a3ef5d5430a4d6cf49cb61995fae55c81b374"
+    },
+    "repetition_terminal": {
+      "path": "tests/crazyhouse/repetition-terminal-v1.json",
+      "bytes": 2440,
+      "sha256": "fd423ef46b0c4451b5482e844b0fe609a019e1b7857d64686dbda99c9542521a",
+      "git_blob": "6a35946057c8e5d1e2b32ecfd8bf1a601b0b4889"
+    },
+    "legacy_network": {
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    },
+    "official_network": {
+      "bytes": 98511183,
+      "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2"
+    },
+    "official_comparator": {
+      "bytes": 102861732,
+      "sha256": "401294d34f4003de2ebdc9bd9831c3bd2a49cb6451a7e5d2f64a8a1afc4cb793"
+    }
+  },
+  "expected_red": {
+    "source_commit": "507e581d0e06a5a0edb6ab3eb491ebf7e037b63a",
+    "source_tree": "2d7872f0ecfedec15cc39e93a659fb03bf245c97",
+    "sealed_engine_bytes": 103064562,
+    "sealed_engine_sha256": "8bf2c791d2a1ca9b6b209b8f6194715a932b33558a1e97f5a2ba3a9a3e76cdaa",
+    "required_static_gaps": [
+      "rule50_tt_value_decode",
+      "rule50_tt_cutoff_suppression",
+      "see_probcut_positive_polarity",
+      "null_move_board_material_gate",
+      "shallow_board_material_pruning"
+    ],
+    "runtime_special_state_matrix_expected": "PASS_UNCHANGED_PIPELINE",
+    "expected_result": "PASS_EXPECTED_RED_CONSERVATIVE_SEARCH_POLICY_GAPS"
+  },
+  "target_source_contract": {
+    "orthodox_policy_boolean": "const bool orthodoxSearch = pos.ruleset() == Ruleset::CHESS",
+    "orthodox_policy_instances": 2,
+    "tt_decode_signature": "value_from_tt(Value v, int ply, bool useRule50, int r50c)",
+    "tt_decode_calls_with_policy": 2,
+    "rule50_downgrade_guards": 4,
+    "high_counter_cutoff": "!orthodoxSearch || pos.rule50_count() < 96",
+    "null_move": "orthodoxSearch && cutNode",
+    "full_probcut": "orthodoxSearch && depth >= 3",
+    "shared_shallow_pruning": "orthodoxSearch && !rootNode && pos.non_pawn_material(us)",
+    "crazyhouse_see_return": true,
+    "probcut_movepicker_retained_but_unreachable_from_crazyhouse_full_probcut": true
+  },
+  "runtime_cases": [
+    "root_checkmate",
+    "root_stalemate",
+    "pocket_prevents_stalemate",
+    "forced_drop_evasion",
+    "no_fifty_move_result",
+    "promoted_capture_demotes_to_pawn",
+    "en_passant_capture",
+    "promotion_provenance",
+    "castling",
+    "high_halfmove_tt_mate_reuse"
+  ],
+  "controls": {
+    "clean_export_required_for_green": true,
+    "warning_strict_build_required": true,
+    "legacy_network_exact_identity_required": true,
+    "source_to_binary_binding_required": true,
+    "exact_standard_control_required": true,
+    "stderr_bytes": 0,
+    "timeouts": 0,
+    "fallback_allowed": false,
+    "timing_evidence": false,
+    "strength_claim": false
+  },
+  "stopping_rule": "Commit this contract, map, ADR and verifier before observing the expected red. The red must contain exactly the five mapped policy gaps while every runtime special-state case passes on the sealed pre-behavior binary. The green must remove exactly those gaps, preserve every frozen surrounding boundary, pass the same runtime matrix on a source-bound clean build, and match the exact official standard control. Any broader search-policy change, chess drift, missing guard, fallback, stderr, crash, timeout or artifact mismatch rejects the slice.",
+  "openbench_evidence": false,
+  "release_claim": false
+}

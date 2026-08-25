@@ -1,0 +1,118 @@
+{
+  "schema": "crazyhouse-release-workflow-guard/v1",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P15",
+  "evidence_class": "R4_RELEASE",
+  "status": "PREREGISTERED_EXPECTED_RED",
+  "frozen_utc": "2026-08-25T01:32:00Z",
+  "authority": {
+    "oracle_review": "WAIVED_BY_OWNER",
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "g15_decision_recorded": false
+  },
+  "source": {
+    "decision_parent": "820bbaeabd4669957c3f172122004520d02c2f66",
+    "decision_tree": "062d36e01c71dfc9de62cfdcf082aadf4788f51d",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "adr": {
+    "path": "docs/crazyhouse/adr-0021-g15-release-workflow-guard-v1.md",
+    "bytes": 2890,
+    "sha256": "d64475d47bb92f2d798b30e17dabcb4b0331bdf6527e2e39db08b5d4c34c6f69"
+  },
+  "verifier": {
+    "path": "tools/release/verify_crazyhouse_release_workflow_guard.py",
+    "bytes": 4891,
+    "sha256": "9f982d904e0aec785cbafeb80cfdcdb81a9c7dd18534d2fef0466a9f71544afe"
+  },
+  "inherited_expected_red": {
+    "path": ".github/workflows/official_release.yml",
+    "bytes": 4448,
+    "sha256": "c3ecf4b40096d8b0f3af8555ffc0f261a783322105676759f97d2a366676a2ac",
+    "required_result": "EXPECTED_RED_RELEASE_WORKFLOW_NOT_GUARDED",
+    "observed_result_before_freeze": false,
+    "known_defects": [
+      "official-stockfish repository authority",
+      "master branch requirement",
+      "sf_* tag dialect",
+      "contents write permission",
+      "tag creation before G15",
+      "universal compilation outside the Crazyhouse target matrix",
+      "ARM compilation outside the Crazyhouse target matrix",
+      "upstream binary upload workflow"
+    ]
+  },
+  "canonical_guard": {
+    "path": ".github/workflows/official_release.yml",
+    "encoding": "UTF-8 without BOM",
+    "line_endings": "LF",
+    "trailing_lf": true,
+    "bytes": 498,
+    "sha256": "a0fabef4ce5ca8a745af8df861822ad9e45aa8378df3493dda55ca983bea4db7",
+    "lines": [
+      "name: Crazyhouse stable release (G15 gated)",
+      "",
+      "on:",
+      "  workflow_dispatch:",
+      "",
+      "permissions:",
+      "  contents: read",
+      "",
+      "jobs:",
+      "  blocked-before-g15:",
+      "    name: Stable publication is not authorized",
+      "    runs-on: ubuntu-24.04",
+      "    steps:",
+      "      - name: Refuse inherited release path",
+      "        shell: bash",
+      "        run: |",
+      "          set -euo pipefail",
+      "          echo \"::error::Crazyhouse stable publication is disabled until the exact-candidate draft passes G15 and the owner explicitly authorizes publication.\"",
+      "          exit 1"
+    ]
+  },
+  "forbidden_fragments": [
+    "contents: write",
+    "official-stockfish/Stockfish",
+    "refs/tags/",
+    "gh release",
+    "/git/refs",
+    "GITHUB_TOKEN",
+    "secrets.",
+    "uses:",
+    "UniversalCompilation",
+    "ARMCompilation",
+    "upload_binaries",
+    "sf_",
+    "master"
+  ],
+  "qualification": {
+    "expected_red_first": true,
+    "required_clean_exports": 2,
+    "required_profiles_per_export": [
+      "normal",
+      "python_optimized"
+    ],
+    "required_mutations": [
+      "each forbidden fragment",
+      "single-byte canonical drift",
+      "CRLF framing",
+      "UTF-8 BOM",
+      "missing trailing LF",
+      "linked workflow",
+      "duplicate contract key"
+    ],
+    "network_calls": 0,
+    "github_writes": 0,
+    "openbench_calls": 0
+  },
+  "gate_effect": {
+    "G15": "UNCHANGED_OPEN",
+    "G16": "UNCHANGED_OPEN",
+    "public_repository_write_authorized": false,
+    "stable_publication_authorized": false,
+    "strength_credit": false,
+    "release_credit": false
+  }
+}

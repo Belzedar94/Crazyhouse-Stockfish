@@ -1,0 +1,140 @@
+{
+  "schema": "crazyhouse-openbench-local-server-client-routing-pass/v1",
+  "created_utc": "2026-08-24T04:11:22.8416669Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P10",
+  "gate": "G10",
+  "evidence_class": "E1_ENGINEERING",
+  "effect": "strictly_additive_local_inactive_onboarding_record",
+  "status": "PASS_LOCAL_INACTIVE_SERVER_CLIENT_ROUTING",
+  "parent": {
+    "path": "tests/crazyhouse/p10-openbench-onboarding-v1.addendum.006.json",
+    "commit": "c9767f4ee1c8ecaff3f18b5d98268309875ca11f",
+    "bytes": 3660,
+    "sha256": "4d5442a3d08f043bc956c2cf2174e1d0f42b2ca0b75fb4c7088ac09371411a2b"
+  },
+  "openbench_source": {
+    "repository": "https://github.com/Belzedar94/OpenBench",
+    "base_commit": "e20f0d9432f88fed1706d83fc93469be1a2a2cec",
+    "branch": "agent/crazyhouse-onboarding-v1",
+    "implementation_commit": "42e6cd69196876a1264b346e6d749a8ed75c16e2",
+    "identity_commit": "8224334f2acca6f797ae285557987ac4257f962a",
+    "identity_tree": "2025b98e535a6e3dc3b538f4d59916058444fc5a",
+    "receipt_commit": "0347cfe8be6333a747259845d38213b9c0c55ee7",
+    "receipt_tree": "967945e3cc08a350fcda19ebe91b3c118dd54def",
+    "published": false,
+    "pushed": false
+  },
+  "local_result": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p10-openbench-onboarding-clean-288/result.json",
+    "bytes": 4937,
+    "sha256": "28ab89bc784d1dad7739bf0761821dbbaab2622d4d47bb36474d5b0037669665",
+    "status": "PASS_LOCAL_INACTIVE_OPENBENCH_ROUTING"
+  },
+  "openbench_receipt_document": {
+    "path": "docs/crazyhouse-onboarding.md",
+    "repository_commit": "0347cfe8be6333a747259845d38213b9c0c55ee7",
+    "bytes": 4636,
+    "sha256": "f78c2de52b1e13b65afff44d6342b1aa5c886b9685ee1b8643c880aa7bc2a4c0"
+  },
+  "server_contract": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "known_contract": true,
+    "workload_engine_book_agreement_required": true,
+    "missing_contract_rejected": true,
+    "wrong_contract_rejected": true,
+    "ambiguous_protected_family_rejected": true,
+    "persisted_contract_required": true
+  },
+  "client_contract": {
+    "route": ["cutechess", "crazyhouse"],
+    "settings": "-repeat -recover -variant crazyhouse",
+    "contract_specific_referee_path": true,
+    "shared_referee_fallback": false,
+    "windows_referee_sha256": "f465025b2ad21526e2cbab2b7da1a231ff3d64f6e8a01a0be5963f525a0bddae",
+    "shared_horde_referee_sha256": "1c0bbab69e15a277c0b68bf032848b513f706749999cd5f6d09a1fb60f05b8a6",
+    "referees_distinct": true,
+    "linux_referee_sha256": null,
+    "linux_behavior": "FAIL_CLOSED"
+  },
+  "engine_draft": {
+    "onboarding_ready": false,
+    "registered_in_config": false,
+    "nps": null,
+    "qualified_commit": "97fe071f2de738da0f7a570419f0bc89382eef19",
+    "qualified_tree": "f07f7c84d05726089e9c915eaa7f4f6859e33a8e",
+    "qualified_src_tree": "74b74e4adbd01f8bc46c0597fb64b30733a1506b",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "bench": 113485,
+    "network": {
+      "name": "crazyhouse_run15rl_e190_l03.nnue",
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "alias_candidate": "Crazyhouse_v1.nnue",
+      "alias_or_champion_change_authorized": false
+    }
+  },
+  "book_draft": {
+    "name": "CRAZYHOUSE_openings_v1.epd",
+    "onboarding_ready": false,
+    "registered_in_config": false,
+    "payload_bytes": 100204,
+    "payload_sha256": "a8976a380a6cc4b3a1a6aae3bf14249b2ab6d1bac6cf4a2715625d7c01747603",
+    "roots": 1024,
+    "unique_roots": 1024,
+    "archive_bytes": 26842,
+    "archive_sha256": "d919a19e3192a0457991dfafc95d320f33047a458277386334ef34d1bd14d820",
+    "published": false
+  },
+  "test_matrix": {
+    "targeted_clean_export": {"passed": 47, "failed": 0, "errors": 0},
+    "changed_full_unit": {"tests": 245, "failures": 13, "errors": 3, "skipped": 1},
+    "clean_base_full_unit": {"tests": 231, "failures": 13, "errors": 3, "skipped": 1},
+    "same_unit_failure_set": true,
+    "changed_django": {"tests": 184, "failures": 2, "errors": 0},
+    "same_two_django_failures_reproduced_on_clean_base": true,
+    "new_incidents": ["CH-255", "CH-256"]
+  },
+  "incident_ledgers": {
+    "project": {
+      "path": "docs/crazyhouse/incident-ledger.md",
+      "bytes": 164158,
+      "sha256": "3526963a697ef0b04beaf03553580f636ae7f52ac1505a486cbc1bbc6ab31a14",
+      "latest_incident": "CH-256"
+    },
+    "portfolio_shared": {
+      "registered_project_root_relative_path": "LESSONS_LEARNED.md",
+      "worktree_verification_relative_path": "../../LESSONS_LEARNED.md",
+      "bytes": 71297,
+      "sha256": "52143776a51112408c1bdeb0912bde8b29e17a8ee123fe8b751a3968869d0a26",
+      "latest_crazyhouse_incident": "CH-256"
+    }
+  },
+  "activation_boundary": {
+    "production_mutated": false,
+    "public_repository_created": false,
+    "openbench_branch_published": false,
+    "client_version_bumped": false,
+    "official_canary_submitted": false,
+    "openbench_authorized": false,
+    "local_strength_gate": "WAITING_HOST_TIMING_CLEAN",
+    "official_g10_status": "IN_PROGRESS"
+  },
+  "owner_fixed_local_strength_method": {
+    "time_controls": ["2+0.02", "10+0.1", "30+0.3"],
+    "minimum_games_per_rung": 50,
+    "advance_only_at_displayed_los_percent": 100.0,
+    "reject_at_displayed_los_percent": 0.0,
+    "game_results_observed_here": false
+  },
+  "claims": {
+    "local_openbench_server_client_routing": true,
+    "openbench_onboarded": false,
+    "official_canary": false,
+    "strength": false,
+    "publication": false,
+    "release": false
+  },
+  "foreign_processes_mutated": false,
+  "receipt_rewrite_allowed": false
+}

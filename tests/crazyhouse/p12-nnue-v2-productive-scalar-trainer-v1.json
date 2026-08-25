@@ -1,0 +1,102 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-scalar-trainer-preregistration/v1",
+  "created_utc": "2026-08-24T08:56:58.5107732Z",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "hypothesis": "The frozen 902x512 shared-perspective topology can be exported into a fail-closed 960324-byte integer container, evaluated layer-for-layer identically by independent Python and C++ scalar paths, and trained with exact interrupted/resumed state without changing the productive legacy evaluator.",
+  "base": {
+    "commit": "b8ab35cf70305b4c3cc720f5ccc828e0baac769a",
+    "tree": "c36ea7c958c7428a272ef5878100359968a690b9",
+    "src_tree": "5940f07ad6e0e66af0a91d4eb37337cf63ac9005",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean": true
+  },
+  "contracts": {
+    "rule_profile": {"id": "LICHESS_CRAZYHOUSE_2026_08_12", "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"},
+    "physical_schema": {"path": "schemas/crazyhouse-physical-v1.schema.json", "bytes": 18729, "sha256": "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55"},
+    "feature_contract": {"path": "schemas/crazyhouse-nnue-v2-features-v1.json", "bytes": 3844, "sha256": "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6"},
+    "architecture": {"path": "schemas/crazyhouse-nnue-v2-productive-architecture-v1.json", "bytes": 4548, "sha256": "76ebf73988d21fdd3dbf3c34420be0abe6a587419c9f170c16fa3acde4c112b6"},
+    "architecture_descriptor": {"bytes": 302, "sha256": "f9ef0b0f404de4e5347514bdc2eedee6c864b48d5da2a9d3056aeb6f4cc7d10c"},
+    "quantization": {"path": "schemas/crazyhouse-nnue-v2-quantization-v1.json", "bytes": 2997, "sha256": "0a9d811ce76509ab58c1eec02fd87cef9df3804d76eb2fe2ae156183b23311a3"},
+    "container": {"path": "schemas/crazyhouse-nnue-v2-productive-container-v1.json", "bytes": 6981, "sha256": "19c83c55c4c6bbb69bcf9acf77d3ac2eafc01ce2a18e3e20d10c6e084a9f5b9b"},
+    "scope_correction": {"path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.result.001.addendum.001.json", "bytes": 2023, "sha256": "bf5f7b066c2c5bf52fb3536bcd1a74e09cffd6f70a0b779095513347eeab6728", "incident": "CH-265"}
+  },
+  "fixed_architecture": {
+    "feature_dimensions": 902,
+    "maximum_active": 138,
+    "transformer_lanes": 512,
+    "shared_perspective_weights": true,
+    "perspective_order": ["side-to-move", "opponent"],
+    "dense": [[1024, 32], [32, 32], [32, 1]],
+    "buckets": 0,
+    "psqt_head": false,
+    "parameter_count": 496225,
+    "container_bytes": 960324
+  },
+  "engineering_microfit": {
+    "training_admissible": false,
+    "model_selection_admissible": false,
+    "source_manifest": {"path": "tests/crazyhouse/data/crazyhouse-physical-v1-goldens.json", "bytes": 8383, "sha256": "94cd50961d8e51478e55a82cd4e0770d418a30483b3c5d120a470f7eb2efccac"},
+    "record_count": 42,
+    "record_sha256_source": "source_manifest.expected.record_sha256",
+    "labels_consumed": false,
+    "target_domain_prefix_ascii": "Crazyhouse-Stockfish NNUE V2 engineering microfit target v1",
+    "target_domain_suffix_hex": "00",
+    "target_formula": "((little-endian uint32 of SHA256(domain || position_identity)[0:4] mod 1201) - 600) / 600",
+    "seed": 2026082412,
+    "epochs": 3,
+    "batch_size": 7,
+    "optimizer": {"name": "torch.optim.AdamW", "learning_rate": 0.001, "betas": [0.9, 0.999], "epsilon": 1e-8, "weight_decay": 0.0, "amsgrad": false},
+    "loss": "mean-squared-error-on-engineering-target",
+    "device": "cpu",
+    "cpu_threads": 1,
+    "dataloader_workers": 0,
+    "deterministic_algorithms": true,
+    "full_optimizer_steps": 18,
+    "interruption_after_optimizer_steps": 7
+  },
+  "expected_red": {
+    "target": "crazyhouse_v2_productive_test",
+    "reason": "target and productive network implementation do not exist at the frozen base",
+    "gate_credit": false
+  },
+  "verification": {
+    "clean_exports": 2,
+    "build_profiles": ["release", "debug-assertions"],
+    "warning_hits_allowed": 0,
+    "python_serialize_parse_reserialize_byte_equal": true,
+    "cpp_python_layer_parity": ["transformer-int32", "transformer-crelu", "dense0-int32", "dense0-crelu", "dense1-int32", "dense1-crelu", "output-raw", "output-centipawns"],
+    "perspectives": ["white", "black"],
+    "parser_negative_minimum": 36,
+    "exporter_negative_minimum": 8,
+    "resume_negative_minimum": 9,
+    "full_resume_exact": ["model-tensors", "optimizer-tensors", "rng-state", "cursor", "sample-order-chain", "metrics-jsonl", "quantized-container"],
+    "normal_engine_control": {"legacy_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43", "backend": "legacy-v1", "bestmove_non_none": true, "v2_identity_hits": 0}
+  },
+  "resource_boundary": {
+    "future_formal_namespace": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-scalar-trainer-<lease-id>",
+    "cpu": 1,
+    "gpu": 0,
+    "workers": 0,
+    "network": 0,
+    "openbench": 0,
+    "ports": 0,
+    "disk_ceiling_bytes": 2147483648,
+    "c_drive_bulk_writes": 0,
+    "foreign_process_policy": "read-only; no stop, suspend, resume, priority, affinity or ownership mutation"
+  },
+  "stopping_rule": "Stop at the first contract, build, parser, parity, resume, isolation, resource, or provenance failure. Do not repair or reinterpret a failed formal namespace in place.",
+  "pass_effect": "Qualify only the productive scalar container, integer inference, and deterministic engineering trainer kernel. Keep G12 open for admitted sanitizer runtime, productive SIMD/incremental integration, a production-admissible trainer campaign, legacy control through the productive datapath, model selection, strength and release.",
+  "boundaries": {
+    "training_started": false,
+    "production_training_authorized": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

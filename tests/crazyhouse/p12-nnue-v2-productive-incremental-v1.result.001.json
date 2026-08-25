@@ -1,0 +1,229 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-incremental-result/v1",
+  "created_utc": "2026-08-24T13:35:40.996Z",
+  "status": "PASS_PRODUCTIVE_INCREMENTAL_FORMAL",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "contracts": [
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-incremental-v1.json",
+      "commit": "f6e032c9d9ef9cdc5d4e46e08031c0c03713adca",
+      "bytes": 8983,
+      "sha256": "9d34b494aea9715fed462e3610380c983f5a98c18aa685c7e6eebe30c07b2973"
+    },
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-incremental-v1.addendum.001.json",
+      "commit": "03d1f27b2102070a67babdf1d8e0d430ef7d3b52",
+      "bytes": 4035,
+      "sha256": "e563ab89f602a96520e51349ff2bf6dc6b697665d511469d5d2ab9613b90b39b"
+    }
+  ],
+  "source": {
+    "implementation_commit": "a6b1cdedc4814928f9bf8eeca238b96dd2adecc8",
+    "formal_source_commit": "a6b1cdedc4814928f9bf8eeca238b96dd2adecc8",
+    "formal_source_tree": "2a34d37b439d73b376d5ff5a22d77c372b54684d",
+    "formal_src_tree": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true
+  },
+  "diagnostic_history": [
+    {
+      "lease": 317,
+      "status": "REJECTED_CONTROLLER_OVERLAY_PATH_FRAMING",
+      "incident": "CH-289",
+      "formal_credit": false,
+      "end_receipt": {
+        "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-dev-t1-end-317.json",
+        "bytes": 3589,
+        "sha256": "eae42d9a5a02fa027326c1bedab0bcf20deb2e2cd6f3ec2f95a8e4a9584c2666"
+      }
+    },
+    {
+      "lease": 318,
+      "status": "ABORTED_PRE_READY_CONTROLLER_PATH_LITERAL",
+      "incident": "CH-290",
+      "formal_credit": false,
+      "abort_receipt": {
+        "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-dev-t1-start-318.correction.001.json",
+        "bytes": 2651,
+        "sha256": "15a5e25c4b49a708bdc2a6773d25a1e24d2c22c147b0966bab0d2559300c1ebb"
+      }
+    },
+    {
+      "lease": 319,
+      "status": "PASS_DIRTY_SOURCE_DIAGNOSTIC_ONLY",
+      "incident": "CH-291",
+      "formal_credit": false,
+      "end_receipt": {
+        "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-dev-t1-end-319.json",
+        "bytes": 9994,
+        "sha256": "2a750f62bed6100c2bb4e31735fb0f3d0e3709d21dc347138d3d1c89df9dd576"
+      }
+    }
+  ],
+  "accepted_formal_lease": {
+    "lease": 320,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-incremental-formal-320",
+    "start_receipt": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-formal-t1-start-320.json",
+      "bytes": 6571,
+      "sha256": "dc8ba8ef824b39eccee72e74c708a75949a6c8ec9392de5e277eea8ed4700df5"
+    },
+    "controller_preflight": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-formal-t1-start-320.preflight.001.json",
+      "bytes": 1800,
+      "sha256": "793993b5dedd222dd9d45ce220a0af459a033061a7c1aedffd7bc42e93adbaf7"
+    },
+    "pid_binding": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-formal-t1-start-320.addendum.001.json",
+      "bytes": 2623,
+      "sha256": "e1df73abbf057fae99ca7e2f4178976ad0b2bba805b956ac47f3221d7cde5d40"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-incremental-formal-320/completion.json",
+      "bytes": 97721,
+      "sha256": "17b9b7494ff8ec54239f1d1989359d99f5e769eb67785ee4f3c4315f893fe8b2"
+    },
+    "end_receipt": {
+      "path": "../../../receipts/resources/p12-nnue-v2-productive-incremental-formal-t1-end-320.json",
+      "bytes": 8049,
+      "sha256": "01db9c348a0af9e3409af0c06dc9886e3bcc80417877981ed7051fdf64491ecc"
+    }
+  },
+  "clean_exports": {
+    "count": 2,
+    "archive_bytes_each": 6512640,
+    "archive_sha256": "993a2e6bfc40b1e9fbd57cb2a66a8c9bf4dcbf173d200bb43639e9189e8f552e",
+    "archives_byte_equal": true,
+    "tracked_files_each": 479,
+    "tracked_blob_lists_equal": true,
+    "manifest_wrapper_documents_byte_equal": false,
+    "manifest_wrapper_difference": "export-specific path and archive metadata only"
+  },
+  "productive_incremental_matrix": {
+    "warning_strict_builds": 4,
+    "warning_strict_builds_exit_zero": true,
+    "compiler_warning_pattern_hits": 0,
+    "verifiers": 4,
+    "verifiers_exit_zero": true,
+    "verifier_stderr_bytes_total": 0,
+    "cases_each": 13,
+    "moves_each": 17,
+    "undos_each": 17,
+    "null_moves_each": 1,
+    "null_undos_each": 1,
+    "refreshes_each": 13,
+    "updates_each": 36,
+    "checkpoints_each": 49,
+    "evaluations_each": 98,
+    "trace_values_each": 426888,
+    "operation_negatives_each": 10,
+    "evaluation_negatives_each": 4,
+    "replay_byte_equal_each": true,
+    "cross_export_profile_result_byte_equal": true,
+    "verification_json": {
+      "bytes": 1852,
+      "sha256": "e8b86cff038019fa098c0bc2bbc7f3b27911e6a58f4cece4cdabb144ba0e0d1d"
+    }
+  },
+  "productive_simd_regression": {
+    "verifiers": 4,
+    "verifiers_exit_zero": true,
+    "evaluations_each": 3696,
+    "trace_values_each": 8049888,
+    "result_byte_equal": true,
+    "verification_json": {
+      "bytes": 1654,
+      "sha256": "62951d8f21779f606e52a813be08249dca1dc49b3d133a3f9fa18a54c85064f2"
+    }
+  },
+  "scalar_trainer_regression": {
+    "verifiers": 4,
+    "verifiers_exit_zero": true,
+    "verification_json_byte_equal": true,
+    "verification_json": {
+      "bytes": 22308,
+      "sha256": "0a2de916d7108130f721570d0b4516facdd39f9bba5ad1fe9a5af82ce57b08a0"
+    },
+    "parser_negatives_each": 62,
+    "exporter_negatives_each": 19,
+    "resume_negatives_each": 16,
+    "checkpoint_step7_byte_equal": true,
+    "checkpoint_step7": {
+      "bytes": 5989501,
+      "sha256": "ea8d9841701d124dabc10dd40abb82215c76a6928c19c7bd36dcf9878f0e67bc"
+    },
+    "full_resume_checkpoint_semantic_equal_each": true,
+    "full_resume_network_byte_equal_each": true,
+    "network_cross_profile_byte_equal": true,
+    "network": {
+      "bytes": 960324,
+      "sha256": "ef209a669eeaa72ec48eaca115154c94556fe90064b751ac4c623e01823098fa"
+    },
+    "labels_consumed": false,
+    "identity": "engineering-only synthetic micro-fit"
+  },
+  "normal_engine_control": {
+    "build": "PASS_WARNING_STRICT_OPENBENCH_PLAY_BUILD_WITHOUT_OPENBENCH_CONNECTION",
+    "backend": "legacy-v1",
+    "legacy_network_bytes": 58534811,
+    "legacy_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "artifact_bytes": 63050751,
+    "artifact_sha256": "adeb7d510c66ebcfbd6c4b1ed79532905dbc720673403782302f56999cff4238",
+    "uci_ready": true,
+    "bestmove": "e5e6",
+    "bench_nodes": 113485,
+    "bench_stdout_bestmoves": 12,
+    "bench_stderr_position_rows": 12,
+    "productive_v2_identity_hits": 0,
+    "downloaded_standard_networks": 0
+  },
+  "resource_audit": {
+    "cpu_threads": 1,
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "ports": 0,
+    "step_receipts": 36,
+    "nonzero_steps": 0,
+    "timeouts": 0,
+    "namespace_files": 1609,
+    "namespace_bytes": 1223815496,
+    "namespace_ceiling_bytes": 2147483648,
+    "owned_processes_remaining": 0,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_supervisor_unchanged": true
+  },
+  "gate_effect": {
+    "productive_incremental_full_refresh_parity": "PASS",
+    "productive_simd_transformer_scalar_parity": "PRESERVED_PASS",
+    "productive_scalar_container_integer_inference": "PRESERVED_PASS",
+    "deterministic_engineering_trainer_kernel": "PRESERVED_PASS",
+    "legacy_v1_default": "PRESERVED",
+    "g12": "OPEN",
+    "remaining": [
+      "admitted productive sanitizer runtime",
+      "legacy control through the new productive V2 datapath",
+      "production-admissible data and training",
+      "model selection and strength gates"
+    ]
+  },
+  "boundaries": {
+    "training_admissible": false,
+    "production_training_authorized": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "simd_productive_proven": true,
+    "incremental_productive_proven": true,
+    "sanitizer_productive_proven": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_claimed": false,
+    "legacy_v1_remains_default": true
+  }
+}

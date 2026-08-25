@@ -1,0 +1,121 @@
+{
+  "schema": "crazyhouse-p15-native-package-transcript-replay-preregistration/v1",
+  "created_utc": "2026-08-24T20:31:00.000Z",
+  "status": "PREREGISTERED_UNCHANGED_SOURCE_TRANSCRIPT_REPLAY_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.addendum.003.json",
+    "bytes": 4802,
+    "sha256": "9a98d7039f04b1e05a339183baa0b8664a8269f7f960cefa0d4975f1d037892d"
+  },
+  "rejected_lease": {
+    "lease": 344,
+    "status": "FAIL_STOPPED_NO_REPAIR_IN_PLACE",
+    "target_exit_code": 0,
+    "target_stderr_bytes": 0,
+    "failure_bytes": 1019,
+    "failure_sha256": "f901a0e9f55b8932651d2c003e5bcc26b3fcddd7e6d397cf6e8a2cb2c0f2cdb2",
+    "end_receipt_bytes": 3585,
+    "end_receipt_sha256": "8e286cb2b3181ce7a5133a39383e63cb87ae00a02abeb4412c521f59e097ba28",
+    "namespace_reused": false
+  },
+  "incident": {
+    "id": "CH-306",
+    "ledger_path": "docs/crazyhouse/incident-ledger.md",
+    "ledger_commit": "5758e994be7fd91728e65526a35077bfa64d423f",
+    "cause": "GNU Make emitted the deterministic recipe echo before the exact test summary, while the controller expected one stdout line."
+  },
+  "source_base": {
+    "commit": "5758e994be7fd91728e65526a35077bfa64d423f",
+    "tree": "ad5c2a93f06b85658e01b79686c14c1f5b0128e1",
+    "src_tree": "1058720318d4e0ad9c3f61e6ee48675f2dd13b6b",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "exact_overlays": [
+    {
+      "path": "src/Makefile",
+      "bytes": 61826,
+      "sha256": "f49c3b889680692923c702f071a3c51cd2bd67702f473d3e44e58339a3a8e092"
+    },
+    {
+      "path": "tools/release/crazyhouse_release_native_package.py",
+      "bytes": 23223,
+      "sha256": "355615ac2419583275c97e7e13a38bc26693b08cecd545b88e9fa3736f79fb87"
+    },
+    {
+      "path": "tools/release/verify_crazyhouse_native_package.py",
+      "bytes": 25590,
+      "sha256": "63fc4afde5322f9410d7aa489832160c795ec73130cf0122b7eceea858b2f9b0"
+    },
+    {
+      "path": "tests/crazyhouse_release_native_package.py",
+      "bytes": 43410,
+      "sha256": "ed39a3509cef426bde8a6320b93d7346c59d9a15aaea7481ab1edc01f668841c"
+    }
+  ],
+  "raw_transcript_contract": {
+    "encoding": "ASCII with exact mixed line endings emitted by GNU Make and Windows Python",
+    "bytes": 225,
+    "sha256": "3c200f0f09b020f49e0ef2a7fb23a3d81b4f091b99612b959fa25fbc99437f3a",
+    "base64": "QzovVXNlcnMvZGppbWUvQXBwRGF0YS9Mb2NhbC9Qcm9ncmFtcy9QeXRob24vUHl0aG9uMzEyL3B5dGhvbi5leGUgLUIgLi4vdGVzdHMvY3Jhenlob3VzZV9yZWxlYXNlX25hdGl2ZV9wYWNrYWdlLnB5ClBBU1NfTkFUSVZFX1BBQ0tBR0VfRklYVFVSRVMgcG9zaXRpdmU9NCBuZWdhdGl2ZT03MiByZWFsX25ldHdvcms9ZmFsc2UgZnVsbF9lbmdpbmU9ZmFsc2UgcmVsZWFzZV9jbGFpbT1mYWxzZQ0K",
+    "lines": [
+      "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe -B ../tests/crazyhouse_release_native_package.py",
+      "PASS_NATIVE_PACKAGE_FIXTURES positive=4 negative=72 real_network=false full_engine=false release_claim=false"
+    ],
+    "third_line_allowed": false,
+    "normalization": "Authenticate the 225 raw bytes first, preserve them in a separate log, then expose only line two plus LF to the inherited semantic controller."
+  },
+  "diagnostic_matrix": {
+    "clean_base_export": 1,
+    "python_profiles": [
+      "normal"
+    ],
+    "make_target": "crazyhouse_release_native_package_contract_test",
+    "required_summary": "PASS_NATIVE_PACKAGE_FIXTURES positive=4 negative=72 real_network=false full_engine=false release_claim=false",
+    "full_replay_from_case_one": true,
+    "source_or_test_change_since_lease_344": false,
+    "positive_small_fixture_cases": 4,
+    "negative_cases": 72,
+    "real_network": false,
+    "full_engine": false,
+    "compiler_linker_or_bytecode_artifacts": 0,
+    "nonzero_exits_allowed": false,
+    "timeouts_allowed": false
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 536870912,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764,
+    "p7_has_priority": true
+  },
+  "stopping_rule": "Replay the complete unchanged matrix in a fresh namespace. Stop on any raw-byte, source, overlay, process, P7 identity, artifact or resource mismatch; do not repair in place.",
+  "pass_effect": "A pass remains dirty-source diagnostic evidence only and permits review plus an exact implementation commit. It grants no formal package, real-network, candidate, strength, OpenBench, draft, G15 or release credit.",
+  "boundaries": {
+    "dirty_source_diagnostic_only": true,
+    "formal_credit": false,
+    "real_network_containment_verified": false,
+    "package_internal_layout_verified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

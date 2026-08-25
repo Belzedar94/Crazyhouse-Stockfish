@@ -1,0 +1,61 @@
+{
+  "schema": "crazyhouse-nnue-v2-simd-incremental-probe-addendum/v1",
+  "evidence_class": "E1_ENGINEERING",
+  "date": "2026-08-24",
+  "purpose": "pin the implementation and expected-red receipt before clean-export formal verification",
+  "preregistration": {
+    "commit": "41d65b34859004fd380173105dba534e3194f6c2",
+    "path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.json",
+    "sha256": "1f93f28118478e46362b4254df7e2fa366b851f698f7c1075676a973f7e80a34"
+  },
+  "implementation": {
+    "commit": "84a30c996db31f5f5d76cd824096d137c4b7d690",
+    "tree": "8157f9d2b82c29028435c4d50031fd53cec4d585",
+    "src_tree": "5940f07ad6e0e66af0a91d4eb37337cf63ac9005",
+    "files": {
+      "src/nnue/crazyhouse_v2_probe.cpp": "634b93c317dc1207b3b08231123efeb599baddf15098aeb4485392fdab5c7abb",
+      "src/nnue/crazyhouse_v2_probe.h": "774d10f4c509c8f6f44a1e7c8a3de4aea7d706297ad91fba06e9fbf7bf39c461",
+      "tests/crazyhouse_v2_simd_incremental.cpp": "ecbbb0c098dff6884525f4ffec005d64d79d62ec547ce432f36e431346c4dc62",
+      "tests/crazyhouse_v2_simd_incremental_verify.py": "bf30d8ff3620156466ce775f8d115444fd2d1043e0ab1e9ea1240066344c15b4"
+    }
+  },
+  "expected_red": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-simd-incremental-prereg-296/expected-red.log",
+    "bytes": 730,
+    "sha256": "064fd85a37e91bc1df356387746d75f8d3118953fcd82b617a8dd67d81a5f21a",
+    "exit_code": 2,
+    "required_signal": "No rule to make target 'crazyhouse-v2-simd-incremental-tests'",
+    "credit": "PASS_EXPECTED_RED_ONLY"
+  },
+  "toolchain": {
+    "compiler": "x86_64-w64-mingw32-g++ 16.1.0 MSYS2 Rev5",
+    "make": "GNU Make 4.4.1",
+    "python": "CPython 3.12.0",
+    "clang_format": "20.1.8"
+  },
+  "preformal_observation": {
+    "release": "PASS",
+    "debug_glibcxx_assertions": "PASS",
+    "required_backend": "sse2-x16-scalar-tail1",
+    "protocol_sha256": "6a4d0e6412f60ea401d59d350dcf8c907f93df92046f5a69a1f0eb47dc8a1216",
+    "container_scalar_protocol_sha256": "f7017ceeadb90259f05caa78b72409b3377f1722dc4fc25d9ba670620c9770bd",
+    "container_scalar_rejection_sha256": "a3b4483e644a9d4c8bcc5b15f387de0be2c6085dda91ebc385193aff18c65d76",
+    "formal_credit": false
+  },
+  "formal_requirements": {
+    "clean_exports": ["release", "debug"],
+    "source_manifest_unchanged_before_after_each_build": true,
+    "warning_clean": true,
+    "normalized_output_byte_identical": true,
+    "normal_engine_isolation": true,
+    "independent_receipt_verification": true
+  },
+  "gate_boundary": {
+    "g12_closed": false,
+    "sanitizer_gap_closed": false,
+    "training_admissible": false,
+    "strength_evidence": false,
+    "openbench_evidence": false,
+    "release_evidence": false
+  }
+}

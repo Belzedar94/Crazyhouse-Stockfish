@@ -1,0 +1,107 @@
+{
+  "schema": "crazyhouse-datagen-bundle-schema/v1",
+  "created_utc": "2026-08-24T04:53:00Z",
+  "status": "frozen-before-bundle-implementation",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "single-file OpenBench transport for capability, provenance, and one crazyhouse-physical-v1 chunk",
+  "byte_order": "little-endian",
+  "file_layout": [
+    {"name": "header", "bytes": 256},
+    {"name": "capability_json", "bytes": "header.capability_bytes"},
+    {"name": "provenance_json", "bytes": "header.provenance_bytes"},
+    {"name": "physical_chunk", "bytes": "header.chunk_bytes"},
+    {"name": "footer", "bytes": 128}
+  ],
+  "header": {
+    "bytes": 256,
+    "fields": [
+      {"name": "magic", "offset": 0, "size": 8, "value_ascii": "CHBNDLV1"},
+      {"name": "magic_reserved", "offset": 8, "size": 8, "value": 0},
+      {"name": "endianness_marker", "offset": 16, "size": 4, "storage": "uint32", "value": 16909060},
+      {"name": "header_bytes", "offset": 20, "size": 2, "storage": "uint16", "value": 256},
+      {"name": "footer_bytes", "offset": 22, "size": 2, "storage": "uint16", "value": 128},
+      {"name": "format_version", "offset": 24, "size": 2, "storage": "uint16", "value": 1},
+      {"name": "version_reserved", "offset": 26, "size": 2, "value": 0},
+      {"name": "section_count", "offset": 28, "size": 4, "storage": "uint32", "value": 3},
+      {"name": "total_bytes", "offset": 32, "size": 8, "storage": "uint64"},
+      {"name": "capability_bytes", "offset": 40, "size": 8, "storage": "uint64"},
+      {"name": "provenance_bytes", "offset": 48, "size": 8, "storage": "uint64"},
+      {"name": "chunk_bytes", "offset": 56, "size": 8, "storage": "uint64"},
+      {"name": "capability_sha256", "offset": 64, "size": 32, "storage": "raw-sha256"},
+      {"name": "provenance_sha256", "offset": 96, "size": 32, "storage": "raw-sha256"},
+      {"name": "chunk_sha256", "offset": 128, "size": 32, "storage": "raw-sha256"},
+      {"name": "payload_sha256", "offset": 160, "size": 32, "storage": "raw-sha256"},
+      {"name": "bundle_schema_sha256", "offset": 192, "size": 32, "storage": "raw-sha256"},
+      {"name": "reserved", "offset": 224, "size": 28, "value": 0},
+      {"name": "header_crc32c", "offset": 252, "size": 4, "storage": "uint32", "coverage": "bytes 0..251"}
+    ]
+  },
+  "sections": {
+    "capability_json": {
+      "schema": "crazyhouse-datagen-selfplay-capability-response/v1",
+      "minimum_bytes": 2,
+      "maximum_bytes": 65536,
+      "encoding": "UTF-8",
+      "framing": "one canonical compact JSON object followed by exactly one LF",
+      "forbidden": ["BOM", "CR", "NUL", "duplicate-key", "non-finite-number", "prefix", "suffix"]
+    },
+    "provenance_json": {
+      "schema": "crazyhouse-datagen-provenance/v1",
+      "minimum_bytes": 2,
+      "maximum_bytes": 1048576,
+      "encoding": "UTF-8",
+      "framing": "one canonical compact JSON object followed by exactly one LF",
+      "forbidden": ["BOM", "CR", "NUL", "duplicate-key", "non-finite-number", "prefix", "suffix"]
+    },
+    "physical_chunk": {
+      "schema": "crazyhouse-physical-v1",
+      "minimum_bytes": 640,
+      "framing": "256-byte header, one or more 256-byte records, 128-byte footer",
+      "capability_binding": "physical header capability_sha256 equals bundle capability_sha256",
+      "provenance_binding": "physical header provenance_sha256 equals bundle provenance_sha256"
+    }
+  },
+  "footer": {
+    "bytes": 128,
+    "fields": [
+      {"name": "magic", "offset": 0, "size": 10, "value_ascii": "CHBNDENDV1"},
+      {"name": "magic_reserved", "offset": 10, "size": 6, "value": 0},
+      {"name": "footer_bytes", "offset": 16, "size": 2, "storage": "uint16", "value": 128},
+      {"name": "format_version", "offset": 18, "size": 2, "storage": "uint16", "value": 1},
+      {"name": "section_count", "offset": 20, "size": 4, "storage": "uint32", "value": 3},
+      {"name": "total_bytes", "offset": 24, "size": 8, "storage": "uint64"},
+      {"name": "payload_bytes", "offset": 32, "size": 8, "storage": "uint64"},
+      {"name": "payload_sha256", "offset": 40, "size": 32, "storage": "raw-sha256"},
+      {"name": "header_sha256", "offset": 72, "size": 32, "storage": "raw-sha256"},
+      {"name": "reserved", "offset": 104, "size": 20, "value": 0},
+      {"name": "footer_crc32c", "offset": 124, "size": 4, "storage": "uint32", "coverage": "bytes 0..123"}
+    ]
+  },
+  "integrity": {
+    "total_bytes_formula": "256 + capability_bytes + provenance_bytes + chunk_bytes + 128",
+    "payload_bytes_formula": "capability_bytes + provenance_bytes + chunk_bytes",
+    "payload_sha256_coverage": "capability_json || provenance_json || physical_chunk",
+    "header_sha256_coverage": "all 256 header bytes including header_crc32c",
+    "source_must_be_regular_and_stable_during_validation": true,
+    "trailing_bytes": "forbidden"
+  },
+  "transaction": {
+    "output_opened_after_all_generation_and_identity_checks": true,
+    "partial_create": "exclusive",
+    "partial_fsync": true,
+    "partial_revalidation": true,
+    "publish": "atomic no-replace rename",
+    "interrupted_partial": "retain as quarantine",
+    "final_overwrite_or_delete": "forbidden"
+  },
+  "openbench_transport": {
+    "generator_out_is_bundle": true,
+    "worker_validates_uncompressed_bundle_before_bzip2": true,
+    "worker_compresses_exact_validated_bundle": true,
+    "server_hashes_compressed_bytes": true,
+    "offline_publisher_reauthenticates_bundle_and_all_sections": true
+  },
+  "claim_boundary": "The bundle makes sidecars transportable and independently resolvable. It does not validate Crazyhouse legality, authorize generation, prove split quality, establish Elo, train a model, or support release."
+}

@@ -1,0 +1,107 @@
+{
+  "schema": "crazyhouse-public-correctness-ci-preparation-preregistration/v1",
+  "addendum": 4,
+  "created_utc": "2026-08-25T03:16:54.6993486Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P6",
+  "gate": "G6",
+  "evidence_class": "E1_ENGINEERING_PREREGISTRATION",
+  "status": "PREREGISTERED_G15_PUBLISHER_CI_INTEGRATION_NOT_EXECUTED",
+  "source_parent": {
+    "commit": "0f305fdcb38f826bb504af0f9ee42bf71dec6d87",
+    "tree": "09dd9a859c59ac511f98f27cb1cc58aafb3208cc",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302"
+  },
+  "parents": {
+    "prior_ci_result": {
+      "path": "docs/crazyhouse/g6-public-correctness-ci-preparation-v1.addendum.003.json",
+      "bytes": 5794,
+      "sha256": "b83f3d93cfe25053c1ea5edbb0dac7897ea0cca883fe31b4728860c82c7f7087"
+    },
+    "qualified_publisher_result": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.005.json",
+      "bytes": 5117,
+      "sha256": "946d94c3e7000237b49b27362f7d97eaab7cf159a06a8c03a92164e67e234535",
+      "status": "PASS_G15_PUBLISHER_FORMAL_TOOLING"
+    },
+    "publisher": {
+      "path": "tools/release/crazyhouse_g15_publisher.py",
+      "bytes": 41192,
+      "sha256": "f984016ef12c57263994dacd3f1765bb352fda46fe7334bb94817353f45ff2e0"
+    },
+    "unit_suite": {
+      "path": "tests/crazyhouse_g15_publisher.py",
+      "bytes": 30535,
+      "sha256": "9612e15552223d126b8f098556940f51fada57d352dc28820da084d43c878a77"
+    },
+    "download_authority_correction": {
+      "path": "tests/crazyhouse/p15-g15-publisher-v1.addendum.003.json",
+      "bytes": 4660,
+      "sha256": "70ff2396a5a93f76253f941d39eb8ad12c59558a8b678b4e8c9d5e9fa5fed117",
+      "incident": "CH-328"
+    }
+  },
+  "workflow_before": {
+    "path": ".github/workflows/crazyhouse-correctness.yml",
+    "bytes": 17128,
+    "sha256": "0442f0449467fb53c277ff0df1624887f95f9614740a5efd5eae7faf15122c79"
+  },
+  "one_change": {
+    "job": "network-tooling",
+    "position": "after Test fail-closed G15 release workflow guard and before Materialize exact registered legacy network",
+    "step_name": "Test fail-closed post-G15 publisher tooling",
+    "step_instances_after": 1,
+    "run_lines": [
+      "set -euo pipefail",
+      "python -m py_compile tools/release/crazyhouse_g15_publisher.py tests/crazyhouse_g15_publisher.py",
+      "python -B tests/crazyhouse_g15_publisher.py",
+      "python -O -B tests/crazyhouse_g15_publisher.py"
+    ],
+    "new_job": false,
+    "new_runner": false,
+    "new_matrix": false,
+    "new_permission": false,
+    "new_secret": false,
+    "new_environment_variable": false,
+    "new_network_input": false,
+    "publisher_cli_invoked": false,
+    "public_mutation_path_added": false
+  },
+  "verification_plan": {
+    "workflow_only_source_commit": true,
+    "src_tree_unchanged": true,
+    "py_compile": [
+      "tools/release/crazyhouse_g15_publisher.py",
+      "tests/crazyhouse_g15_publisher.py"
+    ],
+    "unit_profiles": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "unit_tests_per_profile": 11,
+    "positive_cases_per_profile": 3,
+    "negative_cases_per_profile": 89,
+    "publisher_fake_transport_only": true,
+    "yaml_base_loader_exact_structure": true,
+    "actionlint_errors": 0,
+    "post_commit_workflow_hash_required": true,
+    "post_commit_profiles_required": true,
+    "p7_read_only_reauthentication": true
+  },
+  "stopping_rule": "Stop without amending the workflow if any source identity, publisher pin, exact step placement, unit profile, YAML structure, actionlint, repository cleanliness or P7 preservation check fails. Any correction must be additive and the workflow must not be pushed while G6 remains open.",
+  "claim_boundary": {
+    "workflow_change_executed": false,
+    "local_ci_integration_executed": false,
+    "public_workflow_pushed": false,
+    "public_workflow_run_observed": false,
+    "public_artifacts_observed": false,
+    "G6": "OPEN",
+    "G15": "OPEN",
+    "owner_decision_recorded": false,
+    "public_write_authorized": false,
+    "stable_publication_authorized": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false
+  }
+}

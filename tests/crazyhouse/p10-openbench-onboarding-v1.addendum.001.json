@@ -1,0 +1,82 @@
+{
+  "schema": "crazyhouse-openbench-onboarding-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T02:58:10.5402487Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P10",
+  "gate": "G10",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "PREREGISTRATION_CORRECTED_BEFORE_COMPLETE_BENCH_RESULT",
+  "parent": {
+    "path": "tests/crazyhouse/p10-openbench-onboarding-v1.json",
+    "bytes": 8150,
+    "sha256": "4c53d68886029029ba032a8ac468c188ae6436bb6d6cbac3ddda1307c91a4f47",
+    "commit": "a128e791424e21a9c548184e6b7eee09123e169f",
+    "tree": "44ac687962c0b362f602633ae8563e7be0442623"
+  },
+  "diagnostics_before_correction": [
+    {
+      "status": "REJECTED_VERIFIER_PROFILE_TOKEN",
+      "incident": "CH-248",
+      "observed_engine_code": "crazyhouse_profile_hash_mismatch",
+      "route_committed": false,
+      "bench_started": false,
+      "gate_credit": false
+    },
+    {
+      "status": "REJECTED_BENCH_PREPOSITION_ADMISSION",
+      "incident": "CH-249",
+      "route_committed": true,
+      "network_identity": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "observed_engine_code": "crazyhouse_bench_not_bound",
+      "observed_position_state": "invalid",
+      "search_started": false,
+      "gate_credit": false
+    },
+    {
+      "status": "INCONCLUSIVE_FUNCTIONAL_TIMEOUT_BEFORE_COMPLETE_SIGNATURE",
+      "incident": "CH-250",
+      "command": "verify_crazyhouse_openbench_engine.py --engine <dirty-development-build> --runs 2 --timeout 180",
+      "development_engine": {
+        "bytes": 66826703,
+        "sha256": "83778ce156a2835a8a8a8e5967d2550288f348573466aaf909b246ea3681e174",
+        "dirty_source_build": true,
+        "optimized": false,
+        "threads": 1
+      },
+      "owned_engine_pid": 27508,
+      "owned_engine_observed_alive_before_timeout": true,
+      "owned_engine_terminated_by_its_verifier_timeout": true,
+      "foreign_processes_mutated": false,
+      "complete_node_signature_observed": false,
+      "partial_node_value_consumed": false,
+      "gate_credit": false
+    }
+  ],
+  "correction": {
+    "single_changed_scientific_field": "benchmark.limit",
+    "before": 6,
+    "after": 4,
+    "limit_type": "depth",
+    "reason": "Remove two Crazyhouse plies after the preregistered depth-6 corpus exceeded its functional ceiling without yielding a complete signature.",
+    "frozen_before_complete_depth4_signature": true
+  },
+  "unchanged": {
+    "positions": 12,
+    "position_order": true,
+    "threads": 1,
+    "hash_mib": 16,
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "rule_profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "rule_profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "expected_nodes": null,
+    "expected_nodes_policy": "Freeze only after two clean optimized exports agree.",
+    "strength_claim": false,
+    "openbench_official_claim": false,
+    "release_claim": false
+  },
+  "owner_boundaries": {
+    "local_strength_gate_passed": false,
+    "official_openbench_canary_authorized": false,
+    "publication_authorized": false
+  }
+}

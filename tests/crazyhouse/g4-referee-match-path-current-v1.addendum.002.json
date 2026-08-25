@@ -1,0 +1,146 @@
+{
+  "schema": "crazyhouse-g4-referee-current-match-path-map-addendum/v1",
+  "addendum": 2,
+  "created_utc": "2026-08-22T12:42:15.0807316Z",
+  "evidence_class": "E1_ENGINEERING",
+  "reason": "The owner explicitly waived the previously mandatory Oracle consultation while preserving every correctness, provenance, resource, strength, release and monitoring gate. This addendum supersedes only the Oracle-dependent source-change prohibition in the immutable base map and addendum 1; it does not rewrite their observations or convert lease 167 into capability evidence.",
+  "pins": {
+    "current_map_v1": {
+      "path": "tests/crazyhouse/g4-referee-match-path-current-v1.json",
+      "bytes": 12628,
+      "sha256": "5317b8981a4c9cc38ad2cdb51e1a45f4aa936e3dd27e9f984e77ad85f0a92812",
+      "git_blob": "694deeec0b63a7208d414431b14c9101270221a7"
+    },
+    "addendum_001": {
+      "path": "tests/crazyhouse/g4-referee-match-path-current-v1.addendum.001.json",
+      "bytes": 3601,
+      "sha256": "3c24422d19b9b32dbbea18bb63788faac29499615d313a3ce6561eea812c9c30"
+    },
+    "owner_waiver": {
+      "path": "../../../receipts/private/project-owner-waiver-oracle-resume-082.json",
+      "bytes": 3452,
+      "sha256": "8a104134932f1c7959109349c0076439f10066e5ab526cd3a1d77a672e585d97",
+      "verbatim": "Puedes seguir sin Oracle"
+    },
+    "owner_waiver_gate_record": {
+      "path": "../../../receipts/private/project-owner-waiver-gate-record-083.json",
+      "bytes": 2056,
+      "sha256": "1ef2f4781b3a010ea8d9322ad93ddc15894cab298c6a96b5818afe22d753f4c9"
+    },
+    "rejected_lease_167_start": {
+      "path": "../../../receipts/resources/p4-referee-match-capability-red-t1-start-167.json",
+      "bytes": 5942,
+      "sha256": "b39ee6cf3ace1310b19c7d11ec021505d2915a85ecde8d96018fed33a4c5a63f"
+    },
+    "rejected_lease_167_end": {
+      "path": "../../../receipts/resources/p4-referee-match-capability-red-t1-end-167.json",
+      "bytes": 7583,
+      "sha256": "e0c2c2df1bc415e4f88e8e9d041a7e0b7f350d0284dc1060b0fe49209cef0495"
+    }
+  },
+  "identities_at_freeze": {
+    "product": {
+      "repository": "Crazyhouse-Stockfish",
+      "branch": "sync/official-229f6339",
+      "commit": "55f8a086c06c596648a76f6130c3f0d1432504fe",
+      "tree": "f2d88e0c199dd54626f541a5cecf3ba53a8b6f4f",
+      "status_lines": 0,
+      "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+      "retired_fairy_base_used": false
+    },
+    "referee": {
+      "repository": "https://github.com/AndyGrant/cutechess.git",
+      "path": "D:/Crazyhouse-Stockfish/referee/cutechess-24d430-clean",
+      "branch": "crazyhouse/profile-conformance",
+      "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+      "candidate_commit": "c1a9b91b3b32c68cbea6cf6708ae06d380bfcdba",
+      "candidate_tree": "2ae9fa88491900227a27c9adf743be4d33052188",
+      "status_lines": 0,
+      "forbidden_horde_ancestor_present": false
+    }
+  },
+  "existing_fixture_first_proof": {
+    "lf_only_conformance_stream": {
+      "fixture": {
+        "path": "tests/crazyhouse/g4-referee-cli-cases-v1.json in the referee repository",
+        "bytes": 6412,
+        "sha256": "72cb80676695a73d42a930c59bb68029ee643a23c2234f4f35f45b3beecc9d69"
+      },
+      "test_source": {
+        "path": "projects/cli/tests/crazyhouseclicontract/tst_crazyhouseclicontract.cpp",
+        "bytes": 15859,
+        "sha256": "932320254ec73805cb4123b7ccb53d2b710ff3709e71826734a6c7ea72562869"
+      },
+      "expected_red": "On Windows, each conformance response contains a carriage return despite the frozen LF-only stream contract.",
+      "source_under_test": {
+        "path": "projects/cli/src/crazyhouseconformance.cpp",
+        "bytes": 6152,
+        "sha256": "1081639902da1dd8dd744292483815110bd242163f370e18a0521e774f77cc8e"
+      }
+    },
+    "pre_game_failure": {
+      "required_new_fixture": "A focused ChessPlayer test must call the pre-game crash/forfeit path while side is NoSide and board is null, and must fail on the frozen candidate before the implementation changes.",
+      "source_under_test": {
+        "path": "projects/lib/src/chessplayer.cpp",
+        "bytes": 5783,
+        "sha256": "823c8cffd39d8771d492181d740bc57423efa3c2c574765dd67cbcb486f54a1e"
+      },
+      "observed_runtime_symptom": "Lease 167 reached a Qt assertion in Side::opposite after one actor failed protocol startup.",
+      "capability_evidence": false
+    }
+  },
+  "one_variable_sequence": [
+    {
+      "order": 1,
+      "boundary": "conformance_lf_only_stream",
+      "action": "Make the conformance stdout byte stream binary on Windows without changing JSON semantics, ordinary CLI output or match behavior.",
+      "required_evidence": ["existing frozen process fixture is red before the change", "all six process cases pass after the change", "raw stdout has one terminal LF and zero carriage returns", "separate referee commit and authenticated build receipt"]
+    },
+    {
+      "order": 2,
+      "boundary": "pre_game_null_side_failure",
+      "action": "Add an isolated expected-red unit fixture, then make pre-game crash/timeout forfeits emit a non-winning result claim without dereferencing a null board or calling opposite on NoSide.",
+      "required_evidence": ["fixture commit predates behavior commit", "expected-red is independently observed", "green test checks result type, NoSide winner and single emission", "ordinary in-game forfeits remain covered"]
+    },
+    {
+      "order": 3,
+      "boundary": "missing_profile_capability_observation",
+      "action": "Re-run the frozen two-actor rule-free real-process case on a fresh lease after authenticated actor startup, without referee capability enforcement yet.",
+      "required_evidence": ["both actors complete UCI discovery", "both advertise crazyhouse and omit profile/nonce", "the current referee crosses the forbidden post-discovery boundary", "raw actor logs, CLI log and PGN are hash-pinned"]
+    },
+    {
+      "order": 4,
+      "boundary": "profile_capability_ingress",
+      "action": "Add exact profile ID/hash ingress and a fresh nonce-bound engine capability barrier before ucinewgame, position, go, clocks or PGN game start.",
+      "required_evidence": ["fixture-first negative matrix", "missing, wrong, duplicate, stale and cross-engine acknowledgements fail closed", "positive two-engine case passes", "same actor and match harness used for red and green"]
+    },
+    {
+      "order": 5,
+      "boundary": "strict_bestmove_and_legality",
+      "action": "Separate strict protocol grammar failures from legal-move failures using the frozen Crazyhouse dialect.",
+      "required_evidence": ["drop, promotion, trailing-token and malformed-line fixtures", "production Board legality path", "typed immutable result reason"]
+    },
+    {
+      "order": 6,
+      "boundary": "deadline_history_pgn_identity_join",
+      "action": "Implement the deterministic deadline arbiter, accepted physical-history digest, semantic PGN/replay and same-executable identity join as individually reviewed commits and leases.",
+      "required_evidence": ["equality and ordering fixtures", "per-ply physical state round-trip", "profile/reason/history PGN tags", "independent replay", "probe and match executable digest equality"]
+    }
+  ],
+  "supersession": {
+    "oracle_consultation_required": false,
+    "source_change_allowed": true,
+    "lease_167_retry_authorized": true,
+    "scope": "Only the Oracle-dependent pause and source-change prohibition are superseded. All scientific and operational gates remain active.",
+    "no_optional_stopping": true
+  },
+  "current_classification": {
+    "lease_167": "REJECTED_PRE_CAPABILITY_ACTOR_STARTUP_TIMEOUT_AND_REFEREE_ASSERT",
+    "missing_capability_expected_red": "NOT_OBSERVED",
+    "referee_selected_for_official_matches": false,
+    "g4": "IN_PROGRESS"
+  },
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

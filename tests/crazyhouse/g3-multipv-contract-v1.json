@@ -1,0 +1,98 @@
+{
+  "schema": "crazyhouse-g3-multipv-contract/v1",
+  "created_utc": "2026-08-23T05:17:35.8508245Z",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "FROZEN_FIXTURE_FIRST_EXPECTED_RED_REQUIRED",
+  "lineage": {
+    "branch": "sync/official-229f6339",
+    "pre_behavior_commit": "f0b0d8d16fc43f0bc351132e761cc68c1d22bc9c",
+    "pre_behavior_tree": "3b50d731fb4919c6303f2cf8535c0a294be225c9",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false
+  },
+  "pins": {
+    "current_map": {
+      "path": "tests/crazyhouse/g3-multipv-current-map-v1.json",
+      "bytes": 8173,
+      "sha256": "135b209a70a29845a462373015b44d1bd42de6109fc1fbeb811d37a53119ac3a",
+      "git_blob": "dc767a069d8157e4ef57d534ba0710c5bd999e65"
+    },
+    "known_303_fixture": {
+      "path": "tests/crazyhouse/max-moves-303.json",
+      "bytes": 4541,
+      "sha256": "3c77de3377d66feecdffd37459e31a1824424b3833a39e2272b4202d1c312e38",
+      "git_blob": "2b8af94ccfeffcb81cd472bb0b2edd6183af672c"
+    },
+    "architecture": {
+      "path": "docs/crazyhouse/adr-0001-addendum-004-crazyhouse-multipv-protocol.md"
+    },
+    "legacy_network": {
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    },
+    "official_network": {
+      "bytes": 98511183,
+      "sha256": "1a298aa575a085434d29027978dc36867fe9c5bcea9376654b7a8eba1e52dfc2"
+    },
+    "official_comparator": {
+      "bytes": 102861732,
+      "sha256": "401294d34f4003de2ebdc9bd9831c3bd2a49cb6451a7e5d2f64a8a1afc4cb793"
+    }
+  },
+  "frozen_inventory": {
+    "orthodox": "option name MultiPV type spin default 1 min 1 max 256",
+    "crazyhouse": "option name CrazyhouseMultiPV type spin default 0 min 0 max 2147483647",
+    "static_single_inventory": true,
+    "orthodox_line_changed": false
+  },
+  "effective_request": {
+    "chess": "MultiPV",
+    "crazyhouse_override_zero": "MultiPV",
+    "crazyhouse_override_positive": "CrazyhouseMultiPV",
+    "selection_owner": "committed root Position::ruleset()",
+    "clamp": "min(effective request, complete rootMoves.size())",
+    "fixed_crazyhouse_legal_ceiling": null,
+    "protocol_representation_maximum": 2147483647
+  },
+  "invalid_assignment": {
+    "inputs": ["", "abc", "-1", "2147483648", "999999999999999999999999"],
+    "immediate_error": "info string ERROR setoption code=crazyhouse_multipv_invalid option=CrazyhouseMultiPV",
+    "crazyhouse_go_error_code": "crazyhouse_multipv_invalid",
+    "bestmove_allowed": false,
+    "sticky_until_valid_assignment": true,
+    "isready_allowed": true,
+    "position_allowed": true,
+    "perft_allowed": true,
+    "chess_search_allowed": true,
+    "generic_spin_semantics_changed": false
+  },
+  "expected_red": {
+    "source_commit": "2fdbae00892c9c40c2a3322738c4ea4cf15547c5",
+    "source_tree": "348258d451b614bbc69b3891da0c936330a06558",
+    "engine_target": "x86-64-avx2 default scalar",
+    "engine_bytes": 103058078,
+    "engine_sha256": "e5402a33b64b9c5d216003b32493e89a5d9696015ada69c845069792429bd7e4",
+    "required_observations": [
+      "CrazyhouseMultiPV is absent from the UCI inventory",
+      "setting CrazyhouseMultiPV reports No such option",
+      "setting MultiPV to 303 is ignored by the orthodox spin range",
+      "the 303-root fixture search emits only MultiPV index 1"
+    ]
+  },
+  "green_cases": [
+    "inventory_exact_once",
+    "known_303_complete_root_pvs",
+    "startpos_dynamic_clamp_20",
+    "searchmoves_dynamic_clamp_2",
+    "zero_inherits_orthodox_multipv",
+    "variant_persistence_and_chess_isolation",
+    "invalid_empty_non_decimal_negative_and_overflow",
+    "invalid_is_sticky_for_crazyhouse_search_only",
+    "valid_assignment_recovers_search"
+  ],
+  "stopping_rule": "Freeze this contract and its verifier in a commit before observing the expected red. Preserve the red observation immutably. Change only the option-validation, engine configuration, route admission and search request-selection surfaces required by this ADR. Any inventory drift, incomplete or duplicate 303-root output, fixed Crazyhouse legal bound, silent invalid retention, chess behavior drift, stderr, crash, timeout or fallback rejects the slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

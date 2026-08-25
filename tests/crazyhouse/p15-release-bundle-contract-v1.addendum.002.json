@@ -1,0 +1,108 @@
+{
+  "schema": "crazyhouse-p15-release-bundle-formal-preregistration/v1",
+  "created_utc": "2026-08-24T19:42:26.8208957Z",
+  "status": "PREREGISTERED_FORMAL_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_contract": {
+    "path": "tests/crazyhouse/p15-release-bundle-contract-v1.json",
+    "bytes": 7953,
+    "sha256": "8f179d4051129b0a2452e8a26af9947bc5d38475f1b06d93862518a563a548f6"
+  },
+  "expected_red_result": {
+    "lease": 340,
+    "completion_bytes": 4377,
+    "completion_sha256": "4b60821661e965703713f82ad853c7e6a5c588c44cfbdb36d67339385078c257",
+    "end_receipt_bytes": 3017,
+    "end_receipt_sha256": "b8ac69a538d66f5e00dffd2cbfd95084c1830ff1c6e1f19a3d9239f9101a77d4"
+  },
+  "implementation_parent": {
+    "commit": "681bb2418716cba040d1667f7b8857a55658c9c1",
+    "tree": "85f4997143a4ecdd99e63a77e16e80a2317a2b7a",
+    "src_tree": "1058720318d4e0ad9c3f61e6ee48675f2dd13b6b"
+  },
+  "implementation_pins": [
+    {
+      "path": "src/Makefile",
+      "bytes": 61665,
+      "sha256": "9a7750083a26f69e4e1dbc439fc7d8024b6652cc4bfc03c695c2fa8279ff4e98"
+    },
+    {
+      "path": "tools/release/crazyhouse_release_manifest.py",
+      "bytes": 17949,
+      "sha256": "4212457f955bd53797e17b1dadd5ded058c7ccd6d8eeea4ebb2bcc421b32580f"
+    },
+    {
+      "path": "tools/release/crazyhouse_release_provenance.py",
+      "bytes": 7643,
+      "sha256": "256f327af07e7fb5f6e6eda2948ba47b22ac7f81f9d027f36ef08d3516621b18"
+    },
+    {
+      "path": "tools/release/verify_crazyhouse_release_download.py",
+      "bytes": 12362,
+      "sha256": "ec3e225149873e4720910094dbd53f0ff97266b45602366696d9070bdee9366b"
+    },
+    {
+      "path": "tests/crazyhouse_release_bundle_contract.py",
+      "bytes": 20410,
+      "sha256": "68b727f54225792b6e9ed609c46e8a52777c6dbb8e636f57100cd9074b9731ff"
+    }
+  ],
+  "formal_matrix": {
+    "clean_exports": 2,
+    "profiles_per_export": ["python-normal", "python-optimized"],
+    "entrypoint": "make --no-print-directory --old-file=.depend -C src crazyhouse_release_bundle_contract_test",
+    "python": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+    "python_version": "3.12",
+    "pythonhashseed": "0",
+    "bytecode_writes_allowed": false,
+    "required_summary": "PASS_RELEASE_BUNDLE_FIXTURES positive=5 negative=49 synthetic_fixture_only=true release_claim=false",
+    "positive_count": 5,
+    "negative_count": 49,
+    "all_four_summaries_byte_identical": true,
+    "source_archives_byte_identical": true,
+    "tracked_export_inventory_exact": true,
+    "allowed_generated_paths": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "compiler_linker_or_bytecode_artifacts": 0,
+    "timeouts_allowed": false,
+    "nonzero_exits_allowed": false
+  },
+  "resource_contract": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_ceiling_bytes": 268435456,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764
+  },
+  "stopping_rule": "Stop and preserve the namespace on any source pin, archive, inventory, profile exit, summary, generated-file, deterministic-output, resource, P7 identity or restoration mismatch. Do not repair a failed formal namespace in place.",
+  "pass_effect": "Qualifies only the synthetic global inventory, provenance, assembly, checksum and downloaded-byte tooling. Package-internal layout, network bytes inside real archives, full engines, reproducible product archives, SBOM content, candidate, strength, OpenBench, draft, tag, G15 and release remain open.",
+  "boundaries": {
+    "formal_executed": false,
+    "fixture_tooling_qualified": false,
+    "synthetic_fixture_only": true,
+    "package_internal_layout_verified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}
+

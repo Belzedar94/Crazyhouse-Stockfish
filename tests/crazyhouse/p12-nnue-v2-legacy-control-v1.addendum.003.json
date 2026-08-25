@@ -1,0 +1,84 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-legacy-control-preregistration-addendum/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-24T16:16:12.0645595Z",
+  "status": "PREREGISTERED_INCLUDED_DEPENDENCY_CORRECTION_BEFORE_RETRY",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_addendum": {
+    "path": "tests/crazyhouse/p12-nnue-v2-legacy-control-v1.addendum.002.json",
+    "commit": "1907597d5548dccd6dbf3a7181545afd15b1ec07",
+    "bytes": 3977,
+    "sha256": "93181e43c87e5787070f64f3fdc4d70e8f898ce30c3fde4176bc566159eeeae8"
+  },
+  "rejected_observation": {
+    "lease": 330,
+    "status": "REJECTED_ENGINEERING_OR_ORCHESTRATION",
+    "incident": "CH-300",
+    "start_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-expected-red-t1-start-330.json",
+      "bytes": 5381,
+      "sha256": "fe3d8bd774d7c8faa8f03f1c2d60fd1a9e0a352b371b57f560a2d92d1dceea66"
+    },
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-expected-red-t1-end-330.json",
+      "bytes": 3361,
+      "sha256": "baa581b98c24d8ab4dac1b7b0c6549b288d4fa7a90f32085c4f9efae739b2558"
+    },
+    "completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-legacy-control-expected-red-330/completion.json",
+      "bytes": 4670,
+      "sha256": "14d1e3ce29137bb3d83d309f656c05ca81828c5ab19fc28c70268ea6b8be2490"
+    },
+    "archive_and_relative_tar_passed": true,
+    "make_exit_code": 2,
+    "missing_target_fragment_observed": true,
+    "unexpected_stderr": "make: [Makefile:1481: .depend] Error 127 (ignored)",
+    "generated_depend_bytes": 0,
+    "formal_expected_red_credit": false
+  },
+  "demonstrated_cause": "GNU Make remakes missing included makefiles even under -n. The clean export had no .depend file, so Make executed the ignored-error dependency recipe at line 1481 before resolving the requested absent target. CXX was unavailable in the deliberately discovery-only PATH and returned 127, contaminating the transcript.",
+  "diagnostic_only": {
+    "target": "D:/Crazyhouse-Stockfish/diagnostics/p12-nnue-v2-legacy-control-oldfile-20260824-002",
+    "source_commit": "1907597d5548dccd6dbf3a7181545afd15b1ec07",
+    "source_src_tree": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "command": "C:/msys64/usr/bin/make.exe --old-file=.depend -n -C source/src crazyhouse_v2_legacy_control_test",
+    "exit_code": 2,
+    "stderr_lines": 1,
+    "stderr_exact": "make: *** No rule to make target 'crazyhouse_v2_legacy_control_test'.  Stop.",
+    "depend_absent_after": true,
+    "compiler_or_linker_commands": 0,
+    "source_archive": {"bytes": 6625280, "sha256": "f227181d254e865ee9f2d6ae200ed11610d977a0b55d78ce309678fc9e1cc687"},
+    "make_stdout": {"bytes": 243, "sha256": "312268be75b3c2e3dbe79a8cece0599a34ba96ff7053441d1b71bb2c05d6db77"},
+    "make_stderr": {"bytes": 78, "sha256": "36b97348445eba7a7459e83c913ee44d8116c220401bdfb9feed0807a4f93b08"},
+    "namespace_bytes": 12873569,
+    "status": "PASS_DIAGNOSTIC_ONLY",
+    "formal_credit": false
+  },
+  "corrected_expected_red_admission": {
+    "make_arguments": ["--old-file=.depend", "-n", "-C", "source/src", "crazyhouse_v2_legacy_control_test"],
+    "depend_must_be_absent_before_and_after": true,
+    "compiler_or_linker_child_allowed": false,
+    "required_exit_code": 2,
+    "required_stderr_lines": 1,
+    "required_missing_target_line": "make: *** No rule to make target 'crazyhouse_v2_legacy_control_test'.  Stop.",
+    "archive_and_relative_tar_requirements_unchanged": true,
+    "parent_path_restoration_required": true,
+    "retry_lease": 331,
+    "retry_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-legacy-control-expected-red-331"
+  },
+  "stopping_rule": "Lease 330 remains rejected with zero gate credit. Lease 331 may pass expected-red only if .depend is absent before and after Make, the exact --old-file=.depend invocation produces one missing-target stderr line and exit 2, and no compiler or linker process or transcript is observed. Any other cause rejects the fresh lease without reuse.",
+  "boundaries": {
+    "expected_red_proven": false,
+    "legacy_control_proven": false,
+    "training_admissible": false,
+    "model_selection_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

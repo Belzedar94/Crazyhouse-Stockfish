@@ -1,0 +1,91 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-preregistration-addendum/v1",
+  "addendum": 6,
+  "created_utc": "2026-08-24T15:05:50.505Z",
+  "status": "PREREGISTERED_MSVC_LINK_OPTION_ROUTING_CORRECTION_BEFORE_LEASE_326",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Replace only the rejected lease and correct how cl.exe receives link-only options. Preserve the scientific hypothesis, sanitizer toolchains, product source, matrices, stopping rule, resources, asynchronous pipe protocol, unique translation-unit objects, 8 MiB stack requirement and claim boundaries.",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.005.json",
+    "commit": "29dc85c45af61b12add4c7ecbb7c7332353d66d7",
+    "bytes": 3328,
+    "sha256": "9a8eeb5fcc5f05e6696770b8d9e86cc4045acb534b79ea873aa1b23bcc50b125"
+  },
+  "rejected_lease_325": {
+    "status": "REJECTED_ENGINEERING_OR_ORCHESTRATION",
+    "incident": "CH-296",
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-end-325.json",
+      "bytes": 5890,
+      "sha256": "f259397a349ee613ce79db49d56b615632a900cf8f208a8d1da8378f223256d9"
+    },
+    "causal_diagnostic": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-link-routing-diagnostic-325.json",
+      "bytes": 8779,
+      "sha256": "bce0c9b2fad79018e477ffa156c52fd861b060eee79a8c819bc0754fea3bece3"
+    },
+    "control_executable_linked_and_asan_imported": true,
+    "observed_stack_reserve": "0x100000",
+    "required_stack_reserve": "0x800000",
+    "product_verifier_started": false,
+    "scientific_result_observed": false,
+    "gate_credit": false
+  },
+  "single_operational_change": {
+    "old_lease": 325,
+    "new_lease": 326,
+    "old_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-325",
+    "new_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-326",
+    "driver_response_requirement": "The cl response contains driver inputs only: /nologo, /fsanitize=address, the complete explicit object list and /Fe.",
+    "link_command_requirement": "The actual cl command appends /link /INCREMENTAL:NO /WX /DEBUG /PDB:<unique-path> /STACK:8388608 Shell32.lib after the response reference.",
+    "warning_admission": "The complete MSVC build step must exit zero with empty stderr and no warning diagnostic in stdout; linker /WX must be effective.",
+    "runtime_admission": "Before any ASan executable runs, dumpbin /headers must report exactly one 800000 size of stack reserve line."
+  },
+  "causal_basis": {
+    "exact_object_reused": true,
+    "source_or_object_bytes_changed": false,
+    "rejected_command_observed_cl_d9002_for_stack": true,
+    "rejected_command_observed_nonfatal_lnk4302_under_claimed_wx": true,
+    "corrected_command_stack_reserve": "0x800000",
+    "corrected_command_link_stderr_empty": true,
+    "corrected_safe_control_exit_zero": true,
+    "corrected_positive_control_asan_heap_overflow": true
+  },
+  "formal_source_admission": {
+    "effective_base_commit": "29dc85c45af61b12add4c7ecbb7c7332353d66d7",
+    "permitted_difference_from_effective_base": [
+      "docs/crazyhouse/incident-ledger.md",
+      "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.006.json"
+    ],
+    "exact_src_tree_required": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "clean_worktree_required": true
+  },
+  "preserved": {
+    "hypothesis": true,
+    "single_variable": true,
+    "frozen_inputs": true,
+    "toolchains": true,
+    "resource_contract": true,
+    "clean_export_contract": true,
+    "sanitizer_lanes": true,
+    "runtime_matrix": true,
+    "asynchronous_pipe_protocol": true,
+    "large_bidirectional_pipe_preflight": true,
+    "unique_translation_unit_object_plan": true,
+    "linker_warnings_are_errors": true,
+    "msvc_asan_stack_reserve_bytes": 8388608,
+    "stopping_rule": true,
+    "pass_effect": true,
+    "boundaries": true
+  },
+  "boundaries": {
+    "sanitizer_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

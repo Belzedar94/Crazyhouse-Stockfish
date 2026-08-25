@@ -1,0 +1,283 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-preregistration/v1",
+  "created_utc": "2026-08-24T13:43:41.427Z",
+  "status": "PREREGISTERED_BEFORE_FORMAL_SANITIZER_RUN",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "hypothesis": "The exact productive V2 scalar/container, SIMD and transactional incremental C++ datapaths execute their frozen matrices without memory-safety or undefined-behavior findings under the already admitted project sanitizer toolchains.",
+  "single_variable": "execution profile: ordinary warning-strict builds to authenticated MSVC AddressSanitizer and GCC undefined-behavior trap instrumentation",
+  "frozen_implementation_source": {
+    "commit": "cfb1e1ba7bccc1988949b054834fd859e6f84b06",
+    "tree": "fc69f6af2d5155c175152cd796575d5aee52ee73",
+    "src_tree": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean": true
+  },
+  "formal_source_admission": {
+    "permitted_difference_from_frozen_implementation_source": [
+      "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.json"
+    ],
+    "exact_src_tree_required": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "clean_worktree_required": true,
+    "merge_commit_forbidden": true
+  },
+  "external_review": {
+    "required": false,
+    "reason": "owner explicitly waived Oracle for this continuation",
+    "api_or_credits_used": false,
+    "fallback_used": false
+  },
+  "frozen_inputs": [
+    {
+      "path": "tests/crazyhouse/p12-nnue-v2-productive-incremental-v1.result.001.json",
+      "bytes": 8386,
+      "sha256": "1bc17bd29a913887afe51063537e03405ee3eaf845f5a952b6342dd039cdcf8f"
+    },
+    {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.014.json",
+      "bytes": 6219,
+      "sha256": "922918a48358bfc719c87810feba66a3a6442e439e26a367e90ab08283d6a19d"
+    },
+    {
+      "path": "tests/crazyhouse_asan_control.cpp",
+      "bytes": 827,
+      "sha256": "b8553536df7a71c46092f0fd6b2ce929336d3050203d127e2c1e857ec2663a77"
+    },
+    {
+      "path": "tests/crazyhouse_ubsan_control.cpp",
+      "bytes": 844,
+      "sha256": "d946ed527d3b2d06979ccba91ef37a86479bf194547dfb9d32e27b6a64bd79cc"
+    },
+    {
+      "path": "tests/crazyhouse_v2_productive.cpp",
+      "bytes": 18762,
+      "sha256": "23180835a30beb3fb8ca546757bcca3c9d3f713a517d35b3a4ad0fcfdf564c6e"
+    },
+    {
+      "path": "tests/crazyhouse_v2_productive_verify.py",
+      "bytes": 36655,
+      "sha256": "da402296dd16af01493c172de161e243bd64c6a58fc82145f20a6ed11e98cebb"
+    },
+    {
+      "path": "tests/crazyhouse_v2_productive_simd_verify.py",
+      "bytes": 9944,
+      "sha256": "414736c4959001e8e19559d5a43da88294ee82c19ee85f52f7fc213114cf1d09"
+    },
+    {
+      "path": "tests/crazyhouse_v2_productive_incremental.cpp",
+      "bytes": 24761,
+      "sha256": "375dc1d03d0ad5a86aec7362481abc307919991cadb05e19ed3ae6fe095016e1"
+    },
+    {
+      "path": "tests/crazyhouse_v2_productive_incremental_verify.py",
+      "bytes": 12918,
+      "sha256": "2b4d7f5a6b791b127927b276a0328006b4240209964c073bf872f5f0cd89cde6"
+    },
+    {
+      "path": "src/nnue/crazyhouse_v2_productive.h",
+      "bytes": 9678,
+      "sha256": "d40e14a9f9ac2704df8fde6bb930e85a4ea26a3c9173bd1782035035af407506"
+    },
+    {
+      "path": "src/nnue/crazyhouse_v2_productive.cpp",
+      "bytes": 47509,
+      "sha256": "8bd666de566886d52c43e9f45c977cba7f664ed26b564647118c2cb397211a1c"
+    },
+    {
+      "path": "src/nnue/crazyhouse_v2_features.cpp",
+      "bytes": 7368,
+      "sha256": "17e1acb2cf40d216cfb1408a6f6bb72d2175aa86200fe784bf9de7ea52574b98"
+    },
+    {
+      "path": "src/nnue/crazyhouse_v2_physical.cpp",
+      "bytes": 27534,
+      "sha256": "d7bace342fbdf30f5dc29e9060b21a6b66b4ab0de45638dbd70bfcc943a45508"
+    },
+    {
+      "path": "src/Makefile",
+      "bytes": 59361,
+      "sha256": "1f2fe55034fd218f2e0ee4e4a47e6ea980837c1e71602d55e6e8a786744dd6b6"
+    }
+  ],
+  "toolchains": {
+    "common": [
+      {
+        "path": "C:/Program Files/Git/cmd/git.exe",
+        "bytes": 46464,
+        "sha256": "fec691d80fccc35fcc309fbc9f720536c1d795b8a562ec169f28c9923da9600f"
+      },
+      {
+        "path": "C:/Program Files/Git/usr/bin/tar.exe",
+        "bytes": 497189,
+        "sha256": "bb89375a830ac0986f2cfe9c7a71cc44d8e646c4fbfbd14545918a759e96887a"
+      },
+      {
+        "path": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+        "bytes": 103192,
+        "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0",
+        "torch": "2.7.1+cu118"
+      }
+    ],
+    "msvc_asan": [
+      {
+        "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/VsDevCmd.bat",
+        "bytes": 11526,
+        "sha256": "c004278e64444bf3524360f960511b5ce7b1d0306910f08a4ebcf1c42ff9bd6d"
+      },
+      {
+        "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+        "bytes": 677464,
+        "sha256": "a9a3a13e4d019cfc0a9d823b3ee0cc383c6f3f86b00f861ac066032d869997e5"
+      },
+      {
+        "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe",
+        "bytes": 3256432,
+        "sha256": "f5950d9bd30d14a003747dd5359fc53b5c852a2271c5ea5855e4ae44ba5b86c1"
+      },
+      {
+        "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/dumpbin.exe",
+        "bytes": 23624,
+        "sha256": "bcf658fdef418b1fa9c0ab0062e636e25c1673df5eb4ec5884d37cedaa9fb5c9"
+      },
+      {
+        "path": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/clang_rt.asan_dynamic-x86_64.dll",
+        "bytes": 1190432,
+        "sha256": "2babc2a4298d128c8abc33efc7f3b70611246010059ef343d72f096d8ae24ff3"
+      }
+    ],
+    "gcc_ubsan_trap": [
+      {
+        "path": "C:/msys64/usr/bin/make.exe",
+        "bytes": 229856,
+        "sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22"
+      },
+      {
+        "path": "C:/msys64/mingw64/bin/g++.exe",
+        "bytes": 3312964,
+        "sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb"
+      },
+      {
+        "path": "C:/msys64/mingw64/bin/objdump.exe",
+        "bytes": 2634968,
+        "sha256": "2d4746ee2402b2d77342e87a1597a82a4dc58e218cfcd372ae5cf799f82c0029"
+      }
+    ]
+  },
+  "formal_namespace": {
+    "lease": 321,
+    "target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-321",
+    "must_not_exist_before_start": true
+  },
+  "resource_contract": {
+    "supervisor_priority": "Normal",
+    "cpu_threads": 1,
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "ports": 0,
+    "c_drive_bulk_writes": 0,
+    "namespace_ceiling_bytes": 4294967296,
+    "c_free_floor_bytes": 5368709120,
+    "d_free_floor_bytes": 1099511627776,
+    "foreign_p7_supervisor_pid": 44764,
+    "foreign_mutation_forbidden": true
+  },
+  "clean_export_contract": {
+    "independent_exports": [
+      "asan",
+      "ubsan-trap"
+    ],
+    "archive_byte_equality_required": true,
+    "every_tracked_blob_authenticated": true,
+    "unexpected_files_before_build": 0
+  },
+  "asan_lane": {
+    "compiler": "MSVC 19.44 cl.exe",
+    "flags": [
+      "/std:c++17",
+      "/EHsc",
+      "/Od",
+      "/Zi",
+      "/fsanitize=address",
+      "/W4",
+      "/WX",
+      "/DNNUE_EMBEDDING_OFF",
+      "/DUSE_SSE2"
+    ],
+    "runtime_import_required": "clang_rt.asan_dynamic-x86_64.dll",
+    "runtime_options": "halt_on_error=1:abort_on_error=1:detect_leaks=0",
+    "preflight": {
+      "safe_control_exact_stdout": "PASS crazyhouse_asan_control safe_path=PASS positive_control=SEPARATE",
+      "positive_control_argument": "--heap-overflow",
+      "positive_control_nonzero_exit": true,
+      "diagnostic_patterns": [
+        "AddressSanitizer",
+        "heap-buffer-overflow"
+      ]
+    }
+  },
+  "ubsan_trap_lane": {
+    "compiler": "GCC MinGW g++.exe",
+    "flags": [
+      "-Werror",
+      "-O0",
+      "-g3",
+      "-fsanitize=undefined",
+      "-fsanitize-undefined-trap-on-error"
+    ],
+    "runtime_strategy": "compiler-emitted fail-closed ud2 traps; no external libubsan fallback",
+    "preflight": {
+      "safe_control_exact_stdout": "PASS crazyhouse_ubsan_control safe_path=PASS positive_control=SEPARATE",
+      "positive_control_argument": "--signed-overflow",
+      "positive_control_nonzero_exit": true,
+      "disassembly_ud2_required": true
+    }
+  },
+  "runtime_matrix": {
+    "binaries_each": [
+      "crazyhouse-v2-productive-tests.exe",
+      "crazyhouse-v2-productive-incremental-tests.exe"
+    ],
+    "verifier_replays_each": [
+      {
+        "name": "scalar_container_trainer",
+        "parser_negatives": 62,
+        "exporter_negatives": 19,
+        "resume_negatives": 16
+      },
+      {
+        "name": "productive_simd",
+        "evaluations": 3696,
+        "trace_values": 8049888
+      },
+      {
+        "name": "productive_incremental",
+        "cases": 13,
+        "evaluations": 98,
+        "trace_values": 426888,
+        "operation_negatives": 10,
+        "evaluation_negatives": 4
+      }
+    ],
+    "all_verifier_exit_zero_required": true,
+    "all_verifier_stderr_empty_required": true,
+    "no_sanitizer_diagnostic_required": true,
+    "cross_lane_result_json_byte_equality_required": true
+  },
+  "stopping_rule": "PASS only if both clean-export sanitizer lanes pass their positive and safe controls, instrumentation authentication, exact frozen verifier matrices, cross-lane result equality, clean-source postcondition, disk/resource limits and zero owned residual processes. Reject on any diagnostic, missing runtime/trap, warning, fallback, nonzero verifier, stderr, timeout, mismatch or foreign mutation. Do not retry in the same lease.",
+  "pass_effect": "Qualify only the admitted productive V2 sanitizer sub-boundary. Keep G12 open for legacy control through the new productive datapath and production-admissible data/training. No model-selection, timing, strength, OpenBench or release credit.",
+  "boundaries": {
+    "code_change": false,
+    "training_admissible": false,
+    "production_training_authorized": false,
+    "model_selection_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "openbench_authorized": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "crazyhouse-p11-selfplay-formal-g0-result/v1",
+  "recorded_utc": "2026-08-24T06:03:45Z",
+  "status": "REJECTED_LOCAL_PRECONDITION_DIAGNOSTIC",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "lease": 290,
+  "source": {
+    "commit": "697a257f54333aba977e8b92a9ae305e16c7472a",
+    "tree": "ef1c326134596aee839487490199a45b607b1c02",
+    "src_tree": "834827c801093b49bc1616a866757de5a994a06a",
+    "clean_at_admission": true,
+    "clean_at_close": null,
+    "reason_close_not_run": "The harness rejected before the controller reached its closing Git check. The archive remained commit-derived and the canonical worktree was not used as a build directory."
+  },
+  "builds": {
+    "jobs": 1,
+    "build_recipe_sha256": "ae0cbe11e13677221dcafc6d2ee88eb6d4a53071968351649885ba4a9fbe56be",
+    "toolchain_sha256": "9c2d13f47a8690dff907e83ddde127e3ef43599e518973b7542e4ac48edba052",
+    "clean_producer": {"exit_code": 0, "timed_out": false, "stderr_bytes": 0, "elapsed_ms": 88643},
+    "dirty_control_producer": {"exit_code": 0, "timed_out": false, "stderr_bytes": 0, "elapsed_ms": 87588},
+    "normal_engine": {"exit_code": 0, "timed_out": false, "stderr_bytes": 0, "elapsed_ms": 69630}
+  },
+  "artifacts": {
+    "clean_producer": {"bytes": 4644208, "sha256": "d1772974e2f048fbbdf8ee8fe900b480425209434e1a280bf43cf0ba7b477774", "source_dirty": false},
+    "dirty_control_producer": {"bytes": 4644208, "sha256": "cbff853b21f2a15fc2e4b43e26e65ab099ea88cd8a80d0146a9313ae96d59b29", "source_dirty": true},
+    "normal_engine": {"bytes": 63050751, "sha256": "084d862e1a9ce0f215ed4b94e0bd21fca8ea651c49e5aedda3bbd48cdc1fdbd3"},
+    "network": {"bytes": 58534811, "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"}
+  },
+  "formal_harness": {
+    "exit_code": 1,
+    "timed_out": false,
+    "elapsed_ms": 1980,
+    "completed_rows": 9,
+    "first_bundle_bytes": 6845,
+    "first_bundle_sha256": "a09a359a16f68a63cf87490bddd5f5b00b76bf60bdb86a2cb120245b7df57892",
+    "failure": "positive-lf-independent: independent verifier process",
+    "independent_verifier_diagnostic": "FAIL_CRAZYHOUSE_SELFPLAY_DATAGEN_G0_INDEPENDENT provenance network basename"
+  },
+  "root_cause": {
+    "incident": "CH-260",
+    "false_inference_rejected": "A byte-identical network copy may be freely renamed inside the formal lease.",
+    "cause": "The lease controller copied the registered network as legacy.nnue, while the provenance contract freezes crazyhouse_run15rl_e190_l03.nnue as the network basename.",
+    "independent_verifier_behavior": "correct-fail-closed",
+    "producer_defect_observed": false,
+    "network_compatibility_defect_observed": false
+  },
+  "receipts": {
+    "completion_bytes": 24387,
+    "completion_sha256": "872a4f974c458fa3461a789963cb982ed3aaae090365c193e03a0e0c148e364a",
+    "handoff_end_bytes": 1082,
+    "handoff_end_sha256": "539a948501741034b75c3db9fc9136b3149cb31d1b8398536ccc4024571dae58",
+    "harness_failure_bytes": 2649,
+    "harness_failure_sha256": "205854e5676321b07ed30f9cbd2c6eae84720a1dc8ab0be834412fab964f96bd"
+  },
+  "resource_close": {
+    "owned_residual_processes": 0,
+    "foreign_process_mutation": false,
+    "p7_supervisor_alive_before_and_after": true,
+    "p7_supervisor_priority_before_and_after": "Normal",
+    "network_calls": false,
+    "openbench_actions": false,
+    "gpu_used": false,
+    "namespace_bytes_before_completion": 453349165
+  },
+  "claim_boundary": {
+    "gate_credit": false,
+    "training_admissible": false,
+    "official_openbench_evidence": false,
+    "strength_evidence": false,
+    "model_evidence": false,
+    "release_evidence": false
+  },
+  "next_safe_action": "Preserve lease 290 and its controller, freeze addendum 006, then use fresh lease 291 with the canonical network basename and replay every formal row from two new source exports."
+}

@@ -1,0 +1,151 @@
+{
+  "schema": "crazyhouse-g4-referee-current-match-path-map-addendum/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-22T13:06:05.6720846Z",
+  "evidence_class": "E1_ENGINEERING",
+  "reason": "The first staged correction admitted by addendum 2 is now complete. This addendum records the exact LF-only conformance stream implementation, its authenticated build, the rejected order-sensitive diagnostic, the corrected full replay and independent reauthentication without rewriting any prior evidence.",
+  "pins": {
+    "addendum_002": {
+      "path": "tests/crazyhouse/g4-referee-match-path-current-v1.addendum.002.json",
+      "bytes": 7937,
+      "sha256": "4d27c282a398f460792aaeb1540d6bc7c83c1d420ca8bc83c81c4587a5b41d38",
+      "git_blob": "b830182d836d443ebb1eb6ae8e7b02f7996420af",
+      "commit": "c05399f0f422392996b6d3669cb62c79f25e82f9"
+    },
+    "owner_waiver": {
+      "path": "../../../receipts/private/project-owner-waiver-oracle-resume-082.json",
+      "bytes": 3452,
+      "sha256": "8a104134932f1c7959109349c0076439f10066e5ab526cd3a1d77a672e585d97"
+    },
+    "expected_red": {
+      "path": "../../../receipts/resources/p4-referee-cli-runtime-diagnostic-t3-end-165.json",
+      "bytes": 9945,
+      "sha256": "66eb3079669ff2c6dccd1e7094dda9238c8c461ce68d0f69fc9c011a8602c1bb",
+      "conformance_terminal_crlf_cases": 5
+    },
+    "build_start_183": {
+      "path": "../../../receipts/resources/p4-referee-cli-lf-green-t1-start-183.json",
+      "bytes": 6111,
+      "sha256": "696a7ee50b5be9fa533937bcbf987f82a18ea2112f12317ba5b13642399eebfb"
+    },
+    "build_end_183": {
+      "path": "../../../receipts/resources/p4-referee-cli-lf-green-t1-end-183.json",
+      "bytes": 4515,
+      "sha256": "b34788cd98d9940007949ae658f2b3b52ae861b86d839b310c0cc80f98da4de4"
+    },
+    "rejected_diagnostic_start_184": {
+      "path": "../../../receipts/resources/p4-referee-cli-lf-diagnostic-t1-start-184.json",
+      "bytes": 4788,
+      "sha256": "d186eb2c2983b708232edb64f2e575e38c2cf635125dd494d63cf7df81f16009"
+    },
+    "rejected_diagnostic_end_184": {
+      "path": "../../../receipts/resources/p4-referee-cli-lf-diagnostic-t1-end-184.json",
+      "bytes": 3957,
+      "sha256": "665483a7c9af6a476bb7100b17507ad105c38e0cd0d4e5ca6609a57dd9c6b991"
+    },
+    "corrected_diagnostic_start_185": {
+      "path": "../../../receipts/resources/p4-referee-cli-lf-diagnostic-t1-start-185.json",
+      "bytes": 4483,
+      "sha256": "b7fa33037591f0bb66f9e2497d0203df61ea3abe683e64d55a068c8e72f1ad3a"
+    },
+    "corrected_diagnostic_end_185": {
+      "path": "../../../receipts/resources/p4-referee-cli-lf-diagnostic-t1-end-185.json",
+      "bytes": 4450,
+      "sha256": "36ca67c3517de46c600c8a3a3287e7e2894bf6e33c27f8f6faa994771d818fc7"
+    },
+    "incident_ledger": {
+      "path": "../../../LESSONS_LEARNED.md",
+      "entry": 63,
+      "bytes": 22818,
+      "sha256": "7b0b807eda09521c19f969cd0e118b58a07a2e802f3e8c89aed0b732bfd9753b"
+    }
+  },
+  "referee_candidate": {
+    "repository": "https://github.com/AndyGrant/cutechess.git",
+    "branch": "crazyhouse/profile-conformance",
+    "clean_root_commit": "24d4301152fb92ac442425e083a2658225f80720",
+    "parent_commit": "c1a9b91b3b32c68cbea6cf6708ae06d380bfcdba",
+    "implementation_commit": "3570a7e456442944c44299afa4d969879e2cb925",
+    "implementation_tree": "0b7f7bc1400ffde49c8e889b296c1e283b0d2b67",
+    "status_lines": 0,
+    "forbidden_horde_ancestor_present": false,
+    "changed_source_files": [
+      {
+        "path": "projects/cli/src/crazyhouseconformance.cpp",
+        "bytes": 6396,
+        "sha256": "41e41d0ca4e5f06b52f6a15171405d7cdb4bf1bffaf8e2a3cd89e8fff31bc02f"
+      }
+    ],
+    "one_variable": "The Crazyhouse conformance entrypoint selects binary stdout mode on Windows before emitting its compact JSON response. Ordinary CLI and match streams are unchanged."
+  },
+  "authenticated_build": {
+    "lease": 183,
+    "configuration": "Debug",
+    "configure_exit": 0,
+    "build_exit": 0,
+    "autogen_parallel": 1,
+    "cli": {
+      "bytes": 55389000,
+      "sha256": "57566a3eee83483e2cee3c97c3927d7d8605f28a85eb00871f58c8f1e8b48b9a"
+    },
+    "cli_test": {
+      "bytes": 1189800,
+      "sha256": "2e8bc09298024c3706e4b46492558c2f2918d3fa772218d2526b400d69212e5e"
+    },
+    "identity_header": {
+      "bytes": 651,
+      "sha256": "169d075a83c61be5e66d270a794bdcb6458815e5e845e00252e494988c1a2d6d"
+    },
+    "namespace_ceiling_passed": true,
+    "residual_owned_processes": 0
+  },
+  "rejected_diagnostic": {
+    "lease": 184,
+    "classification": "REJECTED_HARNESS_ORDER_SENSITIVE_JSON_COMPARATOR",
+    "first_case_exit_and_named_values": "PASS",
+    "first_case_stdout_bytes": 877,
+    "first_case_stdout_sha256": "aae811f8fbb2ba41202e19a9ab3b31c7f57c47ecff4f2328dda946e6e14a0628",
+    "first_case_carriage_return_bytes": 0,
+    "first_case_line_feed_bytes": 1,
+    "six_case_contract": "NOT_COMPLETED",
+    "gate_effect": "NONE",
+    "referee_source_changed_after": false,
+    "fixture_changed_after": false,
+    "binary_changed_after": false
+  },
+  "corrected_replay": {
+    "lease": 185,
+    "result": "PASS_EXACT_LF_ONLY_CONFORMANCE_STREAM",
+    "fixture_sha256": "72cb80676695a73d42a930c59bb68029ee643a23c2234f4f35f45b3beecc9d69",
+    "cases": 6,
+    "conformance_cases": 5,
+    "ordinary_control_cases": 1,
+    "exit_codes_in_fixture_order": [0, 0, 78, 65, 64, 0],
+    "timeouts": 0,
+    "exit_mismatches": 0,
+    "nonempty_stderr_cases": 0,
+    "semantic_mismatches": 0,
+    "conformance_bom_cases": 0,
+    "conformance_carriage_return_bytes_total": 0,
+    "conformance_cases_with_exactly_one_terminal_lf": 5,
+    "raw_stream_files_rehashed": 12,
+    "raw_stream_rehash_mismatches": 0,
+    "artifact_rehash_mismatches": 0,
+    "artifact_identity_equal_before_after": true,
+    "ordinary_version_control_unchanged": true
+  },
+  "boundary_status": {
+    "conformance_lf_only_stream": "PASS",
+    "pre_game_null_side_failure": "FIXTURE_NOT_YET_FROZEN",
+    "missing_profile_capability_expected_red": "NOT_OBSERVED",
+    "profile_capability_ingress": "RED",
+    "strict_bestmove_and_legality": "RED",
+    "deadline_history_pgn_identity_join": "RED",
+    "referee_selected_for_official_matches": false,
+    "g4": "IN_PROGRESS"
+  },
+  "next_action": "Create and commit a focused ChessPlayer pre-game null-side crash fixture, observe the exact expected red on the parent behavior, and only then implement the fail-closed robustness correction in a separate commit.",
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

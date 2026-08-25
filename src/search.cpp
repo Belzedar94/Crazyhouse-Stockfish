@@ -39,6 +39,7 @@
 #include "misc.h"
 #include "movegen.h"
 #include "movepick.h"
+#include "nnue/crazyhouse_legacy_network.h"
 #include "nnue/network.h"
 #include "nnue/nnue_accumulator.h"
 #include "position.h"
@@ -71,6 +72,16 @@ constexpr u64 NODES_LIMIT_OUTPUT = 10'000'000;
 
 constexpr int SEARCHEDLIST_CAPACITY = 32;
 using SearchedList                  = ValueList<Move, SEARCHEDLIST_CAPACITY>;
+
+usize requested_multi_pv(const OptionsMap& options, const Position& pos) {
+    if (pos.ruleset() == Ruleset::CRAZYHOUSE)
+    {
+        const int crazyhouseMultiPV = options["CrazyhouseMultiPV"];
+        if (crazyhouseMultiPV != 0)
+            return usize(crazyhouseMultiPV);
+    }
+    return usize(options["MultiPV"]);
+}
 
 // (*Scalers):
 // The values with Scaler asterisks have proven non-linear scaling.
@@ -132,7 +143,7 @@ void update_correction_history(const Position& pos,
 // Add a small random component to draw evaluations to avoid 3-fold blindness
 Value value_draw(usize nodes) { return VALUE_DRAW - 1 + Value(nodes & 0x2); }
 Value value_to_tt(Value v, int ply);
-Value value_from_tt(Value v, int ply, int r50c);
+Value value_from_tt(Value v, int ply, bool useRule50, int r50c);
 void  update_continuation_histories(Stack* ss, Piece pc, Square to, int bonus);
 void  update_quiet_histories(
    const Position& pos, Stack* ss, Search::Worker& workerThread, Move move, int bonus);
@@ -150,6 +161,8 @@ void update_all_stats(const Position& pos,
 // Detect shuffling moves in order to limit search explosions
 // Added in #6447 as non-regression, and so its parameters should not be tuned
 bool is_shuffling(Move move, Stack* const ss, const Position& pos) {
+    if (pos.ruleset() == Ruleset::CRAZYHOUSE)
+        return false;
     if (pos.capture_stage(move) || pos.rule50_count() < 10)
         return false;
     if (pos.state()->pliesFromNull < 6 || ss->ply < 20)
@@ -178,6 +191,7 @@ Search::Worker::Worker(SharedState&                    sharedState,
     threads(sharedState.threads),
     tt(sharedState.tt),
     network(sharedState.network),
+    legacyNetwork(sharedState.legacyNetwork),
     refreshTable(network[token]) {
     clear();
 }
@@ -191,6 +205,7 @@ void Search::Worker::ensure_network_replicated() {
 void Search::Worker::start_searching() {
 
     accumulatorStack.reset();
+    legacyAccumulatorStack.reset();
 
     // Non-main threads go directly to iterative_deepening()
     if (!is_mainthread())
@@ -264,6 +279,175 @@ void Search::Worker::start_searching() {
     main_manager()->updates.onBestmove(bestmove, ponder);
 }
 
+#ifdef CRAZYHOUSE_DATA_GENERATOR
+
+Search::TrainingSearchResult Search::Worker::training_search(Position&                    pos,
+                                                             const TrainingSearchRequest& request) {
+    // The generator owns dispatch, TT generation and the shared stop flag. This
+    // function is called on the worker's native thread and never emits UCI.
+    TrainingSearchResult result;
+    accumulatorStack.reset();
+    legacyAccumulatorStack.reset();
+
+    LimitsType freshLimits;
+    freshLimits.startTime = now();
+    freshLimits.nodes     = request.nodes;
+    limits                = std::move(freshLimits);
+
+    // Negative infinite is outside the public UCI domain. It suppresses time
+    // management and progress callbacks inside the shared search implementation.
+    struct TrainingGuard {
+        explicit TrainingGuard(int& marker_) : marker(marker_), previous(marker_) {
+            assert(marker != -1);
+            marker = -1;
+        }
+        ~TrainingGuard() { marker = previous; }
+        int& marker;
+        int  previous;
+    } trainingGuard(limits.infinite);
+
+    nodes = tbHits = bestMoveChanges = 0;
+    nmpMinPly                        = 0;
+    rootDepth                        = 0;
+    rootDelta                        = 0;
+    selDepth                         = 0;
+    pvIdx = pvLast = 0;
+    rootMoves.clear();
+    lastIterationIdxPV.clear();
+    optimism[WHITE] = optimism[BLACK] = VALUE_ZERO;
+    main_manager()->callsCnt           = 0;
+    main_manager()->ponder             = false;
+    main_manager()->stopOnPonderhit    = false;
+
+    Stack   stack[MAX_PLY + 10] = {};
+    Stack*  ss                  = stack + 7;
+    PVMoves pv;
+    for (int i = 7; i > 0; --i)
+    {
+        (ss - i)->continuationHistory           = &continuationHistory[0][0][NO_PIECE][0];
+        (ss - i)->continuationCorrectionHistory = &continuationCorrectionHistory[NO_PIECE][0];
+        (ss - i)->staticEval                    = VALUE_NONE;
+    }
+    for (int i = 0; i <= MAX_PLY + 2; ++i)
+        (ss + i)->ply = i;
+    ss->pv = &pv;
+
+    for (Move move : MoveList<LEGAL>(pos))
+        rootMoves.emplace_back(move);
+    if (rootMoves.empty())
+    {
+        result.value = pos.checkers() ? -VALUE_MATE : VALUE_DRAW;
+        result.exact = true;
+        return result;
+    }
+
+    tbConfig = {};
+
+    const Depth targetDepth = std::clamp(request.depth, Depth(1), Depth(MAX_PLY - 1));
+    const usize multiPV = std::min(std::max(usize(1), request.multiPV), rootMoves.size());
+    const u64 nodeLimit = request.nodes;
+
+    lowPlyHistory.fill(102);
+    for (Color c : {WHITE, BLACK})
+        for (int i = 0; i < UINT_16_HISTORY_SIZE; ++i)
+            mainHistory[c][i] = mainHistory[c][i] * 729 / 1024;
+
+    const Color us = pos.side_to_move();
+    auto save_completed_iteration = [&]() {
+        result.lines.clear();
+        result.lines.reserve(multiPV);
+        for (usize i = 0; i < multiPV; ++i)
+        {
+            TrainingSearchLine line;
+            line.value = rootMoves[i].score;
+            line.pv    = rootMoves[i].pv;
+            line.exact = !rootMoves[i].score_is_bound();
+            result.lines.push_back(std::move(line));
+        }
+        result.value    = result.lines.front().value;
+        result.pv       = result.lines.front().pv;
+        result.depth    = rootDepth;
+        result.selDepth = selDepth;
+        result.exact    = result.lines.front().exact;
+    };
+
+    while (rootDepth < targetDepth && rootDepth + 1 < MAX_PLY && !threads.stop
+           && (!nodeLimit || nodes.load(std::memory_order_relaxed) < nodeLimit))
+    {
+        ++rootDepth;
+        for (usize i = 0; i < rootMoves.size(); ++i)
+        {
+            rootMoves[i].previousScore      = rootMoves[i].score;
+            rootMoves[i].previousPV         = rootMoves[i].pv;
+            rootMoves[i].previousScoreExact = i < multiPV;
+        }
+
+        usize pvFirst           = 0;
+        pvLast                  = 0;
+        bool completedIteration = true;
+        for (pvIdx = 0; pvIdx < multiPV; ++pvIdx)
+        {
+            if (pvIdx == pvLast)
+            {
+                pvFirst = pvLast;
+                for (++pvLast; pvLast < rootMoves.size(); ++pvLast)
+                    if (rootMoves[pvLast].tbRank != rootMoves[pvFirst].tbRank)
+                        break;
+            }
+
+            lastIterationIdxPV = rootMoves[pvIdx].previousPV;
+            selDepth           = 0;
+            int   delta   = 5 + threadIdx % 8 + std::abs(rootMoves[pvIdx].meanSquaredScore) / 10193;
+            Value avg     = rootMoves[pvIdx].averageScore;
+            Value alpha   = std::max(avg - delta, -VALUE_INFINITE);
+            Value beta    = std::min(avg + delta, VALUE_INFINITE);
+            optimism[us]  = 114 * avg / (std::abs(avg) + 85);
+            optimism[~us] = -optimism[us];
+
+            int failedHighCnt = 0;
+            while (true)
+            {
+                const Depth adjustedDepth = std::max(1, rootDepth - failedHighCnt);
+                rootDelta                 = beta - alpha;
+                const Value bestValue = search<Root>(pos, ss, alpha, beta, adjustedDepth, false);
+                std::stable_sort(rootMoves.begin() + pvIdx, rootMoves.begin() + pvLast);
+                if (threads.stop)
+                {
+                    completedIteration = false;
+                    break;
+                }
+                if (bestValue <= alpha)
+                {
+                    beta          = alpha;
+                    alpha         = std::max(bestValue - delta, -VALUE_INFINITE);
+                    failedHighCnt = 0;
+                }
+                else if (bestValue >= beta)
+                {
+                    alpha = std::max(beta - delta, alpha);
+                    beta  = std::min(bestValue + delta, VALUE_INFINITE);
+                    ++failedHighCnt;
+                }
+                else
+                    break;
+                delta += 47 * delta / 128;
+                assert(alpha >= -VALUE_INFINITE && beta <= VALUE_INFINITE);
+            }
+            if (!completedIteration)
+                break;
+            std::stable_sort(rootMoves.begin() + pvFirst, rootMoves.begin() + pvIdx + 1);
+        }
+        if (!completedIteration)
+            break;
+        save_completed_iteration();
+    }
+
+    result.nodes = nodes.load(std::memory_order_relaxed);
+    return result;
+}
+
+#endif
+
 // Main iterative deepening loop. It calls search()
 // repeatedly with increasing depth until the allocated thinking time has been
 // consumed, the user stops the search, or the maximum search depth is reached.
@@ -310,7 +494,7 @@ bool Search::Worker::iterative_deepening() {
             mainThread->iterValue.fill(mainThread->bestPreviousScore);
     }
 
-    usize multiPV = usize(options["MultiPV"]);
+    usize multiPV = requested_multi_pv(options, rootPos);
     Skill skill(options["Skill Level"], options["UCI_LimitStrength"] ? int(options["UCI_Elo"]) : 0);
 
     // When playing with strength handicap enable MultiPV search that we will
@@ -641,7 +825,8 @@ void Search::Worker::do_move(
     // prefetch_key does not model castling, en passant or promotion exactly.
     // The correction-history prefetches also approximate castling and promotion;
     // for these rare moves the prefetches land on unused lines.
-    prefetch(tt.first_entry(pos.prefetch_key(move)));
+    if (const auto speculativeKey = pos.prefetch_key(move))
+        prefetch(tt.first_entry(*speculativeKey));
 
     bool capture = pos.capture_stage(move);
 
@@ -658,6 +843,8 @@ void Search::Worker::do_move(
 
     Dirties& dirties = accumulatorStack.push();
     pos.do_move(move, st, givesCheck, dirties, &tt, &sharedHistory);
+    if (pos.ruleset() == Ruleset::CRAZYHOUSE && !legacyAccumulatorStack.push())
+        std::abort();
 
     if (ss != nullptr)
     {
@@ -678,8 +865,11 @@ void Search::Worker::do_null_move(Position& pos, StateInfo& st, Stack* const ss)
 }
 
 void Search::Worker::undo_move(Position& pos, const Move move) {
+    const bool crazyhouse = pos.ruleset() == Ruleset::CRAZYHOUSE;
     pos.undo_move(move);
     accumulatorStack.pop();
+    if (crazyhouse && !legacyAccumulatorStack.pop())
+        std::abort();
 }
 
 void Search::Worker::undo_null_move(Position& pos) { pos.undo_null_move(); }
@@ -708,8 +898,7 @@ void Search::Worker::clear() {
         for (auto& h : to)
             h.fill(5);
 
-    for (usize i = 1; i < reductions.size(); ++i)
-        reductions[i] = int(2872 / 128.0 * std::log(i));
+    reductions.initialize();
 
     refreshTable.clear(network[numaAccessToken]);
 }
@@ -723,7 +912,8 @@ Value Search::Worker::search(
     constexpr bool PvNode   = nodeType != NonPV;
     constexpr bool rootNode = nodeType == Root;
     const bool     allNode  = !(PvNode || cutNode);
-    const bool     seekMate = rootDepth >= 16 && std::abs(rootMoves[pvIdx].score) >= 2000;
+    const bool     orthodoxSearch = pos.ruleset() == Ruleset::CHESS;
+    const bool     seekMate       = rootDepth >= 16 && std::abs(rootMoves[pvIdx].score) >= 2000;
 
     // Dive into quiescence search when the depth reaches zero
     if (depth <= 0)
@@ -774,7 +964,11 @@ Value Search::Worker::search(
                         && (ss - 1)->currentMove == lastIterationIdxPV[ss->ply - 1]));
 
     // Check for the available remaining time
-    if (is_mainthread())
+    if (is_mainthread()
+#ifdef CRAZYHOUSE_DATA_GENERATOR
+        && (limits.infinite != -1 || limits.nodes)
+#endif
+    )
         main_manager()->check_time(*this);
 
     // Used to send selDepth info to GUI (selDepth counts from 1, ply from 0)
@@ -817,7 +1011,8 @@ Value Search::Worker::search(
     // Need further processing of the saved data
     ss->ttHit    = ttHit;
     ttData.move  = rootNode ? rootMoves[pvIdx].pv[0] : ttHit ? ttData.move : Move::none();
-    ttData.value = ttHit ? value_from_tt(ttData.value, ss->ply, pos.rule50_count()) : VALUE_NONE;
+    ttData.value =
+      ttHit ? value_from_tt(ttData.value, ss->ply, orthodoxSearch, pos.rule50_count()) : VALUE_NONE;
     ss->ttPv     = excludedMove ? ss->ttPv : PvNode || (ttHit && ttData.is_pv);
     ttCapture    = ttData.move && pos.capture_stage(ttData.move);
 
@@ -888,7 +1083,7 @@ Value Search::Worker::search(
 
         // Partial workaround for the graph history interaction problem
         // For high rule50 counts don't produce transposition table cutoffs.
-        if (pos.rule50_count() < 96)
+        if (!orthodoxSearch || pos.rule50_count() < 96)
         {
             if (depth >= 7 && ttData.move && pos.pseudo_legal(ttData.move) && pos.legal(ttData.move)
                 && !is_decisive(ttData.value))
@@ -917,7 +1112,7 @@ Value Search::Worker::search(
     }
 
     // Step 7. Tablebases probe
-    if (!rootNode && !excludedMove && tbConfig.cardinality)
+    if (pos.tablebases_applicable() && !rootNode && !excludedMove && tbConfig.cardinality)
     {
         int piecesCount = pos.count<ALL_PIECES>();
 
@@ -929,7 +1124,11 @@ Value Search::Worker::search(
             TB::WDLScore   wdl = TB::probe_wdl(pos, &err);
 
             // Force check of time on the next occasion
-            if (is_mainthread())
+            if (is_mainthread()
+#ifdef CRAZYHOUSE_DATA_GENERATOR
+                && (limits.infinite != -1 || limits.nodes)
+#endif
+            )
                 main_manager()->callsCnt = 0;
 
             if (err != TB::ProbeState::FAIL)
@@ -1006,7 +1205,8 @@ Value Search::Worker::search(
     }
 
     // Step 10. Null move search with verification search
-    if (cutNode && ss->staticEval >= beta - 13 * depth - 47 * improving + 365 && !excludedMove
+    if (orthodoxSearch && cutNode
+        && ss->staticEval >= beta - 13 * depth - 47 * improving + 365 && !excludedMove
         && pos.non_pawn_material(us) && ss->ply >= nmpMinPly && beta >= -2000)
     {
         assert((ss - 1)->currentMove != Move::null());
@@ -1052,7 +1252,7 @@ Value Search::Worker::search(
     // If we have a good enough capture (or queen promotion) and a reduced search
     // returns a value much above beta, we can (almost) safely prune the previous move.
     probCutBeta = beta + 241 - 64 * improving;
-    if (depth >= 3
+    if (orthodoxSearch && depth >= 3
         && !is_decisive(beta)
         // If value from transposition table is lower than probCutBeta, don't attempt
         // probCut there
@@ -1137,7 +1337,11 @@ moves_loop:  // When in check, search starts here
 
         ss->moveCount = ++moveCount;
 
-        if (rootNode && is_mainthread() && nodes > NODES_LIMIT_OUTPUT)
+        if (rootNode && is_mainthread() && nodes > NODES_LIMIT_OUTPUT
+#ifdef CRAZYHOUSE_DATA_GENERATOR
+            && limits.infinite != -1
+#endif
+        )
         {
             main_manager()->updates.onIter(
               {depth, UCIEngine::move(move, pos.is_chess960()), moveCount + pvIdx});
@@ -1164,7 +1368,7 @@ moves_loop:  // When in check, search starts here
 
         // Step 15. Pruning at shallow depths.
         // Depth conditions are important for mate finding.
-        if (!rootNode && pos.non_pawn_material(us) && !is_loss(bestValue))
+        if (orthodoxSearch && !rootNode && pos.non_pawn_material(us) && !is_loss(bestValue))
         {
             // Skip quiet moves if movecount exceeds our threshold
             if (moveCount >= (3 + depth * depth) / (2 - improving))
@@ -1650,6 +1854,7 @@ Value Search::Worker::qsearch(Position& pos, Stack* ss, Value alpha, Value beta)
 
     static_assert(nodeType != Root);
     constexpr bool PvNode = nodeType == PV;
+    const bool     orthodoxSearch = pos.ruleset() == Ruleset::CHESS;
 
     assert(alpha >= -VALUE_INFINITE && alpha < beta && beta <= VALUE_INFINITE);
     assert(PvNode || (alpha == beta - 1));
@@ -1698,7 +1903,8 @@ Value Search::Worker::qsearch(Position& pos, Stack* ss, Value alpha, Value beta)
     // Need further processing of the saved data
     ss->ttHit    = ttHit;
     ttData.move  = ttHit ? ttData.move : Move::none();
-    ttData.value = ttHit ? value_from_tt(ttData.value, ss->ply, pos.rule50_count()) : VALUE_NONE;
+    ttData.value =
+      ttHit ? value_from_tt(ttData.value, ss->ply, orthodoxSearch, pos.rule50_count()) : VALUE_NONE;
     pvHit        = ttHit && ttData.is_pv;
 
     // At non-PV nodes we check for an early TT cutoff
@@ -1880,7 +2086,7 @@ Value Search::Worker::qsearch(Position& pos, Stack* ss, Value alpha, Value beta)
 }
 
 int Search::Worker::reduction(bool i, Depth d, int mn, int delta) const {
-    int reductionScale = reductions[d] * reductions[mn];
+    int reductionScale = reductions.value(d) * reductions.value(mn);
     return reductionScale - delta * 577 / rootDelta + !i * reductionScale * 197 / 512 + 982;
 }
 
@@ -1893,6 +2099,16 @@ TimePoint Search::Worker::elapsed() const {
 }
 
 Value Search::Worker::evaluate(const Position& pos) {
+    if (pos.ruleset() == Ruleset::CRAZYHOUSE)
+    {
+        if (!legacyNetwork || !legacyNetwork->loaded())
+            std::abort();
+        const auto result = legacyNetwork->evaluate_legacy_incremental(pos, legacyAccumulatorStack);
+        if (!result.ok())
+            std::abort();
+        return Value(result.output->adapter.outer);
+    }
+
     return Eval::evaluate(network[numaAccessToken], pos, accumulatorStack, refreshTable,
                           optimism[pos.side_to_move()]);
 }
@@ -1909,7 +2125,7 @@ Value value_to_tt(Value v, int ply) { return is_win(v) ? v + ply : is_loss(v) ? 
 // "plies to mate/be mated (TB win/loss) from the root". However, to avoid
 // potentially false mate or TB scores related to the 50 moves rule and the
 // graph history interaction, we return the highest non-TB score instead.
-Value value_from_tt(Value v, int ply, int r50c) {
+Value value_from_tt(Value v, int ply, bool useRule50, int r50c) {
 
     if (!is_valid(v))
         return VALUE_NONE;
@@ -1918,11 +2134,11 @@ Value value_from_tt(Value v, int ply, int r50c) {
     if (is_win(v))
     {
         // Downgrade a potentially false mate score
-        if (is_mate(v) && VALUE_MATE - v > 100 - r50c)
+        if (useRule50 && is_mate(v) && VALUE_MATE - v > 100 - r50c)
             return VALUE_TB_WIN_IN_MAX_PLY - 1;
 
         // Downgrade a potentially false TB score.
-        if (VALUE_TB - v > 100 - r50c)
+        if (useRule50 && VALUE_TB - v > 100 - r50c)
             return VALUE_TB_WIN_IN_MAX_PLY - 1;
 
         return v - ply;
@@ -1932,11 +2148,11 @@ Value value_from_tt(Value v, int ply, int r50c) {
     if (is_loss(v))
     {
         // Downgrade a potentially false mate score.
-        if (is_mated(v) && VALUE_MATE + v > 100 - r50c)
+        if (useRule50 && is_mated(v) && VALUE_MATE + v > 100 - r50c)
             return VALUE_TB_LOSS_IN_MAX_PLY + 1;
 
         // Downgrade a potentially false TB score.
-        if (VALUE_TB + v > 100 - r50c)
+        if (useRule50 && VALUE_TB + v > 100 - r50c)
             return VALUE_TB_LOSS_IN_MAX_PLY + 1;
 
         return v + ply;
@@ -2129,6 +2345,9 @@ void syzygy_extend_pv(const OptionsMap&         options,
                       RootMove&                 rootMove,
                       Value&                    v) {
 
+    if (!pos.tablebases_applicable())
+        return;
+
     auto t_start      = std::chrono::steady_clock::now();
     int  moveOverhead = int(options["Move Overhead"]);
     bool rule50       = bool(options["Syzygy50MoveRule"]);
@@ -2263,7 +2482,7 @@ void SearchManager::output_pv(Search::Worker&           worker,
     const auto nodes     = threads.nodes_searched();
     auto&      rootMoves = worker.rootMoves;
     auto&      pos       = worker.rootPos;
-    usize      multiPV   = std::min(usize(worker.options["MultiPV"]), rootMoves.size());
+    usize      multiPV   = std::min(requested_multi_pv(worker.options, pos), rootMoves.size());
     u64        tbHits    = threads.tb_hits() + (worker.tbConfig.rootInTB ? rootMoves.size() : 0);
 
     for (usize i = 0; i < multiPV; ++i)

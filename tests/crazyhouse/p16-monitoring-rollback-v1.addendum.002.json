@@ -1,0 +1,82 @@
+{
+  "schema": "crazyhouse-p16-monitoring-expected-red-result/v1",
+  "created_utc": "2026-08-24T21:28:45.2618914Z",
+  "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_preregistration": {
+    "path": "tests/crazyhouse/p16-monitoring-rollback-v1.addendum.001.json",
+    "bytes": 2726,
+    "sha256": "8c48783d6a46f0213079a11fa1ac85e3eed4157b322fa4bee4da6b080e1418dd"
+  },
+  "lease": 349,
+  "source": {
+    "commit": "c5286415484ec1d0a83a52c7207ae7c3b4ae22c1",
+    "tree": "eb9db73ba224d413d492f7703b6eb22a98cb84c1",
+    "src_tree": "fef67c6603c479439c33baaec496115dba293a0c",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true,
+    "tracked_files": 555
+  },
+  "observed_red": {
+    "make_target": "crazyhouse_p16_monitoring_contract_test",
+    "returncode": 2,
+    "stdout_bytes": 0,
+    "stderr_lines": 1,
+    "stderr": "make: *** No rule to make target 'crazyhouse_p16_monitoring_contract_test'.  Stop.",
+    "implementation_paths_present": 0,
+    "compiler_or_interpreter_artifacts": 0,
+    "generated_make_parse_metadata_paths": 3,
+    "clean_exports": 1,
+    "timeouts": 0
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p16-monitoring-expected-red-349/completion.json",
+    "bytes": 5702,
+    "sha256": "b19812442f780c0d5ade6d34ab785c0e37cca596d6e5923411d8745147d70245"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p16-monitoring-expected-red-t1-end-349.json",
+    "bytes": 3945,
+    "sha256": "55d7ee3c364f441a9289e819f7c885dc183325a745e9f63d24e3184951e5b582"
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 564,
+    "namespace_bytes": 14214930,
+    "namespace_ceiling_bytes": 268435456,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_alive": true,
+    "p7_stage": "WAITING_HOST_TIMING_CLEAN",
+    "p7_foreign_count": 3
+  },
+  "non_contaminating_incidents": [
+    "CH-310"
+  ],
+  "effect": "Permits implementation of the three frozen synthetic P16 monitoring paths in a new source commit. It grants no synthetic-tool qualification, real publication, tag, asset, G16 or RELEASED_MONITORED credit.",
+  "boundaries": {
+    "expected_red_proven": true,
+    "implementation_present": false,
+    "synthetic_monitor_qualified": false,
+    "real_release_monitored": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

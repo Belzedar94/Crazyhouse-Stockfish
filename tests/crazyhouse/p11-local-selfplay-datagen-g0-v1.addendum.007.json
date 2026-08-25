@@ -1,0 +1,52 @@
+{
+  "schema": "crazyhouse-p11-local-selfplay-datagen-g0-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T06:11:20Z",
+  "status": "frozen-after-lease-291-admission-rejection-before-wrapper-scope-fix-or-lease-292",
+  "effect": "strictly-additive-dynamic-controller-step-scope-repair",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "rejected_observation": {
+    "lease": 291,
+    "result": "REJECTED_LOCAL_PRECONDITION_DIAGNOSTIC",
+    "failure": "The variable '$script:Steps' cannot be retrieved because it has not been set.",
+    "controller_bytes": 5623,
+    "controller_sha256": "a7f6f27e4056aabe1ca7a39adb63d884b33a3ce16c420826e97d49038d58599d",
+    "handoff_start_bytes": 4201,
+    "handoff_start_sha256": "6fbf037dce4383408fedda161bea698d31aa221de8e7f2a6c19a61afbc6b2738",
+    "completion_bytes": 2888,
+    "completion_sha256": "d6ef064bf00847b04e67dbd16af9152dbec81f381d6a3d6dfc0370e0b4d3a81c",
+    "handoff_end_bytes": 1121,
+    "handoff_end_sha256": "c872df090e6779b6b54df46d74bff8b8daa0c313d51ca147483f4739d82b36d6",
+    "git_status_child_exit": 0,
+    "git_status_child_residual": false,
+    "builds_started": 0,
+    "harnesses_started": 0,
+    "gate_credit": false
+  },
+  "root_cause": {
+    "class": "dynamic-powershell-script-scope",
+    "reason": "The immutable lease-290 template declares a local $Steps collection but its process helper appends to $script:Steps. Direct file execution makes those scopes coincide; invoking the composed controller as a ScriptBlock under a wrapper does not.",
+    "source_or_build_defect_observed": false,
+    "canonical_network_basename_exercised": false
+  },
+  "additive_repair": {
+    "next_lease": 292,
+    "new_controller_required": true,
+    "lease_291_controller_must_remain_immutable": true,
+    "dedicated_script_scope_collection": "$script:Lease292Steps",
+    "replace_initialization_append_and_completion_read": true,
+    "compose_only_parser_required": true,
+    "fresh_namespace_and_full_replay_required": true,
+    "partial_credit": false
+  },
+  "unchanged_frozen_values": [
+    "source archive commit/tree/src-tree",
+    "canonical network basename repair from addendum 006",
+    "network/book/schema/capability identities",
+    "scientific controls and quotas",
+    "OpenBench and production authorization remain false"
+  ],
+  "claim_boundary": "Lease 291 proves only a controller-scope rejection at admission. It has no build, DATAGEN, training, OpenBench, strength, model-selection or release meaning."
+}

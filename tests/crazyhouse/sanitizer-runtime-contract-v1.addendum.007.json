@@ -1,0 +1,92 @@
+{
+  "schema": "crazyhouse-sanitizer-runtime-contract-addendum/v1",
+  "addendum": 7,
+  "created_utc": "2026-08-23T06:43:04.7845884Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Correct only the pre-extraction orchestration defects demonstrated by rejected lease 239 while preserving every sanitizer, source, runtime and stopping predicate from addendum 006.",
+  "pins": {
+    "sanitizer_addendum_006": {
+      "path": "tests/crazyhouse/sanitizer-runtime-contract-v1.addendum.006.json",
+      "bytes": 7302,
+      "sha256": "460dbd6906ebf80a133b34808bdb82f65eb19c3b45ff2655760901d83bd78f87",
+      "git_blob": "be1301068bb7e46bd28addc8b86a29a2307412e2"
+    },
+    "lease_239_rejection_record": {
+      "path": "../../../receipts/private/p3-current-source-sanitizer-rejection-record-155.json",
+      "bytes": 4135,
+      "sha256": "226512605d73cefc4ba94c0ad36bbe63cb5e295047ad2a12bbf815952b105311"
+    },
+    "lease_239_completion": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p3-current-source-sanitizer-green-239/completion.json",
+      "bytes": 47909,
+      "sha256": "2e3eba9281946217c32aabdd93a085016cd1d15bd55d565432c07bfb9ea00088"
+    },
+    "lease_239_extract_stderr": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p3-current-source-sanitizer-green-239/logs/extract-asan.stderr.log",
+      "bytes": 191,
+      "sha256": "44304cb8d595691d005602e6a950562105c0c2383d57b51046863757d7662d16"
+    }
+  },
+  "rejected_boundary": {
+    "lease": 239,
+    "source_commit": "8e3aaf2f1c5a325fdd83e32d70bebacdd916e147",
+    "source_tree": "0eff9d289c1892e38d9db68968456fc4e3ccac86",
+    "steps_reached": ["ls-tree", "archive-asan", "archive-ubsan", "extract-asan"],
+    "compiler_started": false,
+    "engine_built": false,
+    "sanitizer_runtime_started": false,
+    "sanitizer_diagnostic": false,
+    "product_failure": false,
+    "gate_credit": false
+  },
+  "demonstrated_defects": [
+    {
+      "incident": "CH-202",
+      "field": "completion.source_tree",
+      "observed_type": "array of 277 tree entries",
+      "required_type": "40-character scalar Git tree SHA",
+      "cause": "PowerShell case-insensitive collision between ExpectedTree and expectedTree"
+    },
+    {
+      "incident": "CH-203",
+      "step": "extract-asan",
+      "exit_code": 2,
+      "existing_destination": true,
+      "cause": "Git tar received a backslash-bearing -C path whose final component began with asan-source"
+    }
+  ],
+  "orchestration_corrections": {
+    "identity_variables": {
+      "tree_sha_name": "ExpectedTreeSha",
+      "parsed_inventory_name": "treeEntries",
+      "case_only_name_distinctions_forbidden": true,
+      "completion_scalar_type_assertion_required": true,
+      "completion_exact_tree_sha_assertion_required": true
+    },
+    "tar_paths": {
+      "archive_argument": "forward-slash Windows path",
+      "destination_argument": "forward-slash Windows path",
+      "backslash_destination_allowed": false,
+      "exact_path_shape_preflight_required": true
+    },
+    "scientific_predicates_changed": false,
+    "build_flags_changed": false,
+    "runtime_cases_changed": false,
+    "toolchain_changed": false,
+    "network_changed": false
+  },
+  "fresh_retry": {
+    "lease": 240,
+    "namespace": "D:/Crazyhouse-Stockfish/leases/p3-current-source-sanitizer-green-240",
+    "validation_source": "a clean committed descendant containing this addendum and no product-source change after behavior commit 5d1bee77ac96b3fe95fa28717d428693b56297c1",
+    "expected_tracked_blob_count_after_this_addendum": 278,
+    "reuse_lease_239_artifacts": false,
+    "reuse_lease_239_namespace": false,
+    "expected_result": "PASS_CURRENT_SOURCE_ASAN_UBSAN_CONSERVATIVE_SEARCH"
+  },
+  "stopping_rule": "Authenticate this addendum and rejection record, pass the exact forward-slash extraction preflight, and use a fresh controller and namespace. Then apply every unchanged source, build, instrumentation, runtime, stderr, process and disk predicate from addendum 006. Any other change or any retry inside lease 239 rejects the correction.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

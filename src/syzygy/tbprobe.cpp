@@ -1691,6 +1691,9 @@ void Tablebases::init(const std::string& paths) {
 //  2 : win
 WDLScore Tablebases::probe_wdl(Position& pos, ProbeState* result) {
 
+    if (!pos.tablebases_applicable())
+        return *result = FAIL, WDLDraw;
+
     *result = OK;
     return search<false>(pos, result);
 }
@@ -1722,6 +1725,9 @@ WDLScore Tablebases::probe_wdl(Position& pos, ProbeState* result) {
 // In short, if a move is available resulting in dtz + 50-move-counter <= 99,
 // then do not accept moves leading to dtz + 50-move-counter == 100.
 int Tablebases::probe_dtz(Position& pos, ProbeState* result) {
+
+    if (!pos.tablebases_applicable())
+        return *result = FAIL, 0;
 
     *result      = OK;
     WDLScore wdl = search<true>(pos, result);
@@ -1791,6 +1797,9 @@ bool Tablebases::root_probe(Position&                    pos,
                             bool                         rule50,
                             bool                         rankDTZ,
                             const std::function<bool()>& time_abort) {
+
+    if (!pos.tablebases_applicable())
+        return false;
 
     ProbeState result = OK;
     StateInfo  st;
@@ -1868,6 +1877,9 @@ bool Tablebases::root_probe(Position&                    pos,
 // A return value false indicates that not all probes were successful.
 bool Tablebases::root_probe_wdl(Position& pos, Search::RootMoves& rootMoves, bool rule50) {
 
+    if (!pos.tablebases_applicable())
+        return false;
+
     static const int WDL_to_rank[] = {-MAX_DTZ, -MAX_DTZ + 101, 0, MAX_DTZ - 101, MAX_DTZ};
 
     ProbeState result = OK;
@@ -1907,7 +1919,7 @@ Config Tablebases::rank_root_moves(const OptionsMap&            options,
                                    const std::function<bool()>& time_abort) {
     Config config;
 
-    if (rootMoves.empty())
+    if (!pos.tablebases_applicable() || rootMoves.empty())
         return config;
 
     config.rootInTB    = false;

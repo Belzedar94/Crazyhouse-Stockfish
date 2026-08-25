@@ -1,0 +1,98 @@
+{
+  "schema": "crazyhouse-worker-search-contract-addendum/v1",
+  "addendum": 1,
+  "created_utc": "2026-08-22T22:31:09.6690998Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Replace only the admitted Worker evaluator mode from the historical scalar full-refresh path to the separately certified legacy-v1 scalar incremental path, while preserving the immutable search cases, route identity, fail-closed boundaries and non-strength scope.",
+  "pins": {
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "worker_search_verifier_before_incremental_support": {
+      "path": "tests/crazyhouse_worker_search_verify.py",
+      "bytes": 6897,
+      "sha256": "ec5eab0d00505325df13bc6cd8c7f219bbfe3584d163ca675019e95ce375027c",
+      "git_blob": "4d0c55a94736f8ad497e3b462346f8dbc3ec4f49"
+    },
+    "historical_full_refresh_gate_record": {
+      "path": "../../../receipts/private/p5-worker-search-green-gate-record-120.json",
+      "bytes": 5024,
+      "sha256": "dfb7c3a5183f84fe9eed353e97bcd3b9ccefbf0e3bb192690849c52e6e725b5f"
+    },
+    "incremental_scalar_parity_gate_record": {
+      "path": "../../../receipts/private/p5-legacy-incremental-green-gate-record-124.json",
+      "bytes": 2590,
+      "sha256": "7278da1bd1112e9c176a8a92efa9330ea8832bb68188d79fc4eb7ee2bd8a9e75"
+    },
+    "incremental_scalar_parity_end_receipt": {
+      "path": "../../../receipts/resources/p5-legacy-incremental-green-t1-end-221.json",
+      "bytes": 7540,
+      "sha256": "0434430209b80d3f9c3845d00fb5b441fe7bbac1c459333e51598316f12eeb13"
+    }
+  },
+  "implementation": {
+    "commit": "eb13ec473b6e5339ec914e6de36c0c640fb05b1b",
+    "tree": "43ee5becef2122f3eac7dfdc268ef945923c6c75",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "source_pins": [
+      {
+        "path": "src/search.cpp",
+        "bytes": 95337,
+        "sha256": "8d6450b70c1290e0a6c87a93860a998315fef314dede8c9f548436dc121e83c4",
+        "git_blob": "df04f36f9e93b321622dff1cb54cc6fd1ec33576"
+      },
+      {
+        "path": "src/search.h",
+        "bytes": 15117,
+        "sha256": "a7363c2ef2ed9c0eff31226a38caa0fd1cf34777c6ac49ee755e0e2820377358",
+        "git_blob": "4c5a3fe7fe9adfa689f6ac72fe08e13ae3b1d369"
+      },
+      {
+        "path": "src/nnue/crazyhouse_legacy_network.h",
+        "bytes": 11039,
+        "sha256": "ba061b1aae750a8a1e19b1ef8f63816f135324e9c8b049c2b10ab76df12dce71",
+        "git_blob": "d6e3a8a128e71f06492ff73503dc5746ce645f35"
+      },
+      {
+        "path": "src/nnue/crazyhouse_legacy_network.cpp",
+        "bytes": 43945,
+        "sha256": "3f9ff68764fd2f19352c9480446bb96af7dc8b1e69c7e0d32ae7a9cb04aee1af",
+        "git_blob": "9f0a719b42f7f298fb6aaa2266d2296498915a74"
+      }
+    ]
+  },
+  "single_variable_transition": {
+    "variable": "production Worker legacy-v1 evaluation datapath",
+    "from": {
+      "mode": "FULL_REFRESH",
+      "worker_gate": "PASS_BOUNDED_LEGACY_V1_FULL_REFRESH"
+    },
+    "to": {
+      "mode": "INCREMENTAL_SCALAR",
+      "entrypoint": "LegacyCrazyhouseNetworkV1::evaluate_legacy_incremental",
+      "accumulator_owner": "Search::Worker",
+      "root_policy": "one scalar full refresh after Worker search reset",
+      "move_policy": "one stack push before each Crazyhouse do_move and one pop after each Crazyhouse undo_move",
+      "null_policy": "same physical frame reuse without push or pop",
+      "fallback_allowed": false,
+      "simd_claim": false
+    }
+  },
+  "runtime_replay": {
+    "base_cases_unchanged": true,
+    "case_count": 2,
+    "runs": 4,
+    "route_backend": "legacy-v1",
+    "route_identity_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "required_worker_summary": "PASS crazyhouse_worker_search cases=2 runs=4 backend=legacy-v1 evaluator=incremental-scalar worker_binding=PASS strength_claim=false",
+    "source_to_binary_binding_required": true,
+    "incremental_scalar_parity_precondition_required": true
+  },
+  "stopping_rule": "Build from a fresh archive of a clean descendant of the exact implementation. Authenticate every pinned source path in the export, run the immutable two-case/four-run Worker corpus, require stable engine and network bytes, then replay transactional routing and the exact official standard control. Any source, artifact, route, bestmove, stderr, exit, transcript or control mismatch rejects the slice. No historical receipt is reclassified or rewritten.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

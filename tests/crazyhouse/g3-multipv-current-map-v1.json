@@ -1,0 +1,168 @@
+{
+  "schema": "crazyhouse-g3-multipv-current-map/v1",
+  "created_utc": "2026-08-22T04:21:40.8853944Z",
+  "evidence_class": "E1_ENGINEERING",
+  "status": "PASS_READ_ONLY_MAP_IMPLEMENTATION_DECISION_ORACLE_BLOCKED",
+  "product_boundary": {
+    "branch": "port/official-crazyhouse-core",
+    "commit": "773009b33f074f440eb66eeaba29f3f9a1dddf19",
+    "tree": "166148bbdb3191a5d6aade10bc77704322c92bde",
+    "status_lines": 0,
+    "official_stockfish_ancestor": "5062aee519a1ba262d472d8ab139851ced56573e",
+    "retired_fairy_base_used": false
+  },
+  "governing_evidence": {
+    "architecture": {
+      "path": "../../docs/crazyhouse/adr-0001-official-specialization-architecture.md",
+      "bytes": 15177,
+      "sha256": "520718d15043df7f9f2fb99ba9c890e691fba9ed81312ef3801235f38bd48c73",
+      "git_blob": "51b953321b4320a37c10821cb753a4c2c168a051",
+      "decision": "decouple MultiPV protocol range from move storage, clamp the request to dynamic root size, introduce no unproved Crazyhouse legal-move ceiling, and preserve the chess contract"
+    },
+    "capacity_inventory": {
+      "path": "../../docs/crazyhouse/move-capacity-inventory.md",
+      "bytes": 9648,
+      "sha256": "e7a5463c198a0526fa09944e5c0a83786dceea9fa49ceb633235622c7dee7292",
+      "git_blob": "05ecc0e5b141df7a502cc2ce504023ab162b4a20"
+    },
+    "prior_oracle_review": {
+      "path": "../../../receipts/private/p3-official-port-oracle-pro-manual-end-018.json",
+      "bytes": 5873,
+      "sha256": "4dab50cb28912276959b383177591125341b98ea4336b35def1cc3afdf06874b",
+      "scope": "growable non-truncating Crazyhouse move storage and separation from the accidental MultiPV coupling; no concrete single-inventory UCI option design was selected"
+    },
+    "known_303_move_fixture": {
+      "path": "max-moves-303.json",
+      "bytes": 4541,
+      "sha256": "3c77de3377d66feecdffd37459e31a1824424b3833a39e2272b4202d1c312e38",
+      "git_blob": "2b8af94ccfeffcb81cd472bb0b2edd6183af672c",
+      "legal_moves": 303,
+      "drops": 295,
+      "global_maximum_claim": false
+    }
+  },
+  "current_source": [
+    {
+      "path": "src/types.h",
+      "bytes": 18488,
+      "sha256": "34abaf4a7837f8a17260d4f7ee86239509208d03790bffd740ab2e90a1da535f",
+      "git_blob": "50018320216234f76d72b4a541b1e714febe7709",
+      "official_baseline_blob": "f51bdb89f5116dfa0262ae44ac33df5fe4197dfc",
+      "relevant_lines": [116],
+      "fact": "MAX_MOVES remains the orthodox value 256"
+    },
+    {
+      "path": "src/engine.cpp",
+      "bytes": 24901,
+      "sha256": "d8dc5f24a3126eb417116ad8a0c726496b2b9f055af962b46ff848bb951fdcb6",
+      "git_blob": "1f98c7e388886bb0c1f8605f723140a3609f2da4",
+      "official_baseline_blob": "c4dac7611d8a9d1d5d9cee03e76f11f898271321",
+      "relevant_lines": [112, 127, 128, 129, 130, 131],
+      "facts": [
+        "MultiPV is still registered as a spin option with default 1, minimum 1 and maximum MAX_MOVES",
+        "the specialized product advertises UCI_Variant and defaults it to crazyhouse"
+      ]
+    },
+    {
+      "path": "src/ucioption.h",
+      "bytes": 3179,
+      "sha256": "85468dec1694abd49af3997edac57eb48a897a844369f86ecfb75ea575d546cb",
+      "git_blob": "2fe395231d710f090a65529339bb2e507b006fae",
+      "official_baseline_blob": "2fe395231d710f090a65529339bb2e507b006fae",
+      "equals_official_baseline": true,
+      "fact": "a spin Option owns one fixed integer minimum and maximum"
+    },
+    {
+      "path": "src/ucioption.cpp",
+      "bytes": 6388,
+      "sha256": "edc4abf4cc9d053cfc54ad5bcece0257b8fd2c581f29988ee521d513f75415c2",
+      "git_blob": "a939e6f403af0e5539736c6721f96e1cb832186b",
+      "official_baseline_blob": "cbbe00790bcc01b1765fbfbc0c5ce47d329e383e",
+      "relevant_lines": [137, 145, 151, 157, 188, 205, 206, 207],
+      "facts": [
+        "an out-of-range spin assignment is ignored and retains the previous value",
+        "the UCI inventory prints the single stored minimum and maximum",
+        "the current delta from the official baseline changes only combo-token validation; spin range behavior is unchanged"
+      ]
+    },
+    {
+      "path": "src/search.h",
+      "bytes": 14212,
+      "sha256": "a15129bfc61b0e1180221b37af2b411e5b724742de68ef4968952d98ca86f8ad",
+      "git_blob": "7b14972fe8fb161b03f2299cd3562872effdede5",
+      "official_baseline_blob": "a64b1f34318fb45268013c72588093575865ada7",
+      "relevant_lines": [160],
+      "fact": "RootMoves is std::vector<RootMove> and has no MAX_MOVES storage ceiling"
+    },
+    {
+      "path": "src/thread.cpp",
+      "bytes": 16166,
+      "sha256": "3ffe9c6dc14ba1e6ffd261d5c30848fd896d6b8441b75d312451cb5fa6c1028a",
+      "git_blob": "e203bdebf7fc5990b82de4c9bfd0bf41f963c98a",
+      "official_baseline_blob": "e34d321c3265cdf06e48beeaa497391f706152eb",
+      "relevant_lines": [301, 311, 312, 313, 338],
+      "fact": "the root vector is populated from the complete ruleset-selected legal MoveList and copied to each worker"
+    },
+    {
+      "path": "src/search.cpp",
+      "bytes": 94372,
+      "sha256": "5faef1a2018aabe59e7a059e7de930fe045a1c32bad580e3ba6c4933a627a2c9",
+      "git_blob": "cd7ac8faf3da8f5972a510dd27fef5d597ccb692",
+      "official_baseline_blob": "bc9c6303eb9e996ae6f70c84df955d436fa04af9",
+      "relevant_lines": [328, 336, 2274, 2277],
+      "facts": [
+        "the active MultiPV value is clamped to rootMoves.size before the search loop",
+        "PV output independently clamps the active value to rootMoves.size"
+      ]
+    }
+  ],
+  "mapped_gap": {
+    "default_ruleset": "crazyhouse",
+    "advertised_multipv_maximum": 256,
+    "known_valid_root_size": 303,
+    "known_fixture_lines_above_advertised_maximum": 47,
+    "manual_value_257_or_higher": "IGNORED_BY_CURRENT_SPIN_RANGE",
+    "root_storage_truncation_demonstrated": false,
+    "protocol_request_range_gap_demonstrated_from_source": true,
+    "current_runtime_observation": "NOT_RUN_HOST_SATURATED_AND_CRAZYHOUSE_SEARCH_NOT_ADMITTED",
+    "strength_effect": "NOT_MEASURED_AND_OUT_OF_SCOPE"
+  },
+  "method_references": [
+    {
+      "name": "Atomic-Stockfish",
+      "commit": "13a1cf845c51eee3507ed6baa080895014de9e8b",
+      "tree": "b1469059f3686f45a80ba5ceadce2d7ddb7a0bfe",
+      "status_lines": 0,
+      "engine_cpp_bytes": 13400,
+      "engine_cpp_sha256": "5d21b1e356fd4630abe4e4e8a232ebafbbf9f3d628603484e76123948f10a139",
+      "engine_cpp_git_blob": "a0ff11bec59019d43457a64d965554008001c7c3",
+      "multipv_line": 107,
+      "observation": "retains MultiPV maximum MAX_MOVES and therefore supplies no greater-than-256 solution"
+    },
+    {
+      "name": "Horde-Stockfish",
+      "commit": "83521c3b9ff2c9e195b8fe75c3b8ec4917bd0e02",
+      "tree": "c75e00cd8746f8d8915eae76b72fdf901f67e5f9",
+      "status_lines": 0,
+      "engine_cpp_bytes": 18936,
+      "engine_cpp_sha256": "68a28394bf75d5cf8b77224c437088f29f50dbbeb63576083233e484ae76b7aa",
+      "engine_cpp_git_blob": "749ebb404a013fbfb2a4af3d6d16e01ef4478bff",
+      "multipv_line": 127,
+      "observation": "retains MultiPV maximum MAX_MOVES and therefore supplies no greater-than-256 solution"
+    }
+  ],
+  "reference_policy": "Atomic and Horde are method references only. No value, code, rule, bound or option contract is inherited from either project.",
+  "unresolved_architecture_questions": [
+    "how one UCI option inventory exposes an unbounded-by-rule Crazyhouse request while preserving the orthodox chess MultiPV contract",
+    "how pending versus active UCI_Variant state governs acceptance, persistence and inventory of a MultiPV request",
+    "which out-of-route and overflow inputs fail closed without retaining a misleading previous value",
+    "which fixture proves all 303 known root lines can be requested and emitted without defining 303 as a global maximum"
+  ],
+  "candidate_design_selected": false,
+  "new_oracle_review_required": true,
+  "source_change_allowed": false,
+  "next_safe_action": "Obtain an authenticated browser-only gpt-5-pro advisory focused on the single-inventory UCI contract, then freeze a fixture-first expected-red before changing Option, routing or search source.",
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

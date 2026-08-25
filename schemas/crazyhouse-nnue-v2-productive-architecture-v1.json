@@ -1,0 +1,122 @@
+{
+  "schema": "crazyhouse-nnue-v2-productive-architecture/v1",
+  "status": "frozen-before-implementation",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "physical_schema": {
+    "id": "crazyhouse-physical-v1",
+    "sha256": "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55",
+    "canonical_source": "physical-records-not-feature-rows"
+  },
+  "feature_contract": {
+    "id": "crazyhouse-nnue-v2-feature-contract/v1",
+    "sha256": "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6",
+    "dimensions": 902,
+    "maximum_active": 138,
+    "perspectives": 2
+  },
+  "descriptor_ascii": "Crazyhouse-Stockfish productive NNUE V2 v1|features=902|max_active=138|ft=512x2-shared|ordering=stm,opponent|dense=1024x32,32x32,32x1|activation=crelu-0-127|ft=int16x127,bias-int32,acc-int32|dense=int8x64,bias-int32|output=int16x64,bias-int32|value=600cp-per-unit|buckets=0|state=board,pockets,promoted",
+  "descriptor_ascii_bytes": 302,
+  "descriptor_ascii_sha256": "f9ef0b0f404de4e5347514bdc2eedee6c864b48d5da2a9d3056aeb6f4cc7d10c",
+  "topology": {
+    "sparse_transformer": {
+      "input_rows": 902,
+      "output_lanes": 512,
+      "weights_shared_between_perspectives": true,
+      "bias_shared_between_perspectives": true,
+      "accumulator_type": "int32",
+      "activation": "clipped-relu-uint8-0-through-127"
+    },
+    "perspective_order": [
+      "side-to-move",
+      "opponent"
+    ],
+    "dense_layers": [
+      {"input_lanes": 1024, "output_lanes": 32, "activation": "clipped-relu-uint8-0-through-127"},
+      {"input_lanes": 32, "output_lanes": 32, "activation": "clipped-relu-uint8-0-through-127"},
+      {"input_lanes": 32, "output_lanes": 1, "activation": "none"}
+    ],
+    "output": {
+      "perspective": "side-to-move",
+      "normalized_unit_centipawns": 600,
+      "buckets": 0,
+      "psqt_head": false,
+      "separate_color_heads": false
+    }
+  },
+  "quantization": {
+    "float_to_integer_rounding": "nearest-with-half-away-from-zero after widening each float32 value to float64",
+    "transformer": {
+      "weight_type": "int16-le",
+      "weight_scale": 127,
+      "bias_type": "int32-le",
+      "bias_scale": 127,
+      "activation_divisor": 1
+    },
+    "dense_hidden": {
+      "weight_type": "int8",
+      "weight_scale": 64,
+      "bias_type": "int32-le",
+      "bias_scale": 8128,
+      "activation_divisor": 64,
+      "positive_quotient": "floor-after-zero-clamp"
+    },
+    "output": {
+      "weight_type": "int16-le",
+      "weight_scale": 64,
+      "bias_type": "int32-le",
+      "bias_scale": 8128,
+      "raw_divisor": 8128,
+      "centipawn_numerator_scale": 600,
+      "signed_quotient": "truncate-toward-zero"
+    }
+  },
+  "integer_safety": {
+    "all_products_and_sums_computed_in": "int64",
+    "committed_accumulators": "int32",
+    "loader_static_interval_check": true,
+    "transformer_interval": "bias plus up to 138 most-negative or most-positive serialized row weights per lane",
+    "dense_interval": "bias plus 127 times the sum of all negative or all positive weights per output",
+    "runtime_range_check": true,
+    "overflow_fallback": false
+  },
+  "dimensions": {
+    "parameter_count": 496225,
+    "payload_bytes": 959812,
+    "container_bytes": 960324,
+    "transformer_accumulator_bytes_per_position": 4096
+  },
+  "excluded_from_baseline": [
+    "castling feature rows",
+    "raw or effective en-passant feature rows",
+    "move counters",
+    "repetition or history feature rows",
+    "material or king buckets",
+    "PSQT branch",
+    "state-dependent topology",
+    "multiple output heads"
+  ],
+  "training_boundary": {
+    "production_dataset_required": true,
+    "training_admissible_manifest_required": true,
+    "golden_labels_forbidden": true,
+    "engineering_microfit_may_use_physical_fixture_states": true,
+    "engineering_microfit_targets": "synthetic-from-authenticated-position-identity",
+    "engineering_microfit_model_selection_credit": false,
+    "production_loss_and_optimizer_recipe_frozen_here": false
+  },
+  "scientific_boundary": {
+    "baseline_not_selected_by_observed_loss": true,
+    "width_is_a_future_one-variable-ablation": true,
+    "state_rows_are_future_one-variable-ablations": true,
+    "legacy_v1_remains_default": true,
+    "strength_claimed": false,
+    "openbench_authorized": false,
+    "release_claimed": false
+  }
+}

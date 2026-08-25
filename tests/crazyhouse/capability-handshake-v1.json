@@ -1,0 +1,69 @@
+{
+  "schema": "crazyhouse-engine-capability-handshake/v1",
+  "created_utc": "2026-08-23T08:45:00.0000000Z",
+  "evidence_class": "E1_ENGINEERING",
+  "fixture_parent_commit": "903e0d3ac67ecb10de4f0c7b1f5a028cb2063144",
+  "fixture_parent_tree": "5e3e93629be91cef3acb8791e13890f0d8ecc991",
+  "behavior_files_may_change_in_fixture_commit": false,
+  "profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "token": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "network": {
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+  },
+  "inventory": {
+    "required_exact": [
+      "option name UCI_Variant type combo default crazyhouse var chess var crazyhouse",
+      "option name CrazyhouseProfile type string default LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+      "option name CrazyhouseCapabilityNonce type string default <empty>",
+      "option name CrazyhouseEvalFile type string default <empty>"
+    ],
+    "forbidden_prefixes": [
+      "option name CrazyhouseProfileHash "
+    ]
+  },
+  "cases": [
+    {
+      "id": "positive-route-bound",
+      "nonce": "0123456789abcdef0123456789abcdef",
+      "expected_order": ["route_commit", "capability_ack", "readyok"],
+      "ack_count": 1,
+      "readyok": true
+    },
+    {
+      "id": "one-shot-readiness",
+      "depends_on": "positive-route-bound",
+      "ack_count_on_second_isready": 0,
+      "readyok": true
+    },
+    {
+      "id": "invalid-uppercase-nonce",
+      "nonce": "0123456789ABCDEF0123456789ABCDEF",
+      "expected_error": "info string ERROR isready code=crazyhouse_capability_nonce_invalid",
+      "ack_count": 0,
+      "readyok": false
+    },
+    {
+      "id": "missing-network",
+      "network_path": "<fresh definitely-missing path>",
+      "expected_error_code": "legacy_missing_file",
+      "ack_count": 0,
+      "readyok": false
+    },
+    {
+      "id": "standard-control",
+      "variant": "chess",
+      "nonce_configured": false,
+      "ack_count": 0,
+      "readyok": true
+    }
+  ],
+  "pass_rule": "All exact inventory predicates and five runtime cases pass in fresh processes. Positive acknowledgement occurs once after successful route_commit and before readyok; invalid nonce and missing network withhold acknowledgement and readyok; standard chess emits neither Crazyhouse acknowledgement nor error.",
+  "scope": "Engine UCI capability integration only. This is not a match, strength, OpenBench, packaging or release result.",
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

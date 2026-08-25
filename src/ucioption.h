@@ -24,6 +24,7 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <string_view>
 
 #include "misc.h"
 
@@ -39,11 +40,12 @@ class OptionsMap;
 class Option {
    public:
     using OnChange = std::function<std::optional<std::string>(const Option&)>;
+    using OnInvalid = std::function<std::optional<std::string>(std::string_view)>;
 
     Option(OnChange = nullptr);
     Option(bool v, OnChange = nullptr);
     Option(const char* v, OnChange = nullptr);
-    Option(int v, int minv, int maxv, OnChange = nullptr);
+    Option(int v, int minv, int maxv, OnChange = nullptr, OnInvalid = nullptr);
     Option(const char* v, const char* cur, OnChange = nullptr);
 
     Option& operator=(const std::string&);
@@ -66,6 +68,7 @@ class Option {
     int               min = 0, max = 0;
     usize             idx = 0;
     OnChange          on_change;
+    OnInvalid         on_invalid;
     const OptionsMap* parent = nullptr;
 };
 

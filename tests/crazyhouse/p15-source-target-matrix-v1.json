@@ -1,0 +1,135 @@
+{
+  "schema": "crazyhouse-p15-source-target-matrix/v1",
+  "created_utc": "2026-08-24T19:10:42.6504261Z",
+  "status": "FROZEN_SOURCE_ONLY_NOT_RELEASE_QUALIFIED",
+  "evidence_class": "R4_RELEASE",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "decision_parent": {
+    "commit": "71c645b842df76437c24bacec787cba27bc9d271",
+    "tree": "912bd180928ae7e6d4eace321b13b0c55d59575b",
+    "src_tree": "15e5245b0910bbb5ffa79b3bb67943b8bff24803",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "architecture_decision": "docs/crazyhouse/adr-0017-source-target-matrix-v1.md",
+  "common_build_contract": {
+    "platform": "windows",
+    "kernel_assignment": "OS=Windows_NT",
+    "compiler_assignment": "COMP=gcc",
+    "build_threads": 1,
+    "warning_assignment": "EXTRACXXFLAGS=-Werror",
+    "reproducibility_assignment": "mingw_reproducible=yes",
+    "reproducibility_linker_flag": "-Wl,--no-insert-timestamp",
+    "reproducibility_linker_flag_count": 1,
+    "legacy_backend_assignment_present": false,
+    "legacy_backend_required": "scalar default",
+    "toolchain": {
+      "compiler_path": "C:/msys64/mingw64/bin/g++.exe",
+      "compiler_version": "16.1.0",
+      "compiler_bytes": 3312964,
+      "compiler_sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb",
+      "make_path": "C:/msys64/usr/bin/make.exe",
+      "make_version": "4.4.1",
+      "make_bytes": 229856,
+      "make_sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22"
+    }
+  },
+  "targets": [
+    {
+      "id": "windows-x86-64",
+      "arch": "x86-64",
+      "asset_pattern": "crazyhouse-stockfish-${VERSION}-windows-x86-64.zip",
+      "executable_name": "crazyhouse-stockfish.exe",
+      "feature_floor": ["x86-64", "sse2"],
+      "make_features": {
+        "bits": "64",
+        "sse2": "yes",
+        "ssse3": "no",
+        "sse41": "no",
+        "avx2": "no",
+        "pext": "no",
+        "popcnt": "no"
+      },
+      "build_recipe": "make -j1 build ARCH=x86-64 COMP=gcc OS=Windows_NT EXTRACXXFLAGS=-Werror mingw_reproducible=yes"
+    },
+    {
+      "id": "windows-x86-64-avx2",
+      "arch": "x86-64-avx2",
+      "asset_pattern": "crazyhouse-stockfish-${VERSION}-windows-x86-64-avx2.zip",
+      "executable_name": "crazyhouse-stockfish.exe",
+      "feature_floor": ["x86-64", "avx2", "bmi1", "popcnt", "sse4.1", "ssse3", "sse2"],
+      "make_features": {
+        "bits": "64",
+        "sse2": "yes",
+        "ssse3": "yes",
+        "sse41": "yes",
+        "avx2": "yes",
+        "pext": "no",
+        "popcnt": "yes"
+      },
+      "build_recipe": "make -j1 build ARCH=x86-64-avx2 COMP=gcc OS=Windows_NT EXTRACXXFLAGS=-Werror mingw_reproducible=yes"
+    }
+  ],
+  "network": {
+    "canonical_local_basename": "crazyhouse_run15rl_e190_l03.nnue",
+    "candidate_public_alias": "Crazyhouse_v1.nnue",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "alias_must_be_byte_identical": true,
+    "source_default_change_allowed": false,
+    "champion_identity_change_allowed": false,
+    "license": "CC0-1.0",
+    "lila_asset_blob": "ad269c33db13ecae295ec66ee9f438462498c623",
+    "lila_license_readme_blob": "c94bf53d0cd54599d899a51f0aa4c1e01e4f0b94",
+    "delivery_mode_frozen": false
+  },
+  "excluded_target_families": [
+    "windows-x86-64-bmi2-and-pext",
+    "windows-avxvnni-avx512-vnni512",
+    "linux-all",
+    "macos-and-apple-silicon",
+    "arm-all",
+    "riscv-powerpc-e2k",
+    "wasm",
+    "universal-dispatch",
+    "all-32-bit"
+  ],
+  "required_exact_candidate_gates_per_target": [
+    "candidate commit and winner ancestry",
+    "two clean full builds with byte-identical executable",
+    "two clean packages with byte-identical archive",
+    "zero PE COFF timestamp and exact ISA inspection",
+    "UCI identity and option inventory",
+    "Crazyhouse capability handshake",
+    "positive registered network load",
+    "missing wrong corrupt truncated oversized and incompatible network negatives",
+    "Crazyhouse correctness corpus and special-state search",
+    "deterministic bench and digest",
+    "runtime smoke from extracted package",
+    "network alias byte reauthentication",
+    "per-target provenance inventory and SBOM",
+    "corresponding GPL source and all licenses"
+  ],
+  "method_references_only": {
+    "atomic_target_values_inherited": false,
+    "horde_target_values_inherited": false,
+    "fairy_stockfish_source_or_target_claim_inherited": false
+  },
+  "stopping_rule": "Reject the source matrix if the target set, order, recipes, effective Make features, deterministic-link routing, network identity, excluded set or boundary changes. Additions and removals require a preregistered additive ADR before observing a target build result.",
+  "boundaries": {
+    "source_target_matrix_frozen": true,
+    "full_engine_build_performed": false,
+    "release_executable_reproducible": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

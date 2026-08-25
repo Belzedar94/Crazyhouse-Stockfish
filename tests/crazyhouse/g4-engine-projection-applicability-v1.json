@@ -1,0 +1,258 @@
+{
+  "schema": "crazyhouse-g4-engine-projection-applicability/v1",
+  "profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "profile_token": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "evidence_class": "E1_ENGINEERING",
+  "architecture_consultation": {
+    "receipt": "../../../receipts/private/p4-engine-projection-consultation-038.json",
+    "bytes": 4277,
+    "sha256": "f0ebc64db030fec2d7936f5c75e1a4d931b393c59bd307452eb660b72ecade57",
+    "advisory_adopted": true,
+    "permanent_state_result_uci_command": false,
+    "test_only_uci_command": false
+  },
+  "interprets_participant_matrix": {
+    "path": "tests/crazyhouse/g4-participant-matrix-v1.json",
+    "bytes": 5184,
+    "sha256": "f0ad7131f7a607e03cf5dc0ededb0b3a46301772e8910eb2553235a919fb32dc",
+    "rule_core_all_definition": "every case ID executes for the participant; statically applicable fields are selected here before any official-engine result is observed"
+  },
+  "frozen_inputs": {
+    "rule_core": {
+      "path": "tests/crazyhouse/reference-cases.json",
+      "bytes": 17810,
+      "sha256": "4a00bca20d3b149b5bbe3f4153a4a3ff5a20473126763c2d8125a4ba2d11742e",
+      "git_blob": "69ff656153aa7bb1847eca364ec14047267a6fab",
+      "case_count": 48
+    },
+    "capacity": {
+      "path": "tests/crazyhouse/max-moves-303.json",
+      "bytes": 4541,
+      "sha256": "3c77de3377d66feecdffd37459e31a1824424b3833a39e2272b4202d1c312e38",
+      "legal_moves": 303,
+      "drop_moves": 295,
+      "non_drop_moves": 8,
+      "global_maximum_claim": false
+    },
+    "routing": {
+      "path": "tests/crazyhouse/routing-contract-v1.json",
+      "profile_binding_addendum_required": true
+    },
+    "standard_control": {
+      "path": "tests/crazyhouse/routed-standard-control-v1.json",
+      "bench_nodes": 2884956,
+      "bench_signature_sha256": "78751f6d2a1146c15dac46875b52c4548deb3ca87475f478eebef5906f2d9259"
+    }
+  },
+  "case_coverage": [
+    "CH-REF-FEN-001",
+    "CH-REF-FEN-002",
+    "CH-REF-FEN-003",
+    "CH-REF-PROV-001",
+    "CH-REF-PROV-002",
+    "CH-REF-PROV-003",
+    "CH-REF-PROV-004",
+    "CH-REF-PROV-005",
+    "CH-REF-CAP-P",
+    "CH-REF-CAP-N",
+    "CH-REF-CAP-B",
+    "CH-REF-CAP-R",
+    "CH-REF-CAP-Q",
+    "CH-REF-DROP-001",
+    "CH-REF-CHECK-001",
+    "CH-REF-CHECK-002",
+    "CH-REF-DROP-MATE-001",
+    "CH-REF-TERM-STALEMATE",
+    "CH-REF-TERM-POCKET-PREVENTS-STALEMATE",
+    "CH-REF-TERM-MATE",
+    "CH-REF-TERM-NO-FIFTY",
+    "CH-REF-CASTLE-001",
+    "CH-REF-CASTLE-002",
+    "CH-REF-EP-001",
+    "CH-REF-REP-THREEFOLD",
+    "CH-REF-REP-FIVEFOLD",
+    "CH-REF-DROP-OCCUPIED",
+    "CH-REF-DROP-DOUBLED-PAWN-ALLOWED",
+    "CH-REF-DROP-PAWN-DOUBLE",
+    "CH-REF-CAP-DROP-CHAIN",
+    "CH-REF-CASTLE-RIGHTS-NOT-RESTORED",
+    "CH-REF-CASTLE-DROPPED-ROOK-NO-RIGHT",
+    "CH-REF-CASTLE-ROOK-CAPTURE",
+    "CH-REF-CASTLE-THROUGH-CHECK",
+    "CH-REF-EP-CREATION-LEGAL",
+    "CH-REF-EP-CREATION-NONCAPTURABLE",
+    "CH-REF-EP-PINNED-ILLEGAL",
+    "CH-REF-EP-LOAD-LEGAL",
+    "CH-REF-EP-LOAD-PINNED-ILLEGAL",
+    "CH-REF-EP-MIXED-SOURCES",
+    "CH-REF-EP-HORIZONTAL-DISCOVERY",
+    "CH-REF-EP-CHECK-EVASION",
+    "CH-REF-REP-CASTLING-RIGHTS-DISTINCT",
+    "CH-REF-PERFT-001",
+    "CH-REF-PERFT-002",
+    "CH-REF-PERFT-003",
+    "CH-REF-PERFT-004",
+    "CH-REF-PERFT-005"
+  ],
+  "expectation_selection": {
+    "base": "tests/crazyhouse/reference-cases.json expected",
+    "state_by_implementation": "select scalachess where present",
+    "terminal_by_implementation": "select scalachess where present",
+    "diagnostics_by_implementation": "map authority semantics to the declared direct typed observations only",
+    "engine_output_may_generate_expectations": false
+  },
+  "participants": {
+    "official_base_engine_direct": {
+      "artifact_role": "thin test executable linked to production Position, MoveList, make/history, repetition, FEN and terminal code",
+      "production_rule_logic_only": true,
+      "separate_legality_or_result_implementation_allowed": false,
+      "all_48_cases_required": true,
+      "applicable_fields": [
+        "profile_id",
+        "profile_sha256",
+        "canonical_fen",
+        "turn",
+        "castling_rights",
+        "ep_square",
+        "halfmove_clock",
+        "fullmove_number",
+        "pockets",
+        "promoted_squares",
+        "in_check",
+        "legal_moves",
+        "perft_nodes",
+        "repetition_occurrences",
+        "is_draw_at_ply_1",
+        "automatic_terminal_reason",
+        "automatic_terminal_winner",
+        "automatic_terminal_result"
+      ],
+      "typed_history_result_owner": true,
+      "normalized_runs": 2,
+      "byte_identical_normalized_output_required": true
+    },
+    "official_base_engine_uci": {
+      "artifact_role": "exact production executable through its existing UCI dispatcher",
+      "new_diagnostic_command_allowed": false,
+      "all_48_cases_required": true,
+      "commands_allowlist": [
+        "uci",
+        "setoption",
+        "isready",
+        "ucinewgame",
+        "position",
+        "d",
+        "go perft",
+        "go",
+        "quit"
+      ],
+      "applicable_fields": [
+        "executable_sha256",
+        "profile_id_acknowledgement",
+        "profile_sha256_acknowledgement",
+        "route_ruleset_acknowledgement",
+        "canonical_fen",
+        "fen_encoded_turn_castling_ep_clocks_pockets_promoted",
+        "in_check_from_exact_checkers_line",
+        "legal_moves_from_go_perft_1",
+        "perft_nodes"
+      ],
+      "non_applicable_fields": [
+        "repetition_occurrences",
+        "typed_terminal_reason",
+        "typed_terminal_winner",
+        "typed_terminal_result",
+        "match_pgn_termination"
+      ],
+      "non_applicable_values_may_be_inferred": false,
+      "full_transition_sequence_required": true,
+      "normalized_runs": 2,
+      "byte_identical_normalized_output_required": true
+    }
+  },
+  "shared_field_rule": {
+    "fields": ["canonical_fen", "in_check", "legal_moves", "perft_nodes"],
+    "must_match_frozen_expectation": true,
+    "must_match_between_participants": true,
+    "one_participant_may_rescue_other": false
+  },
+  "history_result_cases": {
+    "CH-REF-TERM-NO-FIFTY": {"direct": {"is_draw_at_ply_1": false, "automatic_terminal_reason": "ongoing"}},
+    "CH-REF-REP-THREEFOLD": {"direct": {"repetition_occurrences": 3, "automatic_terminal_reason": "ongoing"}},
+    "CH-REF-REP-FIVEFOLD": {"direct": {"repetition_occurrences": 5, "automatic_terminal_reason": "fivefold_repetition", "automatic_terminal_result": "1/2-1/2"}},
+    "CH-REF-REP-CASTLING-RIGHTS-DISTINCT": {"direct": {"repetition_occurrences": 2, "automatic_terminal_reason": "ongoing"}}
+  },
+  "profile_routing_contract": {
+    "uci_option": "CrazyhouseProfile",
+    "uci_option_type": "string",
+    "default_token": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "crazyhouse_route_requires_exact_token": true,
+    "chess_route_ignores_profile_validity": true,
+    "invalid_value_persists_until_replaced": true,
+    "route_commit_fields": ["ruleset", "profile", "profile_sha256", "epoch", "backend", "identity"],
+    "stable_errors": {
+      "empty": "crazyhouse_profile_missing",
+      "unknown_id": "crazyhouse_profile_unknown",
+      "known_id_wrong_or_malformed_hash": "crazyhouse_profile_hash_mismatch"
+    },
+    "unknown_or_mismatched_profile_fails_before_position": true,
+    "ucinewgame_preserves_option": true,
+    "setting_profile_dirties_route": true
+  },
+  "capacity_projection": {
+    "participants": ["official_base_engine_direct", "official_base_engine_uci"],
+    "exact_legal_moves": 303,
+    "exact_drop_moves": 295,
+    "exact_non_drop_moves": 8,
+    "exact_sorted_set_required": true,
+    "duplicates_or_truncation": "fail",
+    "effective_256_ceiling_mutation": "must_fail"
+  },
+  "negative_controls": [
+    "empty Crazyhouse profile",
+    "unknown profile ID",
+    "known profile ID with wrong hash",
+    "missing or malformed route acknowledgement",
+    "unknown or missing variant",
+    "Crazyhouse FEN under chess route",
+    "malformed FEN and promoted or pocket syntax",
+    "illegal orthodox move",
+    "illegal drop",
+    "failed position cannot reuse prior position",
+    "ucinewgame preserves variant profile configuration",
+    "standard to Crazyhouse to standard explicit routing",
+    "no fallback or adaptive retry",
+    "missing duplicate unknown or extra case ID",
+    "missing duplicate or truncated legal root",
+    "root subtotal and node total mismatch",
+    "multiple canonical FEN lines",
+    "unknown warning or unexpected bestmove",
+    "timeout or early EOF"
+  ],
+  "search_refusal_controls": {
+    "forms": ["go depth 1", "go nodes 1", "go movetime 1", "go infinite", "go ponder wtime 1000 btime 1000"],
+    "stable_error": "crazyhouse_search_not_bound",
+    "bestmove_allowed": false,
+    "search_info_allowed": false,
+    "subsequent_perft_same_position_required": true
+  },
+  "standard_controls": {
+    "exact_direct_controls_required": true,
+    "exact_uci_bench_and_signature_required": true,
+    "mixed_session_crazyhouse_then_explicit_chess_required": true,
+    "timing_evidence": false
+  },
+  "fail_closed": {
+    "case_omission_duplicate_unknown_or_extra": "fail",
+    "runtime_skip_unsupported_or_na": "fail",
+    "missing_applicable_field": "fail",
+    "unexpected_non_applicable_field": "fail",
+    "warning_or_ambiguous_parse": "fail",
+    "partial_record": "fail",
+    "binary_source_profile_corpus_capacity_or_contract_hash_mismatch": "fail_before_launch",
+    "participant_cross_rescue": "forbidden",
+    "normalization": "syntax validation, exact extraction and legal-move sorting only; no legality, repetition or result inference"
+  },
+  "gate_boundary": "passing this contract closes only the official-base direct-plus-production-UCI engine projection subgate; referee, worker search, strength, OpenBench and release remain open"
+}

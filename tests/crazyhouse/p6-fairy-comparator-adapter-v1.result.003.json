@@ -1,0 +1,63 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-adapter-result/v1",
+  "created_utc": "2026-08-23T19:35:00Z",
+  "evidence_class": "E1_ENGINEERING_ORCHESTRATION_REJECTION_WITH_COMPLETE_BEHAVIOR_OBSERVATION",
+  "lease": 269,
+  "namespace": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-adapter-269",
+  "parent_result": {
+    "path": "tests/crazyhouse/p6-fairy-comparator-adapter-v1.result.002.json",
+    "bytes": 2393,
+    "sha256": "ba4e3ccba69c3fbd10e3d9c7e60c6ec59f8138ff7c01b03e4fa30e1c652ae565",
+    "git_blob": "4ddc4a943067f074684e9c52147cb6aea71dfe1d"
+  },
+  "completion": {
+    "bytes": 23434,
+    "sha256": "069cd227679ea8abfd9fed68e3b7bcc830c21cbf8f5c9e19311bfe4c15536206"
+  },
+  "end_receipt": {
+    "path": "../../../receipts/resources/p6-fairy-comparator-adapter-t1-end-269.json",
+    "bytes": 5072,
+    "sha256": "468e1229ddc163b8cffdf5f83f509e1f662a127f279c9b6bcfdab1274fd17e56"
+  },
+  "observed": {
+    "clean_source_copies": 2,
+    "warning_clean_builds": 2,
+    "byte_identical_adapter_executables": true,
+    "adapter_executable_sha256": "7707e2a120e9ae4d21507aaca5df4edcdaa2751309529dad4b306ab22f636a5f",
+    "verifier_cases": 30,
+    "verifier_failures": 0,
+    "referee_exit_code": 0,
+    "referee_stderr_bytes": 0,
+    "candidate_stderr_bytes": 0,
+    "adapted_stderr_bytes": 0,
+    "nonce_events": 4,
+    "unique_nonces": 4,
+    "acknowledgements": 4,
+    "candidate_node_searches": 2,
+    "adapted_node_searches": 2,
+    "candidate_bestmoves": 2,
+    "adapted_bestmoves": 2,
+    "adapted_nnue_marker_lines": 2,
+    "pgn_games": 2,
+    "pgn_crazyhouse_tags": 2,
+    "pgn_draws": 2,
+    "pgn_maxmoves_terminal_reasons": 2
+  },
+  "incident": {
+    "id": "CH-229",
+    "cause": "The controller applied a multiline end anchor to raw CRLF referee output without allowing the carriage return, so its required-marker regex returned zero although the log contains exactly two matching lines.",
+    "adapter_defect_observed": false,
+    "referee_defect_observed": false,
+    "game_defect_observed": false
+  },
+  "result": "REJECTED_ORCHESTRATION_POST_REFEREE_JOIN_AUDIT",
+  "gate_credit": false,
+  "partial_behavior_observation_reused": false,
+  "adapter_qualified": false,
+  "paired_strength_test_authorized": false,
+  "next_safe_action": "Repeat the complete qualification in a fresh namespace using line-normalized marker counting.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

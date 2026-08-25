@@ -51,6 +51,9 @@ Key psq[PIECE_NB][SQUARE_NB];
 Key enpassant[FILE_NB];
 Key castling[CASTLING_RIGHT_NB];
 Key side, noPawns;
+Key crazyhouseRuleset;
+Key crazyhousePocket[COLOR_NB][Crazyhouse::POCKET_TYPE_NB][17];
+Key crazyhousePromoted[SQUARE_NB];
 
 }
 
@@ -86,12 +89,13 @@ std::ostream& operator<<(std::ostream& os, const Position& pos) {
     for (Bitboard b = pos.checkers(); b;)
         os << UCIEngine::square(pop_lsb(b)) << " ";
 
-    if (Tablebases::MaxCardinality >= popcount(pos.pieces()) && !pos.can_castle(ANY_CASTLING))
+    if (pos.ruleset() == Ruleset::CHESS && Tablebases::MaxCardinality >= popcount(pos.pieces())
+        && !pos.can_castle(ANY_CASTLING))
     {
         StateInfo st;
 
-        Position p;
-        p.set(pos.fen(), pos.is_chess960(), &st);
+        Position p(pos.ruleset());
+        p.set(pos.fen(), pos.is_chess960(), pos.ruleset(), &st);
         Tablebases::ProbeState s1, s2;
         Tablebases::WDLScore   wdl = Tablebases::probe_wdl(p, &s1);
         int                    dtz = Tablebases::probe_dtz(p, &s2);
@@ -137,6 +141,16 @@ void Position::init() {
     Zobrist::side    = rng.rand<Key>();
     Zobrist::noPawns = rng.rand<Key>();
 
+    Zobrist::crazyhouseRuleset = rng.rand<Key>();
+    for (Color c : {WHITE, BLACK})
+        for (usize i = 0; i < Crazyhouse::POCKET_TYPE_NB; ++i)
+            for (int count = 1;
+                 count <= Crazyhouse::max_pocket_count(Crazyhouse::PocketPieceTypes[i]); ++count)
+                Zobrist::crazyhousePocket[c][i][count] = rng.rand<Key>();
+
+    for (Square s = SQ_A1; s <= SQ_H8; ++s)
+        Zobrist::crazyhousePromoted[s] = rng.rand<Key>();
+
     // Prepare the cuckoo tables
     cuckoo.fill(0);
     cuckooMove.fill(Move::none());
@@ -168,6 +182,41 @@ void Position::init() {
 // a PositionSetError describing the problem is returned, otherwise std::nullopt.
 std::optional<PositionSetError>
 Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
+    return set(fenStr, isChess960, activeRuleset, si);
+}
+
+std::optional<PositionSetError>
+Position::set(const string& fenStr, bool isChess960, Ruleset selectedRuleset, StateInfo* si) {
+    selectedRuleset = validate_ruleset(selectedRuleset, "Position::set");
+    assert(si);
+
+    Position  parsed(selectedRuleset);
+    StateInfo parsedState;
+    if (auto error = parsed.set_in_place(fenStr, isChess960, selectedRuleset, &parsedState))
+        return error;
+
+    board     = parsed.board;
+    byTypeBB  = parsed.byTypeBB;
+    byColorBB = parsed.byColorBB;
+    std::copy_n(parsed.pieceCount, PIECE_NB, pieceCount);
+    std::copy_n(parsed.castlingRightsMask, SQUARE_NB, castlingRightsMask);
+    std::copy_n(parsed.castlingRookSquare, CASTLING_RIGHT_NB, castlingRookSquare);
+    std::copy_n(parsed.castlingPath, CASTLING_RIGHT_NB, castlingPath);
+    gamePly        = parsed.gamePly;
+    sideToMove     = parsed.sideToMove;
+    chess960       = parsed.chess960;
+    activeRuleset  = parsed.activeRuleset;
+    scratchDirties = parsed.scratchDirties;
+
+    *si = parsedState;
+    st  = si;
+
+    return std::nullopt;
+}
+
+std::optional<PositionSetError>
+Position::set_in_place(const string& fenStr, bool isChess960, Ruleset selectedRuleset,
+                       StateInfo* si) {
     /*
    A FEN string defines a particular position using only the ASCII character set.
 
@@ -203,18 +252,50 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
       incremented after Black's move.
 */
 
+    assert(is_valid_ruleset(selectedRuleset));
+    assert(si);
+
+    if (selectedRuleset == Ruleset::CRAZYHOUSE && isChess960)
+        return PositionSetError("Unsupported Crazyhouse position. Chess960 is not supported.");
+
     unsigned char      token;
     std::istringstream ss(fenStr);
 
     std::memset(reinterpret_cast<char*>(this), 0, sizeof(Position));
     std::memset(si, 0, sizeof(StateInfo));
-    st = si;
+    st            = si;
+    activeRuleset = selectedRuleset;
 
     ss >> std::noskipws;
 
     int numPieces = 0;
     int file      = FILE_A;
     int rank      = RANK_8;
+    bool   hasPocket        = false;
+    bool   previousWasPiece = false;
+    Square previousSquare   = SQ_NONE;
+
+    auto add_to_pocket = [&](unsigned char pocketToken) -> std::optional<PositionSetError> {
+        const usize idx = PieceToChar.find(pocketToken);
+        if (idx == string::npos)
+            return PositionSetError("Invalid Crazyhouse FEN. Invalid pocket piece: "
+                                    + std::string(1, pocketToken));
+
+        const Piece     pc          = Piece(idx);
+        const PieceType pt          = type_of(pc);
+        const int       pocketIndex = Crazyhouse::pocket_index(pt);
+        if (pocketIndex < 0)
+            return PositionSetError("Invalid Crazyhouse FEN. Invalid pocket piece: "
+                                    + std::string(1, pocketToken));
+
+        auto& count = st->crazyhouse.pockets.count[color_of(pc)][pocketIndex];
+        if (count >= Crazyhouse::max_pocket_count(pt))
+            return PositionSetError(
+              "Unsupported Crazyhouse position. Pocket count exceeds type limit.");
+
+        ++count;
+        return std::nullopt;
+    };
 
     // 1. Piece placement
     for (;;)
@@ -222,8 +303,29 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
         if (!(ss >> token))
             return PositionSetError("Invalid FEN. Unexpected end of stream.");
 
+        if (token == '~')
+        {
+            if (selectedRuleset != Ruleset::CRAZYHOUSE || !previousWasPiece)
+                return PositionSetError("Invalid Crazyhouse FEN. Invalid promoted marker.");
+
+            const PieceType pt = type_of(piece_on(previousSquare));
+            if (pt == PAWN || pt == KING)
+                return PositionSetError(
+                  "Unsupported Crazyhouse position. Promoted marker on pawn or king.");
+
+            st->crazyhouse.promoted |= previousSquare;
+            previousWasPiece = false;
+            continue;
+        }
+
+        previousWasPiece = false;
+
         if (isspace(token))
+        {
+            if (selectedRuleset == Ruleset::CRAZYHOUSE && !hasPocket)
+                return PositionSetError("Invalid Crazyhouse FEN. Missing pocket field.");
             break;
+        }
 
         if (isdigit(token))
         {
@@ -237,6 +339,26 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
         }
         else if (token == '/')
         {
+            if (selectedRuleset == Ruleset::CRAZYHOUSE && rank == RANK_1
+                && file == FILE_NB && !hasPocket)
+            {
+                hasPocket = true;
+                bool pocketEnded = false;
+                while (ss >> token)
+                {
+                    if (isspace(token))
+                    {
+                        pocketEnded = true;
+                        break;
+                    }
+                    if (auto error = add_to_pocket(token))
+                        return error;
+                }
+                if (!pocketEnded)
+                    return PositionSetError("Invalid Crazyhouse FEN. Unterminated pocket.");
+                break;
+            }
+
             if (file != FILE_NB)
                 return PositionSetError(
                   "Invalid FEN. Trying to end rank when not at the end of it.");
@@ -246,6 +368,33 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
 
             if (rank < RANK_1)
                 return PositionSetError("Invalid FEN. Invalid rank reached.");
+        }
+        else if (token == '[')
+        {
+            if (selectedRuleset != Ruleset::CRAZYHOUSE || hasPocket || rank != RANK_1
+                || file != FILE_NB)
+                return PositionSetError("Invalid Crazyhouse FEN. Invalid pocket placement.");
+
+            hasPocket = true;
+            bool pocketClosed = false;
+            while (ss >> token)
+            {
+                if (token == ']')
+                {
+                    pocketClosed = true;
+                    break;
+                }
+                if (isspace(token))
+                    return PositionSetError("Invalid Crazyhouse FEN. Unterminated pocket.");
+                if (auto error = add_to_pocket(token))
+                    return error;
+            }
+            if (!pocketClosed)
+                return PositionSetError("Invalid Crazyhouse FEN. Unterminated pocket.");
+            if (!(ss >> token) || !isspace(token))
+                return PositionSetError(
+                  "Invalid Crazyhouse FEN. Unexpected data after pocket.");
+            break;
         }
         else
         {
@@ -263,6 +412,8 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
             const Square sq = make_square(File(file), Rank(rank));
             put_piece(Piece(idx), sq);
 
+            previousWasPiece = true;
+            previousSquare   = sq;
             ++file;
         }
     }
@@ -276,18 +427,22 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
     if (count<KING>(WHITE) != 1 || count<KING>(BLACK) != 1)
         return PositionSetError("Unsupported position. Incorrect number of kings.");
 
-    for (Color c : {WHITE, BLACK})
-    {
-        if (count<PAWN>(c) > 8)
-            return PositionSetError(std::string("Unsupported position. ")
-                                    + (c == WHITE ? "WHITE" : "BLACK") + " has more than 8 pawns.");
+    if (selectedRuleset == Ruleset::CHESS)
+        for (Color c : {WHITE, BLACK})
+        {
+            if (count<PAWN>(c) > 8)
+                return PositionSetError(std::string("Unsupported position. ")
+                                        + (c == WHITE ? "WHITE" : "BLACK")
+                                        + " has more than 8 pawns.");
 
-        int additional = std::max(count<KNIGHT>(c) - 2, 0) + std::max(count<BISHOP>(c) - 2, 0)
-                       + std::max(count<ROOK>(c) - 2, 0) + std::max(count<QUEEN>(c) - 1, 0);
-        if (additional > 8 - count<PAWN>(c))
-            return PositionSetError(std::string("Unsupported position. Too many pieces for ")
-                                    + (c == WHITE ? "WHITE." : "BLACK."));
-    }
+            int additional = std::max(count<KNIGHT>(c) - 2, 0)
+                           + std::max(count<BISHOP>(c) - 2, 0)
+                           + std::max(count<ROOK>(c) - 2, 0)
+                           + std::max(count<QUEEN>(c) - 1, 0);
+            if (additional > 8 - count<PAWN>(c))
+                return PositionSetError(std::string("Unsupported position. Too many pieces for ")
+                                        + (c == WHITE ? "WHITE." : "BLACK."));
+        }
 
     // 2. Active color
     if (!(ss >> token))
@@ -324,6 +479,10 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
 
         if (++num_castling_rights > 4)
             return PositionSetError("Invalid FEN. Maximum of 4 castling rights can be specified.");
+
+        if (selectedRuleset == Ruleset::CRAZYHOUSE && token != 'K' && token != 'Q'
+            && token != 'k' && token != 'q')
+            return PositionSetError("Unsupported Crazyhouse position. Invalid castling right.");
 
         Square rsq  = SQ_NONE;
         Square ksq  = SQ_NONE;
@@ -375,9 +534,27 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
                                     + std::string(1, token));
         }
 
-        // Only apply castling rights if they can be valid.
+        if (selectedRuleset == Ruleset::CRAZYHOUSE)
+        {
+            const Square requiredKing = relative_square(c, SQ_E1);
+            const Square requiredRook = relative_square(c, token == 'K' ? SQ_H1 : SQ_A1);
+            if (ksq != requiredKing || rsq != requiredRook)
+                return PositionSetError(
+                  "Unsupported Crazyhouse position. Invalid castling right.");
+        }
+
+        if (selectedRuleset == Ruleset::CRAZYHOUSE && (st->crazyhouse.promoted & (ksq | rsq)))
+            return PositionSetError("Unsupported Crazyhouse position. Promoted castling piece.");
+
+        // Standard chess sanitizes invalid rights. Crazyhouse rejects them above.
         if (ksq != SQ_NONE && rsq != SQ_NONE)
+        {
+            const CastlingRights cr = c & (ksq < rsq ? KING_SIDE : QUEEN_SIDE);
+            if (selectedRuleset == Ruleset::CRAZYHOUSE && (st->castlingRights & cr))
+                return PositionSetError(
+                  "Unsupported Crazyhouse position. Invalid castling right.");
             set_castling_right(c, rsq);
+        }
     }
 
     // 4. En passant square.
@@ -417,15 +594,28 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
     if (!enpassant || !legalEP)
         st->epSquare = SQ_NONE;
 
-    // 5-6. Halfmove clock and fullmove number
-    ss >> std::skipws >> st->rule50 >> gamePly;
+    // 5-6. Halfmove clock and fullmove number. Preserve Stockfish's established
+    // permissive Chess ingress (its benchmark corpus contains four-field FENs),
+    // while the versioned Crazyhouse dialect requires an exact six-field frame.
+    if (selectedRuleset == Ruleset::CRAZYHOUSE)
+    {
+        if (!(ss >> std::skipws >> st->rule50 >> gamePly))
+            return PositionSetError("Invalid FEN. Expected halfmove and fullmove counters.");
+
+        ss >> std::ws;
+        if (!ss.eof())
+            return PositionSetError("Invalid FEN. Trailing FEN data.");
+    }
+    else
+        ss >> std::skipws >> st->rule50 >> gamePly;
 
     // Normally values larger than 99 would be pointless but we do support ignoring 50 move rule for TB purposes.
     // Limit at 2**15 as it's used multiplicatively with position evaluation during search.
     if (st->rule50 < 0 || st->rule50 > 32767)
         return PositionSetError("Unsupported position. Rule50 counter out of range.");
 
-    if (gamePly < 0 || gamePly > 100000)
+    if (gamePly < 0 || gamePly > 100000
+        || (selectedRuleset == Ruleset::CRAZYHOUSE && gamePly == 0))
         return PositionSetError("Unsupported position. Game ply out of range.");
 
     // Convert from fullmove starting from 1 to gamePly starting from 0,
@@ -433,12 +623,75 @@ Position::set(const string& fenStr, bool isChess960, StateInfo* si) {
     gamePly = std::max(2 * (gamePly - 1), 0) + (sideToMove == BLACK);
 
     chess960 = isChess960;
+    if (selectedRuleset == Ruleset::CRAZYHOUSE)
+        if (auto error = validate_crazyhouse_physical_state())
+            return error;
+
     set_state();
 
     if (attackers_to_exist(square<KING>(~sideToMove), pieces(), sideToMove))
         return PositionSetError("Unsupported position. King can be captured.");
 
     assert(pos_is_ok());
+
+    return std::nullopt;
+}
+
+
+std::optional<PositionSetError> Position::validate_crazyhouse_physical_state() const {
+    assert(activeRuleset == Ruleset::CRAZYHOUSE);
+
+    const Bitboard promoted = st->crazyhouse.promoted;
+    if (promoted & ~pieces())
+        return PositionSetError(
+          "Unsupported Crazyhouse position. Promoted marker on an empty square.");
+    if (promoted & pieces(PAWN, KING))
+        return PositionSetError(
+          "Unsupported Crazyhouse position. Promoted marker on pawn or king.");
+
+    auto pockets = [&](PieceType pt) {
+        return pocket_count(WHITE, pt) + pocket_count(BLACK, pt);
+    };
+
+    for (Color c : {WHITE, BLACK})
+        for (PieceType pt : Crazyhouse::PocketPieceTypes)
+            if (pocket_count(c, pt) > Crazyhouse::max_pocket_count(pt))
+                return PositionSetError(
+                  "Unsupported Crazyhouse position. Pocket count exceeds type limit.");
+
+    const int pawnUnits = popcount(pieces(PAWN)) + pockets(PAWN) + popcount(promoted);
+    if (pawnUnits > 16)
+        return PositionSetError(
+          "Unsupported Crazyhouse position. Pawn physical-unit total exceeds 16.");
+
+    int physicalUnits = 2 + pawnUnits;
+    for (PieceType pt : {KNIGHT, BISHOP, ROOK, QUEEN})
+    {
+        const int units = popcount(pieces(pt) & ~promoted) + pockets(pt);
+        const int limit = Crazyhouse::max_pocket_count(pt);
+        if (units > limit)
+        {
+            const char* name = pt == KNIGHT ? "Knight"
+                             : pt == BISHOP ? "Bishop"
+                             : pt == ROOK   ? "Rook"
+                                            : "Queen";
+            return PositionSetError("Unsupported Crazyhouse position. " + std::string(name)
+                                    + " physical-unit total exceeds "
+                                    + std::to_string(limit) + ".");
+        }
+        physicalUnits += units;
+    }
+
+    if (physicalUnits > 32)
+        return PositionSetError(
+          "Unsupported Crazyhouse position. Physical-unit total exceeds 32.");
+
+    for (Color c : {WHITE, BLACK})
+        for (CastlingRights cr : {c & KING_SIDE, c & QUEEN_SIDE})
+            if (can_castle(cr)
+                && (promoted & (square<KING>(c) | castling_rook_square(cr))))
+                return PositionSetError(
+                  "Unsupported Crazyhouse position. Promoted castling piece.");
 
     return std::nullopt;
 }
@@ -525,6 +778,17 @@ void Position::set_state() const {
         st->key ^= Zobrist::side;
 
     st->key ^= Zobrist::castling[st->castlingRights];
+
+    st->crazyhouse.pocketKey   = 0;
+    st->crazyhouse.promotedKey = 0;
+    if (activeRuleset == Ruleset::CRAZYHOUSE)
+    {
+        st->crazyhouse.pocketKey   = compute_crazyhouse_pocket_key();
+        st->crazyhouse.promotedKey = compute_crazyhouse_promoted_key();
+        st->key ^= Zobrist::crazyhouseRuleset ^ st->crazyhouse.pocketKey
+                 ^ st->crazyhouse.promotedKey;
+    }
+
     st->materialKey = compute_material_key();
 }
 
@@ -534,6 +798,27 @@ Key Position::compute_material_key() const {
         for (int cnt = 0; cnt < pieceCount[pc]; ++cnt)
             k ^= Zobrist::psq[pc][8 + cnt];
     return k;
+}
+
+Key Position::compute_crazyhouse_pocket_key() const {
+    Key key = 0;
+    for (Color c : {WHITE, BLACK})
+        for (usize i = 0; i < Crazyhouse::POCKET_TYPE_NB; ++i)
+        {
+            const int count = st->crazyhouse.pockets.count[c][i];
+            if (count > Crazyhouse::max_pocket_count(Crazyhouse::PocketPieceTypes[i]))
+                std::abort();
+            key ^= Zobrist::crazyhousePocket[c][i][count];
+        }
+    return key;
+}
+
+Key Position::compute_crazyhouse_promoted_key() const {
+    Key      key = 0;
+    Bitboard promoted = st->crazyhouse.promoted;
+    while (promoted)
+        key ^= Zobrist::crazyhousePromoted[pop_lsb(promoted)];
+    return key;
 }
 
 
@@ -576,12 +861,27 @@ string Position::fen() const {
                 ss << emptyCnt;
 
             if (f <= FILE_H)
-                ss << PieceToChar[piece_on(make_square(f, r))];
+            {
+                const Square square = make_square(f, r);
+                ss << PieceToChar[piece_on(square)];
+                if (activeRuleset == Ruleset::CRAZYHOUSE && (promoted_pieces() & square))
+                    ss << '~';
+            }
         }
 
         if (r == RANK_1)
             break;
         ss << '/';
+    }
+
+    if (activeRuleset == Ruleset::CRAZYHOUSE)
+    {
+        ss << '[';
+        for (Color c : {WHITE, BLACK})
+            for (PieceType pt : Crazyhouse::PocketPieceTypes)
+                for (int count = pocket_count(c, pt); count > 0; --count)
+                    ss << PieceToChar[make_piece(c, pt)];
+        ss << ']';
     }
 
     ss << (sideToMove == WHITE ? " w " : " b ");
@@ -661,11 +961,29 @@ bool Position::attackers_to_exist(Square s, Bitboard occupied, Color c) const {
 // Tests whether a pseudo-legal move is legal
 bool Position::legal(Move m) const {
 
-    assert(m.is_ok());
+    if (!m.is_ok() || !m.is_structurally_valid(activeRuleset))
+        return false;
 
-    Color  us   = sideToMove;
+    Color  us = sideToMove;
+    Square to = m.to_sq();
+
+    if (m.is_drop())
+    {
+        const PieceType pt = m.drop_piece_type();
+        if (activeRuleset != Ruleset::CRAZYHOUSE || !empty(to) || pocket_count(us, pt) == 0
+            || (pt == PAWN && (rank_of(to) == RANK_1 || rank_of(to) == RANK_8)))
+            return false;
+
+        if (!checkers())
+            return true;
+
+        if (more_than_one(checkers()))
+            return false;
+
+        return bool(between_bb(square<KING>(us), lsb(checkers())) & to);
+    }
+
     Square from = m.from_sq();
-    Square to   = m.to_sq();
 
     assert(color_of(moved_piece(m)) == us);
     assert(piece_on(square<KING>(us)) == make_piece(us, KING));
@@ -704,6 +1022,13 @@ bool Position::legal(Move m) const {
 // due to SMP concurrent access or hash position key aliasing.
 bool Position::pseudo_legal(const Move m) const {
 
+    if (!m.is_ok() || !m.is_structurally_valid(activeRuleset))
+        return false;
+
+    if (m.is_drop())
+        return checkers() ? MoveList<EVASIONS>(*this).contains(m)
+                          : MoveList<NON_EVASIONS>(*this).contains(m);
+
     Color  us   = sideToMove;
     Square from = m.from_sq();
     Square to   = m.to_sq();
@@ -716,7 +1041,7 @@ bool Position::pseudo_legal(const Move m) const {
                           : MoveList<NON_EVASIONS>(*this).contains(m);
 
     // Is not a promotion, so the promotion piece must be empty
-    assert(m.promotion_type() - KNIGHT == NO_PIECE_TYPE);
+    assert((m.raw() & DROP_TAG) == 0);
 
     // If the 'from' square is not occupied by a piece belonging to the side to
     // move, the move is obviously not legal.
@@ -766,6 +1091,11 @@ bool Position::pseudo_legal(const Move m) const {
 bool Position::gives_check(Move m) const {
 
     assert(m.is_ok());
+    assert(m.is_structurally_valid(activeRuleset));
+
+    if (m.is_drop())
+        return bool(check_squares(m.drop_piece_type()) & m.to_sq());
+
     assert(color_of(moved_piece(m)) == sideToMove);
 
     Square from = m.from_sq();
@@ -822,9 +1152,13 @@ void Position::do_move(Move                      m,
                        const SharedHistories*    history = nullptr) {
 
     assert(m.is_ok());
+    assert(m.is_structurally_valid(activeRuleset));
     assert(&newSt != st);
 
-    Key k = st->key ^ Zobrist::side;
+    const bool isDrop = m.is_drop();
+    const Key  oldPocketKey = st->crazyhouse.pocketKey;
+    const Key  oldPromotedKey = st->crazyhouse.promotedKey;
+    Key        k = st->key ^ Zobrist::side;
 
     // Copy some fields of the old state to our new StateInfo object except the
     // ones which are going to be recalculated from scratch anyway and then switch
@@ -846,23 +1180,45 @@ void Position::do_move(Move                      m,
     dpps.before[WHITE] = pieces(WHITE, PAWN);
     dpps.before[BLACK] = pieces(BLACK, PAWN);
 
-    Color  us       = sideToMove;
-    Color  them     = ~us;
-    Square from     = m.from_sq();
-    Square to       = m.to_sq();
-    Piece  pc       = piece_on(from);
-    Piece  captured = m.type_of() == EN_PASSANT ? make_piece(them, PAWN) : piece_on(to);
+    Color        us       = sideToMove;
+    Color        them     = ~us;
+    Square       from     = isDrop ? SQ_NONE : m.from_sq();
+    Square       to       = m.to_sq();
+    Piece        pc       = isDrop ? make_piece(us, m.drop_piece_type()) : piece_on(from);
+    Piece        captured = isDrop ? NO_PIECE
+                          : m.type_of() == EN_PASSANT ? make_piece(them, PAWN)
+                                                     : piece_on(to);
+    Square       capsq    = to;
+    const bool   movingPromoted =
+      !isDrop && activeRuleset == Ruleset::CRAZYHOUSE && bool(st->crazyhouse.promoted & from);
 
-    dp.pc     = pc;
-    dp.from   = from;
-    dp.to     = to;
-    dp.add_sq = SQ_NONE;
+    if (isDrop
+        && (activeRuleset != Ruleset::CRAZYHOUSE || !empty(to)
+            || pocket_count(us, m.drop_piece_type()) == 0
+            || (m.drop_piece_type() == PAWN && (rank_of(to) == RANK_1 || rank_of(to) == RANK_8))))
+        std::abort();
+
+    dp.pc        = pc;
+    dp.from      = from;
+    dp.to        = to;
+    dp.remove_sq = SQ_NONE;
+    dp.add_sq    = SQ_NONE;
 
     assert(color_of(pc) == us);
     assert(captured == NO_PIECE || color_of(captured) == (m.type_of() != CASTLING ? them : us));
     assert(type_of(captured) != KING);
 
-    if (m.type_of() == CASTLING)
+    if (isDrop)
+    {
+        const int pocketIndex = Crazyhouse::pocket_index(m.drop_piece_type());
+        if ((us != WHITE && us != BLACK) || pocketIndex < 0)
+            std::abort();
+
+        auto& count = st->crazyhouse.pockets.count[us][pocketIndex];
+        --count;
+        st->crazyhouse.promoted &= ~square_bb(to);
+    }
+    else if (m.type_of() == CASTLING)
     {
         assert(pc == make_piece(us, KING));
         assert(captured == make_piece(us, ROOK));
@@ -876,8 +1232,6 @@ void Position::do_move(Move                      m,
     }
     else if (captured)
     {
-        Square capsq = to;
-
         // If the captured piece is a pawn, update pawn hash key, otherwise
         // update non-pawn material.
         if (type_of(captured) == PAWN)
@@ -914,6 +1268,21 @@ void Position::do_move(Move                      m,
         st->materialKey ^=
           Zobrist::psq[captured][8 + pieceCount[captured] - (m.type_of() != EN_PASSANT)];
 
+        if (activeRuleset == Ruleset::CRAZYHOUSE)
+        {
+            const bool      capturedPromoted = bool(st->crazyhouse.promoted & capsq);
+            const PieceType pocketType = capturedPromoted ? PAWN : type_of(captured);
+            const int       pocketIndex = Crazyhouse::pocket_index(pocketType);
+            if ((us != WHITE && us != BLACK) || pocketIndex < 0)
+                std::abort();
+
+            auto& count = st->crazyhouse.pockets.count[us][pocketIndex];
+            if (count >= Crazyhouse::max_pocket_count(pocketType))
+                std::abort();
+            ++count;
+            st->crazyhouse.promoted &= ~square_bb(capsq);
+        }
+
         // Reset rule 50 counter
         st->rule50 = 0;
     }
@@ -921,7 +1290,10 @@ void Position::do_move(Move                      m,
         dp.remove_sq = SQ_NONE;
 
     // Update hash key
-    k ^= Zobrist::psq[pc][from] ^ Zobrist::psq[pc][to];
+    if (isDrop)
+        k ^= Zobrist::psq[pc][to];
+    else
+        k ^= Zobrist::psq[pc][from] ^ Zobrist::psq[pc][to];
 
     // Reset en passant square
     if (st->epSquare != SQ_NONE)
@@ -930,13 +1302,33 @@ void Position::do_move(Move                      m,
         st->epSquare = SQ_NONE;
     }
 
-    // Update castling rights.
-    k ^= Zobrist::castling[st->castlingRights];
-    st->castlingRights &= ~(castlingRightsMask[from] | castlingRightsMask[to]);
-    k ^= Zobrist::castling[st->castlingRights];
+    // Update castling rights. Drops cannot authenticate or remove rights.
+    if (!isDrop)
+    {
+        k ^= Zobrist::castling[st->castlingRights];
+        st->castlingRights &= ~(castlingRightsMask[from] | castlingRightsMask[to]);
+        k ^= Zobrist::castling[st->castlingRights];
+    }
+
+    if (isDrop)
+    {
+        st->materialKey ^= Zobrist::psq[pc][8 + pieceCount[pc]];
+        if (type_of(pc) == PAWN)
+        {
+            st->pawnKey ^= Zobrist::psq[pc][to];
+            st->rule50 = 0;
+        }
+        else
+        {
+            st->nonPawnKey[us] ^= Zobrist::psq[pc][to];
+            st->nonPawnMaterial[us] += PieceValue[pc];
+            if (type_of(pc) <= BISHOP)
+                st->minorPieceKey ^= Zobrist::psq[pc][to];
+        }
+    }
 
     // If the moving piece is a pawn do some special extra work
-    if (type_of(pc) == PAWN)
+    else if (type_of(pc) == PAWN)
     {
         // Check if the en passant square needs to be set. Accurate e.p. info is needed
         // for correct zobrist key generation and 3-fold checking.
@@ -1004,12 +1396,27 @@ void Position::do_move(Move                      m,
             st->minorPieceKey ^= Zobrist::psq[pc][from] ^ Zobrist::psq[pc][to];
     }
 
+    if (activeRuleset == Ruleset::CRAZYHOUSE && !isDrop && m.type_of() != CASTLING)
+    {
+        st->crazyhouse.promoted &= ~square_bb(from);
+        if (movingPromoted || m.type_of() == PROMOTION)
+            st->crazyhouse.promoted |= to;
+    }
+
+    if (activeRuleset == Ruleset::CRAZYHOUSE)
+    {
+        st->crazyhouse.pocketKey   = compute_crazyhouse_pocket_key();
+        st->crazyhouse.promotedKey = compute_crazyhouse_promoted_key();
+        k ^= oldPocketKey ^ st->crazyhouse.pocketKey ^ oldPromotedKey
+           ^ st->crazyhouse.promotedKey;
+    }
+
     if (tt)
-        prefetch(tt->first_entry(adjust_key50(k)));
+        prefetch(tt->first_entry(activeRuleset == Ruleset::CRAZYHOUSE ? k : adjust_key50(k)));
     // Update the key with the final value
     st->key = k;
 
-    if (history)
+    if (history && activeRuleset == Ruleset::CHESS)
     {
         prefetch(&history->pawn_entry(*this)[pc][to]);
         prefetch(&history->pawn_correction_entry(*this));
@@ -1019,7 +1426,9 @@ void Position::do_move(Move                      m,
     }
 
     // Move the piece. The tricky Chess960 castling is handled earlier
-    if (m.type_of() != CASTLING)
+    if (isDrop)
+        put_piece(pc, to, &dts);
+    else if (m.type_of() != CASTLING)
     {
         Piece toPc = pc;
         if (m.type_of() == PROMOTION)
@@ -1054,7 +1463,8 @@ void Position::do_move(Move                      m,
     // occurrence of the same position, negative in the 3-fold case, or zero
     // if the position was not repeated.
     st->repetition = 0;
-    int end        = std::min(st->rule50, st->pliesFromNull);
+    int end = activeRuleset == Ruleset::CRAZYHOUSE ? st->pliesFromNull
+                                                    : std::min(st->rule50, st->pliesFromNull);
     if (end >= 4)
     {
         StateInfo* stp = st->previous->previous;
@@ -1076,7 +1486,7 @@ void Position::do_move(Move                      m,
 
     assert(dp.pc != NO_PIECE);
     assert(!(bool(captured) || m.type_of() == CASTLING) ^ (dp.remove_sq != SQ_NONE));
-    assert(dp.from != SQ_NONE);
+    assert((dp.from == SQ_NONE) == isDrop);
     assert(!(dp.add_sq != SQ_NONE) ^ (m.type_of() == PROMOTION || m.type_of() == CASTLING));
 }
 
@@ -1086,18 +1496,20 @@ void Position::do_move(Move                      m,
 void Position::undo_move(Move m) {
 
     assert(m.is_ok());
+    assert(m.is_structurally_valid(activeRuleset));
 
     sideToMove = ~sideToMove;
 
-    Color  us   = sideToMove;
-    Square from = m.from_sq();
-    Square to   = m.to_sq();
-    Piece  pc   = piece_on(to);
+    const bool isDrop = m.is_drop();
+    Color      us     = sideToMove;
+    Square     from   = isDrop ? SQ_NONE : m.from_sq();
+    Square     to     = m.to_sq();
+    Piece      pc     = piece_on(to);
 
-    assert(empty(from) || m.type_of() == CASTLING);
+    assert(isDrop || empty(from) || m.type_of() == CASTLING);
     assert(type_of(st->capturedPiece) != KING);
 
-    if (m.type_of() == PROMOTION)
+    if (!isDrop && m.type_of() == PROMOTION)
     {
         assert(relative_rank(us, to) == RANK_8);
         assert(type_of(pc) == m.promotion_type());
@@ -1107,7 +1519,9 @@ void Position::undo_move(Move m) {
         swap_piece(to, pc);
     }
 
-    if (m.type_of() == CASTLING)
+    if (isDrop)
+        remove_piece(to);
+    else if (m.type_of() == CASTLING)
     {
         Square rfrom, rto;
         do_castling<false>(us, from, to, rfrom, rto);
@@ -1290,7 +1704,10 @@ void Position::update_piece_threats(Piece               pc,
 #endif
 }
 
-Key Position::prefetch_key(Move m) const {
+std::optional<Key> Position::prefetch_key(Move m) const {
+    if (activeRuleset == Ruleset::CRAZYHOUSE)
+        return std::nullopt;
+
     Square from     = m.from_sq();
     Square to       = m.to_sq();
     Piece  pc       = piece_on(from);
@@ -1389,6 +1806,11 @@ void Position::undo_null_move() {
 bool Position::see_ge(Move m, int threshold) const {
 
     assert(m.is_ok());
+
+    // Orthodox SEE does not model pockets, provenance or the material value of
+    // placing a piece from hand. Restore it only through a separate experiment.
+    if (activeRuleset == Ruleset::CRAZYHOUSE)
+        return true;
 
     // Only deal with normal moves, assume others pass a simple SEE
     if (m.type_of() != NORMAL)
@@ -1491,11 +1913,13 @@ bool Position::see_ge(Move m, int threshold) const {
     return bool(res);
 }
 
-// Tests whether the position is drawn by 50-move rule
-// or by repetition. It does not detect stalemates.
+// Tests whether the position is drawn by a search-cycle repetition, or in Chess
+// by the 50-move rule. It does not detect stalemates. Crazyhouse automatic and
+// claim-policy results are exposed separately by crazyhouse_terminal_status().
 bool Position::is_draw(int ply) const {
 
-    if (st->rule50 > 99 && (!checkers() || MoveList<LEGAL>(*this).size()))
+    if (activeRuleset == Ruleset::CHESS && st->rule50 > 99
+        && (!checkers() || MoveList<LEGAL>(*this).size()))
         return true;
 
     return is_repetition(ply);
@@ -1505,12 +1929,15 @@ bool Position::is_draw(int ply) const {
 // after the root, or repeats twice before or at the root.
 bool Position::is_repetition(int ply) const { return st->repetition && st->repetition < ply; }
 
-// Tests whether there has been at least one repetition
-// of positions since the last capture or pawn move.
+// Tests whether there has been at least one repetition. Chess can stop at its
+// last zeroing move; Crazyhouse must scan the complete post-null history because
+// captures and drops can reconstruct an earlier complete physical state.
 bool Position::has_repeated() const {
 
     StateInfo* stc = st;
-    int        end = std::min(st->rule50, st->pliesFromNull);
+    int        end = activeRuleset == Ruleset::CRAZYHOUSE
+                     ? st->pliesFromNull
+                     : std::min(st->rule50, st->pliesFromNull);
     while (end-- >= 4)
     {
         if (stc->repetition)
@@ -1522,9 +1949,60 @@ bool Position::has_repeated() const {
 }
 
 
+// Counts occurrences of the current complete raw identity, including the
+// current position. Only same-side-to-move states can match.
+int Position::repetition_occurrences() const {
+
+    int end = activeRuleset == Ruleset::CRAZYHOUSE ? st->pliesFromNull
+                                                    : std::min(st->rule50, st->pliesFromNull);
+    int        occurrences = 1;
+    StateInfo* cursor      = st;
+
+    for (int distance = 2; distance <= end; distance += 2)
+    {
+        if (!cursor->previous || !cursor->previous->previous)
+            break;
+
+        cursor = cursor->previous->previous;
+        if (cursor->key == st->key)
+            ++occurrences;
+    }
+
+    return occurrences;
+}
+
+
+CrazyhouseTerminalStatus
+Position::crazyhouse_terminal_status(CrazyhouseClaimPolicy policy) const {
+
+    if (activeRuleset != Ruleset::CRAZYHOUSE)
+        return {};
+
+    if (MoveList<LEGAL>(*this).size() == 0)
+    {
+        if (checkers())
+            return {CrazyhouseTerminalReason::CHECKMATE, ~sideToMove};
+
+        return {CrazyhouseTerminalReason::STALEMATE, std::nullopt};
+    }
+
+    const int occurrences = repetition_occurrences();
+    if (occurrences >= 5)
+        return {CrazyhouseTerminalReason::FIVEFOLD_REPETITION, std::nullopt};
+
+    if (policy == CrazyhouseClaimPolicy::THREEFOLD_IMMEDIATE_CLAIM && occurrences >= 3)
+        return {CrazyhouseTerminalReason::THREEFOLD_REPETITION_CLAIM, std::nullopt};
+
+    return {};
+}
+
+
 // Tests if the position has a move which draws by repetition.
 // This function accurately matches the outcome of is_draw() over all legal moves.
 bool Position::upcoming_repetition(int ply) const {
+
+    if (activeRuleset == Ruleset::CRAZYHOUSE)
+        return false;
 
     int end = std::min(st->rule50, st->pliesFromNull);
 
@@ -1620,8 +2098,12 @@ bool Position::pos_is_ok() const {
         || attackers_to_exist(square<KING>(~sideToMove), pieces(), sideToMove))
         assert(0 && "pos_is_ok: Kings");
 
-    if ((pieces(PAWN) & (Rank1BB | Rank8BB)) || count<PAWN>(WHITE) > 8 || count<PAWN>(BLACK) > 8)
+    if (pieces(PAWN) & (Rank1BB | Rank8BB))
         assert(0 && "pos_is_ok: Pawns");
+
+    if (activeRuleset == Ruleset::CHESS
+        && (count<PAWN>(WHITE) > 8 || count<PAWN>(BLACK) > 8))
+        assert(0 && "pos_is_ok: Chess pawns");
 
 
     if (ep_square() != SQ_NONE)
@@ -1640,9 +2122,12 @@ bool Position::pos_is_ok() const {
             assert(0 && "pos_is_ok: En passant square");
     }
 
-    if ((pieces(WHITE) & pieces(BLACK)) || (pieces(WHITE) | pieces(BLACK)) != pieces()
-        || popcount(pieces(WHITE)) > 16 || popcount(pieces(BLACK)) > 16)
+    if ((pieces(WHITE) & pieces(BLACK)) || (pieces(WHITE) | pieces(BLACK)) != pieces())
         assert(0 && "pos_is_ok: Bitboards");
+
+    if (activeRuleset == Ruleset::CHESS
+        && (popcount(pieces(WHITE)) > 16 || popcount(pieces(BLACK)) > 16))
+        assert(0 && "pos_is_ok: Chess bitboards");
 
     for (PieceType p1 = PAWN; p1 <= KING; ++p1)
         for (PieceType p2 = PAWN; p2 <= KING; ++p2)
@@ -1667,6 +2152,25 @@ bool Position::pos_is_ok() const {
         }
 
     assert(material_key_is_ok() && "pos_is_ok: materialKey");
+
+    if (activeRuleset == Ruleset::CRAZYHOUSE)
+    {
+        assert(!validate_crazyhouse_physical_state().has_value()
+               && "pos_is_ok: Crazyhouse physical state");
+        assert(st->crazyhouse.pocketKey == compute_crazyhouse_pocket_key()
+               && "pos_is_ok: Crazyhouse pocket key");
+        assert(st->crazyhouse.promotedKey == compute_crazyhouse_promoted_key()
+               && "pos_is_ok: Crazyhouse promoted key");
+    }
+    else
+    {
+        bool pocketsEmpty = true;
+        for (Color c : {WHITE, BLACK})
+            for (PieceType pt : Crazyhouse::PocketPieceTypes)
+                pocketsEmpty &= pocket_count(c, pt) == 0;
+        assert(pocketsEmpty && st->crazyhouse.promoted == 0 && st->crazyhouse.pocketKey == 0
+               && st->crazyhouse.promotedKey == 0 && "pos_is_ok: Chess Crazyhouse state");
+    }
 
     return true;
 }

@@ -1,0 +1,99 @@
+{
+  "schema": "crazyhouse-p9-local-datagen-g0-preregistration/v1",
+  "created_utc": "2026-08-24T01:20:00Z",
+  "status": "frozen-before-producer-implementation",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P9",
+  "gate": "G9",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "hypothesis": "A separate official-Stockfish-derived Crazyhouse producer can replay the frozen physical trajectories through production legality and make/undo code, encode crazyhouse-physical-v1 exactly, and publish a fail-closed crash-safe chunk without exposing datagen in the normal UCI engine.",
+  "single_variable": "Separate producer plumbing and physical serialization only; no rule, search, evaluator, network, book, time-control or strength change.",
+  "base": {
+    "branch": "engineering/datagen-producer-v1",
+    "preimplementation_commit": "341b8e369169f30a8724d89efadab64d2b784983",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false
+  },
+  "frozen_inputs": {
+    "rule_profile": {
+      "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+      "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+    },
+    "physical_schema": {
+      "path": "schemas/crazyhouse-physical-v1.schema.json",
+      "bytes": 18729,
+      "sha256": "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55"
+    },
+    "capability_contract": {
+      "path": "tests/crazyhouse/datagen-capability-v1.json",
+      "bytes": 4573,
+      "sha256": "dc6af06c3d18fb2ff06e27e35ab691e35555ef03a5948b23cb2a198e6b89eb96"
+    },
+    "trajectory_stream": {
+      "path": "tests/crazyhouse/data/crazyhouse-datagen-g0-trajectories-v1.tsv",
+      "bytes": 1613,
+      "sha256": "4113b930d08d6037de8667b9919f8944882d527856b860aaf92bbf1088aa0cdd",
+      "trajectories": 11,
+      "records": 42,
+      "training_admissible": false
+    },
+    "selection_policy_sha256": "e5b39bd15c78b00ce0f6acc01da49103e71685c95f7b6fbde09334933d8bfb18"
+  },
+  "artifact_boundary": {
+    "producer_name": "crazyhouse-stockfish-datagen",
+    "producer_role": "crazyhouse-physical-datagen",
+    "normal_engine_may_generate": false,
+    "normal_engine_may_advertise_capability": false,
+    "source_dirty_required": false,
+    "generation_output_open_before_admission": false,
+    "openbench_authorized": false
+  },
+  "expected_positive": {
+    "capability_exactly_one_canonical_line": true,
+    "engine_replay_trajectories": 11,
+    "engine_replay_records": 42,
+    "chunk_header_bytes": 256,
+    "chunk_record_bytes": 256,
+    "chunk_footer_bytes": 128,
+    "complete_trajectories": true,
+    "round_trip": true,
+    "make_undo_exact": true,
+    "transaction_commit_point": "final .chp1 rename after verified sidecars"
+  },
+  "negative_matrix": [
+    "missing challenge",
+    "uppercase challenge",
+    "wrong challenge width",
+    "unknown capability argument",
+    "normal engine used as producer",
+    "dirty producer identity",
+    "wrong schema bytes",
+    "wrong capability-contract bytes",
+    "malformed TSV framing",
+    "duplicate game id",
+    "duplicate trajectory id",
+    "illegal move",
+    "wrong expected count",
+    "terminal disagreement",
+    "preexisting final output",
+    "preexisting partial output",
+    "killed partial retained",
+    "same chunk id retry rejected",
+    "stale capability response",
+    "capability/provenance/header mismatch",
+    "corrupt record CRC32C",
+    "truncated chunk",
+    "appended chunk"
+  ],
+  "resource_envelope": {
+    "threads": 1,
+    "network_connections": 0,
+    "gpu": false,
+    "foreign_process_mutation": false,
+    "timing_sensitive": false,
+    "lease_required_for_formal_build_and_run": true
+  },
+  "stopping_rule": "PASS only if every positive and negative row passes in a clean export and an independent verifier authenticates all artifacts; any row failure keeps G9 open and receives an additive incident or correction.",
+  "claim_boundary": "This is a fixture-first engineering preregistration. It is not generated training data, model selection, Elo, local strength, official OpenBench evidence or release evidence."
+}

@@ -1,0 +1,110 @@
+{
+  "schema": "crazyhouse-p15-release-engine-identity-short-scratch-formal-preregistration/v1",
+  "created_utc": "2026-08-24T23:52:39.0475755Z",
+  "status": "PREREGISTERED_FORMAL_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "failed_formal_result": {
+    "path": "tests/crazyhouse/p15-release-engine-identity-v1.addendum.008.json",
+    "bytes": 3913,
+    "sha256": "430ac497d1b075b5d95c6cae4bef35175269ee6e89450b3e092860e831d95a6e",
+    "lease": 354,
+    "incident": "CH-318"
+  },
+  "source_parent": {
+    "commit": "c28b26cf0d4e5dcc4f5ae73c0b2ff3d3aa355243",
+    "tree": "8d3ba53d7e03a2743ac81b53c357444f41458a38",
+    "src_tree": "4649dfee96f7b164fc164ddd8713be2c684d3302",
+    "source_changes_since_failed_formal": 0
+  },
+  "single_variable": {
+    "name": "formal fixture scratch root length",
+    "before": "Per-profile scratch directories were nested below the long formal target and produced a 260-character designed checkout path.",
+    "after": "Four dedicated short scratch roots are allocated below D:/Crazyhouse-Stockfish/tmp/p15-i355 and cap the designed checkout path at 190 characters.",
+    "unchanged": [
+      "source and implementation bytes",
+      "release identity verifier",
+      "three positive and 25 negative fixtures per profile",
+      "two clean exports",
+      "normal and optimized profiles",
+      "Make entrypoint",
+      "local Git authority and ancestry requirements",
+      "900-second per-profile timeout",
+      "expected summaries and stopping rules"
+    ]
+  },
+  "formal_matrix": {
+    "lease": 355,
+    "clean_exports": 2,
+    "profiles_per_export": [
+      "python-normal",
+      "python-optimized"
+    ],
+    "entrypoint": "C:/msys64/usr/bin/make.exe --no-print-directory --old-file=.depend -C src crazyhouse_p15_release_engine_identity_test",
+    "python": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+    "python_version": "3.12.0",
+    "pythonhashseed": "0",
+    "fixture_git_authority": "C:/Users/djime/Documents/Chess_variants/Codex/Fairy-Stockfish organization/Crazyhouse Project/.worktrees/crazyhouse-release-foundation-v1",
+    "fixture_authority_must_equal_tested_source_commit": true,
+    "network_fallback_allowed": false,
+    "profile_timeout_seconds": 900,
+    "required_summary": "PASS_RELEASE_ENGINE_IDENTITY_FIXTURES positive=3 negative=25 proposed=true tagged=true public_mutation=false",
+    "positive_count_per_profile": 3,
+    "negative_count_per_profile": 25,
+    "total_positive_cases": 12,
+    "total_negative_cases": 100,
+    "all_four_normalized_summaries_byte_identical": true,
+    "source_archives_byte_identical": true,
+    "scratch_roots": {
+      "export-1-python-normal": "D:/Crazyhouse-Stockfish/tmp/p15-i355/e1n",
+      "export-1-python-optimized": "D:/Crazyhouse-Stockfish/tmp/p15-i355/e1o",
+      "export-2-python-normal": "D:/Crazyhouse-Stockfish/tmp/p15-i355/e2n",
+      "export-2-python-optimized": "D:/Crazyhouse-Stockfish/tmp/p15-i355/e2o"
+    },
+    "scratch_root_parent_must_be_absent_before_lease": true,
+    "each_scratch_root_must_restore_empty": true,
+    "scratch_bytes_count_against_namespace_ceiling": true,
+    "longest_tracked_relative_path_characters": 86,
+    "max_designed_checkout_path_characters": 190,
+    "max_allowed_designed_checkout_path_characters": 239,
+    "allowed_generated_paths": [
+      "src/.build_date.txt",
+      "src/.build_diffindex.txt",
+      "src/.build_sha.txt"
+    ],
+    "compiler_linker_engine_or_bytecode_artifacts": 0,
+    "timeouts_allowed": false,
+    "nonzero_exits_allowed": false
+  },
+  "resource_contract": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "ports": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "combined_target_and_scratch_ceiling_bytes": 268435456,
+    "foreign_process_mutation": false,
+    "p7_supervisor_pid": 44764
+  },
+  "stopping_rule": "Stop and preserve the fresh target and short scratch parent on any source, failed-result, path-budget, scratch-collision, archive, inventory, authority, ancestry, profile exit, stream, summary, scratch-restoration, resource, P7 or source-restoration mismatch. Never repair or rerun lease 355 in place.",
+  "pass_effect": "Qualifies only the synthetic development/proposed/tagged identity verifier and its unchanged mutation matrix from clean exports. It does not compile or run an engine, authenticate stable runtime or package bytes, select a candidate, grant strength or OpenBench credit, create a draft or tag, authorize G15, or prove RELEASED_MONITORED.",
+  "boundaries": {
+    "formal_executed": false,
+    "synthetic_identity_tooling_qualified": false,
+    "stable_runtime_identity_authenticated": false,
+    "full_engine_builds_executed": false,
+    "final_p14_panel_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

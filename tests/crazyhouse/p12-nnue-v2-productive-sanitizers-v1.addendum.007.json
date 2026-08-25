@@ -1,0 +1,88 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-productive-sanitizers-preregistration-addendum/v1",
+  "addendum": 7,
+  "created_utc": "2026-08-24T15:25:07.029Z",
+  "status": "PREREGISTERED_EMPTY_OWNED_COLLECTION_CORRECTION_BEFORE_LEASE_327",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Replace only the rejected lease and make the zero-owned-process postcheck type-stable. Preserve every scientific input, toolchain, product source, sanitizer matrix, link routing, 8 MiB stack admission, stopping rule, resource boundary and claim boundary.",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.006.json",
+    "commit": "adf90d48c50fec71ae68e0f91a003775a5bd0937",
+    "bytes": 4259,
+    "sha256": "cb732fcc0c6e1fa75de8795c07d0b32e7f522aa79f8bf27d563645f110438d80"
+  },
+  "rejected_lease_326": {
+    "status": "REJECTED_ENGINEERING_OR_ORCHESTRATION",
+    "incident": "CH-297",
+    "end_receipt": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-formal-t1-end-326.json",
+      "bytes": 5962,
+      "sha256": "558c4050b3da030172abb9b394cd8aa0300b2b6be9bd60a57f3b20d1f896984d"
+    },
+    "causal_diagnostic": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-productive-sanitizers-empty-owned-count-diagnostic-326.json",
+      "bytes": 3987,
+      "sha256": "792583366d64b9981abc2b4b55c2ca681433e66a6c1628ed7467b5cd5075d280"
+    },
+    "sanitizer_controls_passed": true,
+    "six_product_verifiers_exit_zero": true,
+    "cross_lane_scalar_simd_incremental_byte_equal": true,
+    "finalizer_owned_processes_alive": 0,
+    "formal_gate_credit": false
+  },
+  "single_operational_change": {
+    "old_lease": 326,
+    "new_lease": 327,
+    "old_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-326",
+    "new_target": "D:/Crazyhouse-Stockfish/leases/p12-nnue-v2-productive-sanitizers-formal-327",
+    "old_expression": "$alive = Get-OwnedAlive",
+    "new_expression": "$alive = @(Get-OwnedAlive)",
+    "preflight_admission": "Before namespace creation, authenticate the exact caller-side array-wrap marker and exercise zero-item and one-item Count branches under StrictMode.",
+    "runtime_admission": "The pre-PASS postcheck must require Count 0; the finalizer retains its independent caller-side array wrap."
+  },
+  "causal_basis": {
+    "unwrapped_empty_output_is_null": true,
+    "unwrapped_count_throws_under_strict_mode": true,
+    "caller_array_wrap_type": "System.Object[]",
+    "caller_array_wrap_count": 0,
+    "exact_failure_reproduced": true
+  },
+  "formal_source_admission": {
+    "effective_base_commit": "adf90d48c50fec71ae68e0f91a003775a5bd0937",
+    "permitted_difference_from_effective_base": [
+      "docs/crazyhouse/incident-ledger.md",
+      "tests/crazyhouse/p12-nnue-v2-productive-sanitizers-v1.addendum.007.json"
+    ],
+    "exact_src_tree_required": "630ebd4629e4361bb3cce3d56e442945be0b6b0e",
+    "clean_worktree_required": true
+  },
+  "preserved": {
+    "hypothesis": true,
+    "single_variable": true,
+    "frozen_inputs": true,
+    "toolchains": true,
+    "resource_contract": true,
+    "clean_export_contract": true,
+    "sanitizer_lanes": true,
+    "runtime_matrix": true,
+    "asynchronous_pipe_protocol": true,
+    "large_bidirectional_pipe_preflight": true,
+    "unique_translation_unit_object_plan": true,
+    "link_options_outside_response": true,
+    "linker_warnings_are_errors": true,
+    "msvc_asan_stack_reserve_bytes": 8388608,
+    "stopping_rule": true,
+    "pass_effect": true,
+    "boundaries": true
+  },
+  "boundaries": {
+    "sanitizer_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

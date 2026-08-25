@@ -1,0 +1,52 @@
+{
+  "schema": "crazyhouse-engine-routing-state-contract/v1",
+  "profile": "LICHESS_CRAZYHOUSE_2026_08_12",
+  "profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "profile_token": "LICHESS_CRAZYHOUSE_2026_08_12@d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+  "official_source_commit": "5062aee519a1ba262d472d8ab139851ced56573e",
+  "routing_vocabulary_commit": "326b803c3b4a245b604d8416222f78644b13be91",
+  "profile_routing_fixture_commit": "bc22e22f75452dd430b65c18b0655329ab292f87",
+  "initial_epoch": 1,
+  "transitions": [
+    {"id": "startup", "epoch": 1, "active": null, "backend": "none", "position": "invalid"},
+    {"id": "legacy_success", "epoch": 2, "active": "crazyhouse", "backend": "legacy-v1", "position": "invalid"},
+    {"id": "position_failure", "epoch": 2, "physical_position": "preserved", "position": "invalid"},
+    {"id": "legacy_replacement_failure", "epoch": 3, "active": "crazyhouse", "backend": "failed", "position": "invalid"},
+    {"id": "failed_retry", "epoch": 3, "active": "crazyhouse", "backend": "failed", "rule_position": "preserved"},
+    {"id": "legacy_retry_success", "epoch": 4, "active": "crazyhouse", "backend": "legacy-v1", "position": "invalid"},
+    {"id": "chess_success", "epoch": 5, "active": "chess", "backend": "official-chess", "position": "invalid"},
+    {"id": "crossed_legacy_failure", "epoch": 6, "active": "crazyhouse", "backend": "failed", "physical_backends": "none"},
+    {"id": "persisted_chess_success", "epoch": 7, "active": "chess", "backend": "official-chess", "legacy_storage": false},
+    {"id": "crazyhouse_chess960_failure", "epoch": 8, "active": null, "backend": "failed", "physical_backends": "none"},
+    {"id": "crazyhouse_recovery", "epoch": 9, "active": "crazyhouse", "backend": "legacy-v1", "position": "invalid"},
+    {"id": "invalid_variant_no_mutation", "epoch": 9, "active": "crazyhouse", "backend": "legacy-v1", "position": "invalid"},
+    {"id": "profile_hash_mismatch", "epoch": 10, "active": null, "backend": "failed", "error": "crazyhouse_profile_hash_mismatch"},
+    {"id": "profile_unknown", "epoch": 11, "active": null, "backend": "failed", "error": "crazyhouse_profile_unknown"},
+    {"id": "profile_missing", "epoch": 12, "active": null, "backend": "failed", "error": "crazyhouse_profile_missing"},
+    {"id": "profile_exact_recovery", "epoch": 13, "active": "crazyhouse", "backend": "legacy-v1", "profile": "exact"},
+    {"id": "profile_chess_route", "epoch": 14, "active": "chess", "backend": "official-chess", "profile": "exact"},
+    {"id": "profile_invalid_chess_allowed", "epoch": 15, "active": "chess", "backend": "official-chess", "profile": "invalid-retained"},
+    {"id": "profile_invalid_crazyhouse_rejected", "epoch": 16, "active": null, "backend": "failed", "error": "crazyhouse_profile_hash_mismatch"},
+    {"id": "profile_final_exact_recovery", "epoch": 17, "active": "crazyhouse", "backend": "legacy-v1", "profile": "exact"}
+  ],
+  "profile_routing": {
+    "crazyhouse_requires_exact_token": true,
+    "chess_ignores_profile_validity": true,
+    "profile_mutation_dirties_route": true,
+    "failed_profile_clears_active_route_and_backends": true,
+    "invalid_value_persists_until_replaced": true
+  },
+  "position": {
+    "candidate_ownership": "heap slot containing Position and complete StateInfo deque",
+    "failure_policy": "preserve physical slot and clear position epoch",
+    "move_index_base": 1,
+    "rule_only_after_backend_failure": true
+  },
+  "backend": {
+    "legacy_identity": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "official_identity_prefix": "official-content-hash:",
+    "failed_replacement_restores_stale": false,
+    "inactive_storage_retained": false
+  },
+  "scope": "E1 Engine ownership and profile routing only; no worker binding, Crazyhouse search, strength, OpenBench or release claim"
+}

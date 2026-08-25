@@ -1,0 +1,65 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-legacy-control-preregistration-addendum/v1",
+  "addendum": 5,
+  "created_utc": "2026-08-24T17:21:36.9158554Z",
+  "status": "RECORDED_PREFLIGHT_CORRECTION_NO_GATE_CREDIT",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_addendum": {
+    "path": "tests/crazyhouse/p12-nnue-v2-legacy-control-v1.addendum.004.json",
+    "commit": "20407569e4386638cf575926938a882c0558e238",
+    "bytes": 3356,
+    "sha256": "b751199955b765778e444cb82f1b9e0f415ac4414efa40d7230c2d274a1ceac5"
+  },
+  "immutable_handoff_chain": {
+    "original_start": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-formal-t1-start-332.json",
+      "bytes": 1909,
+      "sha256": "e7d998016b731175d07d54313d82ac6f6564ddfd5cbab45da1987c017e81c912"
+    },
+    "correction": {
+      "path": "../../../../receipts/resources/p12-nnue-v2-legacy-control-formal-t1-start-332.correction.001.json",
+      "bytes": 1379,
+      "sha256": "37ea4f08ab3702e2a80d854a9b40e3bd825be76f67888da97f11a38196efc820"
+    },
+    "original_controller": {
+      "bytes": 47715,
+      "sha256": "bb7b4e66d9837f76a65243dc1d77563102b7e40598d7d3cc7b1c9ec817d943e4"
+    },
+    "effective_controller": {
+      "bytes": 48857,
+      "sha256": "1b8daf4998724a250ca73ac88dfc9dfca841f790e38ef894bf81c62a5508993a"
+    },
+    "receipt_rewritten": false
+  },
+  "incident": {
+    "id": "CH-301",
+    "symptom": "The read-only formal preflight rejected the live P7 supervisor as missing.",
+    "false_inference": "The process name returned by psutil would be exactly python.",
+    "cause": "On this Windows host psutil returned the executable-style name python.exe.",
+    "prevention": "Normalize the Windows executable suffix while continuing to pin PID, creation time and priority.",
+    "gate": "P12/G12 resource preflight process identity"
+  },
+  "preflight_effect": {
+    "formal_namespace_created": false,
+    "child_processes_started": false,
+    "source_changed": false,
+    "foreign_process_mutation": false,
+    "openbench_used": false,
+    "corrected_preflight_exit_zero": true,
+    "fresh_namespace_required_after_any_post_creation_failure": true
+  },
+  "claim_boundary": "This addendum records only an immutable pre-namespace controller correction and its passing read-only retry. Formal legacy-control credit, if any, must be established by a separate result record that authenticates the completed fresh lease. It gives no training, model-selection, timing, strength, OpenBench, G12, release or monitoring credit.",
+  "boundaries": {
+    "legacy_control_proven": false,
+    "training_admissible": false,
+    "model_selection_credit": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "g12_closed": false,
+    "openbench_used": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  }
+}

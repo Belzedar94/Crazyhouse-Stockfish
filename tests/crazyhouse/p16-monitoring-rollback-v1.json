@@ -1,0 +1,243 @@
+{
+  "schema": "crazyhouse-p16-monitoring-rollback-contract/v1",
+  "created_utc": "2026-08-24T21:17:34.8605606Z",
+  "status": "FROZEN_IMPLEMENTATION_ABSENT",
+  "evidence_class": "P5_POST_RELEASE",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "decision_parent": {
+    "commit": "c80713b755eeb6d72977a8884b42207fd0d14062",
+    "tree": "7c7743bfeb2212ced9cfb0aec7ec8db2166d0eed",
+    "src_tree": "fef67c6603c479439c33baaec496115dba293a0c",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac"
+  },
+  "expected_red": {
+    "make_target": "crazyhouse_p16_monitoring_contract_test",
+    "implementation_paths": [
+      "tools/release/crazyhouse_release_monitor.py",
+      "tools/release/verify_crazyhouse_monitor_chain.py",
+      "tests/crazyhouse_release_monitor.py"
+    ],
+    "required_observation": "clean-export target missing, exit 2, exact one-line GNU Make stderr, zero implementation paths and zero compiler/interpreter artifacts"
+  },
+  "namespace": {
+    "prefix": "crazyhouse-monitor-${VERSION}-",
+    "shared_variant_state_allowed": false,
+    "reused_download_bytes_allowed": false,
+    "reused_checkpoint_directory_allowed": false,
+    "canonical_encoding": "UTF-8 JSON, ensure_ascii true, sorted keys, indent 2, LF terminated"
+  },
+  "schedule": [
+    {
+      "id": "T0",
+      "offset_seconds": 0,
+      "lateness_seconds": 300
+    },
+    {
+      "id": "T+15m",
+      "offset_seconds": 900,
+      "lateness_seconds": 300
+    },
+    {
+      "id": "T+1h",
+      "offset_seconds": 3600,
+      "lateness_seconds": 600
+    },
+    {
+      "id": "T+6h",
+      "offset_seconds": 21600,
+      "lateness_seconds": 1800
+    },
+    {
+      "id": "T+24h",
+      "offset_seconds": 86400,
+      "lateness_seconds": 3600
+    },
+    {
+      "id": "T+72h",
+      "offset_seconds": 259200,
+      "lateness_seconds": 14400
+    },
+    {
+      "id": "T+168h",
+      "offset_seconds": 604800,
+      "lateness_seconds": 43200
+    }
+  ],
+  "terminal_eligibility": {
+    "state": "RELEASED_MONITORED",
+    "required_passed_checkpoints": [
+      "T0",
+      "T+15m",
+      "T+1h"
+    ],
+    "future_checkpoints_scheduled_through": "T+168h",
+    "monitor_owner_required": true,
+    "rollback_owner_required": true,
+    "critical_signals_open_allowed": 0,
+    "monitor_remains_active_after_transition": true
+  },
+  "monitor_states": [
+    "HEALTHY",
+    "DEGRADED_INVESTIGATING",
+    "ROLLBACK_RECOMMENDED",
+    "CORRECTIVE_RELEASE_ACTIVE",
+    "INITIAL_WINDOW_COMPLETE"
+  ],
+  "required_checkpoint_fields": [
+    "schema",
+    "project",
+    "variant",
+    "version",
+    "checkpointId",
+    "publicationUtc",
+    "dueUtc",
+    "capturedUtc",
+    "state",
+    "repository",
+    "releaseId",
+    "tagName",
+    "tagObject",
+    "peeledCommit",
+    "draft",
+    "prerelease",
+    "publishedAt",
+    "assets",
+    "freshDownloadNamespace",
+    "globalVerification",
+    "nativePackageVerification",
+    "runtimeVerification",
+    "issueQuery",
+    "criticalSignals",
+    "monitorOwner",
+    "rollbackOwner",
+    "previousCheckpointSha256",
+    "nextCheckpointId",
+    "nextDueUtc"
+  ],
+  "required_observations": [
+    "stable tag object and peeled full candidate commit equal the G15 publication receipt",
+    "release is neither draft nor prerelease and publication timestamp is unchanged",
+    "advertised asset inventory exactly equals the final draft receipt",
+    "all assets are downloaded into a fresh checkpoint namespace",
+    "downloaded names, sizes, SHA-256, global manifest and strict SHA256SUMS pass",
+    "corresponding source binds the exact released full commit and tree",
+    "both native ZIPs pass the independent native-package verifier",
+    "each packaged Crazyhouse_v1.nnue is byte-identical and license-authenticated",
+    "checkpoint-appropriate UCI capability, option, evaluator route and runtime smoke pass",
+    "issue query succeeds and separately reports crash, illegal move, loader, protocol, GUI and rule-drift signals",
+    "owner, rollback owner, prior checkpoint digest and next schedule are present"
+  ],
+  "critical_signal_types": [
+    "TAG_MOVED_OR_RECREATED",
+    "ASSET_INVENTORY_OR_BYTES_DRIFT",
+    "MANIFEST_CHECKSUM_PROVENANCE_DRIFT",
+    "SOURCE_OR_LICENSE_DRIFT",
+    "NETWORK_ALIAS_OR_FALLBACK_DRIFT",
+    "REPRODUCIBLE_CRASH",
+    "ILLEGAL_MOVE_OR_STATE_CORRUPTION",
+    "WRONG_RESULT_OR_PROTOCOL_REGRESSION",
+    "MATERIAL_RULE_AUTHORITY_CHANGE",
+    "SECURITY_OR_DISTRIBUTION_LICENSE_DEFECT"
+  ],
+  "http_policy": {
+    "isolated_timeout_is_outage": false,
+    "isolated_timeout_is_healthy": false,
+    "retry_within_checkpoint_required": true,
+    "persistent_query_or_download_failure_state": "DEGRADED_INVESTIGATING"
+  },
+  "runtime_policy": {
+    "timing_evidence": false,
+    "strength_evidence": false,
+    "exact_released_executable_required": true,
+    "exact_packaged_network_required": true,
+    "explicit_CrazyhouseEvalFile_required": true,
+    "legacy_route_marker_required": true,
+    "fallback_allowed": false,
+    "avx2_host_feature_floor_required": true,
+    "missing_compatible_avx2_host_is_pass": false
+  },
+  "rollback": {
+    "automatic_public_mutation_allowed": false,
+    "move_or_recreate_tag_allowed": false,
+    "overwrite_or_replace_asset_allowed": false,
+    "rewrite_receipt_allowed": false,
+    "silent_network_or_champion_change_allowed": false,
+    "responses": [
+      "additive false-alarm receipt and monitoring resume",
+      "public known-issue notice",
+      "nominate last independently healthy stable version when one exists",
+      "new fully gated corrective version and immutable tag"
+    ],
+    "first_release_without_previous_stable": "known-issue notice plus new corrective release; never tag or asset mutation"
+  },
+  "positive_count": 6,
+  "positive_matrix": [
+    "healthy T0 canonical checkpoint",
+    "healthy T+15m fresh-download checkpoint",
+    "healthy T+1h terminal-eligibility checkpoint",
+    "healthy late-window checkpoint with intact hash chain",
+    "degraded isolated-timeout checkpoint with retry evidence",
+    "rollback recommendation checkpoint with no public mutation"
+  ],
+  "negative_count": 40,
+  "negative_matrix": [
+    "missing global manifest",
+    "malformed manifest JSON",
+    "duplicate manifest JSON key",
+    "wrong manifest schema",
+    "release version or tag mismatch",
+    "candidate commit mismatch",
+    "candidate tree mismatch",
+    "asset count mismatch",
+    "missing asset",
+    "extra asset",
+    "asset size drift",
+    "asset digest drift",
+    "missing checksum row",
+    "duplicate checksum row",
+    "malformed checksum row",
+    "path-bearing checksum row",
+    "non-ASCII checksum data",
+    "corresponding-source relationship drift",
+    "x86-64 native package verification failure",
+    "AVX2 native package verification failure",
+    "network alias identity drift",
+    "SBOM or license authority drift",
+    "release remains draft",
+    "release is prerelease",
+    "stable tag peeled commit moved",
+    "stable tag object recreated",
+    "publication timestamp drift",
+    "duplicate checkpoint ID",
+    "checkpoint capture time regression",
+    "checkpoint exceeds lateness without degraded state",
+    "previous checkpoint digest mismatch",
+    "rollback owner missing",
+    "runtime result missing",
+    "runtime evaluator route mismatch",
+    "runtime evaluator fallback observed",
+    "illegal move signal suppressed",
+    "crash signal suppressed",
+    "protocol regression signal suppressed",
+    "asset download remains inaccessible but state is healthy",
+    "issue query fails but is recorded as an empty successful result"
+  ],
+  "stopping_rule": "Stop and preserve the fresh namespace on any source, contract, fixture, canonicalization, schedule, hash-chain, asset, verifier-composition, runtime-ingestion, issue-query, owner, mutation-negative, process or restoration mismatch. Never repair a failed formal namespace in place.",
+  "pass_effect": "Qualifies synthetic post-release monitor and rollback tooling only. It grants no real publication, tag, asset, runtime, strength, G15, G16 or RELEASED_MONITORED credit.",
+  "boundaries": {
+    "implementation_present": false,
+    "expected_red_executed": false,
+    "synthetic_monitor_qualified": false,
+    "real_release_monitored": false,
+    "stable_publication_authorized": false,
+    "tag_created": false,
+    "release_published": false,
+    "released_monitored": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

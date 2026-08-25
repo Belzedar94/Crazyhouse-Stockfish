@@ -1,0 +1,72 @@
+{
+  "schema": "crazyhouse-p6-fairy-comparator-termination-diagnostic/v1",
+  "created_utc": "2026-08-23T18:21:13.9130714Z",
+  "purpose": "Distinguish an observer race from a real process-lifecycle defect after the pinned Fairy comparator emitted its fatal missing-network message but remained observable for 120 seconds in lease 265.",
+  "evidence_class": "E1_ENGINEERING_DIAGNOSTIC",
+  "source": {
+    "repository": "https://github.com/fairy-stockfish/Fairy-Stockfish.git",
+    "commit": "6d9d0f5724677dc3aba3c577b0b482b6ec11e44a",
+    "tree": "aa4112ea6784cef03fb9b5f87bba632de6168faa"
+  },
+  "engine": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-build-runtime-265/source/src/stockfish.exe",
+    "bytes": 4530945,
+    "sha256": "b79071634530b99f047a51a123b79bb7e14cfc225435f5fb6c50a9411a294183",
+    "qualification_status": "REJECTED_ARTIFACT_DIAGNOSTIC_ONLY"
+  },
+  "trigger": {
+    "network_path": "D:/Crazyhouse-Stockfish/leases/p6-fairy-comparator-termination-diagnostic-266/crazyhouse_missing.nnue",
+    "must_be_absent": true,
+    "uci_variant": "crazyhouse",
+    "use_nnue": true,
+    "threads": 1,
+    "hash_mb": 16,
+    "fatal_markers": [
+      "info string ERROR: If the UCI option \"Use NNUE\" is set to true, network evaluation parameters compatible with the engine must be available.",
+      "info string ERROR: The engine will be terminated now."
+    ]
+  },
+  "cases": [
+    {
+      "id": "normal_quit_control",
+      "action": "uci_then_quit",
+      "expected_exit_code": 0,
+      "maximum_exit_ms": 3000
+    },
+    {
+      "id": "missing_eval_main_thread",
+      "action": "configure_missing_then_eval",
+      "expected_fatal_markers": true,
+      "observation_role": "main UCI thread exit control"
+    },
+    {
+      "id": "missing_go_worker_r1",
+      "action": "configure_missing_then_go_nodes_1",
+      "expected_fatal_markers": true,
+      "observation_role": "search worker termination observation"
+    },
+    {
+      "id": "missing_go_worker_r2",
+      "action": "configure_missing_then_go_nodes_1",
+      "expected_fatal_markers": true,
+      "observation_role": "independent search worker repetition"
+    }
+  ],
+  "post_marker_poll_schedule_ms": [50, 250, 1000, 3000, 10000],
+  "maximum_live_engine_processes": 1,
+  "cleanup": "If a diagnostic engine remains alive after the final sample, terminate only that exact child PID and record forced_cleanup=true.",
+  "classifications": {
+    "OBSERVER_RACE_NOT_REPRODUCED": "Both go cases exit nonzero spontaneously before the final sample.",
+    "REPRODUCED_GO_WORKER_NONTERMINATION": "Both go cases remain alive through 10 seconds after the fatal marker while the normal control exits cleanly.",
+    "THREAD_CONTEXT_DIFFERENTIAL": "The eval case exits nonzero spontaneously but both go cases remain alive through 10 seconds.",
+    "MIXED_OR_INCONCLUSIVE": "Any other outcome."
+  },
+  "interpretation": "This diagnostic can classify process lifecycle only. It cannot qualify the comparator, repair fail-closed behavior, admit a match, measure speed or claim strength.",
+  "stopping_rule": "Execute these four fresh processes once in namespace 266. Preserve every log and sample. Do not extend the wait, add repetitions or change commands after observing the outcome.",
+  "gate_credit": false,
+  "raw_match_admission": false,
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "crazyhouse-p15-native-package-expected-red-result/v1",
+  "created_utc": "2026-08-24T20:03:29.476Z",
+  "status": "PASS_EXPECTED_RED_NO_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "parent_contract": {
+    "path": "tests/crazyhouse/p15-native-package-internal-v1.json",
+    "bytes": 8321,
+    "sha256": "97f8ec2666fd820c8c134f9c2ad58f88ac3a5ffa0e8709dc944b23601d93376b"
+  },
+  "source": {
+    "commit": "2f8f460dd6729f8c234f513853255b7f97a828b4",
+    "tree": "7db2d5e428e1b6badd40651013d0cd6bdb77356d",
+    "src_tree": "1058720318d4e0ad9c3f61e6ee48675f2dd13b6b",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "clean_before": true,
+    "clean_after": true
+  },
+  "lease": 342,
+  "observation": {
+    "make_target": "crazyhouse_release_native_package_contract_test",
+    "exit_code": 2,
+    "stdout_bytes": 0,
+    "stderr_lines": 1,
+    "exact_stderr": "make: *** No rule to make target 'crazyhouse_release_native_package_contract_test'.  Stop.",
+    "implementation_paths_present": 0,
+    "compiler_or_interpreter_artifacts": 0,
+    "tracked_files": 539
+  },
+  "completion": {
+    "path": "D:/Crazyhouse-Stockfish/leases/p15-native-package-expected-red-342/completion.json",
+    "bytes": 4538,
+    "sha256": "374a87299d0fdc5b5a3589feafcbe81d800847411086bc075996610aa2085228"
+  },
+  "end_receipt": {
+    "path": "receipts/resources/p15-native-package-expected-red-t1-end-342.json",
+    "bytes": 3170,
+    "sha256": "7f5a8ada601ae8d258f39ddd66ab648bc7f74f07ce97093c1c972cae55c80345"
+  },
+  "resource_restoration": {
+    "cpu_threads": 1,
+    "process_priority": "BelowNormal",
+    "gpu": 0,
+    "workers": 0,
+    "network_calls": 0,
+    "openbench": 0,
+    "namespace_files": 548,
+    "namespace_bytes": 13878117,
+    "owned_processes_remaining": 0,
+    "foreign_processes_mutated": false,
+    "p7_supervisor_pid": 44764,
+    "p7_alive": true
+  },
+  "effect": "The exact clean-export missing-target observation permits implementation of the preregistered native-package assembler, independent verifier and mutation harness.",
+  "boundaries": {
+    "expected_red_proven": true,
+    "implementation_credit": false,
+    "small_fixture_tooling_qualified": false,
+    "real_network_containment_verified": false,
+    "package_internal_layout_verified": false,
+    "full_engine_builds_executed": false,
+    "release_archive_reproducible": false,
+    "release_candidate_selected": false,
+    "runtime_smoke_executed": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "draft_created": false,
+    "tag_created": false,
+    "release_claimed": false,
+    "g15_authorized": false,
+    "legacy_v1_remains_default": true,
+    "p7_candidate_identity_changed": false
+  }
+}

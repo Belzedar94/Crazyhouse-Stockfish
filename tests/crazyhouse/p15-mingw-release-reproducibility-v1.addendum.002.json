@@ -1,0 +1,74 @@
+{
+  "schema": "crazyhouse-p15-mingw-release-reproducibility-preregistration-addendum/v1",
+  "created_utc": "2026-08-24T19:00:51.9879764Z",
+  "status": "PREREGISTERED_HARNESS_CORRECTION_BEFORE_FRESH_REPLAY",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "amends_without_rewriting": "tests/crazyhouse/p15-mingw-release-reproducibility-v1.json",
+  "source_implementation_commit": "d97b972c0ed1dbcf4be813640d81c90b79df9cc6",
+  "failed_formal_lease": {
+    "lease": 337,
+    "failure": {
+      "bytes": 5712,
+      "sha256": "8d137e6cb3abfcdd7809a1db5cbd91c4438bd5dd2c2d48f4bbd280560b44356e"
+    },
+    "end_receipt": {
+      "bytes": 2887,
+      "sha256": "a110ca6196ee56aa2162d1acfc63f03179f9fd867f05c9c0f7d7741c71a5047e"
+    },
+    "classification": "formal harness false assumption after all source fixtures passed",
+    "namespace_reuse_allowed": false,
+    "formal_credit": false
+  },
+  "diagnosis": {
+    "script": {
+      "bytes": 2994,
+      "sha256": "93533596721de3318c271d6bc15880fc96cf67bd33a20296a0690b216056ec45"
+    },
+    "stdout": {
+      "bytes": 1457,
+      "sha256": "de5727d9bf297fdaad5c73634328d429bf16ea413884addf61559aa53c5d6007"
+    },
+    "observation": "A hidden Windows process with redirected standard streams owns one direct System32 conhost.exe for its entire lifetime. The child remains after the verifier and disappears naturally only when the supervisor exits.",
+    "surviving_compute_descendants": 0,
+    "foreign_process_mutation": false
+  },
+  "single_correction": "Replace the impossible empty-child assertion with an identity-aware terminal child audit.",
+  "corrected_child_audit": {
+    "allowed_count": [0, 1],
+    "allowed_name": "conhost.exe",
+    "allowed_relationship": "direct child of the formal supervisor",
+    "allowed_executable": "%SystemRoot%/System32/conhost.exe",
+    "allowed_creation_window": "not older than the formal supervisor",
+    "allowed_role": "Windows console host created by the hidden redirected launcher",
+    "all_compiler_linker_make_shell_python_verifier_or_unknown_descendants_must_be_absent": true,
+    "audit_must_be_embedded_in_terminal_receipt": true
+  },
+  "fresh_replay": {
+    "lease": 338,
+    "two_clean_exports": true,
+    "profiles": ["python-normal", "python-optimized"],
+    "architectures": ["x86-64", "x86-64-avx2"],
+    "all_four_profiles_replayed": true,
+    "normalized_results_byte_equal": true,
+    "source_makefile_changed_after_lease_337": false,
+    "source_verifier_changed_after_lease_337": false,
+    "fresh_namespace_required": true
+  },
+  "stopping_rule": "Stop at any source identity, clean export, profile, mutation control, PE timestamp, byte equality, P7 identity, toolchain, process audit or resource failure. Never repair lease 337 or the fresh namespace in place.",
+  "boundaries": {
+    "lease_337_promoted_to_pass": false,
+    "release_build_mode_qualified": false,
+    "full_engine_reproducible": false,
+    "archive_reproducible_for_release_candidate": false,
+    "target_matrix_frozen": false,
+    "timing_evidence": false,
+    "strength_credit": false,
+    "openbench_used": false,
+    "tag_created": false,
+    "draft_created": false,
+    "release_claimed": false,
+    "p7_candidate_identity_changed": false
+  }
+}

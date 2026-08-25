@@ -1,0 +1,152 @@
+{
+  "schema": "crazyhouse-worker-search-routing-addendum/v1",
+  "addendum": 5,
+  "created_utc": "2026-08-23T09:21:00Z",
+  "evidence_class": "E1_ENGINEERING",
+  "purpose": "Freeze exact transactional-routing provenance for the capability-build-only legacy V1 incremental SIMD Worker path while preserving the ordinary scalar build, all command refusals and the exact official standard-chess control.",
+  "pins": {
+    "routing_contract_v1": {
+      "path": "tests/crazyhouse/routing-contract-v1.json",
+      "bytes": 6646,
+      "sha256": "f98828dcf79211bc8f547b1562cea2f282adc71669256383309ba43f85b69dfd"
+    },
+    "routing_addendum_001": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.001.json",
+      "bytes": 4023,
+      "sha256": "569ef378350be65fddac2a2897f30fd7587eed2fc88e6cc6728fc1bab8f67fd6"
+    },
+    "routing_addendum_002": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.002.json",
+      "bytes": 3257,
+      "sha256": "725a4abc353e1567e79e49d69cf0520f1412b0bd6c844f0789b982f4f7a1243f"
+    },
+    "routing_addendum_003": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.003.json",
+      "bytes": 4324,
+      "sha256": "61d240cc6911da345de7357643a32a5ad49234acc149e9b8fe0ac6228d722109"
+    },
+    "routing_addendum_004": {
+      "path": "tests/crazyhouse/routing-contract-v1.addendum.004.json",
+      "bytes": 4629,
+      "sha256": "9afdf33f3f4f0a0756700e63ea608d11e1ba3ec5c70fee918919c980cb03cd07"
+    },
+    "worker_search_contract_v1": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.json",
+      "bytes": 3003,
+      "sha256": "18947ec8e47c442264183c858fa0e9beed948b9766313efb7fa6e9c1d1016e59"
+    },
+    "worker_search_addendum_004": {
+      "path": "tests/crazyhouse/worker-search-contract-v1.addendum.004.json",
+      "bytes": 8165,
+      "sha256": "2078c8018a5f55e508eaee3ceac1f365cd9cc063edf3a3f2a35f2575e6795ef5"
+    },
+    "routing_verifier_before_simd_support": {
+      "path": "tests/crazyhouse_uci_routing_verify.py",
+      "bytes": 37212,
+      "sha256": "0e2ba3b42162b4a638d03e9ab642decf22517e40e5ad973f22107272f97d10d7",
+      "git_blob": "a78f929c14a3bbf7f45c270e988303b124a3efc7"
+    },
+    "engine_header_before_simd_routing": {
+      "path": "src/engine.h",
+      "bytes": 6527,
+      "sha256": "71fcd997077f2bf7f60ea9dc3dfcec13195bd684083f6e1933f17b6a9219414c",
+      "git_blob": "de9569ac557d760a4d993e115c9e67578017f520"
+    },
+    "engine_implementation_before_simd_routing": {
+      "path": "src/engine.cpp",
+      "bytes": 25100,
+      "sha256": "f7598b2a8f77b0b68f6930cfa9136de82c476e648457db96c2e778b692d22bc2",
+      "git_blob": "26a88cbd22938d25423e95b116a5d01f9090c90d"
+    },
+    "uci_source_before_simd_routing": {
+      "path": "src/uci.cpp",
+      "bytes": 31087,
+      "sha256": "44fa6eb317f27d736e3399ab3941a0b222d7eed56c2ba930fa258f73b272cad8",
+      "git_blob": "daf83aaa6a780ad230b3999cced5cf9eed14bd04"
+    },
+    "legacy_v1_simd_parity_gate_record": {
+      "path": "../../../receipts/private/p5-legacy-simd-parity-green-gate-record-142.json",
+      "bytes": 3403,
+      "sha256": "92bbf0006d411b21776bca6b9733fa7631c2b75e89528c5ac1c76f520cd27c50"
+    }
+  },
+  "pre_transition_source": {
+    "commit": "7555542a3e24e7a3861f5cbc10140da13cdf849e",
+    "tree": "94c80c587a6dbf0b7db3828635b467724623dd50",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "fairy_stockfish_source_allowed": false
+  },
+  "single_variable_transition": {
+    "variable": "authenticated legacy V1 execution backend for an explicit SIMD capability build",
+    "from": {
+      "crazyhouse_search": "BOUND_LEGACY_V1_INCREMENTAL_SCALAR_AUTHENTICATED",
+      "build_selector": "CRAZYHOUSE_LEGACY_BACKEND=scalar",
+      "route_commit_evaluator_field": "evaluator=incremental-scalar",
+      "simd_backend_field": null,
+      "routing_addendum": 4
+    },
+    "to": {
+      "crazyhouse_search": "BOUND_LEGACY_V1_INCREMENTAL_SIMD_AUTHENTICATED",
+      "build_selector": "CRAZYHOUSE_LEGACY_BACKEND=simd",
+      "route_commit_evaluator_field": "evaluator=incremental-simd",
+      "simd_backend_field": "simd_backend=avx2",
+      "required_ruleset": "crazyhouse",
+      "required_backend": "legacy-v1",
+      "required_backend_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+      "required_worker_addendum": 4,
+      "fallback_allowed": false,
+      "ordinary_product_default_changed": false,
+      "strength_claim": false
+    }
+  },
+  "replayed_scenario": {
+    "scenario_count": 11,
+    "marker_count": 32,
+    "scalar_protocol_sha256": "aef709f821942c38b1437d6c9647cb7ca69a83642a6cf10c4843b80d2efb505f",
+    "crazyhouse_route_commit_markers_changed": 5,
+    "transformation": "Replace the terminal token ' evaluator=incremental-scalar' on each successful Crazyhouse route_commit marker with exactly ' evaluator=incremental-simd simd_backend=avx2'; change no other marker.",
+    "expected_protocol_sha256": "0be471a4dca5e709d9ca9b30f792715f63afe7b1958106311c5d6578b345d6b7",
+    "chess_route_markers_unchanged": true,
+    "non_search_refusals_unchanged": true,
+    "standard_control_unchanged": true
+  },
+  "historical_scalar_negative_control": {
+    "binary": {
+      "path": "D:/Crazyhouse-Stockfish/leases/p5-worker-incremental-green-225-retry-001/source/src/stockfish.exe",
+      "bytes": 103004357,
+      "sha256": "985afee08e1e3963b46f644e97dc872538a0a306c426c9ec78221315e0248ed6"
+    },
+    "required_result": "FAIL_MISSING_SIMD_ROUTE_TELEMETRY",
+    "search_must_not_start": true
+  },
+  "unavailable_simd_negative_control": {
+    "build_selector": "CRAZYHOUSE_LEGACY_BACKEND=simd",
+    "architecture": "general-64",
+    "compiled_simd_backend": "none",
+    "required_error_code": "legacy_simd_unavailable",
+    "route_commit_forbidden": true,
+    "readyok_forbidden": true,
+    "bestmove_forbidden": true,
+    "scalar_fallback_forbidden": true
+  },
+  "ordinary_default_control": {
+    "build_selector": "CRAZYHOUSE_LEGACY_BACKEND=scalar",
+    "same_source_commit_as_simd_capability_build": true,
+    "required_route_token": "evaluator=incremental-scalar",
+    "forbidden_tokens": [
+      "evaluator=incremental-simd",
+      "simd_backend="
+    ]
+  },
+  "unchanged_command_refusals": {
+    "eval": "crazyhouse_eval_not_bound",
+    "bench": "crazyhouse_bench_not_bound",
+    "speedtest": "crazyhouse_speedtest_not_bound",
+    "export_net": "crazyhouse_export_net_not_bound"
+  },
+  "stopping_rule": "Require the historical scalar binary to fail specifically for missing SIMD telemetry before product-source edits. After implementation, require the exact 32-marker SIMD digest and both engine-authored SIMD tokens on all five successful Crazyhouse route commits, the unchanged command-refusal matrix, a fail-closed general-64 SIMD capability build, a fresh default scalar build from the same source, and exact standard-chess equality to the official comparator. Any fallback, optional selection, marker drift, stderr, crash or timeout rejects this slice.",
+  "timing_evidence": false,
+  "strength_claim": false,
+  "openbench_evidence": false,
+  "release_claim": false
+}
