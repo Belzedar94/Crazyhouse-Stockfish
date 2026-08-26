@@ -924,6 +924,23 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
     if (backend_ == ExecutionBackend::Simd && compiled_simd_backend() == "none")
         return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
                 "registered legacy Crazyhouse SIMD backend is not compiled"};
+    const auto feature_failure = [](LegacyCrazyhouseFeaturesV1::Status status,
+                                    std::string                         message) {
+        return EvalResult{EvalStatus::FeatureRejected, status, std::nullopt,
+                          std::move(message)};
+    };
+    if (position.ruleset() != Ruleset::CRAZYHOUSE)
+        return feature_failure(LegacyCrazyhouseFeaturesV1::Status::WrongRuleset,
+                               "legacy Crazyhouse features require the Crazyhouse ruleset");
+    if (position.count<KING>(WHITE) != 1 || position.count<KING>(BLACK) != 1)
+        return feature_failure(LegacyCrazyhouseFeaturesV1::Status::InvalidKingState,
+                               "legacy Crazyhouse features require exactly one king per side");
+
+    const int boardCount = popcount(position.pieces());
+    if (boardCount < 2 || boardCount > int(LegacyCrazyhouseFeaturesV1::LegacyMaxPieces))
+        return feature_failure(
+          LegacyCrazyhouseFeaturesV1::Status::BoardPieceCountOutOfRange,
+          "legacy Crazyhouse board piece count is outside 2..32");
     if (stack.size_ == 0 || stack.size_ > Stack::MaxSize || !stack.frames_)
         return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
                 "legacy Crazyhouse incremental stack is structurally invalid"};
@@ -931,27 +948,36 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
         return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
                 "legacy Crazyhouse incremental stack is bound to another network"};
 
+    std::array<Bitboard, Stack::Frame::BoardInventorySize> currentBoardInventory{};
+    std::size_t                                            boardIndex = 0;
+    for (const Color owner : {WHITE, BLACK})
+        for (const PieceType type : BoardTypes)
+            currentBoardInventory[boardIndex++] = position.pieces(owner, type);
+
+    std::array<std::uint8_t, Stack::Frame::PocketInventorySize> currentPocketInventory{};
+    std::size_t                                                  pocketIndex = 0;
+    for (const Color owner : {WHITE, BLACK})
+        for (const PieceType type : PocketTypes)
+        {
+            const int count = position.pocket_count(owner, type);
+            if (count < 0 || count > int(LegacyCrazyhouseFeaturesV1::PocketSlots))
+                return feature_failure(
+                  LegacyCrazyhouseFeaturesV1::Status::PocketCountOutOfRange,
+                  "legacy Crazyhouse pocket count is outside 0..16");
+            currentPocketInventory[pocketIndex++] = std::uint8_t(count);
+        }
+
+    const std::array<Square, COLOR_NB> currentKings = {position.square<KING>(WHITE),
+                                                       position.square<KING>(BLACK)};
     const std::size_t currentIndex = stack.size_ - 1;
     Stack::Frame&     currentFrame = stack.frames_[currentIndex];
-    const auto physical_inventory_matches = [&]() noexcept {
-        std::size_t boardIndex = 0;
-        for (const Color owner : {WHITE, BLACK})
-            for (const PieceType type : BoardTypes)
-                if (currentFrame.boardInventory[boardIndex++] != position.pieces(owner, type))
-                    return false;
-
-        std::size_t pocketIndex = 0;
-        for (const Color owner : {WHITE, BLACK})
-            for (const PieceType type : PocketTypes)
-                if (currentFrame.pocketInventory[pocketIndex++]
-                    != std::uint8_t(position.pocket_count(owner, type)))
-                    return false;
-        return true;
-    };
 
     if (currentFrame.computed)
     {
-        if (!physical_inventory_matches())
+        if (currentFrame.boardPieceCount != std::size_t(boardCount)
+            || currentFrame.kingSquares != currentKings
+            || currentFrame.boardInventory != currentBoardInventory
+            || currentFrame.pocketInventory != currentPocketInventory)
             return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
                     "legacy Crazyhouse physical features changed without an incremental stack push"};
 
@@ -966,32 +992,59 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
         return result;
     }
 
-    const LegacyCrazyhouseFeaturesV1::Result features =
-      LegacyCrazyhouseFeaturesV1::extract(position);
-    if (!features.ok())
-        return {EvalStatus::FeatureRejected, features.status, std::nullopt,
-                "legacy Crazyhouse feature extraction failed: "
-                  + std::string(LegacyCrazyhouseFeaturesV1::status_name(features.status))
-                  + (features.message.empty() ? "" : " :: " + features.message)};
-
-    const auto contract_failure = [&features](std::string message) {
-        return EvalResult{EvalStatus::ContractViolation, features.status, std::nullopt,
+    const auto contract_failure = [](std::string message) {
+        return EvalResult{EvalStatus::ContractViolation,
+                          LegacyCrazyhouseFeaturesV1::Status::Success, std::nullopt,
                           std::move(message)};
     };
 
-    if (features.boardPieceCount < 2
-        || features.boardPieceCount > LegacyCrazyhouseFeaturesV1::LegacyMaxPieces)
-        return contract_failure("legacy Crazyhouse board-piece count is outside the V1 contract");
     std::array<Stack::ActiveRows, COLOR_NB> currentRows{};
     for (const Color perspective : {WHITE, BLACK})
     {
-        const auto& active = features.active[perspective];
-        if (active.size() > LegacyCrazyhouseFeaturesV1::MaxActiveDimensions)
-            return contract_failure(
-              "legacy Crazyhouse active-feature count exceeds the V1 contract");
         auto& rows = currentRows[perspective];
-        rows.size  = active.size();
-        std::copy(active.begin(), active.end(), rows.values.begin());
+        const std::size_t kingBase = std::size_t(relative_square(perspective,
+                                                                  currentKings[perspective]))
+                                   * LegacyCrazyhouseFeaturesV1::KingStride;
+        const auto append = [&](std::size_t rawIndex) -> bool {
+            if (rawIndex >= LegacyCrazyhouseFeaturesV1::FeatureDimensions
+                || rows.size >= LegacyCrazyhouseFeaturesV1::MaxActiveDimensions)
+                return false;
+            rows.values[rows.size++] = LegacyCrazyhouseFeaturesV1::Index(rawIndex);
+            return true;
+        };
+
+        boardIndex = 0;
+        for (const Color owner : {WHITE, BLACK})
+            for (const PieceType type : BoardTypes)
+            {
+                Bitboard occupied = currentBoardInventory[boardIndex++];
+                while (occupied)
+                {
+                    const Square square = pop_lsb(occupied);
+                    const std::size_t ordinal = std::size_t(type - PAWN);
+                    const std::size_t plane =
+                      2 * ordinal + std::size_t(type != KING && owner != perspective);
+                    if (!append(kingBase + plane * LegacyCrazyhouseFeaturesV1::BoardSquareCount
+                                + std::size_t(relative_square(perspective, square))))
+                        return contract_failure(
+                          "legacy Crazyhouse fixed active-feature set exceeds the V1 contract");
+                }
+            }
+
+        pocketIndex = 0;
+        for (const Color owner : {WHITE, BLACK})
+            for (const PieceType type : PocketTypes)
+            {
+                const std::size_t count = currentPocketInventory[pocketIndex++];
+                const std::size_t ordinal = std::size_t(type - PAWN);
+                const std::size_t band = 2 * ordinal + std::size_t(owner != perspective);
+                for (std::size_t slot = 0; slot < count; ++slot)
+                    if (!append(kingBase + LegacyCrazyhouseFeaturesV1::BoardFeatures
+                                + band * LegacyCrazyhouseFeaturesV1::PocketSlots + slot))
+                        return contract_failure(
+                          "legacy Crazyhouse fixed pocket-feature set exceeds the V1 contract");
+            }
+
         std::sort(rows.values.begin(), rows.values.begin() + rows.size);
         if (std::adjacent_find(rows.values.begin(), rows.values.begin() + rows.size)
             != rows.values.begin() + rows.size)
@@ -1001,9 +1054,6 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
             return contract_failure(
               "legacy Crazyhouse canonical active-feature set exceeds the V1 tensor");
     }
-
-    const std::array<Square, COLOR_NB> currentKings = {position.square<KING>(WHITE),
-                                                       position.square<KING>(BLACK)};
 
     bool        sourceFound = false;
     std::size_t sourceIndex = currentIndex;
@@ -1083,16 +1133,9 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
         for (const Color perspective : {WHITE, BLACK})
             kingRefreshes += candidate.kingSquares[perspective] != currentKings[perspective];
     candidate.kingSquares     = currentKings;
-    candidate.boardPieceCount = features.boardPieceCount;
-    std::size_t boardIndex = 0;
-    for (const Color owner : {WHITE, BLACK})
-        for (const PieceType type : BoardTypes)
-            candidate.boardInventory[boardIndex++] = position.pieces(owner, type);
-    std::size_t pocketIndex = 0;
-    for (const Color owner : {WHITE, BLACK})
-        for (const PieceType type : PocketTypes)
-            candidate.pocketInventory[pocketIndex++] =
-              std::uint8_t(position.pocket_count(owner, type));
+    candidate.boardPieceCount = std::size_t(boardCount);
+    candidate.boardInventory  = currentBoardInventory;
+    candidate.pocketInventory = currentPocketInventory;
 
     EvalResult result = propagate_accumulators(position, candidate.boardPieceCount,
                                                candidate.transformerBits, candidate.psqtBits);
