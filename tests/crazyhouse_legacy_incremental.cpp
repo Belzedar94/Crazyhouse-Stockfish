@@ -106,11 +106,22 @@ void require_parity(const Network& network,
     const Network::LegacyEvalResult full = network.evaluate_legacy(position);
     const Network::LegacyEvalResult incremental =
       network.evaluate_legacy_incremental(position, stack);
+    Stack searchStack;
+    searchStack.reset();
+    const Network::LegacyEvalResult search =
+      network.evaluate_legacy_search_incremental(position, searchStack);
     require(full.ok(), label + " full refresh failed: " + full.message);
     require(incremental.ok(), label + " incremental evaluation failed: " + incremental.message);
+    require(search.ok(), label + " selected-bucket search evaluation failed: " + search.message);
     require(same_raw(full.output->raw, incremental.output->raw), label + " raw output mismatch");
     require(same_adapter(full.output->adapter, incremental.output->adapter),
             label + " legacy adapter mismatch");
+    require(full.output->raw.selectedBucket == search.output->raw.selectedBucket
+              && full.output->raw.selected().psqt == search.output->raw.selected().psqt
+              && full.output->raw.selected().positional == search.output->raw.selected().positional,
+            label + " selected-bucket search raw output mismatch");
+    require(same_adapter(full.output->adapter, search.output->adapter),
+            label + " selected-bucket search adapter mismatch");
 
     mix_text(digest, position.fen());
     mix(digest, full.output->raw.selectedBucket);
@@ -299,4 +310,3 @@ int main(int argc, char* argv[]) {
               << " trace_digest=" << std::hex << totals.digest << std::dec << '\n';
     return EXIT_SUCCESS;
 }
-

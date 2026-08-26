@@ -185,6 +185,8 @@ class LegacyCrazyhouseNetworkV1 {
     LegacyEvalResult evaluate_legacy(const Position& position) const;
     LegacyEvalResult evaluate_legacy_incremental(const Position&                     position,
                                                  LegacyCrazyhouseAccumulatorStackV1& stack) const;
+    LegacyEvalResult evaluate_legacy_search_incremental(
+      const Position& position, LegacyCrazyhouseAccumulatorStackV1& stack) const;
 
     static AdapterResult adapt_legacy_components(RawComponents               raw,
                                                  const LegacyBoardInventory& inventory);
@@ -211,7 +213,11 @@ class LegacyCrazyhouseNetworkV1 {
       const Position&                                                               position,
       std::size_t                                                                   boardPieceCount,
       const std::array<std::array<std::uint16_t, TransformerDimensions>, COLOR_NB>& transformerBits,
-      const std::array<std::array<std::uint32_t, PsqtBuckets>, COLOR_NB>&           psqtBits) const;
+      const std::array<std::array<std::uint32_t, PsqtBuckets>, COLOR_NB>&           psqtBits,
+      bool selectedBucketOnly) const;
+    EvalResult evaluate_incremental_impl(const Position&                     position,
+                                         LegacyCrazyhouseAccumulatorStackV1& stack,
+                                         bool selectedBucketOnly) const;
 
     friend class LegacyCrazyhouseAccumulatorStackV1;
 };
