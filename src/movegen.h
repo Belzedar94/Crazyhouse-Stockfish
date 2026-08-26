@@ -36,6 +36,7 @@ bool uses_growable_move_picker_storage(const Position& pos) noexcept;
 enum GenType {
     CAPTURES,
     QUIETS,
+    CHECKING_DROPS,
     EVASIONS,
     NON_EVASIONS,
     LEGAL

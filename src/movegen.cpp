@@ -284,6 +284,29 @@ void generate_drops(const Position& pos, Sink& sink, Bitboard target) {
 }
 
 
+template<Color Us, typename Sink>
+void generate_checking_drops(const Position& pos, Sink& sink) {
+
+    if (pos.ruleset() != Ruleset::CRAZYHOUSE)
+        return;
+
+    const Bitboard emptySquares = ~pos.pieces();
+
+    for (PieceType pt : Crazyhouse::PocketPieceTypes)
+    {
+        if (pos.pocket_count(Us, pt) == 0)
+            continue;
+
+        Bitboard destinations = emptySquares & pos.check_squares(pt);
+        if (pt == PAWN)
+            destinations &= ~(Rank1BB | Rank8BB);
+
+        while (destinations)
+            sink.push(Move::make_drop(pt, pop_lsb(destinations)));
+    }
+}
+
+
 template<Color Us, GenType Type, typename Sink>
 void generate_all(const Position& pos, Sink& sink) {
 
@@ -325,10 +348,20 @@ void generate_pseudo(const Position& pos, Sink& sink) {
 
     Color us = pos.side_to_move();
 
-    if (us == WHITE)
-        generate_all<WHITE, Type>(pos, sink);
+    if constexpr (Type == CHECKING_DROPS)
+    {
+        if (us == WHITE)
+            generate_checking_drops<WHITE>(pos, sink);
+        else
+            generate_checking_drops<BLACK>(pos, sink);
+    }
     else
-        generate_all<BLACK, Type>(pos, sink);
+    {
+        if (us == WHITE)
+            generate_all<WHITE, Type>(pos, sink);
+        else
+            generate_all<BLACK, Type>(pos, sink);
+    }
 }
 
 template<typename Sink>
@@ -372,6 +405,7 @@ void generate_into(const Position& pos, Sink& sink) {
 
 // <CAPTURES>     Generates all pseudo-legal captures plus queen promotions
 // <QUIETS>       Generates all pseudo-legal non-captures and underpromotions
+// <CHECKING_DROPS> Generates all pseudo-legal Crazyhouse drops giving check
 // <EVASIONS>     Generates all pseudo-legal check evasions
 // <NON_EVASIONS> Generates all pseudo-legal captures and non-captures
 //
@@ -393,6 +427,7 @@ void generate(const Position& pos, GrowableMoveBuffer& moveList) {
 // Explicit template instantiations for the fixed official path.
 template Move* generate<CAPTURES>(const Position&, Move*);
 template Move* generate<QUIETS>(const Position&, Move*);
+template Move* generate<CHECKING_DROPS>(const Position&, Move*);
 template Move* generate<EVASIONS>(const Position&, Move*);
 template Move* generate<NON_EVASIONS>(const Position&, Move*);
 template Move* generate<LEGAL>(const Position&, Move*);
@@ -400,6 +435,7 @@ template Move* generate<LEGAL>(const Position&, Move*);
 // Explicit template instantiations for the checked growable path.
 template void generate<CAPTURES>(const Position&, GrowableMoveBuffer&);
 template void generate<QUIETS>(const Position&, GrowableMoveBuffer&);
+template void generate<CHECKING_DROPS>(const Position&, GrowableMoveBuffer&);
 template void generate<EVASIONS>(const Position&, GrowableMoveBuffer&);
 template void generate<NON_EVASIONS>(const Position&, GrowableMoveBuffer&);
 template void generate<LEGAL>(const Position&, GrowableMoveBuffer&);
