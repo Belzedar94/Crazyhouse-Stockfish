@@ -794,7 +794,7 @@ LegacyCrazyhouseNetworkV1::evaluate_full_refresh(const Position& position) const
     }
 
     EvalResult result =
-      propagate_accumulators(position, features.boardPieceCount, transformerBits, psqtBits);
+      propagate_accumulators(position, features.boardPieceCount, transformerBits, psqtBits, false);
     if (result.ok())
         result.message = backend_ == ExecutionBackend::Simd
                          ? "registered legacy Crazyhouse SIMD full refresh completed"
@@ -806,7 +806,8 @@ LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::propagate_accum
   const Position&                                                               position,
   std::size_t                                                                   boardPieceCount,
   const std::array<std::array<std::uint16_t, TransformerDimensions>, COLOR_NB>& transformerBits,
-  const std::array<std::array<std::uint32_t, PsqtBuckets>, COLOR_NB>&           psqtBits) const {
+  const std::array<std::array<std::uint32_t, PsqtBuckets>, COLOR_NB>&           psqtBits,
+  bool selectedBucketOnly) const {
     if (!parameters_)
         return {EvalStatus::NetworkNotLoaded, std::nullopt, std::nullopt,
                 "registered legacy Crazyhouse network is not loaded"};
@@ -838,7 +839,11 @@ LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::propagate_accum
 
     RawEvaluation evaluation;
     evaluation.selectedBucket = static_cast<std::uint8_t>(expectedBucket);
-    for (std::size_t bucket = 0; bucket < LayerStacks; ++bucket)
+    // Normal search consumes only the active layer stack. Keep the all-bucket
+    // path for trace output and the frozen numeric/incremental parity fixtures.
+    const std::size_t firstBucket = selectedBucketOnly ? expectedBucket : 0;
+    const std::size_t endBucket   = selectedBucketOnly ? expectedBucket + 1 : LayerStacks;
+    for (std::size_t bucket = firstBucket; bucket < endBucket; ++bucket)
     {
         const std::uint32_t differenceBits =
           psqtBits[sideToMove][bucket] - psqtBits[opposite][bucket];
@@ -905,14 +910,24 @@ LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::propagate_accum
         }
     }
 
-    return {EvalStatus::Success, LegacyCrazyhouseFeaturesV1::Status::Success, std::move(evaluation),
-            useSimd ? "registered legacy Crazyhouse accumulated SIMD propagation completed"
-                    : "registered legacy Crazyhouse accumulated scalar propagation completed"};
+    return {
+      EvalStatus::Success, LegacyCrazyhouseFeaturesV1::Status::Success, std::move(evaluation),
+      selectedBucketOnly
+        ? (useSimd ? "registered legacy Crazyhouse selected-bucket SIMD propagation completed"
+                   : "registered legacy Crazyhouse selected-bucket scalar propagation completed")
+        : (useSimd ? "registered legacy Crazyhouse accumulated SIMD propagation completed"
+                   : "registered legacy Crazyhouse accumulated scalar propagation completed")};
 }
 
 LegacyCrazyhouseNetworkV1::EvalResult
 LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                     position,
                                                  LegacyCrazyhouseAccumulatorStackV1& stack) const {
+    return evaluate_incremental_impl(position, stack, false);
+}
+
+LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::evaluate_incremental_impl(
+  const Position& position, LegacyCrazyhouseAccumulatorStackV1& stack,
+  bool selectedBucketOnly) const {
     using Stack = LegacyCrazyhouseAccumulatorStackV1;
     constexpr std::array<PieceType, 6> BoardTypes = {PAWN, KNIGHT, BISHOP,
                                                       ROOK, QUEEN, KING};
@@ -983,7 +998,8 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
 
         EvalResult result =
           propagate_accumulators(position, currentFrame.boardPieceCount,
-                                 currentFrame.transformerBits, currentFrame.psqtBits);
+                                 currentFrame.transformerBits, currentFrame.psqtBits,
+                                 selectedBucketOnly);
         if (!result.ok())
             return result;
         ++stack.counters_.evaluations;
@@ -1209,7 +1225,8 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
     candidate.pocketInventory = currentPocketInventory;
 
     EvalResult result = propagate_accumulators(position, candidate.boardPieceCount,
-                                               candidate.transformerBits, candidate.psqtBits);
+                                               candidate.transformerBits, candidate.psqtBits,
+                                               selectedBucketOnly);
     if (!result.ok())
         return result;
 
@@ -1358,6 +1375,28 @@ LegacyCrazyhouseNetworkV1::LegacyEvalResult LegacyCrazyhouseNetworkV1::evaluate_
     LegacyEvaluation evaluation{std::move(*raw.output), std::move(*adapter.output)};
     return {EvalStatus::Success, raw.featureStatus, std::move(evaluation),
             "registered legacy Crazyhouse incremental evaluation completed"};
+}
+
+LegacyCrazyhouseNetworkV1::LegacyEvalResult
+LegacyCrazyhouseNetworkV1::evaluate_legacy_search_incremental(
+  const Position& position, LegacyCrazyhouseAccumulatorStackV1& stack) const {
+    EvalResult raw = evaluate_incremental_impl(position, stack, true);
+    if (!raw.ok())
+        return {raw.status, raw.featureStatus, std::nullopt, raw.message};
+    if (position.is_chess960())
+        return {EvalStatus::ContractViolation, raw.featureStatus, std::nullopt,
+                "legacy Crazyhouse outer adapter does not admit Chess960 correction"};
+
+    AdapterResult adapter =
+      adapt_legacy_components(raw.output->selected(), legacy_inventory(position));
+    if (!adapter.ok())
+        return {EvalStatus::ContractViolation, raw.featureStatus, std::nullopt,
+                "legacy Crazyhouse search adapter failed: "
+                  + std::string(adapter_status_name(adapter.status)) + " :: " + adapter.message};
+
+    LegacyEvaluation evaluation{std::move(*raw.output), std::move(*adapter.output)};
+    return {EvalStatus::Success, raw.featureStatus, std::move(evaluation),
+            "registered legacy Crazyhouse selected-bucket search evaluation completed"};
 }
 
 std::string_view LegacyCrazyhouseNetworkV1::description() const noexcept { return description_; }

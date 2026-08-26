@@ -2112,7 +2112,8 @@ Value Search::Worker::evaluate(const Position& pos) {
     {
         if (!legacyNetwork || !legacyNetwork->loaded())
             std::abort();
-        const auto result = legacyNetwork->evaluate_legacy_incremental(pos, legacyAccumulatorStack);
+        const auto result =
+          legacyNetwork->evaluate_legacy_search_incremental(pos, legacyAccumulatorStack);
         if (!result.ok())
             std::abort();
         return Value(result.output->adapter.outer);
