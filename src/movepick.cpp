@@ -205,7 +205,7 @@ usize MovePicker::score(const MoveList<Type>& ml) {
     Color us = pos.side_to_move();
 
     [[maybe_unused]] Bitboard threatByLesser[KING + 1];
-    if constexpr (Type == QUIETS || Type == CHECKING_DROPS)
+    if constexpr (Type == QUIETS)
     {
         threatByLesser[PAWN]   = 0;
         threatByLesser[KNIGHT] = threatByLesser[BISHOP] = pos.attacks_by<PAWN>(~us);
@@ -231,7 +231,10 @@ usize MovePicker::score(const MoveList<Type>& ml) {
             m.value = (*captureHistory)[pc][to][type_of(capturedPiece)]
                     + 7 * int(PieceValue[capturedPiece]);
 
-        else if constexpr (Type == QUIETS || Type == CHECKING_DROPS)
+        else if constexpr (Type == CHECKING_DROPS)
+            m.value = 2 * (*mainHistory)[us][m.raw()] + (*continuationHistory[0])[pc][to];
+
+        else if constexpr (Type == QUIETS)
         {
             // histories
             m.value = 2 * (*mainHistory)[us][m.raw()];
