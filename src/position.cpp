@@ -1807,29 +1807,25 @@ bool Position::see_ge(Move m, int threshold) const {
 
     assert(m.is_ok());
 
-    // Orthodox SEE does not model pockets, provenance or the material value of
-    // placing a piece from hand. Restore it only through a separate experiment.
-    if (activeRuleset == Ruleset::CRAZYHOUSE)
-        return true;
-
-    // Only deal with normal moves, assume others pass a simple SEE
-    if (m.type_of() != NORMAL)
+    // Deal with normal moves and Crazyhouse drops. Other special moves pass a
+    // simple SEE because their material effects need separate handling.
+    if (m.type_of() != NORMAL && !(activeRuleset == Ruleset::CRAZYHOUSE && m.is_drop()))
         return VALUE_ZERO >= threshold;
 
     Square from = m.from_sq(), to = m.to_sq();
 
-    assert(piece_on(from) != NO_PIECE);
+    assert(m.is_drop() || piece_on(from) != NO_PIECE);
 
     int swap = PieceValue[piece_on(to)] - threshold;
     if (swap < 0)
         return false;
 
-    swap = PieceValue[piece_on(from)] - swap;
+    swap = PieceValue[moved_piece(m)] - swap;
     if (swap <= 0)
         return true;
 
-    assert(color_of(piece_on(from)) == sideToMove);
-    Bitboard occupied  = pieces() ^ from ^ to;  // xoring to is important for pinned piece logic
+    assert(color_of(moved_piece(m)) == sideToMove);
+    Bitboard occupied  = (m.is_drop() ? pieces() : pieces() ^ from) ^ to;
     Color    stm       = sideToMove;
     Bitboard attackers = attackers_to(to, occupied);
     Bitboard stmAttackers, bb;
