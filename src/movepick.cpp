@@ -53,7 +53,9 @@ enum Stages {
     // generate qsearch moves
     QSEARCH_TT,
     QCAPTURE_INIT,
-    QCAPTURE
+    QCAPTURE,
+    QCHECK_INIT,
+    QCHECK
 };
 
 #ifdef USE_AVX512
@@ -196,12 +198,14 @@ MovePicker::MovePicker(const Position& p, Move ttm, int th, const CapturePieceTo
 template<GenType Type>
 usize MovePicker::score(const MoveList<Type>& ml) {
 
-    static_assert(Type == CAPTURES || Type == QUIETS || Type == EVASIONS, "Wrong type");
+    static_assert(Type == CAPTURES || Type == QUIETS || Type == CHECKING_DROPS
+                    || Type == EVASIONS,
+                  "Wrong type");
 
     Color us = pos.side_to_move();
 
     [[maybe_unused]] Bitboard threatByLesser[KING + 1];
-    if constexpr (Type == QUIETS)
+    if constexpr (Type == QUIETS || Type == CHECKING_DROPS)
     {
         threatByLesser[PAWN]   = 0;
         threatByLesser[KNIGHT] = threatByLesser[BISHOP] = pos.attacks_by<PAWN>(~us);
@@ -227,7 +231,7 @@ usize MovePicker::score(const MoveList<Type>& ml) {
             m.value = (*captureHistory)[pc][to][type_of(capturedPiece)]
                     + 7 * int(PieceValue[capturedPiece]);
 
-        else if constexpr (Type == QUIETS)
+        else if constexpr (Type == QUIETS || Type == CHECKING_DROPS)
         {
             // histories
             m.value = 2 * (*mainHistory)[us][m.raw()];
@@ -388,7 +392,34 @@ top:
     }
 
     case EVASION :
-    case QCAPTURE :
+        return select([](const ExtMove&) { return true; });
+
+    case QCAPTURE : {
+        Move selected = select([](const ExtMove&) { return true; });
+        if (selected)
+            return selected;
+
+        ++stage;
+        [[fallthrough]];
+    }
+
+    case QCHECK_INIT : {
+        moves.clear();
+        cur = endCur = endGenerated = 0;
+
+        if (depth >= DEPTH_QS && pos.ruleset() == Ruleset::CRAZYHOUSE)
+        {
+            MoveList<CHECKING_DROPS> ml(pos);
+            endCur = endGenerated = score<CHECKING_DROPS>(ml);
+            partial_insertion_sort(moves.data() + cur, moves.data() + endCur,
+                                   std::numeric_limits<int>::min());
+        }
+
+        ++stage;
+        [[fallthrough]];
+    }
+
+    case QCHECK :
         return select([](const ExtMove&) { return true; });
 
     case PROBCUT :
