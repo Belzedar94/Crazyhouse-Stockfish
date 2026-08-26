@@ -1879,7 +1879,7 @@ Value Search::Worker::qsearch(Position& pos,
     Key   posKey;
     Move  move, bestMove;
     Value bestValue, value, futilityBase;
-    bool  pvHit, givesCheck, capture, checkingDrop;
+    bool  pvHit, givesCheck, capture, checkingMove;
     int   moveCount;
 
     // Step 1. Initialize node
@@ -1974,7 +1974,7 @@ Value Search::Worker::qsearch(Position& pos,
     Square prevSq = ((ss - 1)->currentMove).is_ok() ? ((ss - 1)->currentMove).to_sq() : SQ_NONE;
 
     // Initialize a MovePicker object for the current position, and prepare to search
-    // the moves. At the first Crazyhouse qsearch ply we also search checking drops.
+    // the moves. At the first Crazyhouse qsearch ply we also search quiet checks.
     // Recursive qsearch plies remain capture/evasion only to keep checking sequences bounded.
     MovePicker mp(pos, ttData.move, qDepth, &mainHistory, &lowPlyHistory, &captureHistory,
                   contHist, &sharedHistory, ss->ply);
@@ -1990,8 +1990,8 @@ Value Search::Worker::qsearch(Position& pos,
 
         givesCheck = pos.gives_check(move);
         capture    = pos.capture_stage(move);
-        checkingDrop = pos.ruleset() == Ruleset::CRAZYHOUSE && qDepth >= DEPTH_QS
-                    && move.is_drop() && givesCheck;
+        checkingMove = pos.ruleset() == Ruleset::CRAZYHOUSE && qDepth >= DEPTH_QS
+                    && !capture && givesCheck;
 
         moveCount++;
 
@@ -2024,8 +2024,8 @@ Value Search::Worker::qsearch(Position& pos,
                 }
             }
 
-            // Search the first-ply Crazyhouse checking drops in addition to captures.
-            if (!capture && !checkingDrop)
+            // Search the first-ply Crazyhouse quiet checks in addition to captures.
+            if (!capture && !checkingMove)
                 continue;
 
             // Do not search moves with bad enough SEE values
