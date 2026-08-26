@@ -412,8 +412,28 @@ top:
 
         if (depth >= DEPTH_QS && pos.ruleset() == Ruleset::CRAZYHOUSE)
         {
-            MoveList<CHECKING_DROPS> ml(pos);
-            endCur = endGenerated = score<CHECKING_DROPS>(ml);
+            // Generate ordinary quiet checks without asking the generic quiet
+            // scorer for histories that qsearch does not provide. Drops are
+            // generated separately below so we do not call gives_check() for
+            // every legal pocket destination.
+            MoveList<QUIETS> quiets(pos);
+            for (Move move : quiets)
+            {
+                if (move.is_drop() || !pos.gives_check(move))
+                    continue;
+
+                ExtMove& m = moves.push_back(ExtMove{});
+                m          = move;
+
+                const Piece pc = pos.moved_piece(m);
+                m.value = 2 * (*mainHistory)[pos.side_to_move()][m.raw()]
+                        + (*continuationHistory[0])[pc][m.to_sq()];
+            }
+
+            cur = moves.size();
+            MoveList<CHECKING_DROPS> drops(pos);
+            endCur = endGenerated = score<CHECKING_DROPS>(drops);
+            cur = 0;
             partial_insertion_sort(moves.data() + cur, moves.data() + endCur,
                                    std::numeric_limits<int>::min());
         }
