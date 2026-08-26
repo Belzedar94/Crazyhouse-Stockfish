@@ -19,6 +19,7 @@ namespace {
 
 using namespace Stockfish;
 using Network = Eval::NNUE::LegacyCrazyhouseNetworkV1;
+using Stack   = Eval::NNUE::LegacyCrazyhouseAccumulatorStackV1;
 
 [[noreturn]] void fail(const std::string& message) {
     std::cerr << "FAIL crazyhouse_legacy_scalar: " << message << '\n';
@@ -117,10 +118,20 @@ int main(int argc, char* argv[]) {
         const Network::EvalResult result = network.evaluate_full_refresh(position);
         require(result.ok(), "scalar full refresh rejected " + fen + ": " + result.message);
 
+        Stack searchStack;
+        searchStack.reset();
+        const Network::LegacyEvalResult search =
+          network.evaluate_legacy_search_incremental(position, searchStack);
+        require(search.ok(), "selected-bucket search rejected " + fen + ": " + search.message);
+
         const Network::RawEvaluation& evaluation = *result.output;
         require(evaluation.selectedBucket < Network::LayerStacks,
                 "scalar full refresh returned an out-of-range selected bucket");
         const Network::RawComponents& selected = evaluation.selected();
+        require(evaluation.selectedBucket == search.output->raw.selectedBucket
+                  && selected.psqt == search.output->raw.selected().psqt
+                  && selected.positional == search.output->raw.selected().positional,
+                "selected-bucket search output mismatch for " + fen);
 
         std::cout << "OK\t" << position.fen() << '\t'
                   << unsigned(evaluation.selectedBucket) << '\t'
