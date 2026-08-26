@@ -245,6 +245,27 @@ void execute_case(const Network& network, const std::vector<std::string>& fields
 }
 
 void verify_boundaries(const Network& network, const std::filesystem::path& artifact, Totals& totals) {
+    constexpr std::array<std::string_view, Network::LayerStacks> BucketFens = {
+      "1n2k3/8/8/8/8/8/8/1N2K3[] w - - 0 1",
+      "1n2k3/8/8/8/8/8/P7/1N2K3[] w - - 0 1",
+      "1n2k3/pp6/8/8/8/8/PPP5/1N2K3[] w - - 0 1",
+      "1n2k3/pppp4/8/8/8/8/PPPPP3/1N2K3[] w - - 0 1",
+      "1n2k3/pppppp2/8/8/8/8/PPPPPPP1/1N2K3[] w - - 0 1",
+      "1n2k3/pppppppp/8/8/8/8/PPPPPPPP/RN2K3[] w - - 0 1",
+      "rn2k2r/pppppppp/8/8/8/8/PPPPPPPP/RNB1K2R[] w - - 0 1",
+      "rnb1kb1r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKB1R[] w - - 0 1",
+    };
+    for (std::size_t bucket = 0; bucket < BucketFens.size(); ++bucket)
+    {
+        StateInfo bucketState{};
+        Position  bucketPosition(Ruleset::CRAZYHOUSE);
+        set_position(bucketPosition, std::string(BucketFens[bucket]), bucketState);
+        Stack bucketStack;
+        bucketStack.reset();
+        require_parity(network, bucketStack, bucketPosition, totals.digest,
+                       "selected search bucket " + std::to_string(bucket));
+    }
+
     StateInfo state{};
     Position  position(Ruleset::CRAZYHOUSE);
     set_position(position, "7k/8/8/8/8/8/P7/K7[] w - - 0 1", state);
