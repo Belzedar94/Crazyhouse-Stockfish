@@ -536,6 +536,8 @@ void LegacyCrazyhouseAccumulatorStackV1::reset() noexcept {
     frames_[0].computed           = false;
     frames_[0].boardPieceCount    = 0;
     frames_[0].kingSquares        = {SQ_NONE, SQ_NONE};
+    frames_[0].boardInventory.fill(0);
+    frames_[0].pocketInventory.fill(0);
     frames_[0].active[WHITE].size = 0;
     frames_[0].active[BLACK].size = 0;
 }
@@ -547,6 +549,8 @@ bool LegacyCrazyhouseAccumulatorStackV1::push() noexcept {
     frame.computed           = false;
     frame.boardPieceCount    = 0;
     frame.kingSquares        = {SQ_NONE, SQ_NONE};
+    frame.boardInventory.fill(0);
+    frame.pocketInventory.fill(0);
     frame.active[WHITE].size = 0;
     frame.active[BLACK].size = 0;
     return true;
@@ -908,8 +912,11 @@ LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::propagate_accum
 
 LegacyCrazyhouseNetworkV1::EvalResult
 LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                     position,
-                                                LegacyCrazyhouseAccumulatorStackV1& stack) const {
+                                                 LegacyCrazyhouseAccumulatorStackV1& stack) const {
     using Stack = LegacyCrazyhouseAccumulatorStackV1;
+    constexpr std::array<PieceType, 6> BoardTypes = {PAWN, KNIGHT, BISHOP,
+                                                      ROOK, QUEEN, KING};
+    constexpr std::array<PieceType, 5> PocketTypes = {PAWN, KNIGHT, BISHOP, ROOK, QUEEN};
 
     if (!parameters_)
         return {EvalStatus::NetworkNotLoaded, std::nullopt, std::nullopt,
@@ -917,6 +924,47 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
     if (backend_ == ExecutionBackend::Simd && compiled_simd_backend() == "none")
         return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
                 "registered legacy Crazyhouse SIMD backend is not compiled"};
+    if (stack.size_ == 0 || stack.size_ > Stack::MaxSize || !stack.frames_)
+        return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
+                "legacy Crazyhouse incremental stack is structurally invalid"};
+    if (stack.network_ && stack.network_ != this)
+        return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
+                "legacy Crazyhouse incremental stack is bound to another network"};
+
+    const std::size_t currentIndex = stack.size_ - 1;
+    Stack::Frame&     currentFrame = stack.frames_[currentIndex];
+    const auto physical_inventory_matches = [&]() noexcept {
+        std::size_t boardIndex = 0;
+        for (const Color owner : {WHITE, BLACK})
+            for (const PieceType type : BoardTypes)
+                if (currentFrame.boardInventory[boardIndex++] != position.pieces(owner, type))
+                    return false;
+
+        std::size_t pocketIndex = 0;
+        for (const Color owner : {WHITE, BLACK})
+            for (const PieceType type : PocketTypes)
+                if (currentFrame.pocketInventory[pocketIndex++]
+                    != std::uint8_t(position.pocket_count(owner, type)))
+                    return false;
+        return true;
+    };
+
+    if (currentFrame.computed)
+    {
+        if (!physical_inventory_matches())
+            return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
+                    "legacy Crazyhouse physical features changed without an incremental stack push"};
+
+        EvalResult result =
+          propagate_accumulators(position, currentFrame.boardPieceCount,
+                                 currentFrame.transformerBits, currentFrame.psqtBits);
+        if (!result.ok())
+            return result;
+        ++stack.counters_.evaluations;
+        ++stack.counters_.sameFrameReuses;
+        result.message = "registered legacy Crazyhouse same-frame incremental reuse completed";
+        return result;
+    }
 
     const LegacyCrazyhouseFeaturesV1::Result features =
       LegacyCrazyhouseFeaturesV1::extract(position);
@@ -934,11 +982,6 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
     if (features.boardPieceCount < 2
         || features.boardPieceCount > LegacyCrazyhouseFeaturesV1::LegacyMaxPieces)
         return contract_failure("legacy Crazyhouse board-piece count is outside the V1 contract");
-    if (stack.size_ == 0 || stack.size_ > Stack::MaxSize || !stack.frames_)
-        return contract_failure("legacy Crazyhouse incremental stack is structurally invalid");
-    if (stack.network_ && stack.network_ != this)
-        return contract_failure("legacy Crazyhouse incremental stack is bound to another network");
-
     std::array<Stack::ActiveRows, COLOR_NB> currentRows{};
     for (const Color perspective : {WHITE, BLACK})
     {
@@ -961,34 +1004,6 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
 
     const std::array<Square, COLOR_NB> currentKings = {position.square<KING>(WHITE),
                                                        position.square<KING>(BLACK)};
-    const auto                         rows_equal   = [](const Stack::ActiveRows& left,
-                               const Stack::ActiveRows& right) noexcept {
-        return left.size == right.size
-            && std::equal(left.values.begin(), left.values.begin() + left.size,
-                                                    right.values.begin());
-    };
-
-    const std::size_t currentIndex = stack.size_ - 1;
-    Stack::Frame&     currentFrame = stack.frames_[currentIndex];
-    if (currentFrame.computed)
-    {
-        if (currentFrame.boardPieceCount != features.boardPieceCount
-            || currentFrame.kingSquares != currentKings
-            || !rows_equal(currentFrame.active[WHITE], currentRows[WHITE])
-            || !rows_equal(currentFrame.active[BLACK], currentRows[BLACK]))
-            return contract_failure(
-              "legacy Crazyhouse physical features changed without an incremental stack push");
-
-        EvalResult result =
-          propagate_accumulators(position, currentFrame.boardPieceCount,
-                                 currentFrame.transformerBits, currentFrame.psqtBits);
-        if (!result.ok())
-            return result;
-        ++stack.counters_.evaluations;
-        ++stack.counters_.sameFrameReuses;
-        result.message = "registered legacy Crazyhouse same-frame incremental reuse completed";
-        return result;
-    }
 
     bool        sourceFound = false;
     std::size_t sourceIndex = currentIndex;
@@ -1069,6 +1084,15 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
             kingRefreshes += candidate.kingSquares[perspective] != currentKings[perspective];
     candidate.kingSquares     = currentKings;
     candidate.boardPieceCount = features.boardPieceCount;
+    std::size_t boardIndex = 0;
+    for (const Color owner : {WHITE, BLACK})
+        for (const PieceType type : BoardTypes)
+            candidate.boardInventory[boardIndex++] = position.pieces(owner, type);
+    std::size_t pocketIndex = 0;
+    for (const Color owner : {WHITE, BLACK})
+        for (const PieceType type : PocketTypes)
+            candidate.pocketInventory[pocketIndex++] =
+              std::uint8_t(position.pocket_count(owner, type));
 
     EvalResult result = propagate_accumulators(position, candidate.boardPieceCount,
                                                candidate.transformerBits, candidate.psqtBits);

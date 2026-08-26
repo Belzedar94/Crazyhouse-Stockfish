@@ -254,6 +254,9 @@ class LegacyCrazyhouseAccumulatorStackV1 {
     };
 
     struct Frame {
+        static constexpr std::size_t BoardInventorySize  = COLOR_NB * 6;
+        static constexpr std::size_t PocketInventorySize = COLOR_NB * 5;
+
         std::array<std::array<std::uint16_t, LegacyCrazyhouseNetworkV1::TransformerDimensions>,
                    COLOR_NB>
           transformerBits{};
@@ -261,6 +264,8 @@ class LegacyCrazyhouseAccumulatorStackV1 {
                                          psqtBits{};
         std::array<ActiveRows, COLOR_NB> active{};
         std::array<Square, COLOR_NB>     kingSquares{SQ_NONE, SQ_NONE};
+        std::array<Bitboard, BoardInventorySize> boardInventory{};
+        std::array<std::uint8_t, PocketInventorySize> pocketInventory{};
         std::size_t                      boardPieceCount = 0;
         bool                             computed        = false;
     };
