@@ -998,63 +998,6 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
                           std::move(message)};
     };
 
-    std::array<Stack::ActiveRows, COLOR_NB> currentRows{};
-    for (const Color perspective : {WHITE, BLACK})
-    {
-        auto& rows = currentRows[perspective];
-        const std::size_t kingBase = std::size_t(relative_square(perspective,
-                                                                  currentKings[perspective]))
-                                   * LegacyCrazyhouseFeaturesV1::KingStride;
-        const auto append = [&](std::size_t rawIndex) -> bool {
-            if (rawIndex >= LegacyCrazyhouseFeaturesV1::FeatureDimensions
-                || rows.size >= LegacyCrazyhouseFeaturesV1::MaxActiveDimensions)
-                return false;
-            rows.values[rows.size++] = LegacyCrazyhouseFeaturesV1::Index(rawIndex);
-            return true;
-        };
-
-        boardIndex = 0;
-        for (const Color owner : {WHITE, BLACK})
-            for (const PieceType type : BoardTypes)
-            {
-                Bitboard occupied = currentBoardInventory[boardIndex++];
-                while (occupied)
-                {
-                    const Square square = pop_lsb(occupied);
-                    const std::size_t ordinal = std::size_t(type - PAWN);
-                    const std::size_t plane =
-                      2 * ordinal + std::size_t(type != KING && owner != perspective);
-                    if (!append(kingBase + plane * LegacyCrazyhouseFeaturesV1::BoardSquareCount
-                                + std::size_t(relative_square(perspective, square))))
-                        return contract_failure(
-                          "legacy Crazyhouse fixed active-feature set exceeds the V1 contract");
-                }
-            }
-
-        pocketIndex = 0;
-        for (const Color owner : {WHITE, BLACK})
-            for (const PieceType type : PocketTypes)
-            {
-                const std::size_t count = currentPocketInventory[pocketIndex++];
-                const std::size_t ordinal = std::size_t(type - PAWN);
-                const std::size_t band = 2 * ordinal + std::size_t(owner != perspective);
-                for (std::size_t slot = 0; slot < count; ++slot)
-                    if (!append(kingBase + LegacyCrazyhouseFeaturesV1::BoardFeatures
-                                + band * LegacyCrazyhouseFeaturesV1::PocketSlots + slot))
-                        return contract_failure(
-                          "legacy Crazyhouse fixed pocket-feature set exceeds the V1 contract");
-            }
-
-        std::sort(rows.values.begin(), rows.values.begin() + rows.size);
-        if (std::adjacent_find(rows.values.begin(), rows.values.begin() + rows.size)
-            != rows.values.begin() + rows.size)
-            return contract_failure(
-              "legacy Crazyhouse canonical active-feature set contains a duplicate");
-        if (rows.size && rows.values[rows.size - 1] >= LegacyCrazyhouseNetworkV1::FeatureDimensions)
-            return contract_failure(
-              "legacy Crazyhouse canonical active-feature set exceeds the V1 tensor");
-    }
-
     bool        sourceFound = false;
     std::size_t sourceIndex = currentIndex;
     while (sourceIndex > 0)
@@ -1098,40 +1041,168 @@ LegacyCrazyhouseNetworkV1::evaluate_incremental(const Position&                 
                              parameters_->psqtWeights.data() + psqtOffset, PsqtBuckets, add, useSimd);
     };
 
-    for (const Color perspective : {WHITE, BLACK})
-    {
-        const Stack::ActiveRows  sourceRows   = candidate.active[perspective];
-        const Stack::ActiveRows& targetRows   = currentRows[perspective];
-        std::size_t              sourceCursor = 0;
-        std::size_t              targetCursor = 0;
-        while (sourceCursor < sourceRows.size || targetCursor < targetRows.size)
+    const auto board_feature_index = [&currentKings](Color     perspective,
+                                                     Color     owner,
+                                                     PieceType type,
+                                                     Square    square) {
+        const std::size_t kingBase = std::size_t(relative_square(perspective,
+                                                                  currentKings[perspective]))
+                                   * LegacyCrazyhouseFeaturesV1::KingStride;
+        const std::size_t ordinal = std::size_t(type - PAWN);
+        const std::size_t plane =
+          2 * ordinal + std::size_t(type != KING && owner != perspective);
+        return LegacyCrazyhouseFeaturesV1::Index(
+          kingBase + plane * LegacyCrazyhouseFeaturesV1::BoardSquareCount
+          + std::size_t(relative_square(perspective, square)));
+    };
+    const auto pocket_feature_index = [&currentKings](Color       perspective,
+                                                      Color       owner,
+                                                      PieceType   type,
+                                                      std::size_t slot) {
+        const std::size_t kingBase = std::size_t(relative_square(perspective,
+                                                                  currentKings[perspective]))
+                                   * LegacyCrazyhouseFeaturesV1::KingStride;
+        const std::size_t ordinal = std::size_t(type - PAWN);
+        const std::size_t band    = 2 * ordinal + std::size_t(owner != perspective);
+        return LegacyCrazyhouseFeaturesV1::Index(
+          kingBase + LegacyCrazyhouseFeaturesV1::BoardFeatures
+          + band * LegacyCrazyhouseFeaturesV1::PocketSlots + slot);
+    };
+    const auto build_current_rows = [&](Color perspective, Stack::ActiveRows& rows) {
+        const auto append = [&](LegacyCrazyhouseFeaturesV1::Index index) {
+            if (index >= LegacyCrazyhouseFeaturesV1::FeatureDimensions
+                || rows.size >= LegacyCrazyhouseFeaturesV1::MaxActiveDimensions)
+                return false;
+            rows.values[rows.size++] = index;
+            return true;
+        };
+
+        std::size_t inventoryIndex = 0;
+        for (const Color owner : {WHITE, BLACK})
+            for (const PieceType type : BoardTypes)
+            {
+                Bitboard occupied = currentBoardInventory[inventoryIndex++];
+                while (occupied)
+                    if (!append(board_feature_index(perspective, owner, type,
+                                                    pop_lsb(occupied))))
+                        return false;
+            }
+
+        inventoryIndex = 0;
+        for (const Color owner : {WHITE, BLACK})
+            for (const PieceType type : PocketTypes)
+            {
+                const std::size_t count = currentPocketInventory[inventoryIndex++];
+                for (std::size_t slot = 0; slot < count; ++slot)
+                    if (!append(pocket_feature_index(perspective, owner, type, slot)))
+                        return false;
+            }
+
+        std::sort(rows.values.begin(), rows.values.begin() + rows.size);
+        return std::adjacent_find(rows.values.begin(), rows.values.begin() + rows.size)
+                 == rows.values.begin() + rows.size;
+    };
+    const auto insert_feature = [&](Color perspective, LegacyCrazyhouseFeaturesV1::Index index) {
+        auto& rows = candidate.active[perspective];
+        if (index >= LegacyCrazyhouseFeaturesV1::FeatureDimensions
+            || rows.size >= LegacyCrazyhouseFeaturesV1::MaxActiveDimensions)
+            return false;
+        auto begin = rows.values.begin();
+        auto end   = begin + rows.size;
+        auto where = std::lower_bound(begin, end, index);
+        if (where != end && *where == index)
+            return false;
+        std::move_backward(where, end, end + 1);
+        *where = index;
+        ++rows.size;
+        apply_feature(perspective, index, true);
+        ++addedFeatures;
+        return true;
+    };
+    const auto remove_feature = [&](Color perspective, LegacyCrazyhouseFeaturesV1::Index index) {
+        auto& rows  = candidate.active[perspective];
+        auto  begin = rows.values.begin();
+        auto  end   = begin + rows.size;
+        auto  where = std::lower_bound(begin, end, index);
+        if (where == end || *where != index)
+            return false;
+        apply_feature(perspective, index, false);
+        std::move(where + 1, end, where);
+        --rows.size;
+        ++removedFeatures;
+        return true;
+    };
+    const auto refresh_perspective = [&](Color perspective) {
+        Stack::ActiveRows rows{};
+        if (!build_current_rows(perspective, rows))
+            return false;
+        copy_transformer_bits(candidate.transformerBits[perspective].data(),
+                              parameters_->transformerBiases.data(), TransformerDimensions);
+        candidate.psqtBits[perspective].fill(0);
+        candidate.active[perspective].size = 0;
+        for (std::size_t i = 0; i < rows.size; ++i)
         {
-            if (targetCursor == targetRows.size
-                || (sourceCursor < sourceRows.size
-                    && sourceRows.values[sourceCursor] < targetRows.values[targetCursor]))
-            {
-                apply_feature(perspective, sourceRows.values[sourceCursor++], false);
-                ++removedFeatures;
-            }
-            else if (sourceCursor == sourceRows.size
-                     || targetRows.values[targetCursor] < sourceRows.values[sourceCursor])
-            {
-                apply_feature(perspective, targetRows.values[targetCursor++], true);
-                ++addedFeatures;
-            }
-            else
-            {
-                ++sourceCursor;
-                ++targetCursor;
-            }
+            apply_feature(perspective, rows.values[i], true);
+            ++addedFeatures;
         }
-        candidate.active[perspective] = targetRows;
-    }
+        candidate.active[perspective] = rows;
+        return true;
+    };
 
     std::uint64_t kingRefreshes = 0;
-    if (sourceFound)
-        for (const Color perspective : {WHITE, BLACK})
-            kingRefreshes += candidate.kingSquares[perspective] != currentKings[perspective];
+    for (const Color perspective : {WHITE, BLACK})
+    {
+        if (!sourceFound || candidate.kingSquares[perspective] != currentKings[perspective])
+        {
+            kingRefreshes += sourceFound;
+            if (!refresh_perspective(perspective))
+                return contract_failure(
+                  "legacy Crazyhouse perspective refresh violates the V1 feature contract");
+            continue;
+        }
+
+        std::size_t inventoryIndex = 0;
+        for (const Color owner : {WHITE, BLACK})
+            for (const PieceType type : BoardTypes)
+            {
+                Bitboard removed = candidate.boardInventory[inventoryIndex]
+                                 & ~currentBoardInventory[inventoryIndex];
+                Bitboard added = currentBoardInventory[inventoryIndex]
+                               & ~candidate.boardInventory[inventoryIndex];
+                ++inventoryIndex;
+                while (removed)
+                    if (!remove_feature(
+                          perspective,
+                          board_feature_index(perspective, owner, type, pop_lsb(removed))))
+                        return contract_failure(
+                          "legacy Crazyhouse board delta removes an inactive feature");
+                while (added)
+                    if (!insert_feature(
+                          perspective,
+                          board_feature_index(perspective, owner, type, pop_lsb(added))))
+                        return contract_failure(
+                          "legacy Crazyhouse board delta adds a duplicate feature");
+            }
+
+        inventoryIndex = 0;
+        for (const Color owner : {WHITE, BLACK})
+            for (const PieceType type : PocketTypes)
+            {
+                const std::size_t before = candidate.pocketInventory[inventoryIndex];
+                const std::size_t after  = currentPocketInventory[inventoryIndex++];
+                for (std::size_t slot = after; slot < before; ++slot)
+                    if (!remove_feature(
+                          perspective, pocket_feature_index(perspective, owner, type, slot)))
+                        return contract_failure(
+                          "legacy Crazyhouse pocket delta removes an inactive feature");
+                for (std::size_t slot = before; slot < after; ++slot)
+                    if (!insert_feature(
+                          perspective, pocket_feature_index(perspective, owner, type, slot)))
+                        return contract_failure(
+                          "legacy Crazyhouse pocket delta adds a duplicate feature");
+            }
+    }
+
     candidate.kingSquares     = currentKings;
     candidate.boardPieceCount = std::size_t(boardCount);
     candidate.boardInventory  = currentBoardInventory;
