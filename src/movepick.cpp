@@ -324,7 +324,9 @@ top:
 
     case GOOD_CAPTURE : {
         Move selected = select([&](ExtMove& move) {
-            if (pos.see_ge(move, -move.value / 18))
+            const int checkingCaptureAllowance =
+              pos.ruleset() == Ruleset::CRAZYHOUSE && pos.gives_check(move) ? 500 : 0;
+            if (pos.see_ge(move, -move.value / 18 - checkingCaptureAllowance))
                 return true;
             std::swap(moves[endBadCaptures++], move);
             return false;
