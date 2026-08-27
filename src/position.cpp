@@ -1192,11 +1192,16 @@ void Position::do_move(Move                      m,
 
     auto updatePocketCount = [&](Color color, PieceType type, int newCount) {
         const int index = Crazyhouse::pocket_index(type);
-        if ((color != WHITE && color != BLACK) || index < 0 || newCount < 0
-            || newCount > Crazyhouse::max_pocket_count(type))
+        if ((color != WHITE && color != BLACK) || index < 0)
+            std::abort();
+
+        const int maxCount = Crazyhouse::max_pocket_count(type);
+        if (newCount < 0 || newCount > maxCount)
             std::abort();
 
         auto& count = st->crazyhouse.pockets.count[color][index];
+        if (count > maxCount)
+            std::abort();
         const Key delta = Zobrist::crazyhousePocket[color][index][count]
                         ^ Zobrist::crazyhousePocket[color][index][newCount];
         count = newCount;
