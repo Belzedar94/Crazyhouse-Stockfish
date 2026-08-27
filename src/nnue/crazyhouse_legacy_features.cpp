@@ -58,8 +58,7 @@ LegacyCrazyhouseFeaturesV1::extract(const Position& position) {
 
     for (Color perspective : {WHITE, BLACK})
     {
-        std::vector<Index>& active = candidate.active[perspective];
-        active.reserve(LegacyMaxPieces);
+        IndexList& active = candidate.active[perspective];
 
         const Square ownKing = position.square<KING>(perspective);
         if (ownKing == SQ_NONE)

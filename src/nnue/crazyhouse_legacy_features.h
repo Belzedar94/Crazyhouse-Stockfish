@@ -16,8 +16,8 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
-#include <vector>
 
+#include "../misc.h"
 #include "../types.h"
 
 namespace Stockfish {
@@ -43,6 +43,8 @@ class LegacyCrazyhouseFeaturesV1 {
     static constexpr std::size_t LegacyMaxPieces   = 32;
     static constexpr std::size_t MaxActiveDimensions = 128;
 
+    using IndexList = ValueList<Index, MaxActiveDimensions>;
+
     enum class Status {
         Success,
         WrongRuleset,
@@ -57,7 +59,7 @@ class LegacyCrazyhouseFeaturesV1 {
 
     struct Result {
         Status                                  status = Status::WrongRuleset;
-        std::array<std::vector<Index>, COLOR_NB> active;
+        std::array<IndexList, COLOR_NB>           active;
         std::size_t                             boardPieceCount = 0;
         std::size_t                             layerBucket     = 0;
         std::string                             message;
