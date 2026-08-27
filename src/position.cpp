@@ -1156,9 +1156,7 @@ void Position::do_move(Move                      m,
     assert(&newSt != st);
 
     const bool isDrop = m.is_drop();
-    const Key  oldPocketKey = st->crazyhouse.pocketKey;
-    const Key  oldPromotedKey = st->crazyhouse.promotedKey;
-    Key        k = st->key ^ Zobrist::side;
+    Key        k      = st->key ^ Zobrist::side;
 
     // Copy some fields of the old state to our new StateInfo object except the
     // ones which are going to be recalculated from scratch anyway and then switch
@@ -1192,6 +1190,38 @@ void Position::do_move(Move                      m,
     const bool   movingPromoted =
       !isDrop && activeRuleset == Ruleset::CRAZYHOUSE && bool(st->crazyhouse.promoted & from);
 
+    auto updatePocketCount = [&](Color color, PieceType type, int newCount) {
+        const int index = Crazyhouse::pocket_index(type);
+        if ((color != WHITE && color != BLACK) || index < 0 || newCount < 0
+            || newCount > Crazyhouse::max_pocket_count(type))
+            std::abort();
+
+        auto& count = st->crazyhouse.pockets.count[color][index];
+        const Key delta = Zobrist::crazyhousePocket[color][index][count]
+                        ^ Zobrist::crazyhousePocket[color][index][newCount];
+        count = newCount;
+        st->crazyhouse.pocketKey ^= delta;
+        k ^= delta;
+    };
+
+    auto removePromoted = [&](Square square) {
+        if (st->crazyhouse.promoted & square)
+        {
+            st->crazyhouse.promoted ^= square;
+            st->crazyhouse.promotedKey ^= Zobrist::crazyhousePromoted[square];
+            k ^= Zobrist::crazyhousePromoted[square];
+        }
+    };
+
+    auto addPromoted = [&](Square square) {
+        if (!(st->crazyhouse.promoted & square))
+        {
+            st->crazyhouse.promoted |= square;
+            st->crazyhouse.promotedKey ^= Zobrist::crazyhousePromoted[square];
+            k ^= Zobrist::crazyhousePromoted[square];
+        }
+    };
+
     if (isDrop
         && (activeRuleset != Ruleset::CRAZYHOUSE || !empty(to)
             || pocket_count(us, m.drop_piece_type()) == 0
@@ -1214,9 +1244,9 @@ void Position::do_move(Move                      m,
         if ((us != WHITE && us != BLACK) || pocketIndex < 0)
             std::abort();
 
-        auto& count = st->crazyhouse.pockets.count[us][pocketIndex];
-        --count;
-        st->crazyhouse.promoted &= ~square_bb(to);
+        const int count = st->crazyhouse.pockets.count[us][pocketIndex];
+        updatePocketCount(us, m.drop_piece_type(), count - 1);
+        removePromoted(to);
     }
     else if (m.type_of() == CASTLING)
     {
@@ -1276,11 +1306,9 @@ void Position::do_move(Move                      m,
             if ((us != WHITE && us != BLACK) || pocketIndex < 0)
                 std::abort();
 
-            auto& count = st->crazyhouse.pockets.count[us][pocketIndex];
-            if (count >= Crazyhouse::max_pocket_count(pocketType))
-                std::abort();
-            ++count;
-            st->crazyhouse.promoted &= ~square_bb(capsq);
+            const int count = st->crazyhouse.pockets.count[us][pocketIndex];
+            updatePocketCount(us, pocketType, count + 1);
+            removePromoted(capsq);
         }
 
         // Reset rule 50 counter
@@ -1398,17 +1426,9 @@ void Position::do_move(Move                      m,
 
     if (activeRuleset == Ruleset::CRAZYHOUSE && !isDrop && m.type_of() != CASTLING)
     {
-        st->crazyhouse.promoted &= ~square_bb(from);
+        removePromoted(from);
         if (movingPromoted || m.type_of() == PROMOTION)
-            st->crazyhouse.promoted |= to;
-    }
-
-    if (activeRuleset == Ruleset::CRAZYHOUSE)
-    {
-        st->crazyhouse.pocketKey   = compute_crazyhouse_pocket_key();
-        st->crazyhouse.promotedKey = compute_crazyhouse_promoted_key();
-        k ^= oldPocketKey ^ st->crazyhouse.pocketKey ^ oldPromotedKey
-           ^ st->crazyhouse.promotedKey;
+            addPromoted(to);
     }
 
     if (tt)
