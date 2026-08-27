@@ -72,8 +72,6 @@ LegacyCrazyhouseFeaturesV1::extract(const Position& position) {
             if (rawIndex >= FeatureDimensions)
                 return Status::FeatureIndexOutOfRange;
             const Index index = static_cast<Index>(rawIndex);
-            if (std::find(active.begin(), active.end(), index) != active.end())
-                return Status::DuplicateFeature;
             if (active.size() >= MaxActiveDimensions)
                 return Status::ActiveFeatureOverflow;
             active.push_back(index);
