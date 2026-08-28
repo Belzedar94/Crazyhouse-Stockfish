@@ -125,15 +125,15 @@ void verify_typed_drop_piece_and_prefetch() {
     }
 }
 
-void verify_conservative_see() {
+void verify_enabled_see() {
     StateInfo state;
     Position  position(Ruleset::CRAZYHOUSE);
     require_set(position, state, "7k/8/8/8/8/8/R7/K7[N] w - - 0 1");
 
-    require(position.see_ge(Move::make_drop(KNIGHT, SQ_E4), std::numeric_limits<int>::max()),
-            "drop entered orthodox SEE pruning");
-    require(position.see_ge(Move(SQ_A2, SQ_A3), std::numeric_limits<int>::max()),
-            "Crazyhouse board move entered orthodox SEE pruning");
+    require(!position.see_ge(Move::make_drop(KNIGHT, SQ_E4), std::numeric_limits<int>::max()),
+            "drop bypassed enabled Crazyhouse SEE");
+    require(!position.see_ge(Move(SQ_A2, SQ_A3), std::numeric_limits<int>::max()),
+            "Crazyhouse board move bypassed enabled SEE");
 }
 
 void verify_move_picker_drop_paths() {
@@ -180,11 +180,11 @@ int main() {
     Position::init();
 
     verify_typed_drop_piece_and_prefetch();
-    verify_conservative_see();
+    verify_enabled_see();
     verify_move_picker_drop_paths();
 
     std::cout << "PASS crazyhouse_search_primitives moved_piece=PASS prefetch=DISABLED "
-                 "see=CONSERVATIVE move_picker_303=PASS drop_evasions=PASS "
+                 "see=ENABLED move_picker_303=PASS drop_evasions=PASS "
                  "chess_isolation=PASS\n";
     return EXIT_SUCCESS;
 }

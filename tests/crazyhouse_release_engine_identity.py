@@ -24,10 +24,10 @@ if str(TOOLS) not in sys.path:
 import verify_crazyhouse_engine_identity as identity  # noqa: E402
 
 
-CONTRACT = REPO_ROOT / "tests" / "crazyhouse" / "p15-release-engine-identity-v1.json"
+CONTRACT = REPO_ROOT / "tests" / "crazyhouse" / "p15-release-engine-identity-v2.json"
 VERSION = "1.0.0"
 TAG = "v1.0.0"
-P7 = "c0c11978abbe0cc7c4d80c90426b00eae0aa712c"
+P7 = "4482bb403bf19b7e8dde6ef316c27769cde31ca8"
 OFFICIAL = "229f6339e537a097a79831cd06dbfdb3e623d4ac"
 TARGETS = identity.TARGETS
 FIXTURE_SOURCE_ENV = "CRAZYHOUSE_IDENTITY_FIXTURE_REPOSITORY"
