@@ -146,8 +146,13 @@ def inspect_source(source_root: Path) -> dict:
     p = squash(position)
 
     require(
-        "if (activeRuleset == Ruleset::CRAZYHOUSE) return true;" in p,
-        "Crazyhouse conservative SEE pass boundary drifted",
+        "if (activeRuleset == Ruleset::CRAZYHOUSE) return true;" not in p,
+        "Crazyhouse SEE bypass was restored",
+    )
+    require(
+        "if (m.type_of() != NORMAL && !(activeRuleset == Ruleset::CRAZYHOUSE && m.is_drop())) return VALUE_ZERO >= threshold;"
+        in p,
+        "Crazyhouse drop SEE admission drifted",
     )
     require(
         "case PROBCUT : return select([&](const ExtMove& move) { return pos.see_ge(move, threshold); });"
@@ -203,7 +208,7 @@ def inspect_source(source_root: Path) -> dict:
             "probCutBeta = beta + 241 - 64 * improving; if (orthodoxSearch && depth >= 3" in s
         ),
         "shallow_guard": (
-            "if (orthodoxSearch && !rootNode && pos.non_pawn_material(us) && !is_loss(bestValue))"
+            "if ((orthodoxSearch || pos.ruleset() == Ruleset::CRAZYHOUSE) && !rootNode && pos.non_pawn_material(us) && !is_loss(bestValue))"
             in s
         ),
     }
