@@ -413,6 +413,7 @@ jobs:
         shell: msys2 {0}
         run: |
           set -euo pipefail
+          export PATH="$(cygpath -u "$pythonLocation"):$PATH"
           mkdir -p .ci/evidence
           python tools/ci/fetch_crazyhouse_legacy_network.py \
             --verify-existing .ci/network/Crazyhouse_v1.nnue
