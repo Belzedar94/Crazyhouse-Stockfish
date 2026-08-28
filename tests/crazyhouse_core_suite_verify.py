@@ -25,7 +25,7 @@ NORMAL_CASES = {
     "drop-generation": "PASS crazyhouse_drop_generation exact303=PASS all_types=PASS restrictions=PASS single_check=PASS double_check=PASS check_drop=PASS ownership=PASS duplicates=PASS chess_isolation=PASS",
     "repetition-terminal": "PASS crazyhouse_repetition_terminal horizon=PASS threefold=PASS fivefold=PASS precedence=PASS no_50=PASS no_insufficient=PASS stalemate=PASS syzygy=PASS chess_isolation=PASS",
     "search-capacity": "PASS crazyhouse_search_capacity inline=1..255 fallback=256,303,512,1024 invalid_zero_control=SEPARATE",
-    "search-primitives": "PASS crazyhouse_search_primitives moved_piece=PASS prefetch=DISABLED see=CONSERVATIVE move_picker_303=PASS drop_evasions=PASS chess_isolation=PASS",
+    "search-primitives": "PASS crazyhouse_search_primitives moved_piece=PASS prefetch=DISABLED see=ENABLED move_picker_303=PASS drop_evasions=PASS chess_isolation=PASS",
 }
 
 NEGATIVE_CASES = [
