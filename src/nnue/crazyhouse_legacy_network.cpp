@@ -244,8 +244,9 @@ void apply_transformer_bits(std::uint16_t*      target,
     if (useSimd)
     {
         constexpr std::size_t Lanes = sizeof(__m256i) / sizeof(std::uint16_t);
-        std::size_t           lane  = 0;
-        for (; lane + Lanes <= count; lane += Lanes)
+        const std::size_t     vectorizedCount = count - count % Lanes;
+        std::size_t           lane            = 0;
+        for (; lane < vectorizedCount; lane += Lanes)
         {
             const __m256i left =
               _mm256_loadu_si256(reinterpret_cast<const __m256i*>(target + lane));
@@ -267,8 +268,9 @@ void apply_transformer_bits(std::uint16_t*      target,
     if (useSimd)
     {
         constexpr std::size_t Lanes = sizeof(__m128i) / sizeof(std::uint16_t);
-        std::size_t           lane  = 0;
-        for (; lane + Lanes <= count; lane += Lanes)
+        const std::size_t     vectorizedCount = count - count % Lanes;
+        std::size_t           lane            = 0;
+        for (; lane < vectorizedCount; lane += Lanes)
         {
             const __m128i left  = _mm_loadu_si128(reinterpret_cast<const __m128i*>(target + lane));
             const __m128i right = _mm_loadu_si128(reinterpret_cast<const __m128i*>(source + lane));
@@ -304,8 +306,9 @@ void apply_psqt_bits(std::uint32_t*      target,
     if (useSimd)
     {
         constexpr std::size_t Lanes = sizeof(__m256i) / sizeof(std::uint32_t);
-        std::size_t           lane  = 0;
-        for (; lane + Lanes <= count; lane += Lanes)
+        const std::size_t     vectorizedCount = count - count % Lanes;
+        std::size_t           lane            = 0;
+        for (; lane < vectorizedCount; lane += Lanes)
         {
             const __m256i left =
               _mm256_loadu_si256(reinterpret_cast<const __m256i*>(target + lane));
@@ -326,8 +329,9 @@ void apply_psqt_bits(std::uint32_t*      target,
     if (useSimd)
     {
         constexpr std::size_t Lanes = sizeof(__m128i) / sizeof(std::uint32_t);
-        std::size_t           lane  = 0;
-        for (; lane + Lanes <= count; lane += Lanes)
+        const std::size_t     vectorizedCount = count - count % Lanes;
+        std::size_t           lane            = 0;
+        for (; lane < vectorizedCount; lane += Lanes)
         {
             const __m128i left  = _mm_loadu_si128(reinterpret_cast<const __m128i*>(target + lane));
             const __m128i right = _mm_loadu_si128(reinterpret_cast<const __m128i*>(source + lane));
@@ -362,8 +366,9 @@ void transform_accumulator(const std::uint16_t* input,
         constexpr std::size_t Lanes = sizeof(__m128i) / sizeof(std::uint16_t);
         const __m128i         zero  = _mm_setzero_si128();
         const __m128i         upper = _mm_set1_epi16(127);
-        std::size_t           lane  = 0;
-        for (; lane + Lanes <= count; lane += Lanes)
+        const std::size_t     vectorizedCount = count - count % Lanes;
+        std::size_t           lane            = 0;
+        for (; lane < vectorizedCount; lane += Lanes)
         {
             __m128i values       = _mm_loadu_si128(reinterpret_cast<const __m128i*>(input + lane));
             values               = _mm_max_epi16(values, zero);

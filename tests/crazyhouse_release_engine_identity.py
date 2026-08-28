@@ -87,7 +87,16 @@ def pin(path: Path) -> dict[str, object]:
 
 def git(repository: Path, *arguments: str) -> str:
     completed = subprocess.run(
-        ["git", "-C", str(repository), *arguments],
+        [
+            "git",
+            "-c",
+            "gc.auto=0",
+            "-c",
+            "maintenance.auto=false",
+            "-C",
+            str(repository),
+            *arguments,
+        ],
         stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -234,6 +243,10 @@ def build_fixture(
     completed = subprocess.run(
         [
             "git",
+            "-c",
+            "gc.auto=0",
+            "-c",
+            "maintenance.auto=false",
             "clone",
             "-q",
             "--no-hardlinks",
