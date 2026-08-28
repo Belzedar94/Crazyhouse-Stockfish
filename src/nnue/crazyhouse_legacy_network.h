@@ -273,6 +273,7 @@ class LegacyCrazyhouseAccumulatorStackV1 {
         std::array<Bitboard, BoardInventorySize> boardInventory{};
         std::array<std::uint8_t, PocketInventorySize> pocketInventory{};
         std::size_t                      boardPieceCount = 0;
+        Key                              positionKey     = 0;
         bool                             computed        = false;
     };
 

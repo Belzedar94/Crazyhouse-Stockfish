@@ -535,6 +535,7 @@ void LegacyCrazyhouseAccumulatorStackV1::reset() noexcept {
     counters_                     = {};
     frames_[0].computed           = false;
     frames_[0].boardPieceCount    = 0;
+    frames_[0].positionKey        = 0;
     frames_[0].kingSquares        = {SQ_NONE, SQ_NONE};
     frames_[0].boardInventory.fill(0);
     frames_[0].pocketInventory.fill(0);
@@ -548,6 +549,7 @@ bool LegacyCrazyhouseAccumulatorStackV1::push() noexcept {
     Frame& frame             = frames_[size_++];
     frame.computed           = false;
     frame.boardPieceCount    = 0;
+    frame.positionKey        = 0;
     frame.kingSquares        = {SQ_NONE, SQ_NONE};
     frame.boardInventory.fill(0);
     frame.pocketInventory.fill(0);
@@ -963,6 +965,22 @@ LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::evaluate_increm
         return {EvalStatus::ContractViolation, std::nullopt, std::nullopt,
                 "legacy Crazyhouse incremental stack is bound to another network"};
 
+    const std::size_t currentIndex = stack.size_ - 1;
+    Stack::Frame&     currentFrame = stack.frames_[currentIndex];
+    if (currentFrame.computed && currentFrame.positionKey == position.key())
+    {
+        EvalResult result =
+          propagate_accumulators(position, currentFrame.boardPieceCount,
+                                 currentFrame.transformerBits, currentFrame.psqtBits,
+                                 selectedBucketOnly);
+        if (!result.ok())
+            return result;
+        ++stack.counters_.evaluations;
+        ++stack.counters_.sameFrameReuses;
+        result.message = "registered legacy Crazyhouse keyed same-frame reuse completed";
+        return result;
+    }
+
     std::array<Bitboard, Stack::Frame::BoardInventorySize> currentBoardInventory{};
     std::size_t                                            boardIndex = 0;
     for (const Color owner : {WHITE, BLACK})
@@ -984,9 +1002,6 @@ LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::evaluate_increm
 
     const std::array<Square, COLOR_NB> currentKings = {position.square<KING>(WHITE),
                                                        position.square<KING>(BLACK)};
-    const std::size_t currentIndex = stack.size_ - 1;
-    Stack::Frame&     currentFrame = stack.frames_[currentIndex];
-
     if (currentFrame.computed)
     {
         if (currentFrame.boardPieceCount != std::size_t(boardCount)
@@ -1004,6 +1019,7 @@ LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::evaluate_increm
             return result;
         ++stack.counters_.evaluations;
         ++stack.counters_.sameFrameReuses;
+        currentFrame.positionKey = position.key();
         result.message = "registered legacy Crazyhouse same-frame incremental reuse completed";
         return result;
     }
@@ -1221,6 +1237,7 @@ LegacyCrazyhouseNetworkV1::EvalResult LegacyCrazyhouseNetworkV1::evaluate_increm
 
     candidate.kingSquares     = currentKings;
     candidate.boardPieceCount = std::size_t(boardCount);
+    candidate.positionKey     = position.key();
     candidate.boardInventory  = currentBoardInventory;
     candidate.pocketInventory = currentPocketInventory;
 
