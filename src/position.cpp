@@ -1837,7 +1837,8 @@ bool Position::see_ge(Move m, int threshold) const {
     if (m.type_of() != NORMAL && !(activeRuleset == Ruleset::CRAZYHOUSE && m.is_drop()))
         return VALUE_ZERO >= threshold;
 
-    Square from = m.from_sq(), to = m.to_sq();
+    const Square to   = m.to_sq();
+    const Square from = m.is_drop() ? SQ_NONE : m.from_sq();
 
     assert(m.is_drop() || piece_on(from) != NO_PIECE);
 
