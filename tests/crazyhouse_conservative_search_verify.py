@@ -387,6 +387,9 @@ def main() -> int:
 
     for path in (args.source_root, args.engine, args.legacy_network):
         require(path.exists(), f"missing required path: {path}")
+    args.source_root = args.source_root.resolve(strict=True)
+    args.engine = args.engine.resolve(strict=True)
+    args.legacy_network = args.legacy_network.resolve(strict=True)
     require(args.engine.is_file(), "engine is not a file")
     require(args.legacy_network.is_file(), "legacy network is not a file")
     require(args.legacy_network.stat().st_size == LEGACY_BYTES, "legacy network size mismatch")
