@@ -255,6 +255,10 @@ void verify_boundaries(const Network& network, const std::filesystem::path& arti
       "rn2k2r/pppppppp/8/8/8/8/PPPPPPPP/RNB1K2R[] w - - 0 1",
       "rnb1kb1r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKB1R[] w - - 0 1",
     };
+    // The immutable corpus digest predates this selected-bucket coverage. Keep
+    // the additive probes in a separate trace domain so they cannot rewrite
+    // the frozen scalar/SIMD protocol identity.
+    std::uint64_t bucketDigest = 0x43485F4255434B54ULL;
     for (std::size_t bucket = 0; bucket < BucketFens.size(); ++bucket)
     {
         StateInfo bucketState{};
@@ -262,7 +266,7 @@ void verify_boundaries(const Network& network, const std::filesystem::path& arti
         set_position(bucketPosition, std::string(BucketFens[bucket]), bucketState);
         Stack bucketStack;
         bucketStack.reset();
-        require_parity(network, bucketStack, bucketPosition, totals.digest,
+        require_parity(network, bucketStack, bucketPosition, bucketDigest,
                        "selected search bucket " + std::to_string(bucket));
     }
 
