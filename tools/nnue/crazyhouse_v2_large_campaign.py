@@ -184,6 +184,13 @@ def import_trainer(path: Path, expected_sha256: str) -> tuple[ModuleType, bytes]
     return module, payload
 
 
+def bound_trainer_call(module: ModuleType, function: Any, *arguments: Any) -> Any:
+    try:
+        return function(*arguments)
+    except module.TrainerError as exc:
+        raise CampaignError(f"BOUND_TRAINER:{exc}") from exc
+
+
 def placeholder_config(module: ModuleType, recipe: Mapping[str, Any]) -> Any:
     document = {
         "batch_size": recipe["batch_size"],
@@ -274,7 +281,9 @@ def materialize(
     source = validate_source(campaign)
     config = placeholder_config(module, recipe)
     validate_hex(admission_sha256, HEX64, "ADMISSION_SHA256_ARGUMENT")
-    train, validation, inputs = module._load_admission(admission_path, admission_sha256, config)
+    train, validation, inputs = bound_trainer_call(
+        module, module._load_admission, admission_path, admission_sha256, config
+    )
     try:
         minimums = campaign.get("dataset_admission", {}).get("minimum_record_counts")
         require(isinstance(minimums, dict), "DATASET_MINIMUMS")
@@ -322,7 +331,7 @@ def materialize(
             payload = canonical_json(document)
             path = partial / f"training-config-seed-{seed['index']}.json"
             write_exclusive(path, payload)
-            module._load_config(path, sha256_bytes(payload))
+            bound_trainer_call(module, module._load_config, path, sha256_bytes(payload))
             configurations.append(
                 {
                     "index": seed["index"],
