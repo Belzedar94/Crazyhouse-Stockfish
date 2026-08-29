@@ -26,6 +26,10 @@ ROOT = Path(__file__).resolve().parents[1]
 RULE_SHA = "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
 PHYSICAL_SHA = "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55"
 FEATURE_SHA = "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6"
+PRODUCTION_CAPABILITY_SHA = "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b"
+PRODUCTION_NETWORK_SHA = "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+PRODUCTION_BOOK_SHA = "1371e87ce3bdb875d922ad0061c96c4a123bc571daf4ae2bff24e5176287f0fa"
+PRODUCTION_POLICY_SHA = "475fd0fb9a929e964ff32357031a18d33ecc2543e8681cc73068858c10db3014"
 
 HEADER_BYTES = 256
 RECORD_BYTES = 256
@@ -789,17 +793,45 @@ def make_production_shape(
         manifest["aggregate_chunk_set_receipt"]["path"], aggregate_payload
     )
     capability_path = fixture / "capability.json"
-    capability = dict(parse_json(capability_path.read_bytes(), "production capability"))
-    capability.update(
-        {
-            "artifact_role": "crazyhouse-physical-datagen",
-            "atomic_rename": True,
-            "fsync": True,
-            "kill_retry_unique_chunk_id": True,
-            "partial_quarantine": True,
-            "production_generation_authorized": True,
-        }
+    legacy_capability = dict(
+        parse_json(capability_path.read_bytes(), "legacy fixture capability")
     )
+    first_entry = manifest["roles"]["train"]["chunks"][0]
+    first_provenance = parse_json(
+        (fixture / first_entry["provenance"]["path"]).read_bytes(),
+        "legacy fixture provenance",
+    )
+    capability = {
+        "artifact_bytes": legacy_capability["artifact_bytes"],
+        "artifact_role": "crazyhouse-physical-datagen-production-v1",
+        "artifact_sha256": legacy_capability["artifact_sha256"],
+        "build_recipe_sha256": legacy_capability["build_recipe_sha256"],
+        "capability_contract_sha256": PRODUCTION_CAPABILITY_SHA,
+        "challenge": legacy_capability["challenge"],
+        "command": "crazyhouse_generate_physical_production_v1",
+        "openbench_publication_protocol": 41,
+        "physical_record_bytes": 256,
+        "physical_schema_sha256": PHYSICAL_SHA,
+        "producer_source_commit": legacy_capability["source_commit"],
+        "producer_source_dirty": False,
+        "producer_source_tree": legacy_capability["source_tree"],
+        "producer_src_tree": legacy_capability["src_tree"],
+        "production_generation_authorized": provenance_case != "unauthorized",
+        "registered_network_bytes": 58_534_811,
+        "registered_network_sha256": PRODUCTION_NETWORK_SHA,
+        "rule_profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
+        "rule_profile_sha256": RULE_SHA,
+        "schema": "crazyhouse-datagen-production-capability-response/v1",
+        "selection_policy_sha256": PRODUCTION_POLICY_SHA,
+        "toolchain_identity": first_provenance["toolchain"]["identity"],
+        "toolchain_sha256": legacy_capability["toolchain_sha256"],
+        "trajectory_partition_domain": (
+            "Crazyhouse-Stockfish physical trajectory split v1\\0"
+            if provenance_case == "domain-printable"
+            else SPLIT_DOMAIN.decode("ascii")
+        ),
+        "variant": "crazyhouse",
+    }
     capability_payload = canonical_json(capability)
     capability_path.write_bytes(capability_payload)
     capability_sha = hashlib.sha256(capability_payload).digest()
@@ -807,35 +839,137 @@ def make_production_shape(
         for entry in manifest["roles"][role]["chunks"]:
             provenance_path = fixture / entry["provenance"]["path"]
             provenance = dict(parse_json(provenance_path.read_bytes(), "production provenance"))
-            provenance["producer_capability"] = dict(provenance["producer_capability"])
-            provenance["producer_capability"]["bytes"] = len(capability_payload)
-            provenance["producer_capability"]["sha256"] = capability_sha.hex()
-            provenance["producer_artifact"] = {
+            producer = {
                 "bytes": capability["artifact_bytes"],
                 "kind": capability["artifact_role"],
                 "path": "artifacts/crazyhouse-physical-datagen.exe",
                 "sha256": capability["artifact_sha256"],
             }
-            provenance["generation_settings"] = dict(provenance["generation_settings"])
-            provenance["generation_settings"]["fixture_only"] = False
-            provenance["generation_settings"]["training_admissible"] = True
+            provenance.update(
+                {
+                    "adjudication": {
+                        "claim_policy": "automatic-only",
+                        "fivefold_automatic": True,
+                        "insufficient_material": False,
+                        "resignation": False,
+                        "rule50": False,
+                        "threefold_claim": False,
+                    },
+                    "cohort": "training-admission-production-shape-v1",
+                    "external_workload_id": "local-structural-negative-only",
+                    "generation_settings": {
+                        "accepted_trajectories": entry["trajectory_count"],
+                        "base_seed": int(provenance["seed"]),
+                        "candidate_games_examined": entry["trajectory_count"],
+                        "complete_trajectory_only": True,
+                        "depth_cap": 64,
+                        "exact_count": True,
+                        "exact_quota_algorithm": "deterministic-first-reachable-exact-subset-v1",
+                        "exploration_max_score_diff_internal": 256,
+                        "exploration_multipv": 4,
+                        "exploration_plies": 8,
+                        "fixture_only": False,
+                        "hash_mib": 128,
+                        "max_candidate_games": max(1, entry["trajectory_count"]),
+                        "max_game_ply": 512,
+                        "nodes_per_position": 16384,
+                        "production_generation_authorized": True,
+                        "record_count": entry["record_count"],
+                        "role_eligible_complete_candidates": entry["trajectory_count"],
+                        "role_ineligible_candidates": 0,
+                        "subset_candidates_omitted": 0,
+                        "threads": 1,
+                        "training_admissible": True,
+                        "wall_time_encoded": False,
+                    },
+                    "invalid_game_policy": {
+                        "bound_or_missing_pv": "quarantine-game",
+                        "complete_trajectory_oversize": "quarantine-game",
+                        "crash": "abort-chunk",
+                        "illegal_move": "quarantine-game",
+                        "observed_rejections": [],
+                        "safety_limit": "quarantine-game",
+                        "unreachable_exact_quota": "abort-chunk",
+                    },
+                    "network": {
+                        "bytes": 58_534_811,
+                        "compatibility": "qualified-positive-and-negative-load",
+                        "format": "legacy-halfkav2variants-v1",
+                        "license": "CC0-1.0",
+                        "path": "artifacts/networks/crazyhouse_run15rl_e190_l03.nnue",
+                        "sha256": PRODUCTION_NETWORK_SHA,
+                        "used": True,
+                    },
+                    "official_openbench_origin": "https://belzedar.duckdns.org",
+                    "openbench_publication_protocol": 41,
+                    "opening_source": {
+                        "artifact": {
+                            "bytes": 39_922,
+                            "kind": "official-crazyhouse-epd-physical-roots-v1",
+                            "license": "GPL-3.0-or-later",
+                            "path": "openbench/books/CRAZYHOUSE_openings.epd",
+                            "roots": 599,
+                            "sha256": PRODUCTION_BOOK_SHA,
+                        },
+                        "engine_selected": False,
+                        "kind": "deterministic-authenticated-book-order",
+                        "match_result_selected": False,
+                        "selection_policy_sha256": PRODUCTION_POLICY_SHA,
+                    },
+                    "partition": {
+                        "campaign_set_sha256": manifest["partition_config"]["campaign_set_sha256"],
+                        "domain": manifest["partition_config"]["domain"],
+                        "label_free": True,
+                        "method": manifest["partition_config"]["method"],
+                        "partition_sha256": manifest["partition_config"]["sha256"],
+                        "posthoc_rebalance": False,
+                        "role": role,
+                        "split_seed_u64": manifest["partition_config"]["split_seed_u64"],
+                        "validation_threshold_u64": manifest["partition_config"]["validation_threshold_u64"],
+                    },
+                    "producer_artifact": producer,
+                    "producer_capability": {
+                        "bytes": len(capability_payload),
+                        "challenge": capability["challenge"],
+                        "schema": "crazyhouse-datagen-production-capability-response/v1",
+                        "sha256": capability_sha.hex(),
+                    },
+                    "teacher": {
+                        "artifact": {
+                            "bytes": producer["bytes"],
+                            "path": producer["path"],
+                            "sha256": producer["sha256"],
+                        },
+                        "bound_policy": "selected-line-exact-only",
+                        "evaluator_mode": "legacy-scalar-full-refresh",
+                        "kind": "legacy-network-product-search",
+                        "network_used": True,
+                        "route_backend_identity": "legacy-scalar-full-refresh",
+                        "score_perspective": "side-to-move",
+                        "search_settings_sha256": provenance["teacher"]["search_settings_sha256"],
+                        "selected_line_owns_score_and_pv": True,
+                        "synthetic": False,
+                    },
+                }
+            )
             if provenance_case == "source-dirty":
                 provenance["source_dirty"] = True
             elif provenance_case == "synthetic":
-                provenance["teacher"] = dict(provenance["teacher"])
-                provenance["teacher"].update(
+                settings = provenance["generation_settings"]
+                settings["candidate_games_examined"] += 1
+                settings["max_candidate_games"] = settings["candidate_games_examined"]
+                provenance["invalid_game_policy"]["observed_rejections"] = [
                     {
-                        "artifact": {
-                            "bytes": 1,
-                            "kind": "classical-teacher",
-                            "path": "artifacts/teacher.exe",
-                            "sha256": "1" * 64,
-                        },
-                        "kind": "classical",
-                        "network_used": False,
-                        "synthetic": True,
+                        "candidate_index": settings["candidate_games_examined"] - 1,
+                        "reason": "independent-valid-rejection-accounting-probe",
+                        "root_id": "fixture-root",
                     }
-                )
+                ]
+                provenance["teacher"] = dict(provenance["teacher"])
+                provenance["teacher"]["synthetic"] = True
+            elif provenance_case == "golden":
+                provenance["teacher"] = dict(provenance["teacher"])
+                provenance["teacher"]["kind"] = "golden-fixture"
             provenance_payload = canonical_json(provenance)
             provenance_path.write_bytes(provenance_payload)
             bundle_path = fixture / entry["bundle"]["path"]
@@ -864,6 +998,7 @@ def expect_failure(
     *,
     mode: str = "fixture",
     preserve_output: bool = False,
+    expected_detail: str | None = None,
 ) -> str:
     completed = run_loader(
         loader,
@@ -878,6 +1013,11 @@ def expect_failure(
     require(completed.returncode == 2 and completed.stdout == b"", f"negative {expected_code}: process")
     error = parse_json(completed.stderr, f"negative {expected_code}")
     require(error["code"] == expected_code, f"negative expected {expected_code}, got {error}")
+    if expected_detail is not None:
+        require(
+            expected_detail in error["detail"],
+            f"negative expected detail {expected_detail!r}, got {error}",
+        )
     if not preserve_output:
         require(not output.exists(), f"negative {expected_code}: output leaked")
     require(not output.with_name(output.name + ".partial").exists(), f"negative {expected_code}: partial leaked")
@@ -1128,50 +1268,25 @@ def adversarial_matrix(loader: Path, base: Path, root: Path) -> list[str]:
     write_manifest(fixture, manifest)
     passed.append(expect_failure(loader, fixture, fixture.parent / "out", "SPLIT_ROLE_MISMATCH"))
 
-    for label, provenance_case, expected in (
-        ("production-unauthorized", "unauthorized", "PRODUCTION_CAPABILITY"),
-        ("production-source-dirty", "source-dirty", "PROVENANCE"),
-        ("production-synthetic", "synthetic", "PROVENANCE"),
-        ("production-golden", "golden", "PRODUCTION_GOLDEN_FORBIDDEN"),
+    for label, provenance_case, expected, detail in (
+        (
+            "production-domain-printable-backslash-zero",
+            "domain-printable",
+            "CAPABILITY_OR_PROVENANCE",
+            "production capability trajectory_partition_domain drifted",
+        ),
+        ("production-unauthorized", "unauthorized", "CAPABILITY_OR_PROVENANCE", None),
+        ("production-source-dirty", "source-dirty", "PROVENANCE", None),
+        (
+            "production-synthetic",
+            "synthetic",
+            "PROVENANCE",
+            "production teacher drifted",
+        ),
+        ("production-golden", "golden", "PROVENANCE", None),
     ):
         fixture = copied_fixture(base, root, label)
-        if provenance_case == "unauthorized":
-            manifest = load_manifest(fixture)
-            manifest["fixture_mode"] = False
-            manifest["training_admissible"] = True
-            manifest["status"] = "READY_FOR_TRAINING"
-            manifest["semantic_audit"] = {
-                "engine_backed": True,
-                "every_record_scanned": True,
-                "every_trajectory_replayed": True,
-                "history_prefix_and_repetition_reproduced": True,
-                "make_undo_roundtrip": True,
-                "physical_state_equals_replay": True,
-                "split_decisions_recomputed": True,
-                "status": "PASS",
-                "stored_move_is_legal": True,
-                "teacher_bound_and_perspective_reproduced": True,
-                "terminal_reason_and_result_reproduced": True,
-                "training_admissible": True,
-            }
-            aggregate_path = fixture / manifest["aggregate_chunk_set_receipt"]["path"]
-            aggregate = dict(parse_json(aggregate_path.read_bytes(), "unauthorized aggregate"))
-            aggregate.update(
-                {
-                    "fixture_only": False,
-                    "official_openbench_origin": "https://belzedar.duckdns.org",
-                    "status": "PASS_PRODUCTION",
-                    "training_admissible": True,
-                }
-            )
-            aggregate_payload = canonical_json(aggregate)
-            aggregate_path.write_bytes(aggregate_payload)
-            manifest["aggregate_chunk_set_receipt"] = pin(
-                manifest["aggregate_chunk_set_receipt"]["path"], aggregate_payload
-            )
-            write_manifest(fixture, manifest)
-        else:
-            make_production_shape(fixture, provenance_case)
+        make_production_shape(fixture, provenance_case)
         passed.append(
             expect_failure(
                 loader,
@@ -1179,6 +1294,7 @@ def adversarial_matrix(loader: Path, base: Path, root: Path) -> list[str]:
                 fixture.parent / "out",
                 expected,
                 mode="production",
+                expected_detail=detail,
             )
         )
 
