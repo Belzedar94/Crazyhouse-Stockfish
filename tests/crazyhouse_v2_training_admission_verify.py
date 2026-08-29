@@ -901,6 +901,7 @@ def make_production_shape(
                         "used": True,
                     },
                     "official_openbench_origin": "https://belzedar.duckdns.org",
+                    "openbench_assignment": {"worker_threads_capacity": 12},
                     "openbench_publication_protocol": 41,
                     "opening_source": {
                         "artifact": {

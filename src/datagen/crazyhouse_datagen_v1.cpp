@@ -965,6 +965,7 @@ struct SelfplayOptions {
     std::uint64_t              nodes                   = 0;
     std::uint32_t              maxGamePly              = 0;
     std::uint32_t              openbenchProtocol       = 0;
+    std::uint32_t              openbenchWorkerThreads  = 0;
     std::uint32_t              explorationPlies        = 0;
     std::uint32_t              explorationMultiPv      = 1;
     int                        explorationMaxScoreDiff = 0;
@@ -1102,8 +1103,8 @@ SelfplayOptions parse_selfplay_options(const std::vector<std::string>& tokens) {
     if (production)
         allowed.insert({"--campaign-set-sha256", "--cohort", "--exploration-max-score-diff",
                         "--exploration-multipv", "--exploration-plies", "--external-workload-id",
-                        "--openbench-protocol", "--partition-sha256", "--role", "--split-seed",
-                        "--validation-threshold"});
+                        "--openbench-protocol", "--openbench-worker-threads",
+                        "--partition-sha256", "--role", "--split-seed", "--validation-threshold"});
     std::map<std::string, std::string> values;
     for (std::size_t index = 1; index < tokens.size(); index += 2)
     {
@@ -1135,8 +1136,8 @@ SelfplayOptions parse_selfplay_options(const std::vector<std::string>& tokens) {
     if (production)
         required.insert({"--campaign-set-sha256", "--cohort", "--exploration-max-score-diff",
                          "--exploration-multipv", "--exploration-plies", "--external-workload-id",
-                         "--openbench-protocol", "--partition-sha256", "--role", "--split-seed",
-                         "--validation-threshold"});
+                         "--openbench-protocol", "--openbench-worker-threads",
+                         "--partition-sha256", "--role", "--split-seed", "--validation-threshold"});
     for (const std::string& key : required)
         require(values.count(key) == 1, "missing self-play argument: " + key);
 
@@ -1244,6 +1245,10 @@ SelfplayOptions parse_selfplay_options(const std::vector<std::string>& tokens) {
         output.openbenchProtocol = parse_integer<std::uint32_t>(
           values.at("--openbench-protocol"), ProductionOpenBenchProtocol,
           ProductionOpenBenchProtocol, "OpenBench publication protocol");
+        output.openbenchWorkerThreads = parse_integer<std::uint32_t>(
+          values.at("--openbench-worker-threads"), 1,
+          std::numeric_limits<std::uint32_t>::max(),
+          "OpenBench assigned worker thread capacity");
         output.splitSeed           = parse_integer<std::uint64_t>(values.at("--split-seed"), 0,
                                                                   std::numeric_limits<std::uint64_t>::max(),
                                                                   "partition split seed");
@@ -2382,6 +2387,8 @@ std::string build_production_provenance(const SelfplayOptions&  options,
            << ",\"license\":\"CC0-1.0\",\"path\":" << json_string(options.networkRepoPath)
            << ",\"sha256\":" << json_string(options.networkSha256) << ",\"used\":true}"
            << ",\"official_openbench_origin\":\"https://belzedar.duckdns.org\""
+           << ",\"openbench_assignment\":{\"worker_threads_capacity\":"
+           << options.openbenchWorkerThreads << '}'
            << ",\"openbench_publication_protocol\":" << options.openbenchProtocol
            << ",\"opening_source\":{\"artifact\":{\"bytes\":" << bookBytes
            << ",\"kind\":\"official-crazyhouse-epd-physical-roots-v1\""
