@@ -3444,12 +3444,19 @@
         "legacy_v1_remains_default": true
       },
       "local_large_engine_routing_checkpoint": {
-        "status": "PASS_LOCAL_ENGINE_ROUTING_SUBGATE_PUBLIC_CI_PENDING",
+        "status": "PASS_ENGINE_ROUTING_SUBGATE_PUBLIC_CI",
         "closed_utc": "2026-08-29T07:32:52.4327506Z",
+        "public_ci_closed_utc": "2026-08-29T08:52:04Z",
         "record": "../../tests/crazyhouse/p12-nnue-v2-large-engine-routing-v1.result.001.json",
         "record_commit": "527c5b21ee2b3c4eb7c1779c431db7fe7d97febe",
         "record_bytes": 5922,
         "record_sha256": "c3d77b362ee99bd8f256bd8e69b0a3f6435f9727339672b19728a40aa7762f51",
+        "failure_addendum": "../../tests/crazyhouse/p12-nnue-v2-large-engine-routing-v1.result.001.addendum.001.json",
+        "failure_addendum_bytes": 7013,
+        "failure_addendum_sha256": "fb0d1be34522a765496e56c1f7bd7e17d6bd00b62c18e6265d7ad2e0fc1b827d",
+        "public_ci_addendum": "../../tests/crazyhouse/p12-nnue-v2-large-engine-routing-v1.result.001.addendum.002.json",
+        "public_ci_addendum_bytes": 6310,
+        "public_ci_addendum_sha256": "f3579b99a0acdc421d0c3d5593c7c6969991167bf4b50ffc28e058434ae34861",
         "preregistration_commit": "77524ebf93db57fa2db286530c2c834478201faa",
         "preregistration_sha256": "791cdde30e6fcb6b1ae05124deb1e498824851db353e6775a5a444f15d59a654",
         "implementation_commit": "9033b66fbe6d766eb234075b0f3a908b8c93f5c1",
@@ -3466,9 +3473,17 @@
         "readyok_withheld": 10,
         "search_refused": 10,
         "legacy_restore": true,
-        "incidents": ["CH-V2-008", "CH-V2-009"],
+        "incidents": ["CH-V2-008", "CH-V2-009", "CH-V2-010", "CH-V2-011"],
         "legacy_v1_remains_default": true,
-        "public_exact_head_ci": "PENDING",
+        "public_exact_head_ci": "PASS",
+        "public_exact_source_commit": "6722e1067651d35ccf95a646b3aeaeca477fd0f0",
+        "public_exact_source_tree": "e1582fe6de27ecf8c4328da16c87c8d9718ef92c",
+        "public_exact_source_src_tree": "90b8e8d5ab1fbd47eece1226493d940460ca0de4",
+        "public_ci_run_id": 33242626499,
+        "public_ci_required_jobs_success": 9,
+        "public_ci_required_jobs_failure": 0,
+        "public_ci_aggregate_manifest_sha256": "dfac9c92802e5b67c08a2a0c640ed3650fb757be25dea562cfdd4d7c96cbb93d",
+        "public_ci_download_inventory_sha256": "c6064b065a483ef24e910adb2d912b32d2f797e996fbbcaee2c3f9e32a0e9f3b",
         "production_network_available": false,
         "training_admissible": false,
         "model_selected": false,
@@ -3477,7 +3492,6 @@
         "release_claim": false
       },
       "remaining": [
-        "exact-head public Linux, Windows, ASan and UBSan routing verification",
         "production-admissible physical data and training"
       ]
     },
