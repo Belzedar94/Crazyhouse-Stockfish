@@ -74,6 +74,11 @@ constexpr u64 NODES_LIMIT_OUTPUT = 10'000'000;
 constexpr int SEARCHEDLIST_CAPACITY = 32;
 using SearchedList                  = ValueList<Move, SEARCHEDLIST_CAPACITY>;
 
+[[noreturn]] void crazyhouse_evaluator_fatal(const char* reason) {
+    std::cerr << "FATAL crazyhouse_evaluator reason=" << reason << std::endl;
+    std::abort();
+}
+
 usize requested_multi_pv(const OptionsMap& options, const Position& pos) {
     if (pos.ruleset() == Ruleset::CRAZYHOUSE)
     {
@@ -210,7 +215,7 @@ void Search::Worker::start_searching() {
     legacyAccumulatorStack.reset();
     largeAccumulatorStack.reset();
     if (largeNetwork && !largeAccumulatorStack.ensure_allocated())
-        std::abort();
+        crazyhouse_evaluator_fatal("large_accumulator_allocation_failed");
 
     // Non-main threads go directly to iterative_deepening()
     if (!is_mainthread())
@@ -295,7 +300,7 @@ Search::TrainingSearchResult Search::Worker::training_search(Position&          
     legacyAccumulatorStack.reset();
     largeAccumulatorStack.reset();
     if (largeNetwork && !largeAccumulatorStack.ensure_allocated())
-        std::abort();
+        crazyhouse_evaluator_fatal("large_training_accumulator_allocation_failed");
 
     LimitsType freshLimits;
     freshLimits.startTime = now();
@@ -858,15 +863,15 @@ void Search::Worker::do_move(
         if (legacyNetwork)
         {
             if (!legacyAccumulatorStack.push())
-                std::abort();
+                crazyhouse_evaluator_fatal("legacy_accumulator_push_failed");
         }
         else if (largeNetwork)
         {
             if (!largeAccumulatorStack.push())
-                std::abort();
+                crazyhouse_evaluator_fatal("large_accumulator_push_failed");
         }
         else
-            std::abort();
+            crazyhouse_evaluator_fatal("crazyhouse_backend_missing_after_move");
     }
 
     if (ss != nullptr)
@@ -896,15 +901,15 @@ void Search::Worker::undo_move(Position& pos, const Move move) {
         if (legacyNetwork)
         {
             if (!legacyAccumulatorStack.pop())
-                std::abort();
+                crazyhouse_evaluator_fatal("legacy_accumulator_pop_failed");
         }
         else if (largeNetwork)
         {
             if (!largeAccumulatorStack.pop())
-                std::abort();
+                crazyhouse_evaluator_fatal("large_accumulator_pop_failed");
         }
         else
-            std::abort();
+            crazyhouse_evaluator_fatal("crazyhouse_backend_missing_after_undo");
     }
 }
 
@@ -2144,18 +2149,18 @@ Value Search::Worker::evaluate(const Position& pos) {
         if (legacyNetwork)
         {
             if (!legacyNetwork->loaded() || largeNetwork)
-                std::abort();
+                crazyhouse_evaluator_fatal("legacy_backend_state_invalid");
             const auto result =
               legacyNetwork->evaluate_legacy_search_incremental(pos, legacyAccumulatorStack);
             if (!result.ok())
-                std::abort();
+                crazyhouse_evaluator_fatal("legacy_incremental_evaluation_failed");
             return Value(result.output->adapter.outer);
         }
         if (!largeNetwork || !largeNetwork->loaded())
-            std::abort();
+            crazyhouse_evaluator_fatal("large_backend_state_invalid");
         const auto result = largeNetwork->evaluate_search_incremental(pos, largeAccumulatorStack);
         if (!result.ok())
-            std::abort();
+            crazyhouse_evaluator_fatal("large_incremental_evaluation_failed");
         return Value(std::clamp(result.trace.outputValue, VALUE_TB_LOSS_IN_MAX_PLY + 1,
                                 VALUE_TB_WIN_IN_MAX_PLY - 1));
     }

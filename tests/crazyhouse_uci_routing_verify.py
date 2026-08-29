@@ -126,7 +126,10 @@ class UciProcess:
             raise VerificationFailure("engine did not exit after quit") from exc
         self.stdout_thread.join(timeout=2)
         self.stderr_thread.join(timeout=2)
-        require(self.process.returncode == 0, f"engine exit code {self.process.returncode}")
+        require(
+            self.process.returncode == 0,
+            f"engine exit code {self.process.returncode}; stderr={self.stderr_all!r}",
+        )
         if expect_stderr_empty:
             require(not self.stderr_all, f"unexpected engine stderr: {self.stderr_all!r}")
 

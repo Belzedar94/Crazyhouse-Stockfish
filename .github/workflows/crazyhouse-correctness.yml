@@ -17,6 +17,7 @@ concurrency:
 env:
   PYTHON_VERSION: "3.12.0"
   LEGACY_NETWORK_URL: https://media.githubusercontent.com/media/lichess-org/lila/13895e5856db0f854f6ab76394fffce852ebd5c9/public/lifat/nnue/crazyhouse-8ebf84784ad2.nnue
+  SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   network-tooling:
@@ -25,6 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -162,7 +164,7 @@ jobs:
       - name: Publish exact CI input artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: crazyhouse-legacy-network-${{ github.sha }}
+          name: crazyhouse-legacy-network-${{ env.SOURCE_SHA }}
           path: .ci/network/
           if-no-files-found: error
           include-hidden-files: true
@@ -181,6 +183,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -190,7 +193,7 @@ jobs:
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: crazyhouse-legacy-network-${{ github.sha }}
+          name: crazyhouse-legacy-network-${{ env.SOURCE_SHA }}
           path: .ci/network
 
       - name: Reauthenticate CI input
@@ -308,6 +311,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -359,6 +363,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -432,6 +437,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -441,7 +447,7 @@ jobs:
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: crazyhouse-legacy-network-${{ github.sha }}
+          name: crazyhouse-legacy-network-${{ env.SOURCE_SHA }}
           path: .ci/network
 
       - name: Build instrumented scalar engine
@@ -479,15 +485,15 @@ jobs:
       - name: Run instrumented large-A0 parser and scalar parity
         run: |
           set -euo pipefail
-          make -C src -j2 crazyhouse_v2_large_network_test \
-            ARCH=x86-64-sse41-popcnt COMP=gcc \
-            debug=yes optimize=no sanitize="$SANITIZER" \
-            2>&1 | tee .ci/evidence/large-a0-sanitizer.log
           python tests/crazyhouse_v2_large_engine_routing_verify.py \
             --engine src/stockfish \
             --reference tools/nnue/crazyhouse_v2_large_container_reference.py \
             --legacy-network .ci/network/Crazyhouse_v1.nnue \
             2>&1 | tee .ci/evidence/large-a0-engine-routing-sanitizer.log
+          make -C src -j2 crazyhouse_v2_large_network_test \
+            ARCH=x86-64-sse41-popcnt COMP=gcc \
+            debug=yes optimize=no sanitize="$SANITIZER" \
+            2>&1 | tee .ci/evidence/large-a0-sanitizer.log
 
       - name: Seal sanitizer evidence
         run: |
@@ -516,6 +522,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -530,7 +537,7 @@ jobs:
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: crazyhouse-legacy-network-${{ github.sha }}
+          name: crazyhouse-legacy-network-${{ env.SOURCE_SHA }}
           path: .ci/network
 
       - name: Build and run Windows correctness
@@ -596,6 +603,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -627,7 +635,7 @@ jobs:
       - name: Publish aggregate correctness receipt
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: crazyhouse-correctness-aggregate-${{ github.sha }}
+          name: crazyhouse-correctness-aggregate-${{ env.SOURCE_SHA }}
           path: |
             .ci/all/
             .ci/aggregate/

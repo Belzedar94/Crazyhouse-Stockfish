@@ -144,22 +144,28 @@ def wait_for_stderr(proc: UciProcess, predicate, description: str, timeout: floa
 
 
 def positive_run(engine: Path, network: Path, legacy_network: Path | None,
-                 transition_fens: list[str]) -> tuple[str, tuple[str, ...], str]:
+                 transition_fens: list[str], label: str) -> tuple[str, tuple[str, ...], str]:
     proc, _ = open_uci(engine)
+    stage = "configure-large"
     try:
         configure_large(proc, network, NETWORK_SHA256, PROVENANCE)
+        stage = "commit-large"
         ready_success(proc)
+        stage = "first-search"
         first_bestmove, _ = run_go(proc, 512)
 
+        stage = "repeated-search"
         proc.send("setoption name Clear Hash")
         second_bestmove, _ = run_go(proc, 512)
         require(first_bestmove == second_bestmove,
                 f"large-V2 repeated search is not deterministic: {first_bestmove!r} != {second_bestmove!r}")
 
+        stage = "special-state-searches"
         special_bestmoves = tuple(
             run_go(proc, 128, f"position fen {fen}")[0] for fen in transition_fens
         )
 
+        stage = "bench"
         proc.send("bench 16 1 256 current nodes")
         proc.send("isready")
         bench_lines = proc.wait_for(lambda line: line == "readyok", "large-V2 bench completion", 180)
@@ -170,6 +176,7 @@ def positive_run(engine: Path, network: Path, legacy_network: Path | None,
 
         legacy_commit = "not-requested"
         if legacy_network is not None:
+            stage = "commit-legacy-restore"
             setoption(proc, "CrazyhouseEvaluator", "legacy-v1")
             setoption(proc, "CrazyhouseEvalFile", str(legacy_network))
             proc.send("isready")
@@ -185,10 +192,16 @@ def positive_run(engine: Path, network: Path, legacy_network: Path | None,
             require("evaluator=incremental-" in commits[0],
                     f"legacy restore evaluator truth is missing: {commits[0]!r}")
             legacy_commit = commits[0]
+            stage = "legacy-restore-search"
             run_go(proc, 128)
+        stage = "complete"
         return first_bestmove, special_bestmoves, legacy_commit
     finally:
-        proc.close(expect_stderr_empty=False)
+        print(f"TRACE crazyhouse_v2_large_engine_routing process={label} stage={stage} closing", flush=True)
+        try:
+            proc.close(expect_stderr_empty=False)
+        except VerificationFailure as exc:
+            raise VerificationFailure(f"process={label} stage={stage}; {exc}") from exc
 
 
 def main() -> int:
@@ -227,8 +240,8 @@ def main() -> int:
         require(network.stat().st_size == reference.FILE_BYTES, "large-V2 fixture size drifted")
         require(sha256_file(network) == NETWORK_SHA256, "large-V2 fixture SHA-256 drifted")
 
-        first = positive_run(engine, network, legacy_network, transition_fens)
-        second = positive_run(engine, network, legacy_network, transition_fens)
+        first = positive_run(engine, network, legacy_network, transition_fens, "positive-1")
+        second = positive_run(engine, network, legacy_network, transition_fens, "positive-2")
         require(first == second, f"large-V2 fresh-process result is not deterministic: {first!r} != {second!r}")
 
         missing = root / "missing.nnue"
