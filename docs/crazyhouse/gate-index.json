@@ -3443,9 +3443,43 @@
         "release_claim": false,
         "legacy_v1_remains_default": true
       },
-    "remaining": [
-      "production-admissible physical data and training"
-    ]
+      "local_large_engine_routing_checkpoint": {
+        "status": "PASS_LOCAL_ENGINE_ROUTING_SUBGATE_PUBLIC_CI_PENDING",
+        "closed_utc": "2026-08-29T07:32:52.4327506Z",
+        "record": "../../tests/crazyhouse/p12-nnue-v2-large-engine-routing-v1.result.001.json",
+        "record_commit": "527c5b21ee2b3c4eb7c1779c431db7fe7d97febe",
+        "record_bytes": 5922,
+        "record_sha256": "c3d77b362ee99bd8f256bd8e69b0a3f6435f9727339672b19728a40aa7762f51",
+        "preregistration_commit": "77524ebf93db57fa2db286530c2c834478201faa",
+        "preregistration_sha256": "791cdde30e6fcb6b1ae05124deb1e498824851db353e6775a5a444f15d59a654",
+        "implementation_commit": "9033b66fbe6d766eb234075b0f3a908b8c93f5c1",
+        "implementation_tree": "64c273838ef6d8e8d8ee68b338cac578a3a2be23",
+        "implementation_src_tree": "b3ee56fcd5d027d37e5a36f2f1072bd803bad940",
+        "normal_engine_sha256": "5fb9b9e1f1e79089126ec4c9266b7d8db5761bbb54852b39df82bb1c69c142b6",
+        "container_positive_cases": 6,
+        "container_negative_cases": 29,
+        "transition_cases": 13,
+        "runtime_checkpoints": 49,
+        "runtime_comparisons": 147,
+        "normal_engine_special_state_searches": 26,
+        "negative_routes": 10,
+        "readyok_withheld": 10,
+        "search_refused": 10,
+        "legacy_restore": true,
+        "incidents": ["CH-V2-008", "CH-V2-009"],
+        "legacy_v1_remains_default": true,
+        "public_exact_head_ci": "PENDING",
+        "production_network_available": false,
+        "training_admissible": false,
+        "model_selected": false,
+        "strength_claim": false,
+        "g12_closed": false,
+        "release_claim": false
+      },
+      "remaining": [
+        "exact-head public Linux, Windows, ASan and UBSan routing verification",
+        "production-admissible physical data and training"
+      ]
     },
     {
       "id": "G13",
