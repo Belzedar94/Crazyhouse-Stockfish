@@ -267,6 +267,7 @@ struct LargeNetworkLoadResultV1 {
 LargeNetworkLoadResultV1 load_large_network_v1(const Byte*                      bytes,
                                                std::size_t                      size,
                                                const LargeExpectedProvenanceV1& expected) noexcept;
+Digest                   large_network_sha256(const Byte* bytes, std::size_t size) noexcept;
 LargeNetworkSimdBackend  large_network_simd_backend() noexcept;
 std::string_view         large_network_load_error_name(LargeNetworkLoadError error) noexcept;
 std::string_view large_network_evaluate_error_name(LargeNetworkEvaluateError error) noexcept;

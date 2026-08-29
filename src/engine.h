@@ -34,6 +34,7 @@
 #include "misc.h"
 #include "history.h"
 #include "nnue/crazyhouse_legacy_network.h"
+#include "nnue/crazyhouse_v2_large_runtime.h"
 #include "nnue/network.h"
 #include "nnue/nnue_misc.h"
 #include "numa.h"
@@ -58,9 +59,9 @@ extern int    MaxThreads;
 
 class Engine {
    public:
-    using InfoShort = Search::InfoShort;
-    using InfoFull  = Search::InfoFull;
-    using InfoIter  = Search::InfoIteration;
+    using InfoShort              = Search::InfoShort;
+    using InfoFull               = Search::InfoFull;
+    using InfoIter               = Search::InfoIteration;
     using LegacyExecutionBackend = Eval::NNUE::LegacyCrazyhouseNetworkV1::ExecutionBackend;
 
     Engine(std::optional<std::filesystem::path> path     = std::nullopt,
@@ -93,7 +94,10 @@ class Engine {
     void stage_chess960(bool value);
     void stage_crazyhouse_profile(std::string value);
     void stage_chess_eval_file(std::string value);
+    void stage_crazyhouse_evaluator(std::string value);
     void stage_crazyhouse_eval_file(std::string value);
+    void stage_crazyhouse_eval_sha256(std::string value);
+    void stage_crazyhouse_eval_provenance(std::string value);
 
     EngineRouting::ApplyResult    apply_pending_route();
     EngineRouting::PositionResult set_routed_position(const std::string&              fen,
@@ -103,8 +107,11 @@ class Engine {
     const EngineRouting::Snapshot& routing_snapshot() const noexcept;
     bool                           has_routed_official_network() const noexcept;
     bool                           has_routed_legacy_network() const noexcept;
+    bool                           has_routed_large_network() const noexcept;
     std::string_view               routed_legacy_evaluator_mode() const noexcept;
     std::string_view               routed_legacy_simd_backend() const noexcept;
+    std::string_view               routed_crazyhouse_evaluator_mode() const noexcept;
+    std::string_view               routed_crazyhouse_simd_backend() const noexcept;
     bool                           crazyhouse_multipv_valid() const noexcept;
 
     // modifiers
@@ -159,22 +166,23 @@ class Engine {
         StateListPtr states;
     };
 
-    const std::filesystem::path binaryDirectory;
+    const std::filesystem::path  binaryDirectory;
     const LegacyExecutionBackend legacyExecutionBackend;
 
     NumaReplicationContext numaContext;
 
     std::unique_ptr<PositionSlot> positionSlot;
 
-    std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1> legacyNetwork;
-    OptionsMap                                             options;
-    ThreadPool                                             threads;
-    TranspositionTable                                     tt;
-    Eval::NNUE::EvalFile                                   networkFile;
-    LazyNumaReplicatedSystemWide<Eval::NNUE::Network>      network;
-    EngineRouting::Snapshot                                routing;
-    bool                                                   officialRouteInstalled = false;
-    bool                                                   crazyhouseMultiPVValid  = true;
+    std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>    legacyNetwork;
+    std::unique_ptr<Eval::NNUE::CrazyhouseV2::LargeRuntimeV1> largeNetwork;
+    OptionsMap                                                options;
+    ThreadPool                                                threads;
+    TranspositionTable                                        tt;
+    Eval::NNUE::EvalFile                                      networkFile;
+    LazyNumaReplicatedSystemWide<Eval::NNUE::Network>         network;
+    EngineRouting::Snapshot                                   routing;
+    bool                                                      officialRouteInstalled = false;
+    bool                                                      crazyhouseMultiPVValid = true;
 
     Search::SearchManager::UpdateContext  updateContext;
     std::function<void(std::string_view)> onVerifyNetwork;

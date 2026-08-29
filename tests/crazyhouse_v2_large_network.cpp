@@ -1,6 +1,7 @@
 /*
   Dedicated engineering verifier for CH-NNUE-V2-LARGE-K64G1-SFNNV16.
-  This executable is not linked into or reachable through the normal engine.
+  This verifier executable is not reachable through the normal-engine UCI surface.
+  The production runtime under test is linked into the normal engine as an opt-in route.
 */
 
 #include <algorithm>
@@ -22,6 +23,7 @@
 
 #include "attacks.h"
 #include "nnue/crazyhouse_v2_large_network.h"
+#include "nnue/crazyhouse_v2_large_runtime.h"
 #include "position.h"
 #include "uci.h"
 
@@ -592,16 +594,167 @@ void run_transition_suite(const Network& network, const Network& otherNetwork) {
               << "\ttraining_admissible=false\tg12_closed=false\n";
 }
 
+struct RuntimeTransitionTotals {
+    std::uint64_t cases       = 0;
+    std::uint64_t moves       = 0;
+    std::uint64_t undos       = 0;
+    std::uint64_t nullMoves   = 0;
+    std::uint64_t nullUndos   = 0;
+    std::uint64_t checkpoints = 0;
+    std::uint64_t comparisons = 0;
+    std::uint64_t digest      = 0x52554E54494D4556ULL;
+};
+
+void compare_runtime(const LargeRuntimeV1&           runtime,
+                     LargeRuntimeAccumulatorStackV1& stack,
+                     const Position&                 position,
+                     const std::string&              label,
+                     RuntimeTransitionTotals&        totals) {
+    const Evaluation scalar      = runtime.evaluate_full_refresh(position);
+    const Evaluation simd        = runtime.evaluate_full_refresh_simd(position);
+    const Evaluation incremental = runtime.evaluate_search_incremental(position, stack);
+    const Evaluation reuse       = runtime.evaluate_search_incremental(position, stack);
+    require(scalar.ok(), label + " scalar runtime evaluation rejected");
+    require_same_evaluation(scalar, simd, label + " runtime scalar/SIMD");
+    require_same_evaluation(scalar, incremental, label + " runtime incremental/full");
+    require_same_evaluation(incremental, reuse, label + " runtime same-frame reuse");
+    mix_text(totals.digest, position.fen());
+    mix_trace(totals.digest, scalar.trace);
+    ++totals.checkpoints;
+    totals.comparisons += 3;
+}
+
+void execute_runtime_transition_case(const LargeRuntimeV1&           runtime,
+                                     const std::vector<std::string>& fields,
+                                     RuntimeTransitionTotals&        totals) {
+    require(fields.size() == 5, "runtime fixture line does not have five fields");
+    const std::string& id          = fields[0];
+    const std::string& mode        = fields[1];
+    const std::string& fen         = fields[2];
+    const std::string& moveText    = fields[3];
+    const std::string& expectedFen = fields[4];
+
+    Position              position(Ruleset::CRAZYHOUSE);
+    std::deque<StateInfo> states;
+    states.emplace_back();
+    set_position(position, fen, states.back());
+    const std::string normalizedRoot = position.fen();
+
+    LargeRuntimeAccumulatorStackV1 stack;
+    require(stack.ensure_allocated(), id + " runtime stack allocation failed");
+    compare_runtime(runtime, stack, position, id + " runtime root", totals);
+
+    if (mode == "walk")
+    {
+        std::vector<std::string> tokens;
+        if (!moveText.empty())
+            tokens = split(moveText, ' ');
+        std::vector<Move> moves;
+        for (const std::string& token : tokens)
+        {
+            const Move move = parse_move(position, token);
+            states.emplace_back();
+            position.do_move(move, states.back());
+            require(stack.push(), id + " runtime push failed");
+            moves.push_back(move);
+            ++totals.moves;
+            compare_runtime(runtime, stack, position, id + " runtime after " + token, totals);
+        }
+        require(position.fen() == expectedFen, id + " runtime final FEN mismatch");
+        while (!moves.empty())
+        {
+            const Move move = moves.back();
+            moves.pop_back();
+            position.undo_move(move);
+            states.pop_back();
+            require(stack.pop(), id + " runtime pop failed");
+            ++totals.undos;
+            compare_runtime(runtime, stack, position, id + " runtime undo", totals);
+        }
+        require(position.fen() == normalizedRoot, id + " runtime did not restore root FEN");
+    }
+    else if (mode == "null")
+    {
+        require(moveText.empty(), id + " runtime null case unexpectedly has moves");
+        StateInfo nullState{};
+        position.do_null_move(nullState);
+        ++totals.nullMoves;
+        compare_runtime(runtime, stack, position, id + " runtime null", totals);
+        position.undo_null_move();
+        ++totals.nullUndos;
+        compare_runtime(runtime, stack, position, id + " runtime null undo", totals);
+        require(position.fen() == expectedFen, id + " runtime null round-trip FEN mismatch");
+    }
+    else
+        fail(id + " has unknown runtime mode " + mode);
+    ++totals.cases;
+}
+
+void run_runtime_transition_suite(const std::filesystem::path& networkPath) {
+    constexpr std::string_view ArtifactSha256 =
+      "e305c386080c3d802deb23fad322ee04689d360d9b04526f7e5608e9fc055311";
+    constexpr std::string_view Provenance =
+      "1111111111111111111111111111111111111111111111111111111111111111:"
+      "2222222222222222222222222222222222222222222222222222222222222222:"
+      "3333333333333333333333333333333333333333333333333333333333333333:"
+      "4444444444444444444444444444444444444444444444444444444444444444:"
+      "5555555555555555555555555555555555555555555555555555555555555555:"
+      "6666666666666666666666666666666666666666666666666666666666666666";
+
+    Attacks::init();
+    Position::init();
+    LargeRuntimeV1 runtime;
+    const auto     loaded = runtime.load_file(networkPath, ArtifactSha256, Provenance);
+    require(loaded.ok(),
+            "runtime load rejected: " + std::string(large_runtime_load_status_name(loaded.status))
+              + " :: " + loaded.message);
+    require(runtime.artifact_sha256() == ArtifactSha256, "runtime artifact identity mismatch");
+
+    RuntimeTransitionTotals totals;
+    std::string             line;
+    while (std::getline(std::cin, line))
+    {
+        require(!line.empty(), "runtime fixture stream contains an empty line");
+        execute_runtime_transition_case(runtime, split(line, '\t'), totals);
+    }
+    require(std::cin.eof(), "runtime fixture stream read failed");
+    require(totals.cases == 13 && totals.moves == 17 && totals.undos == 17,
+            "runtime real transition count drifted");
+    require(totals.nullMoves == 1 && totals.nullUndos == 1,
+            "runtime null transition count drifted");
+    require(totals.checkpoints == 49 && totals.comparisons == 147,
+            "runtime comparison count drifted");
+
+    std::cout << "RUNTIME_TRANSITIONS"
+              << "\tbackend=" << LargeRuntimeV1::simd_backend_name() << "\tcases=" << totals.cases
+              << "\tmoves=" << totals.moves << "\tundos=" << totals.undos
+              << "\tnulls=" << totals.nullMoves << "\tnull_undos=" << totals.nullUndos
+              << "\tcheckpoints=" << totals.checkpoints << "\tcomparisons=" << totals.comparisons
+              << "\tdigest=" << std::hex << std::setw(16) << std::setfill('0') << totals.digest
+              << std::dec
+              << "\tnormal_engine_opt_in=true\tmodel_selected=false\tstrength_evidence=false\n";
+}
+
 }  // namespace
 
 int main(int argc, char* argv[]) {
-    require(argc == 2 || argc == 3 || argc == 4,
-            "usage: verifier NETWORK [--transition-suite|--expect-error NAME]");
+    require(
+      argc == 2 || argc == 3 || argc == 4,
+      "usage: verifier NETWORK [--transition-suite|--runtime-transition-suite|--expect-error NAME]");
     const std::string networkPath    = argv[1];
     const bool        transitionMode = argc == 3 && std::string(argv[2]) == "--transition-suite";
+    const bool        runtimeTransitionMode =
+      argc == 3 && std::string(argv[2]) == "--runtime-transition-suite";
     const std::string expectedError =
       argc == 4 && std::string(argv[2]) == "--expect-error" ? argv[3] : std::string{};
-    require(argc == 2 || transitionMode || !expectedError.empty(), "invalid mode arguments");
+    require(argc == 2 || transitionMode || runtimeTransitionMode || !expectedError.empty(),
+            "invalid mode arguments");
+
+    if (runtimeTransitionMode)
+    {
+        run_runtime_transition_suite(networkPath);
+        return EXIT_SUCCESS;
+    }
 
     std::vector<Byte>               bytes = read_file(networkPath);
     const LargeExpectedProvenanceV1 provenance =

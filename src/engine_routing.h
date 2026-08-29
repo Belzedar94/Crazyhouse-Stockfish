@@ -20,6 +20,7 @@
 #include "crazyhouse_profile.h"
 #include "evaluate.h"
 #include "nnue/crazyhouse_legacy_network.h"
+#include "nnue/crazyhouse_v2_large_runtime.h"
 #include "ruleset.h"
 
 namespace Stockfish::EngineRouting {
@@ -29,7 +30,8 @@ using Epoch = std::uint64_t;
 enum class BackendKind : std::uint8_t {
     None,
     OfficialChess,
-    LegacyCrazyhouseV1
+    LegacyCrazyhouseV1,
+    LargeCrazyhouseV2A0
 };
 
 enum class BackendReadiness : std::uint8_t {
@@ -46,6 +48,7 @@ enum class ErrorCode : std::uint8_t {
     CrazyhouseProfileHashMismatch,
     CrazyhouseChess960Rejected,
     RoutePending,
+    CrazyhouseEvaluatorUnknown,
     CrazyhouseEvalFileEmpty,
     LegacyMissingFile,
     LegacyFileReadFailure,
@@ -60,6 +63,16 @@ enum class ErrorCode : std::uint8_t {
     LegacyTensorLayoutMismatch,
     LegacyDigestMismatch,
     LegacySimdUnavailable,
+    LargeEvalFileEmpty,
+    LargeSha256Invalid,
+    LargeProvenanceInvalid,
+    LargeMissingFile,
+    LargeNotRegularFile,
+    LargeFileReadFailure,
+    LargeWrongFileSize,
+    LargeSha256Mismatch,
+    LargeSimdUnavailable,
+    LargeContainerRejected,
     OfficialEvalNotLoaded,
     PositionRequiresCommittedRoute,
     InvalidFen,
@@ -77,11 +90,14 @@ enum class ErrorCode : std::uint8_t {
 };
 
 struct RouteOptions {
-    Ruleset     ruleset            = Ruleset::CRAZYHOUSE;
-    bool        chess960           = false;
-    std::string crazyhouseProfile  = std::string(CrazyhouseProfile::Token);
-    std::string chessEvalFile      = EvalFileDefaultName;
+    Ruleset     ruleset             = Ruleset::CRAZYHOUSE;
+    bool        chess960            = false;
+    std::string crazyhouseProfile   = std::string(CrazyhouseProfile::Token);
+    std::string chessEvalFile       = EvalFileDefaultName;
+    std::string crazyhouseEvaluator = "legacy-v1";
     std::string crazyhouseEvalFile;
+    std::string crazyhouseEvalSha256;
+    std::string crazyhouseEvalProvenance;
 };
 
 struct BackendBinding {
@@ -122,6 +138,8 @@ std::string_view error_code_name(ErrorCode code) noexcept;
 std::string_view start_fen(Ruleset ruleset) noexcept;
 
 ErrorCode legacy_load_error(Eval::NNUE::LegacyCrazyhouseNetworkV1::LoadStatus status) noexcept;
+ErrorCode
+large_runtime_load_error(Eval::NNUE::CrazyhouseV2::LargeRuntimeLoadStatus status) noexcept;
 ErrorCode crazyhouse_profile_error(std::string_view token) noexcept;
 
 bool same_route_options(const RouteOptions& lhs, const RouteOptions& rhs) noexcept;

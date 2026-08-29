@@ -565,10 +565,13 @@ bool UCIEngine::acknowledge_crazyhouse_capability() {
     }
 
     const auto& snapshot = engine.routing_snapshot();
+    const bool  routedEvaluator =
+      (snapshot.backend.kind == EngineRouting::BackendKind::LegacyCrazyhouseV1
+       && engine.has_routed_legacy_network())
+      || (snapshot.backend.kind == EngineRouting::BackendKind::LargeCrazyhouseV2A0
+          && engine.has_routed_large_network());
     if (!snapshot.active.has_value() || snapshot.active->ruleset != Ruleset::CRAZYHOUSE
-        || snapshot.backend.kind != EngineRouting::BackendKind::LegacyCrazyhouseV1
-        || snapshot.backend.readiness != EngineRouting::BackendReadiness::Ready
-        || !engine.has_routed_legacy_network())
+        || snapshot.backend.readiness != EngineRouting::BackendReadiness::Ready || !routedEvaluator)
     {
         sync_cout << "info string ERROR isready code=crazyhouse_capability_route_invalid"
                   << sync_endl;
@@ -625,13 +628,20 @@ bool UCIEngine::apply_route_for_command(std::string_view command, bool retryFail
                     << " identity=" << snapshot.backend.identity;
         if (crazyhouse)
         {
-            const std::string_view evaluator = engine.routed_legacy_evaluator_mode();
+            const std::string_view evaluator = engine.routed_crazyhouse_evaluator_mode();
             if (evaluator == "none")
                 std::abort();
             routeCommit << " evaluator=" << evaluator;
-            if (evaluator == "incremental-simd")
+            const std::string_view simdBackend = engine.routed_crazyhouse_simd_backend();
+            if (snapshot.backend.kind == EngineRouting::BackendKind::LargeCrazyhouseV2A0)
             {
-                const std::string_view simdBackend = engine.routed_legacy_simd_backend();
+                if (simdBackend == "none")
+                    std::abort();
+                routeCommit << " transformer_update=scalar-delta parity_simd_backend="
+                            << simdBackend;
+            }
+            else if (evaluator == "incremental-simd")
+            {
                 if (simdBackend == "none")
                     std::abort();
                 routeCommit << " simd_backend=" << simdBackend;
@@ -716,11 +726,11 @@ bool UCIEngine::admit_bench_command() {
 
     if (snapshot.active->ruleset == Ruleset::CRAZYHOUSE)
     {
-        if (snapshot.active->chess960
-            || snapshot.backend.kind != BackendKind::LegacyCrazyhouseV1
-            || snapshot.backend.identity
-                 != Eval::NNUE::LegacyCrazyhouseNetworkV1::RegisteredSha256
-            || !engine.has_routed_legacy_network()
+        const bool routedEvaluator = (snapshot.backend.kind == BackendKind::LegacyCrazyhouseV1
+                                      && engine.has_routed_legacy_network())
+                                  || (snapshot.backend.kind == BackendKind::LargeCrazyhouseV2A0
+                                      && engine.has_routed_large_network());
+        if (snapshot.active->chess960 || !crazyhouse_search_ready(snapshot) || !routedEvaluator
             || !engine.crazyhouse_multipv_valid())
         {
             report_route_error("bench", ErrorCode::CrazyhouseBenchNotBound);
@@ -770,9 +780,11 @@ bool UCIEngine::admit_search_command() {
 
     if (snapshot.active->ruleset == Ruleset::CRAZYHOUSE)
     {
-        if (!backend_matches_epoch(snapshot)
-            || snapshot.backend.kind != BackendKind::LegacyCrazyhouseV1
-            || !engine.has_routed_legacy_network())
+        const bool routedEvaluator = (snapshot.backend.kind == BackendKind::LegacyCrazyhouseV1
+                                      && engine.has_routed_legacy_network())
+                                  || (snapshot.backend.kind == BackendKind::LargeCrazyhouseV2A0
+                                      && engine.has_routed_large_network());
+        if (!backend_matches_epoch(snapshot) || !routedEvaluator)
         {
             report_route_error("go", ErrorCode::BackendRouteMismatch);
             return false;

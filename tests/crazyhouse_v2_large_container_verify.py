@@ -18,6 +18,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PREREG = ROOT / "tests/crazyhouse/p12-nnue-v2-large-simd-incremental-v1.json"
 PREREG_SHA256 = "f8c944b7d6b519f6272ead4dff46e04dc0fdf7318d2bbc9494fefd729d6788bf"
+ROUTING_PREREG = ROOT / "tests/crazyhouse/p12-nnue-v2-large-engine-routing-v1.json"
+ROUTING_PREREG_SHA256 = "791cdde30e6fcb6b1ae05124deb1e498824851db353e6775a5a444f15d59a654"
 TRANSITIONS = ROOT / "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.json"
 TRANSITIONS_SHA256 = "1f93f28118478e46362b4254df7e2fa366b851f698f7c1075676a973f7e80a34"
 HEX16 = re.compile(r"^[0-9a-f]{16}$")
@@ -63,10 +65,15 @@ def authenticate_transition_contract() -> tuple[dict[str, object], str]:
         raise RuntimeError("large SIMD/incremental preregistration pin mismatch")
     if sha256_file(TRANSITIONS) != TRANSITIONS_SHA256:
         raise RuntimeError("transition fixture pin mismatch")
+    if sha256_file(ROUTING_PREREG) != ROUTING_PREREG_SHA256:
+        raise RuntimeError("large engine-routing preregistration pin mismatch")
     prereg = json.loads(PREREG.read_text(encoding="utf-8"))
     transitions = json.loads(TRANSITIONS.read_text(encoding="utf-8"))
+    routing_prereg = json.loads(ROUTING_PREREG.read_text(encoding="utf-8"))
     if prereg.get("status") != "PREREGISTERED_BEFORE_IMPLEMENTATION":
         raise RuntimeError("large SIMD/incremental preregistration status mismatch")
+    if routing_prereg.get("status") != "PREREGISTERED_BEFORE_IMPLEMENTATION":
+        raise RuntimeError("large engine-routing preregistration status mismatch")
     counts = prereg.get("frozen_counts")
     if not isinstance(counts, dict) or counts.get("cases") != 13:
         raise RuntimeError("large SIMD/incremental frozen counts mismatch")
@@ -113,6 +120,50 @@ def run_transition(executable: Path, network: Path, protocol: str) -> str:
     if len(lines) != 1 or not lines[0].startswith("TRANSITIONS\t"):
         raise RuntimeError(f"transition verifier framing mismatch: {lines!r}")
     return lines[0]
+
+
+def run_runtime_transition(executable: Path, network: Path, protocol: str) -> str:
+    result = subprocess.run(
+        [str(executable), str(network), "--runtime-transition-suite"],
+        input=protocol,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"runtime transition verifier failed: stdout={result.stdout!r} "
+            f"stderr={result.stderr!r}"
+        )
+    if result.stderr:
+        raise RuntimeError(f"runtime transition verifier emitted stderr: {result.stderr!r}")
+    lines = result.stdout.splitlines()
+    if len(lines) != 1 or not lines[0].startswith("RUNTIME_TRANSITIONS\t"):
+        raise RuntimeError(f"runtime transition verifier framing mismatch: {lines!r}")
+    return lines[0]
+
+
+def verify_runtime_transition_line(line: str) -> None:
+    tokens = dict(field.split("=", 1) for field in line.split("\t")[1:] if "=" in field)
+    expected = {
+        "backend": "sse2-x8-int16-to-int32",
+        "cases": "13",
+        "moves": "17",
+        "undos": "17",
+        "nulls": "1",
+        "null_undos": "1",
+        "checkpoints": "49",
+        "comparisons": "147",
+        "normal_engine_opt_in": "true",
+        "model_selected": "false",
+        "strength_evidence": "false",
+    }
+    for key, value in expected.items():
+        if tokens.get(key) != value:
+            raise RuntimeError(f"runtime transition token {key}: {tokens.get(key)!r} != {value!r}")
+    if HEX16.fullmatch(tokens.get("digest", "")) is None:
+        raise RuntimeError("runtime transition digest framing mismatch")
 
 
 def verify_transition_line(line: str, prereg: dict[str, object]) -> None:
@@ -298,13 +349,20 @@ def main() -> int:
             raise RuntimeError("transition trace digest is not deterministic")
         verify_transition_line(first_transition, prereg)
 
+        first_runtime = run_runtime_transition(executable, network, transition_protocol)
+        second_runtime = run_runtime_transition(executable, network, transition_protocol)
+        if first_runtime != second_runtime:
+            raise RuntimeError("runtime transition trace digest is not deterministic")
+        verify_runtime_transition_line(first_runtime)
+
         print(
             "PASS crazyhouse_v2_large_container"
             f" positive_cases={len(trace_lines)} negative_cases={rejected}"
             f" container_bytes={reference.FILE_BYTES} scalar_reference=independent"
             " simd_backend=sse2-x8-int16-to-int32 transition_cases=13"
             " transition_evaluations=98 simd_trace_values=420616"
-            " incremental_trace_values=420616"
+            " incremental_trace_values=420616 runtime_checkpoints=49"
+            " runtime_comparisons=147 normal_engine_opt_in=true"
             " training_admissible=false g12_closed=false"
         )
     return 0

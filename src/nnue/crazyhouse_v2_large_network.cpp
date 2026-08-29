@@ -1041,6 +1041,12 @@ LargeNetworkSimdBackend large_network_simd_backend() noexcept {
 #endif
 }
 
+Digest large_network_sha256(const Byte* bytes, std::size_t size) noexcept {
+    Sha256 hash;
+    hash.update(bytes, size);
+    return hash.final();
+}
+
 std::string_view large_network_load_error_name(LargeNetworkLoadError error) noexcept {
 #define LARGE_LOAD_NAME(value) \
     case LargeNetworkLoadError::value : \

@@ -52,6 +52,8 @@ bool binding_matches_ruleset(const Snapshot& snapshot) noexcept {
         return snapshot.active->ruleset == Ruleset::CHESS;
     case BackendKind::LegacyCrazyhouseV1 :
         return snapshot.active->ruleset == Ruleset::CRAZYHOUSE && !snapshot.active->chess960;
+    case BackendKind::LargeCrazyhouseV2A0 :
+        return snapshot.active->ruleset == Ruleset::CRAZYHOUSE && !snapshot.active->chess960;
     }
     return false;
 }
@@ -67,6 +69,8 @@ std::string_view backend_kind_name(BackendKind kind) noexcept {
         return "official-chess";
     case BackendKind::LegacyCrazyhouseV1 :
         return "legacy-v1";
+    case BackendKind::LargeCrazyhouseV2A0 :
+        return "large-v2-a0";
     }
     return "invalid";
 }
@@ -101,6 +105,8 @@ std::string_view error_code_name(ErrorCode code) noexcept {
         return "crazyhouse_chess960_rejected";
     case ErrorCode::RoutePending :
         return "route_pending";
+    case ErrorCode::CrazyhouseEvaluatorUnknown :
+        return "crazyhouse_evaluator_unknown";
     case ErrorCode::CrazyhouseEvalFileEmpty :
         return "crazyhouse_eval_file_empty";
     case ErrorCode::LegacyMissingFile :
@@ -129,6 +135,26 @@ std::string_view error_code_name(ErrorCode code) noexcept {
         return "legacy_digest_mismatch";
     case ErrorCode::LegacySimdUnavailable :
         return "legacy_simd_unavailable";
+    case ErrorCode::LargeEvalFileEmpty :
+        return "large_eval_file_empty";
+    case ErrorCode::LargeSha256Invalid :
+        return "large_sha256_invalid";
+    case ErrorCode::LargeProvenanceInvalid :
+        return "large_provenance_invalid";
+    case ErrorCode::LargeMissingFile :
+        return "large_missing_file";
+    case ErrorCode::LargeNotRegularFile :
+        return "large_not_regular_file";
+    case ErrorCode::LargeFileReadFailure :
+        return "large_file_read_failure";
+    case ErrorCode::LargeWrongFileSize :
+        return "large_wrong_file_size";
+    case ErrorCode::LargeSha256Mismatch :
+        return "large_sha256_mismatch";
+    case ErrorCode::LargeSimdUnavailable :
+        return "large_simd_unavailable";
+    case ErrorCode::LargeContainerRejected :
+        return "large_container_rejected";
     case ErrorCode::OfficialEvalNotLoaded :
         return "official_eval_not_loaded";
     case ErrorCode::PositionRequiresCommittedRoute :
@@ -206,6 +232,35 @@ ErrorCode legacy_load_error(Eval::NNUE::LegacyCrazyhouseNetworkV1::LoadStatus st
     return ErrorCode::LegacyDigestMismatch;
 }
 
+ErrorCode
+large_runtime_load_error(Eval::NNUE::CrazyhouseV2::LargeRuntimeLoadStatus status) noexcept {
+    using LoadStatus = Eval::NNUE::CrazyhouseV2::LargeRuntimeLoadStatus;
+    switch (status)
+    {
+    case LoadStatus::SUCCESS :
+        return ErrorCode::None;
+    case LoadStatus::INVALID_SHA256 :
+        return ErrorCode::LargeSha256Invalid;
+    case LoadStatus::INVALID_PROVENANCE :
+        return ErrorCode::LargeProvenanceInvalid;
+    case LoadStatus::MISSING_FILE :
+        return ErrorCode::LargeMissingFile;
+    case LoadStatus::NOT_REGULAR_FILE :
+        return ErrorCode::LargeNotRegularFile;
+    case LoadStatus::FILE_READ_FAILURE :
+        return ErrorCode::LargeFileReadFailure;
+    case LoadStatus::WRONG_FILE_SIZE :
+        return ErrorCode::LargeWrongFileSize;
+    case LoadStatus::ARTIFACT_SHA256_MISMATCH :
+        return ErrorCode::LargeSha256Mismatch;
+    case LoadStatus::SIMD_UNAVAILABLE :
+        return ErrorCode::LargeSimdUnavailable;
+    case LoadStatus::CONTAINER_REJECTED :
+        return ErrorCode::LargeContainerRejected;
+    }
+    return ErrorCode::LargeContainerRejected;
+}
+
 ErrorCode crazyhouse_profile_error(std::string_view token) noexcept {
     switch (CrazyhouseProfile::classify(token))
     {
@@ -223,9 +278,11 @@ ErrorCode crazyhouse_profile_error(std::string_view token) noexcept {
 
 bool same_route_options(const RouteOptions& lhs, const RouteOptions& rhs) noexcept {
     return lhs.ruleset == rhs.ruleset && lhs.chess960 == rhs.chess960
-        && lhs.crazyhouseProfile == rhs.crazyhouseProfile
-        && lhs.chessEvalFile == rhs.chessEvalFile
-        && lhs.crazyhouseEvalFile == rhs.crazyhouseEvalFile;
+        && lhs.crazyhouseProfile == rhs.crazyhouseProfile && lhs.chessEvalFile == rhs.chessEvalFile
+        && lhs.crazyhouseEvaluator == rhs.crazyhouseEvaluator
+        && lhs.crazyhouseEvalFile == rhs.crazyhouseEvalFile
+        && lhs.crazyhouseEvalSha256 == rhs.crazyhouseEvalSha256
+        && lhs.crazyhouseEvalProvenance == rhs.crazyhouseEvalProvenance;
 }
 
 bool snapshot_contract_valid(const Snapshot& snapshot) noexcept {
@@ -293,7 +350,10 @@ bool chess960_only_official_transition(const Snapshot& snapshot) noexcept {
         && active.chess960 != snapshot.pending.chess960
         && active.crazyhouseProfile == snapshot.pending.crazyhouseProfile
         && active.chessEvalFile == snapshot.pending.chessEvalFile
-        && active.crazyhouseEvalFile == snapshot.pending.crazyhouseEvalFile;
+        && active.crazyhouseEvaluator == snapshot.pending.crazyhouseEvaluator
+        && active.crazyhouseEvalFile == snapshot.pending.crazyhouseEvalFile
+        && active.crazyhouseEvalSha256 == snapshot.pending.crazyhouseEvalSha256
+        && active.crazyhouseEvalProvenance == snapshot.pending.crazyhouseEvalProvenance;
 }
 
 bool chess_search_ready(const Snapshot& snapshot) noexcept {
@@ -302,10 +362,16 @@ bool chess_search_ready(const Snapshot& snapshot) noexcept {
 }
 
 bool crazyhouse_search_ready(const Snapshot& snapshot) noexcept {
-    return rule_position_ready(snapshot) && snapshot.active->ruleset == Ruleset::CRAZYHOUSE
-        && !snapshot.active->chess960 && backend_matches_epoch(snapshot)
-        && snapshot.backend.kind == BackendKind::LegacyCrazyhouseV1
-        && snapshot.backend.identity == Eval::NNUE::LegacyCrazyhouseNetworkV1::RegisteredSha256;
+    if (!rule_position_ready(snapshot) || snapshot.active->ruleset != Ruleset::CRAZYHOUSE
+        || snapshot.active->chess960 || !backend_matches_epoch(snapshot))
+        return false;
+    if (snapshot.backend.kind == BackendKind::LegacyCrazyhouseV1)
+        return snapshot.active->crazyhouseEvaluator == "legacy-v1"
+            && snapshot.backend.identity == Eval::NNUE::LegacyCrazyhouseNetworkV1::RegisteredSha256;
+    if (snapshot.backend.kind == BackendKind::LargeCrazyhouseV2A0)
+        return snapshot.active->crazyhouseEvaluator == "large-v2-a0"
+            && snapshot.backend.identity == snapshot.active->crazyhouseEvalSha256;
+    return false;
 }
 
 }  // namespace Stockfish::EngineRouting

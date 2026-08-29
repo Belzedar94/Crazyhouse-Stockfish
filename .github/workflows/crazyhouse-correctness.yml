@@ -324,11 +324,20 @@ jobs:
           python --version 2>&1 | tee .ci/evidence/python.log
           python -m py_compile \
             tools/nnue/crazyhouse_v2_large_container_reference.py \
-            tests/crazyhouse_v2_large_container_verify.py
+            tests/crazyhouse_v2_large_container_verify.py \
+            tests/crazyhouse_v2_large_engine_routing_verify.py
+          make -C src -j2 build \
+            ARCH=x86-64-avx2 COMP=gcc \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/large-a0-engine-build.log
           make -C src -j2 crazyhouse_v2_large_network_test \
             ARCH=x86-64-avx2 COMP=gcc \
             EXTRACXXFLAGS=-Werror \
             2>&1 | tee .ci/evidence/large-a0.log
+          python tests/crazyhouse_v2_large_engine_routing_verify.py \
+            --engine src/stockfish \
+            --reference tools/nnue/crazyhouse_v2_large_container_reference.py \
+            2>&1 | tee .ci/evidence/large-a0-engine-routing.log
           git rev-parse HEAD > .ci/evidence/git-commit.txt
           git rev-parse 'HEAD^{tree}' > .ci/evidence/git-tree.txt
           git rev-parse 'HEAD:src' > .ci/evidence/git-src-tree.txt
@@ -474,6 +483,11 @@ jobs:
             ARCH=x86-64-sse41-popcnt COMP=gcc \
             debug=yes optimize=no sanitize="$SANITIZER" \
             2>&1 | tee .ci/evidence/large-a0-sanitizer.log
+          python tests/crazyhouse_v2_large_engine_routing_verify.py \
+            --engine src/stockfish \
+            --reference tools/nnue/crazyhouse_v2_large_container_reference.py \
+            --legacy-network .ci/network/Crazyhouse_v1.nnue \
+            2>&1 | tee .ci/evidence/large-a0-engine-routing-sanitizer.log
 
       - name: Seal sanitizer evidence
         run: |
@@ -548,6 +562,11 @@ jobs:
             --legacy-network .ci/network/Crazyhouse_v1.nnue \
             --output .ci/evidence/conservative-search.json \
             2>&1 | tee .ci/evidence/conservative-search.log
+          python tests/crazyhouse_v2_large_engine_routing_verify.py \
+            --engine src/stockfish.exe \
+            --reference tools/nnue/crazyhouse_v2_large_container_reference.py \
+            --legacy-network .ci/network/Crazyhouse_v1.nnue \
+            2>&1 | tee .ci/evidence/large-a0-engine-routing.log
           make -C src -j2 crazyhouse_v2_large_network_test \
             ARCH=x86-64-avx2 COMP=mingw \
             EXTRACXXFLAGS=-Werror \

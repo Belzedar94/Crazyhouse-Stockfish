@@ -92,7 +92,9 @@ SRCS = attacks.cpp benchmark.cpp bitboard.cpp evaluate.cpp main.cpp \
 	misc.cpp movegen.cpp movepick.cpp position.cpp \
 	search.cpp thread.cpp timeman.cpp tt.cpp uci.cpp ucioption.cpp tune.cpp syzygy/tbprobe.cpp \
 	nnue/nnue_accumulator.cpp nnue/nnue_misc.cpp nnue/network.cpp nnue/crazyhouse_legacy_network.cpp \
-	nnue/crazyhouse_legacy_features.cpp \
+	nnue/crazyhouse_legacy_features.cpp nnue/crazyhouse_v2_physical.cpp \
+	nnue/crazyhouse_v2_features.cpp nnue/crazyhouse_v2_large_transform.cpp \
+	nnue/crazyhouse_v2_large_network.cpp nnue/crazyhouse_v2_large_runtime.cpp \
 	nnue/features/half_ka_v2_hm.cpp nnue/features/full_threats.cpp nnue/features/pp_3wide.cpp \
 	engine.cpp engine_routing.cpp score.cpp memory.cpp
 
@@ -105,7 +107,10 @@ HEADERS = attacks.h benchmark.h bitboard.h evaluate.h misc.h movegen.h movepick.
 		nnue/nnue_architecture.h nnue/nnue_common.h nnue/nnue_feature_transformer.h nnue/simd.h \
 		nnue/nnz_helper.h position.h search.h syzygy/tbprobe.h thread.h thread_native.h timeman.h \
 		tt.h tune.h types.h uci.h ucioption.h perft.h nnue/network.h nnue/crazyhouse_legacy_network.h \
-		nnue/crazyhouse_legacy_features.h engine.h score.h numa.h memory.h shm.h shm_unix.h
+		nnue/crazyhouse_legacy_features.h nnue/crazyhouse_v2_physical.h \
+		nnue/crazyhouse_v2_features.h nnue/crazyhouse_v2_large_transform.h \
+		nnue/crazyhouse_v2_large_network.h nnue/crazyhouse_v2_large_runtime.h \
+		engine.h score.h numa.h memory.h shm.h shm_unix.h
 
 OBJS = $(notdir $(SRCS:.cpp=.o))
 
@@ -118,28 +123,24 @@ CRAZYHOUSE_LEGACY_SIMD_TEST_OBJS = crazyhouse_legacy_simd_tests.o \
 	$(filter-out main.o,$(OBJS))
 
 CRAZYHOUSE_V2_DECODER_SCALAR_TEST_EXE = crazyhouse-v2-decoder-scalar-tests$(suffix $(EXE))
-CRAZYHOUSE_V2_DECODER_SCALAR_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
-	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp
+CRAZYHOUSE_V2_DECODER_SCALAR_TEST_SRCS = $(filter-out main.cpp,$(SRCS))
 CRAZYHOUSE_V2_DECODER_SCALAR_TEST_OBJS = crazyhouse_v2_decoder_scalar_tests.o \
 	$(addprefix .v2-decoder-obj/,$(notdir $(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_SRCS:.cpp=.o)))
 
 CRAZYHOUSE_V2_LARGE_FEATURES_TEST_EXE = crazyhouse-v2-large-features-tests$(suffix $(EXE))
-CRAZYHOUSE_V2_LARGE_FEATURES_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
-	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp \
-	nnue/crazyhouse_v2_large_transform.cpp
+CRAZYHOUSE_V2_LARGE_FEATURES_TEST_SRCS = $(filter-out main.cpp,$(SRCS))
 CRAZYHOUSE_V2_LARGE_FEATURES_TEST_OBJS = crazyhouse_v2_large_features_tests.o \
 	$(addprefix .v2-large-features-obj/,$(notdir $(CRAZYHOUSE_V2_LARGE_FEATURES_TEST_SRCS:.cpp=.o)))
 CRAZYHOUSE_V2_LARGE_FEATURES_FORMAT_FILES = nnue/crazyhouse_v2_physical.cpp \
 	nnue/crazyhouse_v2_physical.h nnue/crazyhouse_v2_features.cpp \
 	nnue/crazyhouse_v2_features.h nnue/crazyhouse_v2_large_transform.cpp \
 	nnue/crazyhouse_v2_large_transform.h nnue/crazyhouse_v2_large_network.cpp \
-	nnue/crazyhouse_v2_large_network.h ../tests/crazyhouse_v2_large_features.cpp \
+	nnue/crazyhouse_v2_large_network.h nnue/crazyhouse_v2_large_runtime.cpp \
+	nnue/crazyhouse_v2_large_runtime.h ../tests/crazyhouse_v2_large_features.cpp \
 	../tests/crazyhouse_v2_large_network.cpp
 
 CRAZYHOUSE_V2_LARGE_NETWORK_TEST_EXE = crazyhouse-v2-large-network-tests$(suffix $(EXE))
-CRAZYHOUSE_V2_LARGE_NETWORK_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
-	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp \
-	nnue/crazyhouse_v2_large_transform.cpp nnue/crazyhouse_v2_large_network.cpp
+CRAZYHOUSE_V2_LARGE_NETWORK_TEST_SRCS = $(filter-out main.cpp,$(SRCS))
 CRAZYHOUSE_V2_LARGE_NETWORK_TEST_OBJS = crazyhouse_v2_large_network_tests.o \
 	$(addprefix .v2-large-network-obj/,$(notdir $(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_SRCS:.cpp=.o)))
 
@@ -151,7 +152,7 @@ CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_OBJS = crazyhouse_v2_container_scalar_tests.
 
 CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_EXE = crazyhouse-v2-simd-incremental-tests$(suffix $(EXE))
 CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
-	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp nnue/crazyhouse_v2_probe.cpp
+	nnue/crazyhouse_v2_probe.cpp
 CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_OBJS = crazyhouse_v2_simd_incremental_tests.o \
 	$(addprefix .v2-simd-incremental-obj/,$(notdir $(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_SRCS:.cpp=.o)))
 
@@ -163,7 +164,7 @@ CRAZYHOUSE_V2_PRODUCTIVE_TEST_OBJS = crazyhouse_v2_productive_tests.o \
 
 CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_EXE = crazyhouse-v2-productive-incremental-tests$(suffix $(EXE))
 CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
-	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp nnue/crazyhouse_v2_productive.cpp
+	nnue/crazyhouse_v2_productive.cpp
 CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_OBJS = crazyhouse_v2_productive_incremental_tests.o \
 	$(addprefix .v2-productive-incremental-obj/,$(notdir $(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_SRCS:.cpp=.o)))
 
