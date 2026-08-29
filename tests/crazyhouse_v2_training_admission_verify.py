@@ -26,6 +26,18 @@ ROOT = Path(__file__).resolve().parents[1]
 RULE_SHA = "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
 PHYSICAL_SHA = "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55"
 FEATURE_SHA = "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6"
+LARGE_FEATURE_SEMANTIC_SHA = (
+    "6e616c2e090b43daa7710ca39aaedc76b43a90db46e8f093466f45b821f44a79"
+)
+LARGE_FEATURE_SCHEMA_SHA = (
+    "837b82eb9af44829bca913a22c3702270b58cc6970e2b36c3d1fe3419945c397"
+)
+LARGE_FEATURE_REFERENCE_SHA = (
+    "3f61002dd262e24327c8b5fb31a53b773468a3dc336d87ac7572c1418d1a2975"
+)
+LARGE_TRAINING_CONTRACT_SHA = (
+    "cae6e1d1f51f2e33e113c5e9c1007131e1b40de1cf0800543aa4829657353d68"
+)
 PRODUCTION_CAPABILITY_SHA = "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b"
 PRODUCTION_NETWORK_SHA = "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
 PRODUCTION_BOOK_SHA = "1371e87ce3bdb875d922ad0061c96c4a123bc571daf4ae2bff24e5176287f0fa"
@@ -46,6 +58,9 @@ HISTORY_STEP_DOMAIN = b"Crazyhouse-Stockfish physical history step v1\0"
 SPLIT_DOMAIN = b"Crazyhouse-Stockfish physical trajectory split v1\0"
 RAW_DOMAIN = b"Crazyhouse-Stockfish physical record identity v1\0"
 MODEL_DOMAIN = b"Crazyhouse-Stockfish NNUE V2 model input identity v1\0"
+LARGE_MODEL_DOMAIN = (
+    b"Crazyhouse-Stockfish NNUE V2 large K64G1 model input identity v1\0"
+)
 CHUNK_SET_DOMAIN = b"Crazyhouse-Stockfish ordered chunk set v1\0"
 RECORD_STREAM_DOMAIN = b"Crazyhouse-Stockfish ordered record stream v1\0"
 TRAJECTORY_SET_DOMAIN = b"Crazyhouse-Stockfish ordered trajectory set v1\0"
@@ -54,6 +69,13 @@ IDENTITY_SET_DOMAIN = b"Crazyhouse-Stockfish ordered admission identity set v1\0
 POCKET_MAXIMUMS = (16, 4, 4, 4, 2, 16, 4, 4, 4, 2)
 POCKET_TYPE_BASE = (0, 34, 44, 54, 64)
 POCKET_WIDTHS = (17, 5, 5, 5, 3)
+POCKET_PREFIXES = (0, 16, 20, 24, 28)
+K_POCKET_OFFSET = 64 * 11 * 64
+K_PROMOTED_OFFSET = K_POCKET_OFFSET + 64 * 60
+K_DIMENSIONS = K_PROMOTED_OFFSET + 64 * 8 * 64
+G_POCKET_OFFSET = 12 * 64
+G_PROMOTED_OFFSET = G_POCKET_OFFSET + 60
+G_DIMENSIONS = G_PROMOTED_OFFSET + 8 * 64
 IDENTITY_KINDS = (
     "raw_record_key",
     "position_identity",
@@ -61,6 +83,7 @@ IDENTITY_KINDS = (
     "game_id",
     "trajectory_id",
 )
+LARGE_IDENTITY_KINDS = IDENTITY_KINDS + ("large_model_input_key",)
 
 
 class VerificationFailure(RuntimeError):
@@ -172,6 +195,84 @@ def model_key(stm_rows: Sequence[int], opponent_rows: Sequence[int]) -> bytes:
     payload.extend(struct.pack("<I", len(opponent_rows)))
     for row in sorted(opponent_rows):
         payload.extend(struct.pack("<I", row))
+    return hashlib.sha256(payload).digest()
+
+
+def large_feature_rows(
+    record: Mapping[str, Any], perspective: int
+) -> tuple[tuple[int, ...], tuple[int, ...]]:
+    require(perspective in {0, 1}, "independent large perspective")
+    board = record["board"]
+    king_code = 6 if perspective == 0 else 14
+    require(board.count(king_code) == 1, "independent large king")
+    king_bucket = board.index(king_code)
+    if perspective == 1:
+        king_bucket ^= 56
+    k64: list[int] = []
+    g1: list[int] = []
+    for square, code in enumerate(board):
+        if not code:
+            continue
+        piece_type = code & 7
+        relative_owner = int((code >> 3) != perspective)
+        oriented = square if perspective == 0 else square ^ 56
+        k_plane = 10 if piece_type == 6 else 2 * (piece_type - 1) + relative_owner
+        g_plane = 2 * (piece_type - 1) + relative_owner
+        k64.append((king_bucket * 11 + k_plane) * 64 + oriented)
+        g1.append(g_plane * 64 + oriented)
+    for piece_type, prefix in enumerate(POCKET_PREFIXES):
+        for relative_owner in range(2):
+            absolute_owner = perspective ^ relative_owner
+            count = record["pockets"][absolute_owner * 5 + piece_type]
+            for slot in range(count):
+                pocket_plane = relative_owner * 30 + prefix + slot
+                k64.append(K_POCKET_OFFSET + king_bucket * 60 + pocket_plane)
+                g1.append(G_POCKET_OFFSET + pocket_plane)
+    for square, code in enumerate(board):
+        if not record["promoted_mask"] & (1 << square):
+            continue
+        piece_type = code & 7
+        require(piece_type in {2, 3, 4, 5}, "independent large promoted type")
+        relative_owner = int((code >> 3) != perspective)
+        promoted_plane = relative_owner * 4 + piece_type - 2
+        oriented = square if perspective == 0 else square ^ 56
+        k64.append(K_PROMOTED_OFFSET + (king_bucket * 8 + promoted_plane) * 64 + oriented)
+        g1.append(G_PROMOTED_OFFSET + promoted_plane * 64 + oriented)
+    require(
+        len(k64) <= 48
+        and len(k64) == len(set(k64))
+        and all(0 <= row < K_DIMENSIONS for row in k64),
+        "independent K64 rows",
+    )
+    require(
+        len(g1) <= 48
+        and len(g1) == len(set(g1))
+        and all(0 <= row < G_DIMENSIONS for row in g1),
+        "independent G1 rows",
+    )
+    return tuple(k64), tuple(g1)
+
+
+def large_model_key(
+    stm_k64_rows: Sequence[int],
+    stm_g1_rows: Sequence[int],
+    opponent_k64_rows: Sequence[int],
+    opponent_g1_rows: Sequence[int],
+    total_pocket_units: int,
+) -> bytes:
+    require(0 <= total_pocket_units <= 30, "independent large pocket units")
+    payload = bytearray(LARGE_MODEL_DOMAIN)
+    payload.extend(bytes.fromhex(LARGE_FEATURE_SEMANTIC_SHA))
+    for rows in (
+        stm_k64_rows,
+        stm_g1_rows,
+        opponent_k64_rows,
+        opponent_g1_rows,
+    ):
+        payload.extend(struct.pack("<I", len(rows)))
+        for row in sorted(rows):
+            payload.extend(struct.pack("<I", row))
+    payload.extend(struct.pack("<I", total_pocket_units))
     return hashlib.sha256(payload).digest()
 
 
@@ -353,6 +454,82 @@ def expected_row(
     return canonical_json(row), identities
 
 
+def expected_large_row(
+    role: str,
+    campaign: bytes,
+    chunk: bytes,
+    chunk_index: int,
+    raw: bytes,
+    record: Mapping[str, Any],
+) -> tuple[bytes, dict[str, bytes]]:
+    legacy_stm = feature_rows(record, record["side_to_move"])
+    legacy_opponent = feature_rows(record, record["side_to_move"] ^ 1)
+    stm_k64, stm_g1 = large_feature_rows(record, record["side_to_move"])
+    opponent_k64, opponent_g1 = large_feature_rows(
+        record, record["side_to_move"] ^ 1
+    )
+    total_pocket_units = sum(record["pockets"])
+    raw_key = hashlib.sha256(RAW_DOMAIN + raw).digest()
+    legacy_key = model_key(legacy_stm, legacy_opponent)
+    feature_key = large_model_key(
+        stm_k64,
+        stm_g1,
+        opponent_k64,
+        opponent_g1,
+        total_pocket_units,
+    )
+    identities = {
+        "raw_record_key": raw_key,
+        "position_identity": record["position"],
+        "model_input_key": legacy_key,
+        "game_id": campaign + record["game_id"],
+        "trajectory_id": campaign + record["trajectory_id"],
+        "large_model_input_key": feature_key,
+    }
+    teacher_kinds = ("none", "centipawn", "mate-plies")
+    teacher_bounds = ("none", "exact", "lower", "upper")
+    terminals = (
+        "ongoing",
+        "checkmate",
+        "stalemate",
+        "fivefold-repetition",
+        "threefold-claim-proxy",
+        "resignation",
+        "draw-adjudication",
+    )
+    row = {
+        "campaign_id": str(uuid.UUID(bytes=campaign)),
+        "chunk_id": str(uuid.UUID(bytes=chunk)),
+        "chunk_index": chunk_index,
+        "game_id": str(uuid.UUID(bytes=record["game_id"])),
+        "game_result_white": record["game_result_white"],
+        "large_model_input_key": feature_key.hex(),
+        "move_time_ms": record["move_time"],
+        "opponent_g1_rows": list(opponent_g1),
+        "opponent_k64_rows": list(opponent_k64),
+        "ply": record["ply"],
+        "position_identity_sha256": record["position"].hex(),
+        "raw_record_key": raw_key.hex(),
+        "result_side_to_move": record["result_stm"],
+        "role": role,
+        "schema": "crazyhouse-nnue-v2-large-physical-row/v1",
+        "search_depth": record["search_depth"],
+        "search_nodes": record["search_nodes"],
+        "search_seldepth": record["search_seldepth"],
+        "sequence": record["sequence"],
+        "side_to_move": "white" if record["side_to_move"] == 0 else "black",
+        "stm_g1_rows": list(stm_g1),
+        "stm_k64_rows": list(stm_k64),
+        "teacher_bound": teacher_bounds[record["teacher_bound"]],
+        "teacher_score_kind": teacher_kinds[record["teacher_kind"]],
+        "teacher_score_value": record["teacher_value"],
+        "terminal_reason": terminals[record["terminal"]],
+        "total_pocket_units": total_pocket_units,
+        "trajectory_id": str(uuid.UUID(bytes=record["trajectory_id"])),
+    }
+    return canonical_json(row), identities
+
+
 def ordered_chunk_digest(chunks: Sequence[Mapping[str, Any]]) -> str:
     digest = hashlib.sha256(CHUNK_SET_DOMAIN + struct.pack("<Q", len(chunks)))
     for chunk in chunks:
@@ -391,7 +568,16 @@ def ordered_identity_digest(role: str, kind: str, keys: set[bytes]) -> str:
 def independent_full_scan(
     fixture: Path,
     admitted: Path,
+    projection: str = "legacy-v1",
 ) -> dict[str, Any]:
+    require(
+        projection in {"legacy-v1", "large-k64g1-v1"},
+        "independent projection",
+    )
+    large = projection == "large-k64g1-v1"
+    identity_kinds = LARGE_IDENTITY_KINDS if large else IDENTITY_KINDS
+    row_builder = expected_large_row if large else expected_row
+    model_kind = "large_model_input_key" if large else "model_input_key"
     manifest_bytes = (fixture / "training-dataset-manifest.json").read_bytes()
     manifest = parse_json(manifest_bytes, "manifest")
     require(manifest["fixture_mode"] is True and manifest["training_admissible"] is False, "fixture boundary")
@@ -404,7 +590,8 @@ def independent_full_scan(
     )
     require(aggregate["exact_total"] is True and aggregate["training_admissible"] is False, "aggregate boundary")
     identities: dict[str, dict[str, list[bytes]]] = {
-        role: {kind: [] for kind in IDENTITY_KINDS} for role in ("train", "validation")
+        role: {kind: [] for kind in identity_kinds}
+        for role in ("train", "validation")
     }
     expected_rows: dict[str, list[bytes]] = {"train": [], "validation": []}
     raw_by_role: dict[str, list[bytes]] = {"train": [], "validation": []}
@@ -503,14 +690,14 @@ def independent_full_scan(
                 previous = record["history"]
                 expected_ply += 1
                 prior_terminal = bool(record["flags"] & 2)
-                row, row_identities = expected_row(
+                row, row_identities = row_builder(
                     role, campaign, chunk, entry["chunk_index"], raw, record
                 )
                 expected_rows[role].append(row)
                 raw_by_role[role].append(raw)
                 for kind, key in row_identities.items():
                     identities[role][kind].append(key)
-                model = row_identities["model_input_key"]
+                model = row_identities[model_kind]
                 (augmented_models if record["augmented"] else ordinary_models).add(model)
                 coverage["pockets"] |= any(record["pockets"])
                 coverage["drop"] |= record["move"][0] == 5
@@ -569,7 +756,7 @@ def independent_full_scan(
     intersections: dict[str, int] = {}
     duplicates: dict[str, dict[str, int]] = {"train": {}, "validation": {}}
     expected_sets: dict[str, dict[str, dict[str, Any]]] = {"train": {}, "validation": {}}
-    for kind in IDENTITY_KINDS:
+    for kind in identity_kinds:
         train_set = set(identities["train"][kind])
         validation_set = set(identities["validation"][kind])
         intersections[kind] = len(train_set & validation_set)
@@ -594,6 +781,29 @@ def independent_full_scan(
     require(result["source_manifest_sha256"] == sha256(manifest_bytes), "result manifest")
     require(result["intersections"] == intersections, "result intersections")
     require(result["sets"] == expected_sets, "result exact sets")
+    if large:
+        require(
+            result["schema"]
+            == "crazyhouse-nnue-v2-large-training-admission-result/v1"
+            and result["projection"] == projection,
+            "large result projection",
+        )
+        require(
+            result["large_feature_contract_sha256"] == LARGE_FEATURE_SEMANTIC_SHA
+            and result["large_feature_schema_file_sha256"]
+            == LARGE_FEATURE_SCHEMA_SHA
+            and result["large_feature_reference_sha256"]
+            == LARGE_FEATURE_REFERENCE_SHA
+            and result["large_training_contract_sha256"]
+            == LARGE_TRAINING_CONTRACT_SHA,
+            "large result identities",
+        )
+    else:
+        require(
+            result["schema"] == "crazyhouse-nnue-v2-training-admission-result/v1"
+            and "projection" not in result,
+            "legacy result schema preservation",
+        )
     require(total_records >= 32 and total_trajectories >= 8, "fixture minimums")
     return {
         "coverage": coverage,
@@ -1379,6 +1589,39 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             require(tree_digest(admitted_a) == tree_digest(admitted_b), "admission outputs differ")
             independent = independent_full_scan(fixture_a, admitted_a)
+            large_admitted_a = root / "large-admitted-a"
+            large_admitted_b = root / "large-admitted-b"
+            run_success(
+                loader,
+                "admit",
+                "--mode",
+                "fixture",
+                "--projection",
+                "large-k64g1-v1",
+                "--manifest",
+                str(fixture_a / "training-dataset-manifest.json"),
+                "--output",
+                str(large_admitted_a),
+            )
+            run_success(
+                loader,
+                "admit",
+                "--mode",
+                "fixture",
+                "--projection",
+                "large-k64g1-v1",
+                "--manifest",
+                str(fixture_b / "training-dataset-manifest.json"),
+                "--output",
+                str(large_admitted_b),
+            )
+            require(
+                tree_digest(large_admitted_a) == tree_digest(large_admitted_b),
+                "large admission outputs differ",
+            )
+            independent_large = independent_full_scan(
+                fixture_a, large_admitted_a, "large-k64g1-v1"
+            )
             identity_self_test = run_success(loader, "self-test-identities")
             require(
                 identity_self_test["cases"] == {kind: 1 for kind in IDENTITY_KINDS},
@@ -1391,6 +1634,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "fixture_mode": True,
                 "identity_intersection_cases": len(identity_self_test["cases"]),
                 "independent_full_scan": independent,
+                "independent_large_full_scan": independent_large,
                 "negative_cases": len(negatives),
                 "negative_codes": negatives,
                 "production_training_admissible": False,
