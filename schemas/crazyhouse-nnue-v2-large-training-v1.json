@@ -1,0 +1,170 @@
+{
+  "schema": "crazyhouse-nnue-v2-large-training-contract/v1",
+  "status": "frozen-before-production-trainer-implementation",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "architecture_id": "CH-NNUE-V2-LARGE-K64G1-SFNNV16",
+  "source_anchors": {
+    "official_stockfish_commit": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2",
+    "official_nnue_pytorch_commit": "9f72946529c4187d3679014036cd22c3be419716",
+    "official_nnue_generation": "SFNNv16"
+  },
+  "semantic_identities": {
+    "rule_profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
+    "physical_schema_sha256": "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55",
+    "feature_contract_sha256": "6e616c2e090b43daa7710ca39aaedc76b43a90db46e8f093466f45b821f44a79",
+    "architecture_sha256": "2f5efc7cf05f3365bf5e524e636d47a6abdbadcdf5673cc0d260f1e61638341e",
+    "quantization_sha256": "262399c3d1e8f96681f485d8b2d9d6d1c8e783cd1685250317a9c7e244c9386c"
+  },
+  "input_admission": {
+    "canonical_source": "authenticated-crazyhouse-physical-v1-records",
+    "projection": "large-k64g1-v1",
+    "row_schema": "crazyhouse-nnue-v2-large-physical-row/v1",
+    "result_schema": "crazyhouse-nnue-v2-large-training-admission-result/v1",
+    "required_production_status": "PASS_PRODUCTION_ADMISSION",
+    "fixture_status": "PASS_FIXTURE_NONADMISSIBLE",
+    "production_requires_training_admissible": true,
+    "fixture_can_grant_model_credit": false,
+    "required_sparse_fields": [
+      "stm_k64_rows",
+      "stm_g1_rows",
+      "opponent_k64_rows",
+      "opponent_g1_rows"
+    ],
+    "required_state_fields": ["total_pocket_units", "side_to_move"],
+    "required_label_fields": [
+      "result_side_to_move",
+      "teacher_score_kind",
+      "teacher_bound",
+      "teacher_score_value",
+      "terminal_reason"
+    ]
+  },
+  "large_model_input_identity": {
+    "domain_ascii": "Crazyhouse-Stockfish NNUE V2 large K64G1 model input identity v1\\0",
+    "formula": "SHA256(domain || feature_contract_sha256_raw32 || stm_k_count_u32_le || stm_k_rows_u32_le || stm_g_count_u32_le || stm_g_rows_u32_le || opponent_k_count_u32_le || opponent_k_rows_u32_le || opponent_g_count_u32_le || opponent_g_rows_u32_le || total_pocket_units_u32_le)",
+    "rows_sorted_before_hash": true,
+    "labels_or_search_metadata_in_key": false,
+    "cross_role_intersection_required": 0
+  },
+  "model": {
+    "k64": {"input_rows": 81664, "lanes": 768, "pair_halves": [384, 384]},
+    "g1": {"input_rows": 1340, "lanes": 256, "pair_halves": [128, 128]},
+    "shared_between_perspectives": true,
+    "maximum_active_per_domain_per_perspective": 48,
+    "pair_product": "clip each transformer half to [0,255/256], multiply paired halves, and fake-quantize to floor(integer_product/512)/128",
+    "dense_input_lanes": 1024,
+    "perspective_order": ["side-to-move", "opponent"],
+    "bucket_formula": "min(7,total_pocket_units//4)",
+    "buckets": 8,
+    "fc0": {"inputs": 1024, "outputs": 32},
+    "fc1": {"inputs": 64, "outputs": 32},
+    "fc2": {"inputs": 128, "outputs": 1},
+    "activations": "SFNNv16 squared-clipped plus clipped concatenation",
+    "skip": "fc0[30]-fc0[31]",
+    "float_output_to_centipawns": 600,
+    "psqt_head": false,
+    "parameter_count": 63342088
+  },
+  "quantization_aware_training": {
+    "rounding": "nearest-with-half-away-from-zero",
+    "feature_weight_scale": 256,
+    "feature_bias_scale": 256,
+    "feature_serialization": ["int16-le", "int16-le"],
+    "transformer_clamp_integer": [0, 255],
+    "pair_product_divisor": 512,
+    "hidden_one": 128,
+    "fc0_weight_scale": 128,
+    "fc0_bias_scale": 16384,
+    "fc1_weight_scale": 64,
+    "fc1_bias_scale": 8192,
+    "fc2_weight_scale": 128,
+    "fc2_bias_scale": 16384,
+    "dense_weight_serialization": "int8",
+    "dense_bias_serialization": "int32-le",
+    "overflow_or_loader_interval_failure": "reject-without-artifact",
+    "silent_clipping_on_export": false
+  },
+  "labels_and_loss": {
+    "prediction_perspective": "side-to-move",
+    "result_mapping": {"loss": 0.0, "draw": 0.5, "win": 1.0},
+    "centipawn_mapping": "sigmoid(teacher_score_value / score_scale_cp)",
+    "mate_mapping": "1.0 for positive mate-plies and 0.0 for negative mate-plies",
+    "terminal_mapping": "result only",
+    "ongoing_mapping": "teacher_target*lambda + result_target*(1-lambda)",
+    "loss": "mean(abs(predicted_probability-target_probability)^loss_exponent)",
+    "production_configuration_requires_explicit": [
+      "score_scale_cp",
+      "lambda",
+      "loss_exponent",
+      "batch_size",
+      "epochs",
+      "seed",
+      "sparse_learning_rate",
+      "dense_learning_rate",
+      "validation_interval_steps",
+      "checkpoint_interval_steps"
+    ],
+    "stockfish_chess_loss_constants_inherited": false,
+    "training_loss_selects_production_model": false
+  },
+  "optimization": {
+    "feature_tables": "torch.optim.SparseAdam over sparse K64 and G1 embedding gradients",
+    "feature_biases_and_dense_trunks": "torch.optim.AdamW with zero weight decay unless an experiment freezes another value",
+    "sample_order": "keyed cycle-walk Feistel permutation of each complete epoch",
+    "dataloader_workers": 0,
+    "partial_batch": "admitted and included exactly once",
+    "validation_mutates_model_or_optimizers": false
+  },
+  "deterministic_resume": {
+    "scope": "byte-identical continuation on the same authenticated runtime and device class",
+    "checkpoint_binds": [
+      "source commit and trees",
+      "admission result and row descriptors",
+      "training configuration",
+      "trainer code",
+      "Python, PyTorch, NumPy, CUDA and device identity",
+      "model and both optimizer states",
+      "CPU and CUDA RNG states",
+      "epoch, permutation and batch cursor",
+      "metric and resume-lineage chains"
+    ],
+    "transaction": "exclusive partial write, fsync, atomic replace",
+    "cross_runtime_byte_identity_claimed": false
+  },
+  "export": {
+    "container_magic": "CHNNUEV2LARGEA0\\0",
+    "container_bytes": 126406688,
+    "tensor_count": 10,
+    "required_provenance_order": [
+      "dataset_manifest",
+      "split_manifest",
+      "training_config",
+      "trainer_code",
+      "training_runtime",
+      "resume_lineage"
+    ],
+    "transactional": true,
+    "parser_reauthentication_required": true,
+    "scalar_integer_parity_required": true,
+    "simd_integer_parity_required": true,
+    "incremental_full_refresh_parity_required": true
+  },
+  "fixture_boundary": {
+    "reduced-shape_fixture_allowed": true,
+    "reduced-shape_fixture_export_allowed": false,
+    "production_shape_checked_on_meta_device": true,
+    "fixture_training_admissible": false,
+    "fixture_model_or_strength_credit": false
+  },
+  "scientific_boundary": {
+    "legacy_v1_remains_default": true,
+    "production_dataset_exists": false,
+    "trained_large_artifact_exists": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "g12_closed": false,
+    "release_claimed": false
+  }
+}
