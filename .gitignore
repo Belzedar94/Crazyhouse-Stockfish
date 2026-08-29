@@ -17,6 +17,7 @@ src/crazyhouse-v2-legacy-control-tests*
 src/crazyhouse-v2-large-features-tests*
 src/crazyhouse_v2_large_features_tests.o.d
 src/.v2-large-features-obj/
+src/crazyhouse-core-*-tests*
 src/-lstdc++.res
 
 # Neural network for the NNUE evaluation
@@ -31,3 +32,4 @@ tests/bench_tmp.epd
 # Generated correctness-CI materialization and evidence
 .ci/network/
 .ci/evidence/
+.ci/local-*
