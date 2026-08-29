@@ -1,0 +1,35 @@
+{
+  "schema": "crazyhouse-p11-production-datagen-partition-domain-correction/v1",
+  "recorded_utc": "2026-08-29T01:07:53.8246588Z",
+  "status": "CORRECTION_PREREGISTERED_BEFORE_PRODUCTION",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "incident": "CH-347",
+  "scope": "Correct only the decoded capability/provenance partition-domain value and the resulting capability contract identity. The hash input, partition digest, split seed, threshold, campaign set and role decisions remain unchanged.",
+  "symptom": "The production provenance domain decoded to printable backslash-zero while the partition manifest and SHA-256 implementation used a terminal NUL byte.",
+  "cause": "The C++ JSON emitter escaped a display notation instead of emitting the JSON Unicode escape for the actual NUL byte.",
+  "superseded_identity_only": {
+    "path": "tests/crazyhouse/datagen-production-capability-v1.json",
+    "bytes": 2651,
+    "sha256": "96abf35a3a526d3cecdf4a6a3b55ff15b9ce6f1b644fa38375af65242d113357"
+  },
+  "corrected_identity": {
+    "path": "tests/crazyhouse/datagen-production-capability-v1.json",
+    "bytes": 2654,
+    "sha256": "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b",
+    "json_encoding": "terminal NUL encoded as \\u0000",
+    "decoded_domain_bytes_hex_suffix": "00"
+  },
+  "new_runtime_assertions": [
+    "capability trajectory_partition_domain equals the exact hashing domain after JSON decoding",
+    "provenance partition.domain equals the exact hashing domain after JSON decoding"
+  ],
+  "required_replay": [
+    "commit before build",
+    "clean-build the normal and dedicated DATAGEN artifacts",
+    "rerun the complete production runtime matrix",
+    "publish a result addendum without rewriting earlier receipts"
+  ],
+  "claim_boundary": "This correction grants no OpenBench DATAGEN, dataset, training, model, strength or release credit."
+}

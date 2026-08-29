@@ -27,6 +27,7 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -116,6 +117,26 @@ constexpr std::string_view SelfplaySelectionPolicySha256 =
 constexpr std::string_view SelfplayG0BookSha256 =
   "f99f8211316813924e52fb13fbb65a5bc27dcd585e2e32a86d90db0d113fd2f6";
 constexpr std::uint64_t SelfplayG0BookBytes = 158;
+constexpr std::string_view ProductionCapabilityContractSha256 =
+  "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b";
+constexpr std::string_view ProductionSelectionPolicySha256 =
+  "475fd0fb9a929e964ff32357031a18d33ecc2543e8681cc73068858c10db3014";
+constexpr std::string_view ProductionBookSha256 =
+  "1371e87ce3bdb875d922ad0061c96c4a123bc571daf4ae2bff24e5176287f0fa";
+constexpr std::string_view ProductionFeatureContractSha256 =
+  "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6";
+constexpr std::uint64_t    ProductionBookBytes               = 39922;
+constexpr std::size_t      ProductionBookRoots               = 599;
+constexpr std::uint32_t    ProductionOpenBenchProtocol       = 41;
+constexpr std::uint32_t    ProductionThreads                 = 1;
+constexpr std::uint32_t    ProductionHashMb                  = 128;
+constexpr Depth            ProductionDepthCap                = 64;
+constexpr std::uint64_t    ProductionNodes                   = 16384;
+constexpr std::uint32_t    ProductionMaxGamePly              = 512;
+constexpr std::uint32_t    ProductionExplorationPlies        = 8;
+constexpr std::uint32_t    ProductionExplorationMultiPv      = 4;
+constexpr int              ProductionExplorationMaxScoreDiff = 256;
+constexpr std::uint64_t    ProductionValidationThreshold     = std::uint64_t(1) << 61;
 constexpr std::string_view RegisteredLegacyNetworkSha256 =
   "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43";
 constexpr std::uint64_t RegisteredLegacyNetworkBytes = 58534811;
@@ -123,6 +144,8 @@ constexpr std::uint64_t RegisteredLegacyNetworkBytes = 58534811;
 constexpr char PositionDomain[] = "Crazyhouse-Stockfish physical repetition identity v1\0";
 constexpr char HistoryInitialDomain[] = "Crazyhouse-Stockfish physical history initial v1\0";
 constexpr char HistoryStepDomain[] = "Crazyhouse-Stockfish physical history step v1\0";
+constexpr char PartitionDomain[] = "Crazyhouse-Stockfish physical trajectory split v1\0";
+constexpr char ExplorationDomain[] = "Crazyhouse-Stockfish production exploration choice v1\0";
 
 class DatagenError: public std::runtime_error {
    public:
@@ -613,6 +636,41 @@ std::string selfplay_capability_response(const ArtifactIdentity& artifact,
     return output.str();
 }
 
+std::string production_capability_response(const ArtifactIdentity& artifact,
+                                           std::string_view        challenge) {
+    require(lowercase_hex(challenge, 32),
+            "production capability challenge must be 32 lowercase hex characters");
+    validate_compiled_identity();
+    std::ostringstream output;
+    output << "{\"artifact_bytes\":" << artifact.bytes
+           << ",\"artifact_role\":\"crazyhouse-physical-datagen-production-v1\""
+           << ",\"artifact_sha256\":" << json_string(hex(artifact.digest))
+           << ",\"build_recipe_sha256\":" << json_string(DATAGEN_BUILD_RECIPE_SHA256)
+           << ",\"capability_contract_sha256\":" << json_string(ProductionCapabilityContractSha256)
+           << ",\"challenge\":" << json_string(challenge)
+           << ",\"command\":\"crazyhouse_generate_physical_production_v1\""
+           << ",\"openbench_publication_protocol\":" << ProductionOpenBenchProtocol
+           << ",\"physical_record_bytes\":" << RecordBytes
+           << ",\"physical_schema_sha256\":" << json_string(PhysicalSchemaSha256)
+           << ",\"producer_source_commit\":" << json_string(DATAGEN_SOURCE_COMMIT)
+           << ",\"producer_source_dirty\":" << (DATAGEN_SOURCE_DIRTY ? "true" : "false")
+           << ",\"producer_source_tree\":" << json_string(DATAGEN_SOURCE_TREE)
+           << ",\"producer_src_tree\":" << json_string(DATAGEN_SRC_TREE)
+           << ",\"production_generation_authorized\":" << (DATAGEN_SOURCE_DIRTY ? "false" : "true")
+           << ",\"registered_network_bytes\":" << RegisteredLegacyNetworkBytes
+           << ",\"registered_network_sha256\":" << json_string(RegisteredLegacyNetworkSha256)
+           << ",\"rule_profile_id\":" << json_string(CrazyhouseProfile::Id)
+           << ",\"rule_profile_sha256\":" << json_string(CrazyhouseProfile::Sha256)
+           << ",\"schema\":\"crazyhouse-datagen-production-capability-response/v1\""
+           << ",\"selection_policy_sha256\":" << json_string(ProductionSelectionPolicySha256)
+           << ",\"toolchain_identity\":" << json_string(DATAGEN_TOOLCHAIN_IDENTITY)
+           << ",\"toolchain_sha256\":" << json_string(DATAGEN_TOOLCHAIN_SHA256)
+           << ",\"trajectory_partition_domain\":"
+              "\"Crazyhouse-Stockfish physical trajectory split v1\\u0000\""
+           << ",\"variant\":\"crazyhouse\"}\n";
+    return output.str();
+}
+
 struct TeacherLabel {
     Byte          kind       = 0;
     std::int32_t  value      = 0;
@@ -866,7 +924,13 @@ enum class SelfplayTestCandidateFault : std::uint8_t {
     SafetyLimit,
 };
 
+enum class SelfplayMode : std::uint8_t {
+    FixtureG0,
+    ProductionV1,
+};
+
 struct SelfplayOptions {
+    SelfplayMode               mode = SelfplayMode::FixtureG0;
     std::filesystem::path      bookPath;
     std::filesystem::path      networkPath;
     std::filesystem::path      outputPath;
@@ -877,25 +941,49 @@ struct SelfplayOptions {
     std::string                networkSha256;
     std::string                producerSha256;
     std::string                selectionPolicySha256;
+    std::string                externalWorkloadId;
+    std::string                role;
+    std::string                cohort;
+    std::string                campaignSetSha256;
+    std::string                partitionSha256;
     std::string                campaignText;
     std::string                chunkText;
     std::string                seedText;
     std::string                challenge;
     IdBytes                    campaignId{};
     IdBytes                    chunkId{};
-    std::uint64_t              baseSeed            = 0;
-    std::uint64_t              assignedSeed        = 0;
-    std::uint64_t              chunkIndex          = 0;
-    std::size_t                expectedRecords     = 0;
-    std::size_t                maxCandidateGames   = 0;
-    std::uint32_t              threads             = 0;
-    std::uint32_t              hashMb              = 0;
-    Depth                      depth               = 0;
-    std::uint64_t              nodes               = 0;
-    std::uint32_t              maxGamePly          = 0;
-    std::uint32_t              pauseAfterPartialMs = 0;
-    SelfplayTestCandidateFault testCandidateFault  = SelfplayTestCandidateFault::None;
+    std::uint64_t              baseSeed                = 0;
+    std::uint64_t              assignedSeed            = 0;
+    std::uint64_t              chunkIndex              = 0;
+    std::uint64_t              splitSeed               = 0;
+    std::uint64_t              validationThreshold     = 0;
+    std::size_t                expectedRecords         = 0;
+    std::size_t                maxCandidateGames       = 0;
+    std::uint32_t              threads                 = 0;
+    std::uint32_t              hashMb                  = 0;
+    Depth                      depth                   = 0;
+    std::uint64_t              nodes                   = 0;
+    std::uint32_t              maxGamePly              = 0;
+    std::uint32_t              openbenchProtocol       = 0;
+    std::uint32_t              explorationPlies        = 0;
+    std::uint32_t              explorationMultiPv      = 1;
+    int                        explorationMaxScoreDiff = 0;
+    std::uint32_t              pauseAfterPartialMs     = 0;
+    SelfplayTestCandidateFault testCandidateFault      = SelfplayTestCandidateFault::None;
 };
+
+Digest production_partition_config_digest(const SelfplayOptions& options) {
+    std::ostringstream body;
+    body << "{\"campaign_set_sha256\":" << json_string(options.campaignSetSha256) << ",\"domain\":"
+         << json_string(std::string_view(PartitionDomain, sizeof(PartitionDomain) - 1))
+         << ",\"feature_contract_sha256\":" << json_string(ProductionFeatureContractSha256)
+         << ",\"method\":\"content-hash-complete-trajectory-v1\""
+         << ",\"physical_schema_sha256\":" << json_string(PhysicalSchemaSha256)
+         << ",\"rule_profile_sha256\":" << json_string(CrazyhouseProfile::Sha256)
+         << ",\"split_seed_u64\":" << options.splitSeed
+         << ",\"validation_threshold_u64\":" << options.validationThreshold << "}\n";
+    return sha256(body.str());
+}
 
 std::vector<std::string> tokenize_rendered_command(std::string_view line) {
     require(!line.empty() && line.size() <= 1024 * 1024, "rendered command length is invalid");
@@ -915,8 +1003,7 @@ std::vector<std::string> tokenize_rendered_command(std::string_view line) {
             while (cursor < line.size() && line[cursor] != '"')
             {
                 const unsigned char ch = static_cast<unsigned char>(line[cursor]);
-                require(ch >= 0x20 && ch != 0x7F,
-                        "control byte in quoted command token");
+                require(ch >= 0x20 && ch != 0x7F, "control byte in quoted command token");
                 token.push_back(line[cursor++]);
             }
             require(cursor < line.size() && line[cursor] == '"',
@@ -943,16 +1030,14 @@ std::vector<std::string> tokenize_rendered_command(std::string_view line) {
 }
 
 std::vector<std::string> read_selfplay_stdin() {
-    std::string input((std::istreambuf_iterator<char>(std::cin)),
-                      std::istreambuf_iterator<char>());
+    std::string input((std::istreambuf_iterator<char>(std::cin)), std::istreambuf_iterator<char>());
     require(!input.empty() && input.size() <= 1024 * 1024,
             "stdin generation request length is invalid");
     require(!(input.size() >= 3 && static_cast<unsigned char>(input[0]) == 0xEF
               && static_cast<unsigned char>(input[1]) == 0xBB
               && static_cast<unsigned char>(input[2]) == 0xBF),
             "stdin generation request has a BOM");
-    require(input.find('\0') == std::string::npos,
-            "stdin generation request contains NUL");
+    require(input.find('\0') == std::string::npos, "stdin generation request contains NUL");
     if (input.find('\r') != std::string::npos)
     {
         std::string normalized;
@@ -968,8 +1053,7 @@ std::vector<std::string> read_selfplay_stdin() {
             }
             else
             {
-                require(input[index] != '\n',
-                        "stdin generation request mixes LF and CRLF framing");
+                require(input[index] != '\n', "stdin generation request mixes LF and CRLF framing");
                 normalized.push_back(input[index]);
             }
         }
@@ -988,31 +1072,38 @@ std::vector<std::string> read_selfplay_stdin() {
 }
 
 SelfplayOptions parse_selfplay_options(const std::vector<std::string>& tokens) {
-    require(!tokens.empty() && tokens.front() == "crazyhouse_generate_physical_v1",
+    require(!tokens.empty(), "stdin generation command is empty");
+    const bool production = tokens.front() == "crazyhouse_generate_physical_production_v1";
+    require(production || tokens.front() == "crazyhouse_generate_physical_v1",
             "unknown stdin generation command");
     require((tokens.size() - 1) % 2 == 0, "self-play options must be name/value pairs");
-    const std::set<std::string>        allowed = {"--artifact-repo-path",
-                                                  "--base-seed",
-                                                  "--book",
-                                                  "--book-repo-path",
-                                                  "--book-sha256",
-                                                  "--campaign-id",
-                                                  "--count",
-                                                  "--depth",
-                                                  "--hash-mb",
-                                                  "--max-candidate-games",
-                                                  "--max-game-ply",
-                                                  "--network",
-                                                  "--network-repo-path",
-                                                  "--network-sha256",
-                                                  "--nodes",
-                                                  "--output",
-                                                  "--producer-sha256",
-                                                  "--seed",
-                                                  "--selection-policy-sha256",
-                                                  "--test-candidate-fault",
-                                                  "--threads",
-                                                  "--test-pause-after-partial-ms"};
+    std::set<std::string> allowed = {"--artifact-repo-path",
+                                     "--base-seed",
+                                     "--book",
+                                     "--book-repo-path",
+                                     "--book-sha256",
+                                     "--campaign-id",
+                                     "--count",
+                                     "--depth",
+                                     "--hash-mb",
+                                     "--max-candidate-games",
+                                     "--max-game-ply",
+                                     "--network",
+                                     "--network-repo-path",
+                                     "--network-sha256",
+                                     "--nodes",
+                                     "--output",
+                                     "--producer-sha256",
+                                     "--seed",
+                                     "--selection-policy-sha256",
+                                     "--test-candidate-fault",
+                                     "--threads",
+                                     "--test-pause-after-partial-ms"};
+    if (production)
+        allowed.insert({"--campaign-set-sha256", "--cohort", "--exploration-max-score-diff",
+                        "--exploration-multipv", "--exploration-plies", "--external-workload-id",
+                        "--openbench-protocol", "--partition-sha256", "--role", "--split-seed",
+                        "--validation-threshold"});
     std::map<std::string, std::string> values;
     for (std::size_t index = 1; index < tokens.size(); index += 2)
     {
@@ -1021,30 +1112,36 @@ SelfplayOptions parse_selfplay_options(const std::vector<std::string>& tokens) {
         require(values.emplace(key, tokens[index + 1]).second,
                 "duplicate self-play argument: " + key);
     }
-    const std::set<std::string> required = {"--artifact-repo-path",
-                                            "--base-seed",
-                                            "--book",
-                                            "--book-repo-path",
-                                            "--book-sha256",
-                                            "--campaign-id",
-                                            "--count",
-                                            "--depth",
-                                            "--hash-mb",
-                                            "--max-candidate-games",
-                                            "--max-game-ply",
-                                            "--network",
-                                            "--network-repo-path",
-                                            "--network-sha256",
-                                            "--nodes",
-                                            "--output",
-                                            "--producer-sha256",
-                                            "--seed",
-                                            "--selection-policy-sha256",
-                                            "--threads"};
+    std::set<std::string> required = {"--artifact-repo-path",
+                                      "--base-seed",
+                                      "--book",
+                                      "--book-repo-path",
+                                      "--book-sha256",
+                                      "--campaign-id",
+                                      "--count",
+                                      "--depth",
+                                      "--hash-mb",
+                                      "--max-candidate-games",
+                                      "--max-game-ply",
+                                      "--network",
+                                      "--network-repo-path",
+                                      "--network-sha256",
+                                      "--nodes",
+                                      "--output",
+                                      "--producer-sha256",
+                                      "--seed",
+                                      "--selection-policy-sha256",
+                                      "--threads"};
+    if (production)
+        required.insert({"--campaign-set-sha256", "--cohort", "--exploration-max-score-diff",
+                         "--exploration-multipv", "--exploration-plies", "--external-workload-id",
+                         "--openbench-protocol", "--partition-sha256", "--role", "--split-seed",
+                         "--validation-threshold"});
     for (const std::string& key : required)
         require(values.count(key) == 1, "missing self-play argument: " + key);
 
     SelfplayOptions output;
+    output.mode             = production ? SelfplayMode::ProductionV1 : SelfplayMode::FixtureG0;
     output.artifactRepoPath = values.at("--artifact-repo-path");
     output.bookRepoPath     = values.at("--book-repo-path");
     output.networkRepoPath  = values.at("--network-repo-path");
@@ -1073,9 +1170,45 @@ SelfplayOptions parse_selfplay_options(const std::vector<std::string>& tokens) {
         require(lowercase_hex(binding.second, 64), std::string(binding.first) + " is invalid");
     require(output.networkSha256 == RegisteredLegacyNetworkSha256,
             "self-play network is not the registered legacy network");
-    require(output.bookSha256 == SelfplayG0BookSha256, "self-play book is not the frozen G0 book");
-    require(output.selectionPolicySha256 == SelfplaySelectionPolicySha256,
-            "self-play selection policy is not frozen for this producer");
+    if (production)
+    {
+        require(output.bookSha256 == ProductionBookSha256,
+                "production book is not the frozen official book");
+        require(output.selectionPolicySha256 == ProductionSelectionPolicySha256,
+                "production selection policy is not frozen for this producer");
+        require(output.bookRepoPath == "openbench/books/CRAZYHOUSE_openings.epd",
+                "production book repository path is not frozen");
+
+        auto valid_slug = [](std::string_view value) {
+            return !value.empty() && value.size() <= 128
+                && std::isalnum(static_cast<unsigned char>(value.front()))
+                && std::isalnum(static_cast<unsigned char>(value.back()))
+                && std::all_of(value.begin(), value.end(), [](unsigned char ch) {
+                       return (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch == '-';
+                   });
+        };
+        output.externalWorkloadId = values.at("--external-workload-id");
+        output.role               = values.at("--role");
+        output.cohort             = values.at("--cohort");
+        output.campaignSetSha256  = values.at("--campaign-set-sha256");
+        output.partitionSha256    = values.at("--partition-sha256");
+        require(valid_slug(output.externalWorkloadId),
+                "production external workload id is invalid");
+        require(output.role == "train" || output.role == "validation",
+                "production role is invalid");
+        require(valid_slug(output.cohort), "production cohort is invalid");
+        require(lowercase_hex(output.campaignSetSha256, 64),
+                "production campaign-set SHA-256 is invalid");
+        require(lowercase_hex(output.partitionSha256, 64),
+                "production partition SHA-256 is invalid");
+    }
+    else
+    {
+        require(output.bookSha256 == SelfplayG0BookSha256,
+                "self-play book is not the frozen G0 book");
+        require(output.selectionPolicySha256 == SelfplaySelectionPolicySha256,
+                "self-play selection policy is not frozen for this producer");
+    }
 
     output.campaignText = values.at("--campaign-id");
     output.campaignId   = parse_uuid(output.campaignText, "self-play campaign UUID");
@@ -1106,6 +1239,33 @@ SelfplayOptions parse_selfplay_options(const std::vector<std::string>& tokens) {
       values.at("--nodes"), 0, std::numeric_limits<std::uint64_t>::max(), "self-play node limit");
     output.maxGamePly = parse_integer<std::uint32_t>(values.at("--max-game-ply"), 1, 1000000,
                                                      "self-play maximum game ply");
+    if (production)
+    {
+        output.openbenchProtocol = parse_integer<std::uint32_t>(
+          values.at("--openbench-protocol"), ProductionOpenBenchProtocol,
+          ProductionOpenBenchProtocol, "OpenBench publication protocol");
+        output.splitSeed           = parse_integer<std::uint64_t>(values.at("--split-seed"), 0,
+                                                                  std::numeric_limits<std::uint64_t>::max(),
+                                                                  "partition split seed");
+        output.validationThreshold = parse_integer<std::uint64_t>(
+          values.at("--validation-threshold"), ProductionValidationThreshold,
+          ProductionValidationThreshold, "partition validation threshold");
+        output.explorationPlies =
+          parse_integer<std::uint32_t>(values.at("--exploration-plies"), ProductionExplorationPlies,
+                                       ProductionExplorationPlies, "production exploration plies");
+        output.explorationMultiPv = parse_integer<std::uint32_t>(
+          values.at("--exploration-multipv"), ProductionExplorationMultiPv,
+          ProductionExplorationMultiPv, "production exploration MultiPV");
+        output.explorationMaxScoreDiff = parse_integer<int>(
+          values.at("--exploration-max-score-diff"), ProductionExplorationMaxScoreDiff,
+          ProductionExplorationMaxScoreDiff, "production exploration score difference");
+        require(output.threads == ProductionThreads && output.hashMb == ProductionHashMb
+                  && output.depth == ProductionDepthCap && output.nodes == ProductionNodes
+                  && output.maxGamePly == ProductionMaxGamePly,
+                "production fixed-work settings do not match the frozen contract");
+        require(output.partitionSha256 == hex(production_partition_config_digest(output)),
+                "production partition SHA-256 does not match the frozen configuration");
+    }
     if (values.count("--test-pause-after-partial-ms") != 0)
     {
         output.pauseAfterPartialMs = parse_integer<std::uint32_t>(
@@ -1451,6 +1611,58 @@ std::vector<BookRoot> parse_selfplay_book(const ByteList& bytes) {
     return roots;
 }
 
+std::vector<BookRoot> parse_production_book(const ByteList& bytes) {
+    require(!bytes.empty(), "production book is empty");
+    require(!(bytes.size() >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF),
+            "production book has a BOM");
+    require(std::find(bytes.begin(), bytes.end(), Byte{'\r'}) == bytes.end()
+              && std::find(bytes.begin(), bytes.end(), Byte{0}) == bytes.end(),
+            "production book contains CR or NUL");
+    require(bytes.back() == '\n' && (bytes.size() == 1 || bytes[bytes.size() - 2] != '\n'),
+            "production book must end with exactly one LF");
+    const std::string text(reinterpret_cast<const char*>(bytes.data()), bytes.size() - 1);
+    const auto        lines = split(text, '\n');
+    require(!lines.empty(), "production book has no roots");
+
+    std::vector<BookRoot> roots;
+    std::set<std::string> ids;
+    roots.reserve(lines.size());
+    for (std::size_t index = 0; index < lines.size(); ++index)
+    {
+        require(!lines[index].empty(), "production book contains an empty line");
+        const auto fields = split(lines[index], ' ');
+        require(fields.size() == 6,
+                "production book row is not a six-field Crazyhouse FEN at index "
+                  + std::to_string(index));
+        const std::uint32_t halfmove = parse_integer<std::uint32_t>(
+          fields[4], 0, std::numeric_limits<std::uint32_t>::max(), "production halfmove counter");
+        const std::uint32_t fullmove = parse_integer<std::uint32_t>(
+          fields[5], 1, std::numeric_limits<std::uint32_t>::max(), "production fullmove counter");
+        require(fields[4] == std::to_string(halfmove) && fields[5] == std::to_string(fullmove),
+                "production book counters are not canonical");
+
+        std::deque<StateInfo> states(1);
+        Position              position(Ruleset::CRAZYHOUSE);
+        if (const auto error =
+              position.set(lines[index], false, Ruleset::CRAZYHOUSE, &states.back()))
+            throw DatagenError("production book root rejected: " + std::string(error->what()));
+        require(position.ruleset() == Ruleset::CRAZYHOUSE,
+                "production book routed outside Crazyhouse");
+        require(position.repetition_occurrences() == 1,
+                "production book root does not start with fresh history");
+        require(!position.crazyhouse_terminal_status(CrazyhouseClaimPolicy::AUTOMATIC_ONLY).ended(),
+                "production book contains a terminal root");
+
+        std::ostringstream idBuilder;
+        idBuilder << "CHOB-" << std::setw(6) << std::setfill('0') << (index + 1) << '-'
+                  << hex(sha256(lines[index])).substr(0, 12);
+        const std::string id = idBuilder.str();
+        require(ids.insert(id).second, "duplicate production book content identity");
+        roots.push_back(BookRoot{id, lines[index], lines[index], index});
+    }
+    return roots;
+}
+
 struct CandidateRejection {
     std::uint64_t candidateIndex = 0;
     std::string   rootId;
@@ -1530,6 +1742,104 @@ TeacherLabel teacher_label(const Search::TrainingSearchResult& search,
     return label;
 }
 
+TeacherLabel production_teacher_label(const Search::TrainingSearchResult& search,
+                                      const Position&                     position,
+                                      std::size_t                         lineIndex) {
+    if (lineIndex >= search.lines.size() || !search.lines[lineIndex].exact
+        || search.lines[lineIndex].pv.empty())
+        throw CandidateRejected("selected production teacher line is not exact and complete");
+    const Value value = search.lines[lineIndex].value;
+    if (value <= -VALUE_INFINITE || value >= VALUE_INFINITE || value == VALUE_NONE)
+        throw CandidateRejected("selected production teacher line has an invalid value");
+    if (search.nodes == 0 || search.depth <= 0 || search.selDepth <= 0)
+        throw CandidateRejected("production teacher search returned incomplete work metadata");
+    require(search.depth <= std::numeric_limits<std::uint16_t>::max()
+              && search.selDepth <= std::numeric_limits<std::uint16_t>::max(),
+            "production teacher search depth exceeds the physical wire range");
+
+    const Score  score(value, position);
+    TeacherLabel label;
+    label.nodes      = search.nodes;
+    label.depth      = static_cast<std::uint16_t>(search.depth);
+    label.selDepth   = static_cast<std::uint16_t>(search.selDepth);
+    label.moveTimeMs = 0;
+    if (score.is<Score::InternalUnits>())
+    {
+        label.kind  = 1;
+        label.value = score.get<Score::InternalUnits>().value;
+    }
+    else if (score.is<Score::Mate>())
+    {
+        label.kind  = 2;
+        label.value = score.get<Score::Mate>().plies;
+    }
+    else
+        throw CandidateRejected("tablebase teacher values are not admitted in production V1");
+    return label;
+}
+
+std::uint64_t production_partition_value(const SelfplayOptions& options,
+                                         const IdBytes&         trajectoryId) {
+    ByteList payload;
+    append(payload, std::string_view(PartitionDomain, sizeof(PartitionDomain) - 1));
+    std::array<Byte, 8> splitSeed{};
+    put_le<std::uint64_t>(splitSeed.data(), options.splitSeed);
+    append(payload, splitSeed);
+    append(payload, options.campaignId);
+    append(payload, trajectoryId);
+    const Digest digest = sha256(payload);
+    return get_le<std::uint64_t>(digest.data());
+}
+
+bool production_role_eligible(const SelfplayOptions& options, const IdBytes& trajectoryId) {
+    const bool validation =
+      production_partition_value(options, trajectoryId) < options.validationThreshold;
+    return validation == (options.role == "validation");
+}
+
+std::size_t select_production_line(const SelfplayOptions&              options,
+                                   const Search::TrainingSearchResult& search,
+                                   const Position&                     position,
+                                   const IdBytes&                      trajectoryId,
+                                   std::uint32_t                       ply) {
+    if (search.lines.empty() || !search.lines.front().exact || search.lines.front().pv.empty())
+        throw CandidateRejected("production teacher search has no exact best line");
+    if (ply >= options.explorationPlies)
+        return 0;
+
+    const Value best = search.lines.front().value;
+    if (best <= -VALUE_INFINITE || best >= VALUE_INFINITE || best == VALUE_NONE)
+        throw CandidateRejected("production teacher search has an invalid best value");
+    std::vector<std::size_t> eligible;
+    const std::size_t        lineLimit =
+      std::min<std::size_t>(options.explorationMultiPv, search.lines.size());
+    for (std::size_t index = 0; index < lineLimit; ++index)
+    {
+        const Search::TrainingSearchLine& line = search.lines[index];
+        if (!line.exact || line.pv.empty() || line.value <= -VALUE_INFINITE
+            || line.value >= VALUE_INFINITE || line.value == VALUE_NONE)
+            continue;
+        const int difference = static_cast<int>(best) - static_cast<int>(line.value);
+        if (difference >= 0 && difference <= options.explorationMaxScoreDiff)
+            eligible.push_back(index);
+    }
+    if (eligible.empty() || eligible.front() != 0)
+        throw CandidateRejected("production exploration has no eligible exact best line");
+
+    ByteList payload;
+    append(payload, std::string_view(ExplorationDomain, sizeof(ExplorationDomain) - 1));
+    append(payload, options.campaignId);
+    append(payload, options.chunkId);
+    append(payload, trajectoryId);
+    std::array<Byte, 12> numeric{};
+    put_le<std::uint64_t>(numeric.data(), options.assignedSeed);
+    put_le<std::uint32_t>(numeric.data() + 8, ply);
+    append(payload, numeric);
+    append(payload, position_identity(position));
+    const Digest digest = sha256(payload);
+    return eligible[get_le<std::uint64_t>(digest.data()) % eligible.size()];
+}
+
 std::vector<std::size_t> deterministic_book_order(const std::vector<BookRoot>& roots,
                                                   std::uint64_t                seed) {
     struct RankedRoot {
@@ -1563,8 +1873,13 @@ std::vector<std::size_t> deterministic_book_order(const std::vector<BookRoot>& r
 struct LiveCorpus {
     TrajectoryCorpus                corpus;
     std::vector<CandidateRejection> rejected;
-    std::size_t                     candidatesExamined = 0;
+    std::size_t                     candidatesExamined             = 0;
+    std::size_t                     roleIneligibleCandidates       = 0;
+    std::size_t                     roleEligibleCompleteCandidates = 0;
+    std::size_t                     subsetCandidatesOmitted        = 0;
 };
+
+
 
 LiveCorpus generate_live_corpus(const SelfplayOptions&    options,
                                 const std::vector<BookRoot>& roots,
@@ -1689,6 +2004,192 @@ LiveCorpus generate_live_corpus(const SelfplayOptions&    options,
     return output;
 }
 
+LiveCorpus generate_live_corpus_production(const SelfplayOptions&       options,
+                                           const std::vector<BookRoot>& roots,
+                                           ThreadPool&                  threads,
+                                           TranspositionTable&          tt) {
+    require(options.maxCandidateGames <= roots.size(),
+            "production candidate budget exceeds the authenticated unique-root count");
+    require(options.expectedRecords
+              <= options.maxCandidateGames * (std::size_t(options.maxGamePly) + 1),
+            "production exact quota exceeds the candidate budget's physical maximum");
+    const auto order = deterministic_book_order(roots, options.assignedSeed);
+
+    struct CompleteCandidate {
+        Trajectory  trajectory;
+        std::size_t records = 0;
+    };
+    std::vector<CompleteCandidate> complete;
+    complete.reserve(options.maxCandidateGames);
+    std::vector<std::int32_t> predecessorTrajectory(options.expectedRecords + 1, -1);
+    std::vector<std::int32_t> predecessorSum(options.expectedRecords + 1, -1);
+    predecessorTrajectory[0] = -2;
+
+    LiveCorpus output;
+    bool       quotaReachable = false;
+    for (std::uint64_t candidateIndex = 0;
+         candidateIndex < options.maxCandidateGames && !quotaReachable; ++candidateIndex)
+    {
+        ++output.candidatesExamined;
+        const BookRoot& root = roots[order[static_cast<std::size_t>(candidateIndex)]];
+        const IdBytes   trajectoryId =
+          derive_selfplay_id("trajectory", options.campaignId, options.chunkIndex, candidateIndex);
+        if (!production_role_eligible(options, trajectoryId))
+        {
+            ++output.roleIneligibleCandidates;
+            continue;
+        }
+
+        try
+        {
+            Trajectory trajectory;
+            trajectory.gameId =
+              derive_selfplay_id("game", options.campaignId, options.chunkIndex, candidateIndex);
+            trajectory.trajectoryId       = trajectoryId;
+            trajectory.gameText           = uuid_text(trajectory.gameId);
+            trajectory.trajectoryText     = uuid_text(trajectory.trajectoryId);
+            trajectory.claimPolicy        = 0;
+            trajectory.nonstandardRoot    = true;
+            trajectory.teacherUsedNetwork = true;
+            trajectory.rootFen            = root.fen;
+
+            std::deque<StateInfo> states(1);
+            Position              position(Ruleset::CRAZYHOUSE);
+            if (const auto error =
+                  position.set(root.fen, false, Ruleset::CRAZYHOUSE, &states.back()))
+                throw CandidateRejected("book root became invalid: " + std::string(error->what()));
+            if (position.repetition_occurrences() != 1)
+                throw CandidateRejected("candidate root history is not fresh");
+
+            for (;;)
+            {
+                const CrazyhouseTerminalStatus terminal =
+                  position.crazyhouse_terminal_status(CrazyhouseClaimPolicy::AUTOMATIC_ONLY);
+                if (terminal.ended())
+                {
+                    trajectory.terminalReason = map_terminal_reason(terminal.reason);
+                    if (trajectory.terminalReason < 1 || trajectory.terminalReason > 3)
+                        throw CandidateRejected("non-automatic terminal reason reached");
+                    trajectory.resultWhite =
+                      terminal.winner.has_value() ? (*terminal.winner == WHITE ? 1 : -1) : 0;
+                    trajectory.labels.emplace_back(std::nullopt);
+                    break;
+                }
+                const std::size_t effectiveMaxGamePly =
+                  options.testCandidateFault == SelfplayTestCandidateFault::SafetyLimit
+                    ? 0
+                    : options.maxGamePly;
+                if (trajectory.moves.size() >= effectiveMaxGamePly)
+                    throw CandidateRejected("nonterminal safety limit reached");
+
+                const std::uint32_t ply = static_cast<std::uint32_t>(trajectory.moves.size());
+                const std::size_t   multiPv =
+                  ply < options.explorationPlies ? options.explorationMultiPv : 1;
+                const Search::TrainingSearchRequest request{options.depth, options.nodes, multiPv};
+                const PositionSnapshot              beforeSearch = snapshot(position);
+                Search::TrainingSearchResult        search =
+                  run_training_search(position, request, threads, tt);
+                require_restored(position, beforeSearch);
+                if (options.nodes == 0 && search.depth != options.depth)
+                    throw CandidateRejected(
+                      "fixed-depth production teacher search did not complete its target");
+                if (options.testCandidateFault == SelfplayTestCandidateFault::MissingPv)
+                {
+                    search.exact = false;
+                    search.pv.clear();
+                    search.lines.clear();
+                }
+                const std::size_t lineIndex =
+                  select_production_line(options, search, position, trajectory.trajectoryId, ply);
+                const TeacherLabel label = production_teacher_label(search, position, lineIndex);
+                const Move         move =
+                  options.testCandidateFault == SelfplayTestCandidateFault::IllegalPv
+                            ? Move::none()
+                            : search.lines[lineIndex].pv[0];
+                const std::string token = UCIEngine::move(move, false);
+                if (move == Move::none() || UCIEngine::to_move(position, token) != move)
+                    throw CandidateRejected(
+                      "selected production teacher move is absent or illegal");
+                static_cast<void>(move_wire(token, move));
+
+                const PositionSnapshot beforeMove = snapshot(position);
+                StateInfo              temporary;
+                position.do_move(move, temporary);
+                position.undo_move(move);
+                require_restored(position, beforeMove);
+
+                trajectory.moves.push_back(token);
+                trajectory.labels.emplace_back(label);
+                states.emplace_back();
+                position.do_move(move, states.back());
+            }
+
+            require(trajectory.labels.size() == trajectory.moves.size() + 1
+                      && !trajectory.labels.back().has_value(),
+                    "production live trajectory label framing drifted");
+            const std::size_t records = trajectory.moves.size() + 1;
+            if (records > options.expectedRecords)
+                throw CandidateRejected("complete trajectory record count "
+                                        + std::to_string(records)
+                                        + " exceeds the exact record quota");
+
+            const std::size_t completeIndex = complete.size();
+            complete.push_back({std::move(trajectory), records});
+            ++output.roleEligibleCompleteCandidates;
+            for (std::size_t sum = options.expectedRecords - records + 1; sum-- > 0;)
+            {
+                if (predecessorTrajectory[sum] == -1)
+                    continue;
+                const std::size_t next = sum + records;
+                if (predecessorTrajectory[next] == -1)
+                {
+                    predecessorTrajectory[next] = static_cast<std::int32_t>(completeIndex);
+                    predecessorSum[next]        = static_cast<std::int32_t>(sum);
+                }
+            }
+            quotaReachable = predecessorTrajectory[options.expectedRecords] != -1;
+        } catch (const CandidateRejected& error)
+        { output.rejected.push_back({candidateIndex, root.id, error.what()}); }
+    }
+
+    if (!quotaReachable)
+    {
+        std::ostringstream error;
+        error
+          << "production candidate budget could not make the exact complete-trajectory quota reachable"
+          << "; examined=" << output.candidatesExamined
+          << "; role_ineligible=" << output.roleIneligibleCandidates
+          << "; complete=" << output.roleEligibleCompleteCandidates;
+        for (const CandidateRejection& rejected : output.rejected)
+            error << "; candidate=" << rejected.candidateIndex << " root=" << rejected.rootId
+                  << " reason=" << rejected.reason;
+        throw DatagenError(error.str());
+    }
+
+    std::vector<std::size_t> selected;
+    for (std::size_t sum = options.expectedRecords; sum != 0;)
+    {
+        const std::int32_t completeIndex = predecessorTrajectory[sum];
+        const std::int32_t previous      = predecessorSum[sum];
+        require(completeIndex >= 0 && previous >= 0 && static_cast<std::size_t>(previous) < sum,
+                "production exact-subset predecessor chain is invalid");
+        selected.push_back(static_cast<std::size_t>(completeIndex));
+        sum = static_cast<std::size_t>(previous);
+    }
+    std::reverse(selected.begin(), selected.end());
+    output.corpus.trajectories.reserve(selected.size());
+    for (const std::size_t index : selected)
+    {
+        output.corpus.recordCount += complete[index].records;
+        output.corpus.trajectories.push_back(std::move(complete[index].trajectory));
+    }
+    output.subsetCandidatesOmitted = complete.size() - selected.size();
+    require(output.corpus.recordCount == options.expectedRecords
+              && !output.corpus.trajectories.empty(),
+            "production exact-subset reconstruction drifted");
+    return output;
+}
+
 Digest selfplay_search_settings_digest(const SelfplayOptions& options) {
     std::ostringstream settings;
     settings << "Crazyhouse-Stockfish selfplay search settings v1\n"
@@ -1797,6 +2298,134 @@ std::string build_selfplay_provenance(const SelfplayOptions& options,
            << ",\"synthetic\":false}"
            << ",\"toolchain\":{\"build_recipe_sha256\":"
            << json_string(DATAGEN_BUILD_RECIPE_SHA256)
+           << ",\"identity\":" << json_string(DATAGEN_TOOLCHAIN_IDENTITY)
+           << ",\"sha256\":" << json_string(DATAGEN_TOOLCHAIN_SHA256) << '}'
+           << ",\"variant\":\"crazyhouse\"}\n";
+    return output.str();
+}
+
+Digest production_search_settings_digest(const SelfplayOptions& options) {
+    std::ostringstream settings;
+    settings << "Crazyhouse-Stockfish production search settings v1\n"
+             << "depth_cap=" << options.depth << "\n"
+             << "exploration_max_score_diff=" << options.explorationMaxScoreDiff << "\n"
+             << "exploration_multipv=" << options.explorationMultiPv << "\n"
+             << "exploration_plies=" << options.explorationPlies << "\n"
+             << "hash_mib=" << options.hashMb << "\n"
+             << "history_reset=every-position-search\n"
+             << "nodes=" << options.nodes << "\n"
+             << "tablebases=disabled\n"
+             << "threads=" << options.threads << "\n"
+             << "tt_reset=every-position-search\n"
+             << "wall_time_encoded=false\n";
+    return sha256(settings.str());
+}
+
+std::string build_production_provenance(const SelfplayOptions&  options,
+                                        const ArtifactIdentity& artifact,
+                                        const Digest&           capabilityDigest,
+                                        std::size_t             capabilityBytes,
+                                        const Digest&           bookDigest,
+                                        std::size_t             bookBytes,
+                                        const LiveCorpus&       live,
+                                        std::string_view        routeIdentity,
+                                        std::string_view        evaluatorMode) {
+    const Digest       settingsDigest = production_search_settings_digest(options);
+    std::ostringstream output;
+    output << "{\"adjudication\":{\"claim_policy\":\"automatic-only\""
+           << ",\"fivefold_automatic\":true,\"insufficient_material\":false"
+           << ",\"resignation\":false,\"rule50\":false,\"threefold_claim\":false}"
+           << ",\"campaign_id\":" << json_string(options.campaignText)
+           << ",\"chunk_id\":" << json_string(options.chunkText)
+           << ",\"chunk_index\":" << options.chunkIndex
+           << ",\"cohort\":" << json_string(options.cohort)
+           << ",\"external_workload_id\":" << json_string(options.externalWorkloadId)
+           << ",\"generation_settings\":{\"accepted_trajectories\":"
+           << live.corpus.trajectories.size() << ",\"base_seed\":" << options.baseSeed
+           << ",\"candidate_games_examined\":" << live.candidatesExamined
+           << ",\"complete_trajectory_only\":true"
+           << ",\"depth_cap\":" << options.depth << ",\"exact_count\":true"
+           << ",\"exact_quota_algorithm\":\"deterministic-first-reachable-exact-subset-v1\""
+           << ",\"exploration_max_score_diff_internal\":" << options.explorationMaxScoreDiff
+           << ",\"exploration_multipv\":" << options.explorationMultiPv
+           << ",\"exploration_plies\":" << options.explorationPlies
+           << ",\"fixture_only\":false,\"hash_mib\":" << options.hashMb
+           << ",\"max_candidate_games\":" << options.maxCandidateGames
+           << ",\"max_game_ply\":" << options.maxGamePly
+           << ",\"nodes_per_position\":" << options.nodes
+           << ",\"production_generation_authorized\":true"
+           << ",\"record_count\":" << options.expectedRecords
+           << ",\"role_eligible_complete_candidates\":" << live.roleEligibleCompleteCandidates
+           << ",\"role_ineligible_candidates\":" << live.roleIneligibleCandidates
+           << ",\"subset_candidates_omitted\":" << live.subsetCandidatesOmitted
+           << ",\"threads\":" << options.threads
+           << ",\"training_admissible\":true,\"wall_time_encoded\":false}"
+           << ",\"invalid_game_policy\":{\"bound_or_missing_pv\":\"quarantine-game\""
+           << ",\"complete_trajectory_oversize\":\"quarantine-game\""
+           << ",\"crash\":\"abort-chunk\",\"illegal_move\":\"quarantine-game\""
+           << ",\"observed_rejections\":[";
+    for (std::size_t index = 0; index < live.rejected.size(); ++index)
+    {
+        if (index != 0)
+            output << ',';
+        const CandidateRejection& rejected = live.rejected[index];
+        output << "{\"candidate_index\":" << rejected.candidateIndex
+               << ",\"reason\":" << json_string(rejected.reason)
+               << ",\"root_id\":" << json_string(rejected.rootId) << '}';
+    }
+    output << "]"
+           << ",\"safety_limit\":\"quarantine-game\""
+           << ",\"unreachable_exact_quota\":\"abort-chunk\"}"
+           << ",\"network\":{\"bytes\":" << RegisteredLegacyNetworkBytes
+           << ",\"compatibility\":\"qualified-positive-and-negative-load\""
+           << ",\"format\":\"legacy-halfkav2variants-v1\""
+           << ",\"license\":\"CC0-1.0\",\"path\":" << json_string(options.networkRepoPath)
+           << ",\"sha256\":" << json_string(options.networkSha256) << ",\"used\":true}"
+           << ",\"official_openbench_origin\":\"https://belzedar.duckdns.org\""
+           << ",\"openbench_publication_protocol\":" << options.openbenchProtocol
+           << ",\"opening_source\":{\"artifact\":{\"bytes\":" << bookBytes
+           << ",\"kind\":\"official-crazyhouse-epd-physical-roots-v1\""
+           << ",\"license\":\"GPL-3.0-or-later\",\"path\":" << json_string(options.bookRepoPath)
+           << ",\"roots\":" << ProductionBookRoots << ",\"sha256\":" << json_string(hex(bookDigest))
+           << '}' << ",\"engine_selected\":false"
+           << ",\"kind\":\"deterministic-authenticated-book-order\""
+           << ",\"match_result_selected\":false,\"selection_policy_sha256\":"
+           << json_string(options.selectionPolicySha256) << '}'
+           << ",\"partition\":{\"campaign_set_sha256\":" << json_string(options.campaignSetSha256)
+           << ",\"domain\":\"Crazyhouse-Stockfish physical trajectory split v1\\u0000\""
+           << ",\"label_free\":true,\"method\":\"content-hash-complete-trajectory-v1\""
+           << ",\"partition_sha256\":" << json_string(options.partitionSha256)
+           << ",\"posthoc_rebalance\":false,\"role\":" << json_string(options.role)
+           << ",\"split_seed_u64\":" << options.splitSeed
+           << ",\"validation_threshold_u64\":" << options.validationThreshold << '}'
+           << ",\"producer_artifact\":{\"bytes\":" << artifact.bytes
+           << ",\"kind\":\"crazyhouse-physical-datagen-production-v1\""
+           << ",\"path\":" << json_string(options.artifactRepoPath)
+           << ",\"sha256\":" << json_string(hex(artifact.digest)) << '}'
+           << ",\"producer_capability\":{\"bytes\":" << capabilityBytes
+           << ",\"challenge\":" << json_string(options.challenge)
+           << ",\"schema\":\"crazyhouse-datagen-production-capability-response/v1\""
+           << ",\"sha256\":" << json_string(hex(capabilityDigest)) << '}'
+           << ",\"project\":\"Crazyhouse-Stockfish\""
+           << ",\"rule_profile\":{\"id\":" << json_string(CrazyhouseProfile::Id)
+           << ",\"sha256\":" << json_string(CrazyhouseProfile::Sha256) << '}'
+           << ",\"schema\":\"crazyhouse-datagen-provenance/v1\""
+           << ",\"seed\":" << json_string(options.seedText)
+           << ",\"source_commit\":" << json_string(DATAGEN_SOURCE_COMMIT)
+           << ",\"source_dirty\":false"
+           << ",\"source_tree\":" << json_string(DATAGEN_SOURCE_TREE)
+           << ",\"src_tree\":" << json_string(DATAGEN_SRC_TREE)
+           << ",\"teacher\":{\"artifact\":{\"bytes\":" << artifact.bytes
+           << ",\"path\":" << json_string(options.artifactRepoPath)
+           << ",\"sha256\":" << json_string(hex(artifact.digest)) << '}'
+           << ",\"bound_policy\":\"selected-line-exact-only\""
+           << ",\"evaluator_mode\":" << json_string(evaluatorMode)
+           << ",\"kind\":\"legacy-network-product-search\""
+           << ",\"network_used\":true,\"route_backend_identity\":" << json_string(routeIdentity)
+           << ",\"score_perspective\":\"side-to-move\""
+           << ",\"search_settings_sha256\":" << json_string(hex(settingsDigest))
+           << ",\"selected_line_owns_score_and_pv\":true,\"synthetic\":false}"
+           << ",\"toolchain\":{\"build_recipe_sha256\":" << json_string(DATAGEN_BUILD_RECIPE_SHA256)
            << ",\"identity\":" << json_string(DATAGEN_TOOLCHAIN_IDENTITY)
            << ",\"sha256\":" << json_string(DATAGEN_TOOLCHAIN_SHA256) << '}'
            << ",\"variant\":\"crazyhouse\"}\n";
@@ -2390,7 +3019,7 @@ int generate(int argc, char* argv[], const ArtifactIdentity& artifact) {
     return EXIT_SUCCESS;
 }
 
-int generate_selfplay(SelfplayOptions        options,
+int generate_selfplay(SelfplayOptions         options,
                       const ArtifactIdentity& artifact,
                       Engine&                 engine,
                       ThreadPool&             threads,
@@ -2410,12 +3039,13 @@ int generate_selfplay(SelfplayOptions        options,
     ec.clear();
     require(std::filesystem::is_regular_file(options.networkPath, ec) && !ec,
             "self-play network is not a regular file");
-    const ByteList bookBytes    = read_file(options.bookPath);
-    const ByteList networkBytes = read_file(options.networkPath);
-    const Digest   bookDigest   = sha256(bookBytes);
-    const Digest   networkDigest = sha256(networkBytes);
-    require(bookBytes.size() == SelfplayG0BookBytes
-              && hex(bookDigest) == options.bookSha256,
+    const ByteList    bookBytes     = read_file(options.bookPath);
+    const ByteList    networkBytes  = read_file(options.networkPath);
+    const Digest      bookDigest    = sha256(bookBytes);
+    const Digest      networkDigest = sha256(networkBytes);
+    const std::size_t expectedBookBytes =
+      options.mode == SelfplayMode::ProductionV1 ? ProductionBookBytes : SelfplayG0BookBytes;
+    require(bookBytes.size() == expectedBookBytes && hex(bookDigest) == options.bookSha256,
             "self-play book byte identity mismatch");
     require(networkBytes.size() == RegisteredLegacyNetworkBytes
               && hex(networkDigest) == options.networkSha256,
@@ -2424,13 +3054,17 @@ int generate_selfplay(SelfplayOptions        options,
     const auto parent = options.outputPath.parent_path();
     require(!parent.empty() && std::filesystem::is_directory(parent),
             "self-play output parent must already exist");
-    const std::filesystem::path partial = options.outputPath.string()
-                                        + ".partial." + options.chunkText;
-    require(!std::filesystem::exists(options.outputPath)
-              && !std::filesystem::exists(partial),
+    const std::filesystem::path partial =
+      options.outputPath.string() + ".partial." + options.chunkText;
+    require(!std::filesystem::exists(options.outputPath) && !std::filesystem::exists(partial),
             "self-play output namespace is not fresh");
 
-    const std::vector<BookRoot> roots = parse_selfplay_book(bookBytes);
+    const std::vector<BookRoot> roots = options.mode == SelfplayMode::ProductionV1
+                                        ? parse_production_book(bookBytes)
+                                        : parse_selfplay_book(bookBytes);
+    if (options.mode == SelfplayMode::ProductionV1)
+        require(roots.size() == ProductionBookRoots,
+                "production book root count does not match the frozen contract");
     require(threads.num_threads() == 1 && options.threads == 1,
             "self-play runtime is not single-threaded");
     engine.set_tt_size(options.hashMb);
@@ -2452,45 +3086,51 @@ int generate_selfplay(SelfplayOptions        options,
               && engine.has_routed_legacy_network(),
             "self-play route identity/readiness mismatch");
 
-    const LiveCorpus live = generate_live_corpus(options, roots, threads, tt);
+    const LiveCorpus live = options.mode == SelfplayMode::ProductionV1
+                            ? generate_live_corpus_production(options, roots, threads, tt)
+                            : generate_live_corpus(options, roots, threads, tt);
 
     // Close the time-of-check/time-of-use gap before any output is opened.
-    require(read_file(options.bookPath) == bookBytes,
-            "self-play book changed during generation");
+    require(read_file(options.bookPath) == bookBytes, "self-play book changed during generation");
     require(read_file(options.networkPath) == networkBytes,
             "self-play network changed during generation");
     const ByteList stableArtifact = read_file(artifact.path);
-    require(stableArtifact.size() == artifact.bytes
-              && sha256(stableArtifact) == artifact.digest,
+    require(stableArtifact.size() == artifact.bytes && sha256(stableArtifact) == artifact.digest,
             "self-play producer changed during generation");
 
-    const std::string capability = selfplay_capability_response(artifact, options.challenge);
-    const ByteList    capabilityBytes = bytes_of(capability);
+    const std::string capability       = options.mode == SelfplayMode::ProductionV1
+                                         ? production_capability_response(artifact, options.challenge)
+                                         : selfplay_capability_response(artifact, options.challenge);
+    const ByteList    capabilityBytes  = bytes_of(capability);
     const Digest      capabilityDigest = sha256(capabilityBytes);
-    const std::string provenance = build_selfplay_provenance(
-      options, artifact, capabilityDigest, capabilityBytes.size(), bookDigest, bookBytes.size(),
-      live, route.backend.identity, engine.routed_legacy_evaluator_mode());
-    const ByteList provenanceBytes = bytes_of(provenance);
+    const std::string provenance =
+      options.mode == SelfplayMode::ProductionV1
+        ? build_production_provenance(options, artifact, capabilityDigest, capabilityBytes.size(),
+                                      bookDigest, bookBytes.size(), live, route.backend.identity,
+                                      engine.routed_legacy_evaluator_mode())
+        : build_selfplay_provenance(options, artifact, capabilityDigest, capabilityBytes.size(),
+                                    bookDigest, bookBytes.size(), live, route.backend.identity,
+                                    engine.routed_legacy_evaluator_mode());
+    const ByteList provenanceBytes  = bytes_of(provenance);
     const Digest   provenanceDigest = sha256(provenanceBytes);
 
     const GeneratedRecords generated = replay_and_encode(live.corpus, provenanceDigest);
-    GenerationOptions       physicalOptions;
-    physicalOptions.campaignText   = options.campaignText;
-    physicalOptions.chunkText      = options.chunkText;
-    physicalOptions.campaignId     = options.campaignId;
-    physicalOptions.chunkId        = options.chunkId;
-    physicalOptions.chunkIndex     = options.chunkIndex;
+    GenerationOptions      physicalOptions;
+    physicalOptions.campaignText    = options.campaignText;
+    physicalOptions.chunkText       = options.chunkText;
+    physicalOptions.campaignId      = options.campaignId;
+    physicalOptions.chunkId         = options.chunkId;
+    physicalOptions.chunkIndex      = options.chunkIndex;
     physicalOptions.expectedRecords = options.expectedRecords;
-    const ChunkBytes chunk = build_chunk(generated.records, physicalOptions, provenanceDigest,
-                                         capabilityDigest);
+    const ChunkBytes chunk =
+      build_chunk(generated.records, physicalOptions, provenanceDigest, capabilityDigest);
     verify_chunk(chunk.bytes, physicalOptions, provenanceDigest, capabilityDigest,
                  options.expectedRecords);
     const BundleBytes bundle = build_bundle(capabilityBytes, provenanceBytes, chunk);
     verify_bundle(bundle.bytes, capabilityBytes, provenanceBytes, chunk, physicalOptions,
                   provenanceDigest, capabilityDigest, options.expectedRecords);
 
-    require(!std::filesystem::exists(options.outputPath)
-              && !std::filesystem::exists(partial),
+    require(!std::filesystem::exists(options.outputPath) && !std::filesystem::exists(partial),
             "self-play output namespace changed before commit");
     write_all_exclusive(partial, bundle.bytes);
     if (options.pauseAfterPartialMs != 0)
@@ -2511,8 +3151,10 @@ int generate_selfplay(SelfplayOptions        options,
            << ",\"chunk_sha256\":" << json_string(hex(chunk.digest))
            << ",\"output\":" << json_string(options.outputPath.filename().string())
            << ",\"provenance_sha256\":" << json_string(hex(provenanceDigest))
-           << ",\"records\":" << options.expectedRecords
-           << ",\"schema\":\"crazyhouse-datagen-selfplay-result/v1\""
+           << ",\"records\":" << options.expectedRecords << ",\"schema\":"
+           << json_string(options.mode == SelfplayMode::ProductionV1
+                            ? "crazyhouse-datagen-production-result/v1"
+                            : "crazyhouse-datagen-selfplay-result/v1")
            << ",\"status\":\"committed\""
            << ",\"trajectories\":" << live.corpus.trajectories.size() << "}\n";
     std::cout << result.str();
@@ -2542,8 +3184,7 @@ int run(int argc, char* argv[]) {
                 "cannot set canonical binary stderr mode");
 #endif
         crypto_self_test();
-        require(argc >= 1 && argv != nullptr && argv[0] != nullptr,
-                "producer argv is unavailable");
+        require(argc >= 1 && argv != nullptr && argv[0] != nullptr, "producer argv is unavailable");
         const ArtifactIdentity artifact = identify_artifact(argv[0]);
         if (argc == 4 && std::string_view(argv[1]) == "--datagen-capabilities-v1"
             && std::string_view(argv[2]) == "--challenge")
@@ -2555,6 +3196,12 @@ int run(int argc, char* argv[]) {
             && std::string_view(argv[2]) == "--challenge")
         {
             std::cout << selfplay_capability_response(artifact, argv[3]);
+            return EXIT_SUCCESS;
+        }
+        if (argc == 4 && std::string_view(argv[1]) == "--datagen-production-capabilities-v1"
+            && std::string_view(argv[2]) == "--challenge")
+        {
+            std::cout << production_capability_response(artifact, argv[3]);
             return EXIT_SUCCESS;
         }
         if (argc >= 2 && std::string_view(argv[1]) == "--generate-trajectories-v1")
@@ -2570,8 +3217,7 @@ int run(int argc, char* argv[]) {
                                      engine.tt);
         }
         throw DatagenError("unsupported invocation");
-    }
-    catch (const std::exception& error)
+    } catch (const std::exception& error)
     {
         std::cerr << "ERROR crazyhouse-datagen-v1: " << error.what() << '\n';
         return EXIT_FAILURE;

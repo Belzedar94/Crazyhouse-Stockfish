@@ -205,6 +205,18 @@ jobs:
             --fixture tests/crazyhouse/legacy-incremental-cases-v1.json \
             2>&1 | tee .ci/evidence/incremental-verify.log
 
+      - name: Run production physical DATAGEN contract
+        if: matrix.backend == 'scalar'
+        run: |
+          set -euo pipefail
+          python -m py_compile tests/crazyhouse_production_datagen_v1.py
+          make -C src -j2 crazyhouse_production_datagen_test \
+            ARCH=x86-64-avx2 COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND=scalar \
+            CRAZYHOUSE_DATAGEN_NETWORK="$PWD/.ci/network/Crazyhouse_v1.nnue" \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/production-datagen.log
+
       - name: Run SIMD parity
         if: matrix.backend == 'simd'
         run: |
