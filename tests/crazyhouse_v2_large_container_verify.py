@@ -284,8 +284,8 @@ def main() -> int:
             rejected += 1
 
         for offset, value, expected in (
-            (reference.FC0_BIAS_OFFSET, 40_000, "FC0_INTERVAL"),
-            (reference.FC1_BIAS_OFFSET, 40_000, "FC1_INTERVAL"),
+            (reference.FC0_BIAS_OFFSET, -2_147_483_648, "FC0_INTERVAL"),
+            (reference.FC1_BIAS_OFFSET, -2_147_483_648, "FC1_INTERVAL"),
             (reference.FC2_BIAS_OFFSET, 2_147_483_647, "FC2_INTERVAL"),
         ):
             mutate_and_reject(network, executable, offset, struct.pack("<i", value), expected,

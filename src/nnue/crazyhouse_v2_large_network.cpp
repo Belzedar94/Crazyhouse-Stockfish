@@ -291,11 +291,6 @@ bool fits_int32(std::int64_t value) noexcept {
         && value <= std::numeric_limits<std::int32_t>::max();
 }
 
-bool fits_int16(std::int64_t value) noexcept {
-    return value >= std::numeric_limits<std::int16_t>::min()
-        && value <= std::numeric_limits<std::int16_t>::max();
-}
-
 LargeNetworkEvaluateError validate_domain(const LargeFeatureInventoryV1::DomainResult& domain,
                                           std::size_t dimensions) noexcept {
     if (domain.size > LargeFeatureInventoryV1::MaximumActivePerDomain)
@@ -424,7 +419,7 @@ LargeNetworkLoadError LargeNetworkV1::validate_dense_intervals() const noexcept 
                 const std::int64_t weight = fc0Weights_[base + input];
                 (weight < 0 ? lower : upper) += 127 * weight;
             }
-            if (!fits_int16(lower) || !fits_int16(upper))
+            if (!fits_int32(lower) || !fits_int32(upper))
                 return LargeNetworkLoadError::FC0_INTERVAL;
         }
 
@@ -439,7 +434,7 @@ LargeNetworkLoadError LargeNetworkV1::validate_dense_intervals() const noexcept 
                 const std::int64_t weight = fc1Weights_[base + input];
                 (weight < 0 ? lower : upper) += 127 * weight;
             }
-            if (!fits_int16(lower) || !fits_int16(upper))
+            if (!fits_int32(lower) || !fits_int32(upper))
                 return LargeNetworkLoadError::FC1_INTERVAL;
         }
 
@@ -702,7 +697,7 @@ LargeNetworkEvaluationResultV1 LargeNetworkV1::evaluate_from_accumulators(
         const std::size_t base  = (trace.bucket * LargeFc0Outputs + output) * LargeFc0Inputs;
         for (std::size_t input = 0; input < LargeFc0Inputs; ++input)
             value += std::int64_t(trace.denseInput[input]) * fc0Weights_[base + input];
-        if (!fits_int16(value))
+        if (!fits_int32(value))
             return evaluation_failure(LargeNetworkEvaluateError::FC0_RUNTIME_RANGE);
         trace.fc0[output]        = static_cast<std::int32_t>(value);
         trace.fc0Squared[output] = squared_activation(trace.fc0[output], Fc0ActivationShift);
@@ -719,7 +714,7 @@ LargeNetworkEvaluationResultV1 LargeNetworkV1::evaluate_from_accumulators(
         const std::size_t base  = (trace.bucket * LargeFc1Outputs + output) * LargeFc1Inputs;
         for (std::size_t input = 0; input < LargeFc1Inputs; ++input)
             value += std::int64_t(fc1Input[input]) * fc1Weights_[base + input];
-        if (!fits_int16(value))
+        if (!fits_int32(value))
             return evaluation_failure(LargeNetworkEvaluateError::FC1_RUNTIME_RANGE);
         trace.fc1[output]        = static_cast<std::int32_t>(value);
         trace.fc1Squared[output] = squared_activation(trace.fc1[output], Fc1ActivationShift);
