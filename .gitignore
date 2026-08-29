@@ -23,5 +23,6 @@ __pycache__/
 tests/syzygy
 tests/bench_tmp.epd
 
-# Generated correctness-CI evidence
+# Generated correctness-CI materialization and evidence
+.ci/network/
 .ci/evidence/

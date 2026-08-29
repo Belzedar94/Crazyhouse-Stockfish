@@ -1,0 +1,44 @@
+{
+  "schema": "crazyhouse-p11-production-datagen-ci-source-identity-addendum/v1",
+  "recorded_utc": "2026-08-29T01:39:29.9211657Z",
+  "status": "SECOND_CORRECTION_PREREGISTERED_AFTER_PUBLIC_REPLAY_FAILURE",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "incident": "CH-349",
+  "parent_addendum": {
+    "path": "tests/crazyhouse/p11-production-datagen-v1.addendum.005.json",
+    "commit": "7735c2e1765b02caa8bd8aa815e4835dd2a96caf",
+    "bytes": 2006,
+    "sha256": "08d3f7e3f3c7e6ba5b8a63315154f8479c00e7f2bbdad9a401cb4789e186937e",
+    "preserved_as_historical_evidence": true
+  },
+  "failed_public_replay": {
+    "repository": "https://github.com/Belzedar94/Crazyhouse-Stockfish",
+    "pull_request": 6,
+    "run_id": 33226678772,
+    "job_id": 99031748442,
+    "job": "Linux scalar correctness",
+    "status": "FAIL",
+    "exact_product_error": "FAIL crazyhouse production DATAGEN: capability exact field producer_source_dirty",
+    "embedded_source_dirty": true,
+    "compiler_completed": true
+  },
+  "demonstrated_cause": "The workflow-owned .ci/network/ namespace contained a downloaded NNUE plus canonical materialization and verification sidecars. The NNUE was ignored by the existing global pattern, but the untracked JSON and log sidecars remained visible to the fail-closed repository-wide probe.",
+  "single_change": "Add only .ci/network/ to the generated-output ignore policy alongside .ci/evidence/.",
+  "preserved_guards": [
+    "tracked modifications remain dirty",
+    "all non-.ci/network and non-.ci/evidence untracked files remain dirty",
+    "the producer still aborts when producer_source_dirty is true",
+    "the source commit, full tree and src tree remain embedded and authenticated"
+  ],
+  "required_replay": [
+    "prove .ci/network/ and .ci/evidence/ are ignored while an unrelated untracked file is not",
+    "commit before build",
+    "clean-build normal and dedicated DATAGEN artifacts",
+    "rerun the complete production runtime matrix",
+    "publish immutable result addenda with the new source and artifact identities",
+    "require the new public CI run and aggregate job to pass"
+  ],
+  "claim_boundary": "This diagnosis and preregistration grant no public-CI, OpenBench DATAGEN, dataset, training, model, strength or release credit."
+}
