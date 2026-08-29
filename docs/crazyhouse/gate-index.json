@@ -3452,7 +3452,37 @@
       "phase": "P13",
       "evidence_class": "M2_MODEL_SELECTION",
       "status": "OPEN",
-      "criterion": "frozen split and paired multi-seed ablations nominate the actual quantized artifact without using loss as production evidence"
+      "criterion": "frozen split and paired multi-seed ablations nominate the actual quantized artifact without using loss as production evidence",
+      "campaign_materializer_checkpoint": {
+        "status": "PASS_LOCAL_ENGINEERING_ONLY_PRODUCTION_DATA_PENDING",
+        "preregistration": {
+          "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.json",
+          "commit": "67f9a1450bc0db935c6df376b37b520203e8708f",
+          "bytes": 9106,
+          "sha256": "1636986a62d08d73e295f354659cfe5bdcccba0ea4133ea08793c9d02df567ce"
+        },
+        "implementation_commit": "c1da57f1a68329fd66e5625874ded8d771ce6dd4",
+        "result": {
+          "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.result.001.json",
+          "commit": "4f3469a9b520c45ba87469836df1fd63fd053449",
+          "bytes": 5777,
+          "sha256": "f68435044ff7ad6133dd8901f5c77463c23e39fba8843b8895d60b49c8c0aebb"
+        },
+        "independent_campaign_verification": "PASS",
+        "fixture_nonproduction_rejection": "PASS_FAIL_CLOSED",
+        "production_configuration_materialized": false,
+        "production_training_started": false,
+        "model_selected": false,
+        "strength_claim": false,
+        "legacy_v1_remains_default": true
+      },
+      "remaining": [
+        "safe deployment of the merged official OpenBench client after unrelated active work ends",
+        "official two-role Crazyhouse DATAGEN canaries and production aggregate admission",
+        "materialization and execution of all three frozen seeds",
+        "quantized export and parser, scalar, SIMD, incremental and resume authentication for every seed",
+        "predesignated seed-0 legacy-control progression without loss-based selection"
+      ]
     },
     {
       "id": "G14",
