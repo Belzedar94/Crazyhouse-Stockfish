@@ -78,6 +78,18 @@ jobs:
           make --no-print-directory --old-file=.depend -C src \
             crazyhouse_v2_large_trainer_test
 
+      - name: Verify NNUE V2 large A0 production campaign
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/nnue/crazyhouse_v2_large_campaign.py \
+            tests/crazyhouse_v2_large_campaign_verify.py
+          python -B tests/crazyhouse_v2_large_campaign_verify.py \
+            --planner tools/nnue/crazyhouse_v2_large_campaign.py \
+            --campaign tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.json \
+            --campaign-sha256 1636986a62d08d73e295f354659cfe5bdcccba0ea4133ea08793c9d02df567ce \
+            --trainer tools/nnue/crazyhouse_v2_large_trainer.py
+
       - name: Test fail-closed network tooling
         run: |
           set -euo pipefail
