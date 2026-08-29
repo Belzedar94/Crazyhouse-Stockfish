@@ -12,6 +12,9 @@ src/universal/network_dump.inc
 src/stockfish*
 src/crazyhouse-stockfish-datagen*
 src/crazyhouse-v2-legacy-control-tests*
+src/crazyhouse-v2-large-features-tests*
+src/crazyhouse_v2_large_features_tests.o.d
+src/.v2-large-features-obj/
 src/-lstdc++.res
 
 # Neural network for the NNUE evaluation
