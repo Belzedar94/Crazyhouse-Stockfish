@@ -1,0 +1,57 @@
+{
+  "schema": "crazyhouse-p12-large-container-scalar-result-v1",
+  "status": "PASS_LARGE_A0_CONTAINER_SCALAR_SUBGATE",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "executed_utc": "2026-08-29T04:33:26Z",
+  "contract": {
+    "path": "tests/crazyhouse/p12-nnue-v2-large-container-scalar-v1.json",
+    "commit": "b7a57823180d67ad0c073ff1acb99297b2a716eb",
+    "bytes_in_export": 3928,
+    "sha256_in_export": "47db07c0bb5247d91f55c86ddbb828f9238cb37757509dfb5cd65d9f70a5e1fc"
+  },
+  "candidate": {
+    "implementation_commit": "12a267465dbe81b9d050ef39c906b26229bd1f9a",
+    "implementation_tree": "8a9fdbb66748cfa8636531d41324000ac717a740",
+    "implementation_src_tree": "2dbb3178aea1dc2c8ddd588b843cdf1938fb6413",
+    "formal_export_commit": "b7a57823180d67ad0c073ff1acb99297b2a716eb",
+    "official_stockfish_ancestor": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2",
+    "official_ancestor_verified": true
+  },
+  "formal_namespace": "p12-large-a0-scalar-formal-505",
+  "artifacts": [
+    {"name": "source.tar", "bytes": 8396800, "sha256": "9323af4cd02ff18b7a68b8a4fdc52fbe5aa2bb9c20bb3a45dbf840c23a818c20"},
+    {"name": "build.log", "bytes": 2484, "sha256": "34297e0e1cc2f10ef39d8536e94cb921e2299a1b33599eecd0613157c4d79495"},
+    {"name": "verify.log", "bytes": 169, "sha256": "f08f7621ed2440fe72abaf08bb90a5b372bc915e9a56d4dc5f00e55c0918d151"},
+    {"name": "crazyhouse-v2-large-network-tests.exe", "bytes": 3191512, "sha256": "a3df12f46d08be37b99e18174322aa6fbf78f8c4fcda696fc547cea19c3ccfd1"}
+  ],
+  "toolchain": [
+    {"name": "x86_64-w64-mingw32-c++", "version": "16.1.0 MSYS2 Rev5", "bytes": 3312964, "sha256": "c2ca27de1a97c077caad452318711d5dc95f43cc5e30fa81dd52c4bdd9db3abb"},
+    {"name": "GNU Make", "version": "4.4.1", "bytes": 229856, "sha256": "2d3b9fca575be8e93c10ab74348055fa127a65cf628d52e9218ac76065cc6d22"},
+    {"name": "Python", "version": "3.12.0", "bytes": 103192, "sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"}
+  ],
+  "verification": {
+    "build_exit": 0,
+    "verify_exit": 0,
+    "stderr": "",
+    "positive_scalar_traces": 6,
+    "negative_loads": 29,
+    "container_bytes": 126406688,
+    "independent_reference": true,
+    "stdout": "PASS crazyhouse_v2_large_container positive_cases=6 negative_cases=29 container_bytes=126406688 scalar_reference=independent training_admissible=false g12_closed=false"
+  },
+  "claims": {
+    "owned_container_fail_closed": true,
+    "scalar_full_refresh_parity": true,
+    "legacy_v1_default_unchanged": true,
+    "production_training_admissible": false,
+    "simd_parity": false,
+    "incremental_parity": false,
+    "deterministic_resume": false,
+    "model_selected": false,
+    "strength_evidence": false,
+    "g12_closed": false,
+    "release_evidence": false
+  },
+  "next_required_action": "Pass exact-head public CI including Linux/Windows warning-strict lanes and ASan/UBSan, then implement separate large-A0 incremental and SIMD parity before production trainer admission."
+}
