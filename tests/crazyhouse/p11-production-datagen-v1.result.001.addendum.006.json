@@ -1,0 +1,172 @@
+{
+  "schema": "crazyhouse-p11-production-datagen-v1-result-addendum/v1",
+  "recorded_utc": "2026-08-29T02:04:54.9427836Z",
+  "status": "PASS_PUBLIC_CORRECTNESS_CI_REPLAY",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "parent_receipt": {
+    "path": "tests/crazyhouse/p11-production-datagen-v1.result.001.addendum.005.json",
+    "commit": "2d694927a0dc83315a0453b5498672f25fa476fd",
+    "bytes": 6401,
+    "sha256": "7166ba93b8fba0fe76466e6917b7582ba96453b5aee6715a888a48c8d18043ec",
+    "preserved_as_historical_evidence": true
+  },
+  "implementation": {
+    "repository": "https://github.com/Belzedar94/Crazyhouse-Stockfish",
+    "pull_request": "https://github.com/Belzedar94/Crazyhouse-Stockfish/pull/6",
+    "branch": "engineering/datagen-production-v1",
+    "base_commit": "ee30a4cbada2f29837f1f5798f70480023354613",
+    "commit": "87e26fd43f874de41f6985ae18fbcf354bbb5a1d",
+    "tree": "5efe993705c49be3187321a1623e542fcd515c6e",
+    "src_tree": "2cbed40340451781c1cecdc5ac66942802fb4eaf",
+    "source_dirty": false
+  },
+  "public_ci": {
+    "provider": "GitHub Actions",
+    "workflow": "Crazyhouse correctness",
+    "event": "pull_request",
+    "run_id": 33227807708,
+    "url": "https://github.com/Belzedar94/Crazyhouse-Stockfish/actions/runs/33227807708",
+    "head_sha": "87e26fd43f874de41f6985ae18fbcf354bbb5a1d",
+    "created_utc": "2026-08-29T01:59:35Z",
+    "completed_utc": "2026-08-29T02:04:00Z",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 99034819668,
+        "name": "Network identity and tooling",
+        "conclusion": "success"
+      },
+      {
+        "id": 99034819772,
+        "name": "Frozen Crazyhouse core rules",
+        "conclusion": "success"
+      },
+      {
+        "id": 99034896052,
+        "name": "Linux simd correctness",
+        "conclusion": "success"
+      },
+      {
+        "id": 99034896110,
+        "name": "Linux undefined sanitizer",
+        "conclusion": "success"
+      },
+      {
+        "id": 99034896111,
+        "name": "Linux address sanitizer",
+        "conclusion": "success"
+      },
+      {
+        "id": 99034896137,
+        "name": "Windows scalar correctness",
+        "conclusion": "success"
+      },
+      {
+        "id": 99034896172,
+        "name": "Linux scalar correctness",
+        "conclusion": "success",
+        "production_physical_datagen_contract": "success"
+      },
+      {
+        "id": 99035262712,
+        "name": "Aggregate required evidence",
+        "conclusion": "success",
+        "required_lane_authentication": "success"
+      }
+    ],
+    "all_required_jobs_green": true,
+    "queued_is_not_accepted": true
+  },
+  "artifacts": [
+    {
+      "id": 9707511827,
+      "name": "crazyhouse-correctness-aggregate-67ba64f077019ac7abe87f16747daaba6a48db6d",
+      "bytes": 414074202,
+      "github_archive_sha256": "621a2cbdb228a473293a0e4d8b39304da456ee446faa4adc427a37cfc0316651",
+      "expires_utc": "2026-09-28T02:03:33Z",
+      "expired_at_receipt_time": false
+    },
+    {
+      "id": 9707500312,
+      "name": "crazyhouse-correctness-windows-scalar",
+      "bytes": 79841330,
+      "github_archive_sha256": "720801684b97eaa68bd1370fce60b292de1ff4036e0c48d8e40642c372f25280",
+      "expires_utc": "2026-09-05T02:02:58Z",
+      "expired_at_receipt_time": false
+    },
+    {
+      "id": 9707494715,
+      "name": "crazyhouse-correctness-linux-scalar",
+      "bytes": 78974938,
+      "github_archive_sha256": "1709308729bedd350532cc0aae9c2594d622c285730ca12f654b2c0d0c386317",
+      "expires_utc": "2026-09-05T02:02:32Z",
+      "expired_at_receipt_time": false
+    },
+    {
+      "id": 9707485544,
+      "name": "crazyhouse-correctness-sanitizer-address",
+      "bytes": 86925642,
+      "github_archive_sha256": "5d71fdb6931bcfb92dd3302c63b1e3ee237961213030f04f554284314ec4659b",
+      "expires_utc": "2026-09-05T02:01:50Z",
+      "expired_at_receipt_time": false
+    },
+    {
+      "id": 9707482247,
+      "name": "crazyhouse-correctness-sanitizer-undefined",
+      "bytes": 89335469,
+      "github_archive_sha256": "12794f67350800b89cf42901ad82649f16e768a5b2aa18d42736682b32e8f1ba",
+      "expires_utc": "2026-09-05T02:01:36Z",
+      "expired_at_receipt_time": false
+    },
+    {
+      "id": 9707477826,
+      "name": "crazyhouse-correctness-linux-simd",
+      "bytes": 78972019,
+      "github_archive_sha256": "92651f19928e3839b16ffdec8e804a4b56c36cc95287162758d6b4e85dfe8af1",
+      "expires_utc": "2026-09-05T02:01:15Z",
+      "expired_at_receipt_time": false
+    },
+    {
+      "id": 9707474836,
+      "name": "crazyhouse-correctness-core-rules",
+      "bytes": 9376,
+      "github_archive_sha256": "7d3282f5668ead1c16832a6a78ee7cc926c0433f1306e3244bdfc7680eabf20a",
+      "expires_utc": "2026-09-05T02:01:05Z",
+      "expired_at_receipt_time": false
+    },
+    {
+      "id": 9707463535,
+      "name": "crazyhouse-legacy-network-67ba64f077019ac7abe87f16747daaba6a48db6d",
+      "bytes": 29780921,
+      "github_archive_sha256": "dbeae1eb264c5c9a11680bac259b0b3ee0fc7a1c058e7175b62372e438216c31",
+      "expires_utc": "2026-08-30T02:00:10Z",
+      "expired_at_receipt_time": false
+    }
+  ],
+  "incident_closure": {
+    "CH-348": "closed_by_green_public_replay",
+    "CH-349": "closed_by_green_public_replay",
+    "CH-350": "closed_by_green_public_replay",
+    "failed_runs_preserved": [
+      33225846256,
+      33226678772,
+      33227293513
+    ]
+  },
+  "gate_effect": {
+    "local_production_datagen_precondition": "PASS_CORRECTED",
+    "public_correctness_ci": "PASS",
+    "public_correctness_artifacts": "PASS_GITHUB_DIGEST_PINNED",
+    "openbench_artifact_routing": "NOT_CONFIGURED",
+    "official_two_role_canary": "NOT_RUN",
+    "real_dataset_admitted": false,
+    "training_started": false,
+    "g11_production_datagen": "OPEN_OFFICIAL_CANARY_PENDING"
+  },
+  "claim_boundary": "This public correctness result authenticates engineering and CI artifacts only. It is not official OpenBench DATAGEN, a production dataset, training, model selection, strength, release or monitoring evidence."
+}

@@ -1,0 +1,129 @@
+{
+  "schema": "crazyhouse-p11-production-datagen-v1-result-addendum/v1",
+  "recorded_utc": "2026-08-29T01:30:39.7454275Z",
+  "status": "PASS_LOCAL_PRODUCTION_DATAGEN_CI_SOURCE_IDENTITY_CORRECTED",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "parent_receipt": {
+    "path": "tests/crazyhouse/p11-production-datagen-v1.result.001.addendum.002.json",
+    "commit": "8c4e82245ad1d39d206a47a50cad3e2ba4fa46b4",
+    "bytes": 5474,
+    "sha256": "802f54b4d28afc76e92e2875765dbc617c5e2787aa64a49abe6ab1444a89a38f",
+    "preserved_as_historical_evidence": true
+  },
+  "correction": {
+    "incident": "CH-348",
+    "failed_public_ci_run": 33225846256,
+    "failed_public_ci_job": 99029423720,
+    "reason": "The workflow-created, untracked .ci/evidence/ output namespace was included by the repository-wide untracked-file probe and therefore encoded producer_source_dirty=true after a successful build.",
+    "scope": "Classify only .ci/evidence/ as generated output. Preserve tracked-file checks, all other untracked-file checks, every source file, the capability contract, the partition domain, the campaign set and all prior receipts.",
+    "prevention": "Probe both sides of the ignore boundary before clean build and require the full runtime contract plus a new public CI aggregate result."
+  },
+  "ignore_boundary": {
+    ".ci/evidence/probe": "IGNORED",
+    "unrelated_root_untracked_probe": "VISIBLE",
+    "expanded_datagen_source_dirty": 0,
+    "status": "PASS_NARROW_GENERATED_OUTPUT_CLASSIFICATION"
+  },
+  "implementation": {
+    "repository": "https://github.com/Belzedar94/Crazyhouse-Stockfish",
+    "pull_request": "https://github.com/Belzedar94/Crazyhouse-Stockfish/pull/6",
+    "branch": "engineering/datagen-production-v1",
+    "base_commit": "ee30a4cbada2f29837f1f5798f70480023354613",
+    "commit": "7735c2e1765b02caa8bd8aa815e4835dd2a96caf",
+    "tree": "fe53e75980ddf9c267c7a232c69d3f4e62961b00",
+    "src_tree": "2cbed40340451781c1cecdc5ac66942802fb4eaf",
+    "source_dirty": false
+  },
+  "corrected_sources": [
+    {
+      "path": ".gitignore",
+      "bytes": 470,
+      "sha256": "c10ab8bfee924c2bd5fbf680ddddb6fc0a4b21ad21de44c06d7352b7c2c8f4ef"
+    },
+    {
+      "path": "docs/crazyhouse/incident-ledger.md",
+      "bytes": 232504,
+      "sha256": "e264ffebc3ed039b629dec7cc047fd2ae116a1d01258b769f26b80bfce996a1a"
+    },
+    {
+      "path": "tests/crazyhouse/p11-production-datagen-v1.addendum.005.json",
+      "bytes": 2006,
+      "sha256": "08d3f7e3f3c7e6ba5b8a63315154f8479c00e7f2bbdad9a401cb4789e186937e"
+    }
+  ],
+  "preserved_contract": {
+    "capability_path": "tests/crazyhouse/datagen-production-capability-v1.json",
+    "capability_bytes": 2654,
+    "capability_sha256": "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b",
+    "runtime_test_path": "tests/crazyhouse_production_datagen_v1.py",
+    "runtime_test_bytes": 21359,
+    "runtime_test_sha256": "199a440e0adca801d1a154cc9f955b2f20fc747e262f0fa5c0d83a497defd5de",
+    "decoded_partition_domain_terminal_byte_hex": "00"
+  },
+  "build": {
+    "normal_engine_clean_build": "PASS",
+    "dedicated_datagen_clean_build": "PASS",
+    "arch": "x86-64-avx2",
+    "compiler_identity": "x86_64-w64-mingw32-c++.exe (Rev5, Built by MSYS2 project) 16.1.0",
+    "toolchain_sha256": "9c2d13f47a8690dff907e83ddde127e3ef43599e518973b7542e4ac48edba052",
+    "build_recipe_sha256": "de43971391c54fdd7693a63c9f2d629f445637ec628b8f7a8d3369c5d544c87e",
+    "producer": {
+      "bytes": 4800143,
+      "sha256": "93fa7c91ba9032a82b6465d9f8a8729b7dc4a223946632df59c82ed355d9e647"
+    },
+    "normal_engine": {
+      "bytes": 103082292,
+      "sha256": "71306d7f5fc267ef6c0248fcac0463d17834a9d52007195d123d8e33a605a733"
+    }
+  },
+  "capability": {
+    "status": "PASS_EXACT_FIELD_INVENTORY",
+    "schema": "crazyhouse-datagen-production-capability-response/v1",
+    "artifact_role": "crazyhouse-physical-datagen-production-v1",
+    "producer_source_commit": "7735c2e1765b02caa8bd8aa815e4835dd2a96caf",
+    "producer_source_tree": "fe53e75980ddf9c267c7a232c69d3f4e62961b00",
+    "producer_src_tree": "2cbed40340451781c1cecdc5ac66942802fb4eaf",
+    "producer_source_dirty": false,
+    "production_generation_authorized": true,
+    "normal_play_engine_isolated": true
+  },
+  "formal_runtime_test": {
+    "status": "PASS",
+    "exit_code": 0,
+    "campaign_set_sha256": "e5c93dd7ec80d4bf43596965f19da302204c48a14bffc6b5980a1ad7d3b5a854",
+    "partition_sha256": "956c8c4cc3e9759f4ce4aa0060a13bc54840a11bf3669883ed2e4a2434527fba",
+    "split_seed_u64": 1,
+    "train": {
+      "records": 104,
+      "bundle_sha256": "bde4e039cfc1c59546e39562e8d742e4ab644a2e4c43b6c2c33eb7b6a4cbb43f"
+    },
+    "validation": {
+      "records": 80,
+      "bundle_sha256": "324923e3d723782795301e599b6fbeebf0ec995cc96ef152a3eec15bb64f7b15"
+    },
+    "g0_control": {
+      "records": 4,
+      "trajectories": 2,
+      "bundle_sha256": "14178e4e9793ad04eccca58d57afe75223ec6d8fefdbe9bbf492dea43bf9c619"
+    },
+    "exact_record_quota": true,
+    "complete_trajectories_only": true,
+    "role_assignment_before_search": true,
+    "capability_partition_domain_binding": "PASS",
+    "provenance_partition_domain_binding": "PASS"
+  },
+  "gate_effect": {
+    "local_production_datagen_precondition": "PASS_CORRECTED",
+    "public_ci": "PENDING_AT_ADDENDUM_TIME",
+    "openbench_artifact_routing": "NOT_CONFIGURED",
+    "official_two_role_canary": "NOT_RUN",
+    "real_dataset_admitted": false,
+    "training_started": false,
+    "g11_production_datagen": "OPEN"
+  },
+  "claim_boundary": "This corrected local engineering result is not public-CI acceptance, official OpenBench DATAGEN, dataset, training, model, strength, release or monitoring evidence."
+}
