@@ -1,0 +1,60 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-large-dense-int32-preregistration/v1",
+  "status": "PREREGISTERED_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "frozen_source": {
+    "commit": "c9182ba15fecf0786d1a2341c1c19ddddad08019",
+    "tree": "ba8a412f76a7c3ede391a4f0d5ddad55e9b06b6a",
+    "src_tree": "340f1263a00993a9940e88956c1765d6b6f5cdb2",
+    "official_stockfish_ancestor": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2"
+  },
+  "bound_inputs": {
+    "simd_incremental_contract": {
+      "path": "tests/crazyhouse/p12-nnue-v2-large-simd-incremental-v1.json",
+      "sha256": "f8c944b7d6b519f6272ead4dff46e04dc0fdf7318d2bbc9494fefd729d6788bf"
+    },
+    "stockfish_dense_anchor": {
+      "path": "src/nnue/nnue_architecture.h",
+      "contract": "SFNNv16 affine outputs and skip connection are int32 before clipped activations"
+    }
+  },
+  "hypothesis": "The large-A0 fc0 and fc1 affine sums are int32 values, matching the frozen tensor and trace types. Requiring every admitted or runtime sum to fit int16 rejects otherwise valid SFNNv16 parameters without protecting any serialized or arithmetic boundary.",
+  "single_variable": {
+    "before": "fc0 and fc1 complete static intervals and runtime sums must fit signed int16",
+    "after": "fc0 and fc1 complete static intervals and runtime sums must fit signed int32",
+    "unchanged": [
+      "int64 working arithmetic",
+      "int32 committed trace tensors",
+      "activation shifts and saturation",
+      "fc2 interval and runtime bounds",
+      "container bytes and semantic identities",
+      "scalar, SIMD and incremental outputs",
+      "Legacy V1 default routing"
+    ]
+  },
+  "verification": {
+    "positive": [
+      "warning-strict large-A0 build",
+      "six positive container cases",
+      "98 scalar/SIMD/incremental transition evaluations",
+      "deterministic complete trace equality"
+    ],
+    "negative": [
+      "fc0 int32 interval overflow",
+      "fc1 int32 interval overflow",
+      "fc2 int32 interval overflow",
+      "all existing parser and transactional negatives"
+    ],
+    "platforms": ["ubuntu-24.04-gcc", "windows-2025-mingw"],
+    "sanitizers": ["address", "undefined"]
+  },
+  "boundary": {
+    "training_artifact_exists": false,
+    "model_selected": false,
+    "strength_evidence": false,
+    "g12_closed": false,
+    "release_evidence": false
+  },
+  "stopping_rule": "Any identity, int32 interval, runtime range, parser, trace parity, transition, platform, warning or sanitizer mismatch rejects this subgate. No loss, speed or Elo observation may alter the bound after execution begins."
+}
