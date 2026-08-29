@@ -118,7 +118,7 @@ constexpr std::string_view SelfplayG0BookSha256 =
   "f99f8211316813924e52fb13fbb65a5bc27dcd585e2e32a86d90db0d113fd2f6";
 constexpr std::uint64_t SelfplayG0BookBytes = 158;
 constexpr std::string_view ProductionCapabilityContractSha256 =
-  "f17766cb1d678cb186d508a0dfddbd5c21902c2011035393cfdf0715da06581b";
+  "96abf35a3a526d3cecdf4a6a3b55ff15b9ce6f1b644fa38375af65242d113357";
 constexpr std::string_view ProductionSelectionPolicySha256 =
   "475fd0fb9a929e964ff32357031a18d33ecc2543e8681cc73068858c10db3014";
 constexpr std::string_view ProductionBookSha256 =
