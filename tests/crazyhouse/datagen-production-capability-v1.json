@@ -43,7 +43,7 @@
     "registered_network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
     "rule_profile_id": "LICHESS_CRAZYHOUSE_2026_08_12",
     "rule_profile_sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68",
-    "trajectory_partition_domain": "Crazyhouse-Stockfish physical trajectory split v1\\0",
+    "trajectory_partition_domain": "Crazyhouse-Stockfish physical trajectory split v1\u0000",
     "variant": "crazyhouse"
   },
   "dynamic_fields": {
