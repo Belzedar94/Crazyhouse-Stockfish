@@ -1,0 +1,63 @@
+{
+  "schema": "crazyhouse-p11-production-datagen-ci-source-identity-addendum/v1",
+  "recorded_utc": "2026-08-29T01:51:44.7461878Z",
+  "status": "THIRD_CORRECTION_PREREGISTERED_AFTER_EXACT_WORKFLOW_REPRODUCTION",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "incident": "CH-350",
+  "parent_addendum": {
+    "path": "tests/crazyhouse/p11-production-datagen-v1.addendum.006.json",
+    "commit": "e903556fef5e0803ce222eeb14f857a4a4fc9492",
+    "bytes": 2324,
+    "sha256": "42d994127c14f03add07b9d354be937e436a83b8c93329cfa5f6912ea27bc7b3",
+    "preserved_as_historical_evidence": true
+  },
+  "failed_public_replay": {
+    "repository": "https://github.com/Belzedar94/Crazyhouse-Stockfish",
+    "pull_request": 6,
+    "run_id": 33227293513,
+    "job_id": 99033461147,
+    "job": "Linux scalar correctness",
+    "status": "FAIL",
+    "exact_product_error": "FAIL crazyhouse production DATAGEN: capability exact field producer_source_dirty",
+    "embedded_source_dirty": true,
+    "compiler_completed": true
+  },
+  "exact_local_reproduction": {
+    "workflow_order_reproduced": [
+      "build normal scalar engine",
+      "build crazyhouse-legacy-parser-ci",
+      "build crazyhouse-legacy-incremental-tests",
+      "inspect repository-wide untracked-file inventory before DATAGEN"
+    ],
+    "visible_prefixes": [
+      "src/crazyhouse-legacy-parser-ci",
+      "src/crazyhouse-legacy-incremental-tests"
+    ],
+    "visible_artifact_classes": [
+      "executable",
+      "lto_wrapper_args",
+      "ltrans output and arguments",
+      "resource output",
+      "whole-program-analysis arguments"
+    ]
+  },
+  "single_change": "Add the exact src/crazyhouse-legacy-parser-ci* and src/crazyhouse-legacy-incremental-tests* build-target prefixes to the existing built-binary ignore section.",
+  "preserved_guards": [
+    "tracked modifications remain dirty",
+    "all unrelated untracked files remain dirty",
+    "the producer still aborts when producer_source_dirty is true",
+    "the source commit, full tree and src tree remain embedded and authenticated"
+  ],
+  "required_replay": [
+    "prove every reproduced test-target output is ignored while an unrelated untracked file is not",
+    "commit before build",
+    "repeat the scalar workflow order locally",
+    "clean-build the dedicated DATAGEN artifact after the pre-DATAGEN targets",
+    "rerun the complete production runtime matrix",
+    "publish immutable result addenda with new source and artifact identities",
+    "require the new public CI run and aggregate job to pass"
+  ],
+  "claim_boundary": "This diagnosis and preregistration grant no public-CI, OpenBench DATAGEN, dataset, training, model, strength or release credit."
+}
