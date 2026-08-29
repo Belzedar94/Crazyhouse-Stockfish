@@ -1,0 +1,48 @@
+{
+  "schema": "crazyhouse-p11-production-datagen-preregistration-addendum/v1",
+  "created_utc": "2026-08-29T00:32:07.829Z",
+  "status": "FROZEN_AFTER_OFFICIAL_BOOK_PARSER_EXPECTED_FAILURE_BEFORE_RETRY",
+  "effect": "CORRECT_CONTRADICTORY_DUPLICATE_ROOT_EXPECTATION_WITHOUT_CHANGING_ARTIFACT_IDENTITY",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "phase": "P11",
+  "gate": "G11_PRODUCTION_PRODUCER",
+  "evidence_class": "E1_ENGINEERING",
+  "observed_failure": {
+    "command_scope": "local production runtime contract, train role, before search",
+    "exit_code": 1,
+    "diagnostic": "ERROR crazyhouse-datagen-v1: duplicate production book content identity",
+    "output_created": false
+  },
+  "authenticated_book": {
+    "path": "openbench/books/CRAZYHOUSE_openings.epd",
+    "bytes": 39922,
+    "sha256": "1371e87ce3bdb875d922ad0061c96c4a123bc571daf4ae2bff24e5176287f0fa",
+    "rows": 599,
+    "unique_complete_fen_rows": 489,
+    "duplicate_rows": 110,
+    "line_endings": "LF",
+    "row_format": "six-field Crazyhouse FEN"
+  },
+  "contradiction": {
+    "original_negative_matrix_item": "duplicate-root",
+    "finding": "The exact preregistered official artifact itself contains repeated complete FEN rows.",
+    "resolution": "The exact 599-row artifact remains authoritative. Production admits repeated rows as distinct source-indexed candidates and never treats them as distinct physical identities after generation."
+  },
+  "corrected_parser_rule": {
+    "g0_fixture_parser_changed": false,
+    "production_parser": "six-field Crazyhouse FEN",
+    "row_identity": "one-based source index plus a 12-hex SHA-256 content prefix",
+    "duplicate_row_policy": "admit exact authenticated rows with distinct source indices",
+    "wrong_bytes_wrong_hash_or_malformed_row_policy": "reject",
+    "post_generation_duplicate_and_cross_role_audit_required": true,
+    "opening_root_split_is_disjointness_evidence": false
+  },
+  "claims": {
+    "production_data_generated": false,
+    "dataset_admitted": false,
+    "training_started": false,
+    "strength": false,
+    "release": false
+  }
+}

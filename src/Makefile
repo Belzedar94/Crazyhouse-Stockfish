@@ -1209,7 +1209,7 @@ endif
 	crazyhouse_p15_release_engine_identity_test \
 	crazyhouse_p16_monitoring_contract_test \
 	crazyhouse_mingw_reproducibility_probe \
-	crazyhouse-datagen datagen-identity-sanity \
+	crazyhouse-datagen crazyhouse_production_datagen_test datagen-identity-sanity \
 	objclean profileclean config-sanity \
 	icx-profile-use icx-profile-make \
 	gcc-profile-use gcc-profile-make \
@@ -1654,6 +1654,14 @@ crazyhouse_legacy_network.o: $(CRAZYHOUSE_LEGACY_EMBED_DEP)
 endif
 
 crazyhouse-datagen: datagen-identity-sanity $(CRAZYHOUSE_DATAGEN_EXE)
+
+crazyhouse_production_datagen_test: crazyhouse-datagen $(EXE)
+	@test -n '$(CRAZYHOUSE_DATAGEN_NETWORK)'
+	$(PYTHON) -B ../tests/crazyhouse_production_datagen_v1.py \
+		--producer ./$(CRAZYHOUSE_DATAGEN_EXE) \
+		--normal-engine ./$(EXE) \
+		--network '$(CRAZYHOUSE_DATAGEN_NETWORK)' \
+		--source-root ..
 
 datagen-identity-sanity:
 	@test "$$(printf '%s' '$(DATAGEN_SOURCE_COMMIT)' | grep -E '^[0-9a-f]{40}$$')" != ""
