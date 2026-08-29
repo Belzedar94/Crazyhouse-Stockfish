@@ -248,7 +248,7 @@ bool same_inventory(const Inventory::Result& left, const Inventory::Result& righ
     if (left.status != right.status || left.totalPocketUnits != right.totalPocketUnits)
         return false;
     for (unsigned perspective = 0; perspective < COLOR_NB; ++perspective)
-        for (const auto [leftDomain, rightDomain] :
+        for (const auto& [leftDomain, rightDomain] :
              {std::pair{&left.perspective[perspective].k64, &right.perspective[perspective].k64},
               std::pair{&left.perspective[perspective].g1, &right.perspective[perspective].g1}})
         {
