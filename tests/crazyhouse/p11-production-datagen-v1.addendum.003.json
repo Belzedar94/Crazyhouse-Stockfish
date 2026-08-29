@@ -1,0 +1,36 @@
+{
+  "schema": "crazyhouse-p11-production-datagen-capability-inventory-correction/v1",
+  "recorded_utc": "2026-08-29T00:51:43.5485874Z",
+  "status": "CORRECTION_PREREGISTERED_BEFORE_PRODUCTION",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "scope": "Correct only the production capability field inventory and its pinned contract identity. Preserve the original preregistration and every other bound.",
+  "incident": {
+    "symptom": "The producer emitted capability_contract_sha256 while required_response_fields omitted that key even though unknown_or_missing_field_policy was reject.",
+    "unsafe_inference": "Matching required_values was sufficient to prove that the response field inventory was fail-closed.",
+    "cause": "The runtime harness checked required values but did not compare the complete response key set with required_response_fields.",
+    "prevention": "Declare capability_contract_sha256 explicitly and require exact response-key equality before accepting required values or dynamic bindings.",
+    "gate": "P11/G11 production capability admission"
+  },
+  "superseded_identity_only": {
+    "path": "tests/crazyhouse/datagen-production-capability-v1.json",
+    "bytes": 2549,
+    "sha256": "f17766cb1d678cb186d508a0dfddbd5c21902c2011035393cfdf0715da06581b"
+  },
+  "corrected_identity": {
+    "path": "tests/crazyhouse/datagen-production-capability-v1.json",
+    "bytes": 2651,
+    "sha256": "96abf35a3a526d3cecdf4a6a3b55ff15b9ce6f1b644fa38375af65242d113357",
+    "added_required_field": "capability_contract_sha256",
+    "unknown_or_missing_field_policy": "reject"
+  },
+  "required_replay": [
+    "commit the correction before building",
+    "clean-build the normal and dedicated DATAGEN artifacts",
+    "authenticate the corrected exact capability field set",
+    "rerun the complete production DATAGEN runtime test",
+    "publish a result addendum without rewriting prior receipts"
+  ],
+  "claim_boundary": "This correction grants no OpenBench DATAGEN, dataset, training, model, strength or release credit."
+}

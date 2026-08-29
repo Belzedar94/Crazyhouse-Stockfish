@@ -17,7 +17,7 @@ import uuid
 
 BOOK_BYTES = 39_922
 BOOK_SHA256 = "1371e87ce3bdb875d922ad0061c96c4a123bc571daf4ae2bff24e5176287f0fa"
-CAPABILITY_SHA256 = "f17766cb1d678cb186d508a0dfddbd5c21902c2011035393cfdf0715da06581b"
+CAPABILITY_SHA256 = "96abf35a3a526d3cecdf4a6a3b55ff15b9ce6f1b644fa38375af65242d113357"
 FEATURE_SHA256 = "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6"
 NETWORK_BYTES = 58_534_811
 NETWORK_SHA256 = "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
@@ -419,6 +419,10 @@ def main() -> int:
     require(cap_run.returncode == 0 and cap_run.stderr == b"", "production capability invocation")
     capability = parse_canonical(cap_run.stdout, "production capability")
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    require(
+        set(capability) == set(contract["required_response_fields"]),
+        "capability exact field inventory",
+    )
     for key, value in contract["required_values"].items():
         require(capability.get(key) == value, f"capability exact field {key}")
     require(capability["challenge"] == challenge and capability["artifact_sha256"] == sha256_file(producer), "capability dynamic identity")
