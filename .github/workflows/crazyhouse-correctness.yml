@@ -264,6 +264,48 @@ jobs:
           include-hidden-files: true
           retention-days: 7
 
+  v2-large-a0:
+    name: Large V2 A0 container and scalar parity
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Build and verify the owned large-A0 container
+        run: |
+          set -euo pipefail
+          mkdir -p .ci/evidence
+          g++ --version | tee .ci/evidence/compiler.log
+          make --version | tee .ci/evidence/make.log
+          python --version 2>&1 | tee .ci/evidence/python.log
+          python -m py_compile \
+            tools/nnue/crazyhouse_v2_large_container_reference.py \
+            tests/crazyhouse_v2_large_container_verify.py
+          make -C src -j2 crazyhouse_v2_large_network_test \
+            ARCH=x86-64-avx2 COMP=gcc \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/large-a0.log
+          git rev-parse HEAD > .ci/evidence/git-commit.txt
+          git rev-parse 'HEAD^{tree}' > .ci/evidence/git-tree.txt
+          git rev-parse 'HEAD:src' > .ci/evidence/git-src-tree.txt
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Publish large-A0 evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: crazyhouse-correctness-v2-large-a0
+          path: .ci/evidence/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 7
+
   core-rules:
     name: Frozen Crazyhouse core rules
     runs-on: ubuntu-24.04
@@ -387,6 +429,14 @@ jobs:
             --output .ci/evidence/conservative-search.json \
             2>&1 | tee .ci/evidence/conservative-search.log
 
+      - name: Run instrumented large-A0 parser and scalar parity
+        run: |
+          set -euo pipefail
+          make -C src -j2 crazyhouse_v2_large_network_test \
+            ARCH=x86-64-sse41-popcnt COMP=gcc \
+            debug=yes optimize=no sanitize="$SANITIZER" \
+            2>&1 | tee .ci/evidence/large-a0-sanitizer.log
+
       - name: Seal sanitizer evidence
         run: |
           set -euo pipefail
@@ -460,6 +510,10 @@ jobs:
             --legacy-network .ci/network/Crazyhouse_v1.nnue \
             --output .ci/evidence/conservative-search.json \
             2>&1 | tee .ci/evidence/conservative-search.log
+          make -C src -j2 crazyhouse_v2_large_network_test \
+            ARCH=x86-64-avx2 COMP=mingw \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/large-a0.log
           cp src/stockfish.exe .ci/evidence/stockfish-windows-scalar.exe
           git rev-parse HEAD > .ci/evidence/git-commit.txt
           git rev-parse 'HEAD^{tree}' > .ci/evidence/git-tree.txt
@@ -480,7 +534,7 @@ jobs:
 
   evidence:
     name: Aggregate required evidence
-    needs: [correctness-linux, core-rules, sanitizers, correctness-windows]
+    needs: [correctness-linux, v2-large-a0, core-rules, sanitizers, correctness-windows]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -507,6 +561,7 @@ jobs:
             --output-dir .ci/aggregate \
             --expected-artifact crazyhouse-correctness-linux-scalar \
             --expected-artifact crazyhouse-correctness-linux-simd \
+            --expected-artifact crazyhouse-correctness-v2-large-a0 \
             --expected-artifact crazyhouse-correctness-core-rules \
             --expected-artifact crazyhouse-correctness-sanitizer-address \
             --expected-artifact crazyhouse-correctness-sanitizer-undefined \

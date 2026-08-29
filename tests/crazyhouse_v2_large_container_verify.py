@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+"""Independent negative-load and scalar parity suite for large Crazyhouse V2."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import importlib.util
+import mmap
+import struct
+import subprocess
+import tempfile
+from pathlib import Path
+
+
+def load_reference(path: Path):
+    spec = importlib.util.spec_from_file_location("crazyhouse_v2_large_container_reference", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot load large-container reference")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def run(executable: Path, network: Path, expected_error: str | None = None) -> list[str]:
+    command = [str(executable), str(network)]
+    if expected_error is not None:
+        command.extend(("--expect-error", expected_error))
+    result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=180)
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"verifier failed for {expected_error or 'positive'}: "
+            f"stdout={result.stdout!r} stderr={result.stderr!r}"
+        )
+    if result.stderr:
+        raise RuntimeError(f"verifier emitted stderr for {expected_error or 'positive'}: {result.stderr!r}")
+    lines = result.stdout.splitlines()
+    if not lines:
+        raise RuntimeError("verifier emitted no stdout")
+    return lines
+
+
+def parse_csv(text: str) -> list[int]:
+    return [int(value) for value in text.split(",")]
+
+
+def parse_trace(line: str) -> tuple[str, int, dict[str, object]]:
+    fields = line.split("\t")
+    if len(fields) != 20 or fields[0] != "TRACE":
+        raise RuntimeError(f"invalid trace framing: {line[:200]!r}")
+    observed: dict[str, object] = {
+        "bucket": int(fields[3]),
+        "k": [parse_csv(fields[4]), parse_csv(fields[7])],
+        "g": [parse_csv(fields[5]), parse_csv(fields[8])],
+        "perspective": [parse_csv(fields[6]), parse_csv(fields[9])],
+        "dense": parse_csv(fields[10]),
+        "fc0": parse_csv(fields[11]),
+        "fc0_squared": parse_csv(fields[12]),
+        "fc0_clipped": parse_csv(fields[13]),
+        "fc1": parse_csv(fields[14]),
+        "fc1_squared": parse_csv(fields[15]),
+        "fc1_clipped": parse_csv(fields[16]),
+        "fc2": int(fields[17]),
+        "fwd": int(fields[18]),
+        "output": int(fields[19]),
+    }
+    return fields[1], 0 if fields[2] == "white" else 1, observed
+
+
+def refinalize_file(path: Path, reference) -> None:
+    with path.open("r+b") as stream:
+        with mmap.mmap(stream.fileno(), 0) as mapped:
+            payload = memoryview(mapped)[1_024:]
+            digest = hashlib.sha256(payload).digest()
+            del payload
+            mapped[576:608] = digest
+            mapped[608:612] = b"\0" * 4
+            mapped[608:612] = struct.pack("<I", reference.crc32c(mapped[:1_024]))
+            mapped.flush()
+
+
+def mutate_and_reject(path: Path, executable: Path, offset: int, replacement: bytes,
+                      expected: str, reference, refinalize: bool = False) -> None:
+    with path.open("r+b") as stream:
+        stream.seek(offset)
+        original = stream.read(len(replacement))
+        if len(original) != len(replacement):
+            raise RuntimeError(f"mutation {expected} is outside the file")
+        stream.seek(offset)
+        stream.write(replacement)
+        stream.flush()
+    if refinalize:
+        refinalize_file(path, reference)
+    lines = run(executable, path, expected)
+    if lines != [f"REJECT\t{expected}\tobject=false"]:
+        raise RuntimeError(f"unexpected rejection output for {expected}: {lines!r}")
+    with path.open("r+b") as stream:
+        stream.seek(offset)
+        stream.write(original)
+        stream.flush()
+    if refinalize:
+        refinalize_file(path, reference)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--reference", type=Path, required=True)
+    parser.add_argument("--executable", type=Path, required=True)
+    args = parser.parse_args()
+    reference = load_reference(args.reference.resolve())
+    executable = args.executable.resolve()
+    if not executable.is_file():
+        raise RuntimeError("large-network verifier executable is missing")
+
+    with tempfile.TemporaryDirectory(prefix="crazyhouse-v2-large-") as temporary:
+        root = Path(temporary)
+        network = root / "fixture.nnue"
+        reference.write_fixture_container(network)
+        if network.stat().st_size != reference.FILE_BYTES:
+            raise RuntimeError("fixture container size drifted")
+
+        positive_lines = run(executable, network)
+        trace_lines = [line for line in positive_lines if line.startswith("TRACE\t")]
+        summary_lines = [line for line in positive_lines if line.startswith("SUMMARY\t")]
+        if len(trace_lines) != 6 or len(summary_lines) != 1:
+            raise RuntimeError("positive verifier count drifted")
+        with network.open("rb") as stream:
+            with mmap.mmap(stream.fileno(), 0, access=mmap.ACCESS_READ) as mapped:
+                for line in trace_lines:
+                    case_id, side_to_move, observed = parse_trace(line)
+                    expected = reference.evaluate_reference(mapped, case_id, side_to_move)
+                    if observed != expected:
+                        differing = [key for key in expected if observed[key] != expected[key]]
+                        raise RuntimeError(
+                            f"scalar parity failed for {case_id}/{side_to_move}: {differing}"
+                        )
+
+        rejected = 0
+        expected_lines = run(executable, network, "EXPECTED_PROVENANCE")
+        if expected_lines != ["REJECT\tEXPECTED_PROVENANCE\tobject=false"]:
+            raise RuntimeError("expected-provenance rejection drifted")
+        rejected += 1
+
+        short = root / "short.nnue"
+        short.write_bytes(b"x")
+        if run(executable, short, "WRONG_SIZE") != ["REJECT\tWRONG_SIZE\tobject=false"]:
+            raise RuntimeError("wrong-size rejection drifted")
+        rejected += 1
+
+        mutations = (
+            (0, b"X", "MAGIC"),
+            (16, b"\0", "BYTE_ORDER"),
+            (20, struct.pack("<H", 1000), "HEADER_SIZE"),
+            (22, struct.pack("<H", 2), "VERSION"),
+            (26, struct.pack("<H", 0), "FLAGS"),
+            (28, struct.pack("<I", 0), "FILE_SIZE"),
+            (32, struct.pack("<I", 0), "PAYLOAD_SIZE"),
+            (36, struct.pack("<H", 9), "TENSOR_COUNT"),
+            (38, struct.pack("<H", 7), "LAYER_STACKS"),
+            (40, struct.pack("<I", 81_663), "K_DIMENSIONS"),
+            (100, struct.pack("<H", 2), "TENSOR_TYPES"),
+            (116, struct.pack("<I", 254), "TRANSFORM_CONSTANTS"),
+            (124, struct.pack("<I", 5), "ACTIVATION_CONSTANTS"),
+            (132, struct.pack("<I", 15), "OUTPUT_CONSTANTS"),
+            (156, struct.pack("<I", 2), "INPUT_SEMANTICS"),
+            (160, struct.pack("<I", 2), "PERSPECTIVE_ORDER"),
+            (164, struct.pack("<I", 620), "DIRECTORY_LAYOUT"),
+            (224, b"\0", "RULE_PROFILE_IDENTITY"),
+            (384, b"\0" * 32, "DATASET_IDENTITY_ZERO"),
+            (384, b"\x77" * 32, "DATASET_IDENTITY"),
+            (176, b"\x01", "RESERVED_BYTES"),
+            (624, struct.pack("<H", 99), "TENSOR_DIRECTORY"),
+            (608, b"\0\0\0\0", "HEADER_CRC32C"),
+            (reference.FILE_BYTES - 1, b"\x01", "PAYLOAD_SHA256"),
+        )
+        for offset, replacement, expected in mutations:
+            mutate_and_reject(network, executable, offset, replacement, expected, reference)
+            rejected += 1
+
+        for offset, value, expected in (
+            (reference.FC0_BIAS_OFFSET, 40_000, "FC0_INTERVAL"),
+            (reference.FC1_BIAS_OFFSET, 40_000, "FC1_INTERVAL"),
+            (reference.FC2_BIAS_OFFSET, 2_147_483_647, "FC2_INTERVAL"),
+        ):
+            mutate_and_reject(network, executable, offset, struct.pack("<i", value), expected,
+                              reference, refinalize=True)
+            rejected += 1
+
+        print(
+            "PASS crazyhouse_v2_large_container"
+            f" positive_cases={len(trace_lines)} negative_cases={rejected}"
+            f" container_bytes={reference.FILE_BYTES} scalar_reference=independent"
+            " training_admissible=false g12_closed=false"
+        )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -17,6 +17,9 @@ src/crazyhouse-v2-legacy-control-tests*
 src/crazyhouse-v2-large-features-tests*
 src/crazyhouse_v2_large_features_tests.o.d
 src/.v2-large-features-obj/
+src/crazyhouse-v2-large-network-tests*
+src/crazyhouse_v2_large_network_tests.o.d
+src/.v2-large-network-obj/
 src/crazyhouse-core-*-tests*
 src/-lstdc++.res
 

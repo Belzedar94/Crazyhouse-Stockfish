@@ -132,7 +132,15 @@ CRAZYHOUSE_V2_LARGE_FEATURES_TEST_OBJS = crazyhouse_v2_large_features_tests.o \
 CRAZYHOUSE_V2_LARGE_FEATURES_FORMAT_FILES = nnue/crazyhouse_v2_physical.cpp \
 	nnue/crazyhouse_v2_physical.h nnue/crazyhouse_v2_features.cpp \
 	nnue/crazyhouse_v2_features.h nnue/crazyhouse_v2_large_transform.cpp \
-	nnue/crazyhouse_v2_large_transform.h ../tests/crazyhouse_v2_large_features.cpp
+	nnue/crazyhouse_v2_large_transform.h nnue/crazyhouse_v2_large_network.cpp \
+	nnue/crazyhouse_v2_large_network.h ../tests/crazyhouse_v2_large_features.cpp \
+	../tests/crazyhouse_v2_large_network.cpp
+
+CRAZYHOUSE_V2_LARGE_NETWORK_TEST_EXE = crazyhouse-v2-large-network-tests$(suffix $(EXE))
+CRAZYHOUSE_V2_LARGE_NETWORK_TEST_SRCS = nnue/crazyhouse_v2_large_transform.cpp \
+	nnue/crazyhouse_v2_large_network.cpp
+CRAZYHOUSE_V2_LARGE_NETWORK_TEST_OBJS = crazyhouse_v2_large_network_tests.o \
+	$(addprefix .v2-large-network-obj/,$(notdir $(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_SRCS:.cpp=.o)))
 
 CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_EXE = crazyhouse-v2-container-scalar-tests$(suffix $(EXE))
 CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_SRCS = nnue/crazyhouse_v2_physical.cpp \
@@ -1202,7 +1210,8 @@ endif
 .PHONY: help analyze build profile-build macos-lipo strip install clean net \
 	openbench openbench-identity-sanity openbench-network-sanity \
 	crazyhouse-legacy-incremental-tests crazyhouse-legacy-simd-tests \
-	crazyhouse-v2-large-features-tests \
+	crazyhouse-v2-large-features-tests crazyhouse-v2-large-network-tests \
+	crazyhouse_v2_large_network_test \
 	crazyhouse_v2_legacy_control_test crazyhouse_v2_training_admission_test \
 	crazyhouse_release_bundle_contract_test \
 	crazyhouse_release_native_package_contract_test \
@@ -1355,8 +1364,8 @@ clean: objclean profileclean universalclean
 
 # clean binaries and objects
 objclean:
-	@rm -f stockfish stockfish.exe $(CRAZYHOUSE_DATAGEN_EXE) $(CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_LEGACY_SIMD_TEST_EXE) $(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_EXE) $(CRAZYHOUSE_V2_LARGE_FEATURES_TEST_EXE) $(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_EXE) $(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_V2_PRODUCTIVE_TEST_EXE) $(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_EXE) *.o *.o.d ./syzygy/*.o ./nnue/*.o ./nnue/features/*.o $(BUILD_SHA_FILE) $(BUILD_DATE_FILE) $(BUILD_DIFFINDEX_FILE)
-	@rm -rf .datagen-obj .v2-decoder-obj .v2-large-features-obj .v2-container-obj .v2-simd-incremental-obj .v2-productive-obj .v2-productive-incremental-obj .v2-legacy-control-obj
+	@rm -f stockfish stockfish.exe $(CRAZYHOUSE_DATAGEN_EXE) $(CRAZYHOUSE_LEGACY_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_LEGACY_SIMD_TEST_EXE) $(CRAZYHOUSE_V2_DECODER_SCALAR_TEST_EXE) $(CRAZYHOUSE_V2_LARGE_FEATURES_TEST_EXE) $(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_EXE) $(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_EXE) $(CRAZYHOUSE_V2_SIMD_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_V2_PRODUCTIVE_TEST_EXE) $(CRAZYHOUSE_V2_PRODUCTIVE_INCREMENTAL_TEST_EXE) $(CRAZYHOUSE_V2_LEGACY_CONTROL_TEST_EXE) *.o *.o.d ./syzygy/*.o ./nnue/*.o ./nnue/features/*.o $(BUILD_SHA_FILE) $(BUILD_DATE_FILE) $(BUILD_DIFFINDEX_FILE)
+	@rm -rf .datagen-obj .v2-decoder-obj .v2-large-features-obj .v2-large-network-obj .v2-container-obj .v2-simd-incremental-obj .v2-productive-obj .v2-productive-incremental-obj .v2-legacy-control-obj
 
 # clean auxiliary profiling files
 profileclean:
@@ -1368,6 +1377,7 @@ profileclean:
 	@rm -f stockfish.res
 	@rm -f crazyhouse-v2-decoder-scalar-tests.*args* crazyhouse-v2-decoder-scalar-tests.*lt* crazyhouse-v2-decoder-scalar-tests.res
 	@rm -f crazyhouse-v2-large-features-tests.*args* crazyhouse-v2-large-features-tests.*lt* crazyhouse-v2-large-features-tests.res
+	@rm -f crazyhouse-v2-large-network-tests.*args* crazyhouse-v2-large-network-tests.*lt* crazyhouse-v2-large-network-tests.res
 	@rm -f crazyhouse-v2-container-scalar-tests.*args* crazyhouse-v2-container-scalar-tests.*lt* crazyhouse-v2-container-scalar-tests.res
 	@rm -f crazyhouse-v2-simd-incremental-tests.*args* crazyhouse-v2-simd-incremental-tests.*lt* crazyhouse-v2-simd-incremental-tests.res
 	@rm -f crazyhouse-v2-productive-tests.*args* crazyhouse-v2-productive-tests.*lt* crazyhouse-v2-productive-tests.res
@@ -1570,6 +1580,27 @@ crazyhouse_v2_large_features_tests.o: ../tests/crazyhouse_v2_large_features.cpp 
 		-MMD -MP -MF $@.d -I. -c -o $@ $<
 
 -include crazyhouse_v2_large_features_tests.o.d $(wildcard .v2-large-features-obj/*.o.d)
+
+crazyhouse-v2-large-network-tests: $(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_EXE)
+
+crazyhouse_v2_large_network_test: $(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_EXE)
+	$(PYTHON) -B ../tests/crazyhouse_v2_large_container_verify.py \
+		--reference ../tools/nnue/crazyhouse_v2_large_container_reference.py \
+		--executable ./$(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_EXE)
+
+$(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_EXE): $(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_OBJS)
+	+$(CXX) -o $@ $(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_OBJS) $(LDFLAGS)
+
+crazyhouse_v2_large_network_tests.o: ../tests/crazyhouse_v2_large_network.cpp FORCE
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) \
+		-MMD -MP -MF $@.d -I. -c -o $@ $<
+
+.v2-large-network-obj/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) \
+		-MMD -MP -MF $@.d -I. -c -o $@ $<
+
+-include crazyhouse_v2_large_network_tests.o.d $(wildcard .v2-large-network-obj/*.o.d)
 
 crazyhouse-v2-container-scalar-tests: $(CRAZYHOUSE_V2_CONTAINER_SCALAR_TEST_EXE)
 

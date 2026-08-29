@@ -113,6 +113,7 @@ class LargeFeatureInventoryV1 {
     struct Result {
         Status                                  status = Status::INVALID_PIECE;
         std::array<PerspectiveResult, COLOR_NB> perspective{};
+        std::size_t                             totalPocketUnits{};
 
         constexpr bool ok() const noexcept { return status == Status::SUCCESS; }
     };

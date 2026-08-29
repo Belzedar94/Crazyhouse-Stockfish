@@ -205,6 +205,8 @@ LargeInventory::Result extract_large_state(const PhysicalStateV1& state) noexcep
 
     LargeInventory::Result candidate;
     candidate.status = LargeInventory::Status::SUCCESS;
+    for (const Byte count : state.pockets)
+        candidate.totalPocketUnits += count;
     for (unsigned perspective = 0; perspective < COLOR_NB; ++perspective)
     {
         const unsigned kingBucket = orient_square(perspective, kingSquares[perspective]);

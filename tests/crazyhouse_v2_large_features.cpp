@@ -68,6 +68,7 @@ void require_same_inventory(const Inventory::Result& left,
                             const std::string&       message) {
     require(left.status == right.status, message + " status");
     require(left.ok(), message + " success");
+    require(left.totalPocketUnits == right.totalPocketUnits, message + " total pocket units");
     for (Color perspective : {WHITE, BLACK})
     {
         require_same_set(left.perspective[perspective].k64, right.perspective[perspective].k64,
@@ -124,6 +125,7 @@ void verify_start_and_position_parity() {
     const Inventory::Result fromPosition = Inventory::extract(position);
     const Inventory::Result fromPhysical = Inventory::extract(physical_from(position));
     require(fromPosition.ok() && fromPhysical.ok(), "start-position extraction");
+    require(fromPosition.totalPocketUnits == 0, "start-position total pocket units");
     for (Color perspective : {WHITE, BLACK})
     {
         const auto& positionView = fromPosition.perspective[perspective];
@@ -147,6 +149,7 @@ void verify_asymmetric_position_parity_and_goldens() {
     const Inventory::Result fromPosition = Inventory::extract(position);
     const Inventory::Result fromPhysical = Inventory::extract(physical_from(position));
     require_same_inventory(fromPosition, fromPhysical, "asymmetric Position/physical parity");
+    require(fromPosition.totalPocketUnits == 3, "asymmetric total pocket units");
     for (Color perspective : {WHITE, BLACK})
     {
         require(fromPosition.perspective[perspective].k64.size == 7, "asymmetric K64 active count");
@@ -185,6 +188,7 @@ void verify_pocket_slots() {
     state.pockets[0]                 = 2;
     const Inventory::Result features = Inventory::extract(state);
     require(features.ok(), "pocket-slot extraction");
+    require(features.totalPocketUnits == 2, "pocket-slot routing count");
     require(features.perspective[WHITE].k64.size == 4 && features.perspective[WHITE].g1.size == 4,
             "pocket-slot active count");
     require(contains(features.perspective[WHITE].k64, 45296)
@@ -209,6 +213,7 @@ void verify_pocket_slots() {
             extreme.pockets[owner * 5 + type] = static_cast<Byte>(Maxima[type]);
             const Inventory::Result rows      = Inventory::extract(extreme);
             require(rows.ok(), "pocket maximum extraction");
+            require(rows.totalPocketUnits == Maxima[type], "pocket maximum routing count");
             for (unsigned perspective = 0; perspective < 2; ++perspective)
             {
                 const unsigned relativeOwner = owner != perspective;
@@ -367,6 +372,7 @@ void verify_capacity_and_symmetry() {
     const PhysicalStateV1   maximum  = maximum_active_state();
     const Inventory::Result features = Inventory::extract(maximum);
     require(features.ok(), "maximum-active extraction");
+    require(features.totalPocketUnits == 14, "maximum-active pocket routing count");
     for (Color perspective : {WHITE, BLACK})
     {
         require(features.perspective[perspective].k64.size == 48, "maximum K64 active count");
