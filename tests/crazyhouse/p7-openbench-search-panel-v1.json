@@ -1,0 +1,87 @@
+{
+  "schema": "crazyhouse-openbench-search-panel/v1",
+  "created_utc": "2026-08-28T23:59:15.9071797Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P7",
+  "evidence_class": "S3_STRENGTH_PENDING",
+  "status": "SUBMITTED_STC_OPEN_NO_STRENGTH_RESULT",
+  "server": "https://belzedar.duckdns.org",
+  "source_repository": "https://github.com/Belzedar94/Crazyhouse-Stockfish",
+  "hypothesis": "Each independent Crazyhouse-specific patch can improve equal-time strength over the frozen B1 baseline while preserving the exact evaluator, rules, book, referee and experiment controls.",
+  "one_patch_per_candidate": true,
+  "frozen_common_identity": {
+    "base": "ee30a4cbada2f29837f1f5798f70480023354613",
+    "bench": 38919,
+    "network_id": "8EBF8478",
+    "network_name": "crazyhouse_run15rl_e190_l03.nnue",
+    "network_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "book": "CRAZYHOUSE_openings.epd",
+    "variant_contract": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "threads": 1,
+    "elo_bounds": [0.0, 10.0],
+    "confidence": [0.05, 0.05],
+    "priority": 400,
+    "max_games": 0,
+    "upload_pgns": true,
+    "win_adjudication": "None",
+    "draw_adjudication": "None",
+    "syzygy": "DISABLED"
+  },
+  "stc": {
+    "submitted_time_control": "10.0+0.1",
+    "persisted_time_control": "10.0+0.10",
+    "hash_mib": 32,
+    "workload_size": 16,
+    "tests": [
+      {
+        "label": "C12 incremental state keys",
+        "pull_request": "https://github.com/Belzedar94/Crazyhouse-Stockfish/pull/2",
+        "candidate": "1181437b585920d82d506dced13cdfd7f8c49df2",
+        "test_id": 403,
+        "url": "https://belzedar.duckdns.org/test/403/"
+      },
+      {
+        "label": "C13 fixed feature storage",
+        "pull_request": "https://github.com/Belzedar94/Crazyhouse-Stockfish/pull/1",
+        "candidate": "50c2de8563fa08707a47dd3b8e0e428b24cdbefd",
+        "test_id": 404,
+        "url": "https://belzedar.duckdns.org/test/404/"
+      },
+      {
+        "label": "C14 remove duplicate scan",
+        "pull_request": "https://github.com/Belzedar94/Crazyhouse-Stockfish/pull/4",
+        "candidate": "20d67ecd892fd68f09e10aad46bfbbc08de80cc6",
+        "test_id": 405,
+        "url": "https://belzedar.duckdns.org/test/405/"
+      },
+      {
+        "label": "C15 keyed same-frame reuse",
+        "pull_request": "https://github.com/Belzedar94/Crazyhouse-Stockfish/pull/3",
+        "candidate": "1381012650c459228eb7aa56f02efab1eedcf896",
+        "test_id": 406,
+        "url": "https://belzedar.duckdns.org/test/406/"
+      }
+    ]
+  },
+  "ltc_gate": {
+    "create_only_after_corresponding_stc_terminal_pass": true,
+    "submitted_time_control": "30.0+0.3",
+    "expected_persisted_time_control": "30.0+0.30",
+    "hash_mib": 128,
+    "workload_size": 8,
+    "script_bytes": 9101,
+    "script_sha256": "60bfa91a33d3280574a1f3e82c53600ce37dbc6d5840566577a0c77d7c81bba8",
+    "ltc_created_at_receipt_time": false
+  },
+  "submission_verification": {
+    "row_count": 4,
+    "all_approved": true,
+    "all_awaiting_false": true,
+    "all_error_false": true,
+    "all_open_at_submission": true,
+    "public_urls_http_200": true,
+    "time_control_canonicalization_addendum_required": true
+  },
+  "stopping_rule": "Do not extend a flat test by observation. An STC reaches PASS or FAIL only at its server SPRT endpoint. Create the corresponding LTC only after an authenticated STC PASS. A queued, cancelled, errored or partial workload is not a strength result.",
+  "claim_boundary": "These are official submitted workloads, not completed strength evidence. No candidate, champion, merge or release is selected by this receipt."
+}
