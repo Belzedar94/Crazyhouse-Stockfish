@@ -28,6 +28,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
 PHYSICAL_CODEC_PATH = ROOT / "tools" / "datagen" / "crazyhouse_physical_v1.py"
+PRODUCTION_CODEC_PATH = ROOT / "tools" / "datagen" / "crazyhouse_production_v1.py"
 PHYSICAL_SCHEMA_PATH = ROOT / "schemas" / "crazyhouse-physical-v1.schema.json"
 FEATURE_CONTRACT_PATH = ROOT / "schemas" / "crazyhouse-nnue-v2-features-v1.json"
 ADMISSION_CONTRACT_PATH = ROOT / "schemas" / "crazyhouse-nnue-v2-training-admission-v1.json"
@@ -178,7 +179,8 @@ def _load_module(name: str, path: Path) -> Any:
     return module
 
 
-codec = _load_module("crazyhouse_physical_v1_training_admission", PHYSICAL_CODEC_PATH)
+codec = _load_module("crazyhouse_physical_v1", PHYSICAL_CODEC_PATH)
+production_codec = _load_module("crazyhouse_production_v1", PRODUCTION_CODEC_PATH)
 
 
 class AdmissionError(RuntimeError):
@@ -920,7 +922,7 @@ def scan_chunk(
     try:
         provenance_preview = parse_strict_json(provenance_bytes, "chunk provenance")
         if mode == "production":
-            capability = codec.validate_production_capability_response_bytes(
+            capability = production_codec.validate_production_capability_response_bytes(
                 capability_bytes,
                 contract_bytes=capability_contract,
                 expected_challenge=provenance_preview["producer_capability"]["challenge"],
@@ -984,7 +986,7 @@ def scan_chunk(
             require(header[208:240] == hashlib.sha256(capability_bytes).digest(), "CHUNK_CAPABILITY_IDENTITY", "")
             try:
                 if mode == "production":
-                    provenance = codec.validate_production_provenance_bytes(
+                    provenance = production_codec.validate_production_provenance_bytes(
                         provenance_bytes,
                         chunk_id=chunk_id,
                         campaign_id=campaign_id,

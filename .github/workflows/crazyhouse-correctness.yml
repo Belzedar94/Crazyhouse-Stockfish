@@ -42,6 +42,16 @@ jobs:
           python -m unittest -v tests.crazyhouse_physical_v1_unit
           python tests/crazyhouse_physical_v1_independent_verify.py
 
+      - name: Verify NNUE V2 production admission
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/datagen/crazyhouse_production_v1.py \
+            tools/nnue/crazyhouse_v2_training_admission.py \
+            tests/crazyhouse_v2_training_admission_verify.py
+          python -B tests/crazyhouse_v2_training_admission_verify.py \
+            --loader tools/nnue/crazyhouse_v2_training_admission.py
+
       - name: Test fail-closed network tooling
         run: |
           set -euo pipefail

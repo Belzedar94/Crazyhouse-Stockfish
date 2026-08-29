@@ -1,0 +1,74 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-training-admission-preregistration-addendum/v1",
+  "addendum": 3,
+  "created_utc": "2026-08-29T02:21:21.5779170Z",
+  "status": "CORRECTION_FROZEN_PUBLIC_CI_PENDING",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "phase": "P12",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "parent": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.addendum.002.json",
+    "commit": "f9d23a72a0f79d00357afa9cba3337abe34e08ab",
+    "bytes": 3046,
+    "sha256": "2a7d3a2611c0be092aa7ff4e727762ab0859e6aca9542256e401d50e42ee250d"
+  },
+  "incident": {
+    "id": "CH-351",
+    "public_run": 33228335232,
+    "failed_job": 99036330570,
+    "conclusion": "failure",
+    "failed_test": "test_capability_response_and_manifest_bind_exact_bytes",
+    "observed_bytes": 87822,
+    "required_bytes": 66451,
+    "cause": "Production-only protocol-41 validators changed the byte-frozen G8 physical codec."
+  },
+  "correction_scope": {
+    "single_architectural_change": "Separate production capability and provenance policy from the byte-frozen physical codec and load both modules explicitly from V2 admission.",
+    "physical_codec": {
+      "path": "tools/datagen/crazyhouse_physical_v1.py",
+      "bytes": 66451,
+      "sha256": "04876106c165f29ab6ee511fc02a3b2790cf9030bdfb216dbe7cafc44ce54d98",
+      "must_remain_byte_identical": true
+    },
+    "production_policy": {
+      "path": "tools/datagen/crazyhouse_production_v1.py",
+      "bytes": 22126,
+      "sha256": "fb4ca0bf13f034c4a418b22dc24955912e17ff51490a0f40c28eaff4ab51fecc"
+    },
+    "v2_loader": {
+      "path": "tools/nnue/crazyhouse_v2_training_admission.py",
+      "bytes": 77014,
+      "sha256": "4538227d222dfbf81d04bc73c75c890d57d1f5fb55d4d5bc68f3eebd431682e5"
+    },
+    "public_workflow": {
+      "path": ".github/workflows/crazyhouse-correctness.yml",
+      "bytes": 21251,
+      "sha256": "cb333bb349e5a6c003f7a2433332905b040c3f0eb43894a882fce29436326a33",
+      "new_required_step": "Verify NNUE V2 production admission"
+    }
+  },
+  "required_replay": {
+    "physical_codec_unit_tests": 20,
+    "physical_independent_records": 42,
+    "physical_independent_trajectories": 11,
+    "v2_fixture_records": 44,
+    "v2_fixture_trajectories": 12,
+    "v2_negative_cases": 41,
+    "v2_identity_intersection_cases": 5,
+    "real_producer_structural_probe": true,
+    "public_correctness_workflow": true
+  },
+  "stopping_rule": "Do not accept the correction unless the frozen physical identity, complete local replay, direct accepted-producer probe and manually dispatched public workflow all pass on the exact correction commit.",
+  "boundaries": {
+    "official_openbench_datagen": false,
+    "real_dataset_admitted": false,
+    "training_authorized": false,
+    "model_selected": false,
+    "strength_credit": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true,
+    "g12_closed": false
+  }
+}
