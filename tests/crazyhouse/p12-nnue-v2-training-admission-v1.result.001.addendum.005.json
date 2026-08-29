@@ -1,0 +1,133 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-training-admission-result-addendum/v1",
+  "recorded_utc": "2026-08-29T02:32:59.9076705Z",
+  "status": "PASS_PUBLIC_CORRECTION_REAL_DATA_PENDING",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "phase": "P12",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "parent_result_addendum": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.result.001.addendum.004.json",
+    "commit": "14a8c2dc39c0154cbf99ae7aa49713ef45eb45f8",
+    "bytes": 4001,
+    "sha256": "ab4ddc2f2cf9cb98d28e99bd075f7b61cfa8cc0fa61457e954ec1ef03388e867",
+    "preserved_as_historical_evidence": true
+  },
+  "preregistration_correction": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.addendum.003.json",
+    "commit": "14a8c2dc39c0154cbf99ae7aa49713ef45eb45f8",
+    "bytes": 2983,
+    "sha256": "65b81e1dd9a79eb3beb9438d3bba2178a0f96009dfc59aa95e1285798dee5670",
+    "incident": "CH-351"
+  },
+  "tested_implementation": {
+    "commit": "14a8c2dc39c0154cbf99ae7aa49713ef45eb45f8",
+    "tree": "7de012e661536400e21e62877c07e39d1dd4f83d",
+    "src_tree": "2cbed40340451781c1cecdc5ac66942802fb4eaf",
+    "physical_codec_bytes": 66451,
+    "physical_codec_sha256": "04876106c165f29ab6ee511fc02a3b2790cf9030bdfb216dbe7cafc44ce54d98"
+  },
+  "public_ci": {
+    "repository": "Belzedar94/Crazyhouse-Stockfish",
+    "workflow": "Crazyhouse correctness",
+    "event": "workflow_dispatch",
+    "run": 33228910429,
+    "run_attempt": 1,
+    "head_sha": "14a8c2dc39c0154cbf99ae7aa49713ef45eb45f8",
+    "created_utc": "2026-08-29T02:25:20Z",
+    "completed_utc": "2026-08-29T02:29:59Z",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 99037967959,
+        "name": "Frozen Crazyhouse core rules",
+        "conclusion": "success"
+      },
+      {
+        "id": 99037968147,
+        "name": "Network identity and tooling",
+        "conclusion": "success",
+        "physical_goldens": "success",
+        "nnue_v2_production_admission": "success"
+      },
+      {
+        "id": 99038063656,
+        "name": "Linux scalar correctness",
+        "conclusion": "success"
+      },
+      {
+        "id": 99038063689,
+        "name": "Windows scalar correctness",
+        "conclusion": "success"
+      },
+      {
+        "id": 99038063708,
+        "name": "Linux simd correctness",
+        "conclusion": "success"
+      },
+      {
+        "id": 99038063713,
+        "name": "Linux undefined sanitizer",
+        "conclusion": "success"
+      },
+      {
+        "id": 99038063743,
+        "name": "Linux address sanitizer",
+        "conclusion": "success"
+      },
+      {
+        "id": 99038428955,
+        "name": "Aggregate required evidence",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "aggregate_artifact": {
+    "id": 9707874483,
+    "name": "crazyhouse-correctness-aggregate-14a8c2dc39c0154cbf99ae7aa49713ef45eb45f8",
+    "github_archive_bytes": 414074092,
+    "github_archive_sha256": "f3712cbbf5e277aca6f5dc9eb96c583cdff7d35d724f0a0e7c2f17616eaa86fb",
+    "expired_at_receipt_time": false
+  },
+  "independent_download_authentication": {
+    "status": "PASS",
+    "extracted_file_count": 100,
+    "extracted_total_bytes": 560856469,
+    "manifest": {
+      "path": "aggregate/crazyhouse-correctness-manifest.json",
+      "bytes": 20071,
+      "sha256": "00536e673348cb53cbd53d1a934e1111e3c3f1f83b3de9a467f65329ef07b378",
+      "result": "PASS_REQUIRED_PUBLIC_CORRECTNESS_JOBS"
+    },
+    "sha256sums": {
+      "path": "aggregate/SHA256SUMS",
+      "bytes": 13238,
+      "sha256": "60a7ccf6f2e07ed4d9631a172e79265c6db347e786f4d210177dec27cdf1dfca",
+      "verified_entries": 99,
+      "input_entries": 98,
+      "aggregate_entries": 1
+    },
+    "exact_commit_identity_files": 6,
+    "all_commit_identities_match": true,
+    "fallback_allowed": false,
+    "legacy_network_included": false,
+    "openbench_evidence": false,
+    "strength_claim": false,
+    "model_selection_claim": false,
+    "release_claim": false
+  },
+  "gate_effect": {
+    "ch_351_correction": "PASS_PUBLIC",
+    "fixture_loader_and_independent_verifier": "PASS_PUBLIC",
+    "accepted_real_producer_contract_compatibility": "PASS_LOCAL",
+    "official_openbench_datagen": "NOT_RUN",
+    "aggregate_production_chunk_set_receipt": "NOT_AVAILABLE",
+    "semantic_engine_replay_on_real_corpus": "NOT_RUN",
+    "real_dataset": "NOT_ADMITTED",
+    "production_training": "NOT_AUTHORIZED",
+    "g12": "OPEN"
+  },
+  "claim_boundary": "This addendum accepts the public CH-351 engineering correction and its independently downloaded correctness aggregate. It is not official OpenBench DATAGEN, a production chunk-set receipt, real-corpus semantic replay, dataset admission, training, model selection, strength, release or monitoring evidence."
+}
