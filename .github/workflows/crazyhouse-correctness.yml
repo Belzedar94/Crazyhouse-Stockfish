@@ -265,7 +265,7 @@ jobs:
           retention-days: 7
 
   v2-large-a0:
-    name: Large V2 A0 container and scalar parity
+    name: Large V2 A0 scalar, SIMD and incremental parity
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0

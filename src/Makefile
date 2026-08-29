@@ -137,8 +137,9 @@ CRAZYHOUSE_V2_LARGE_FEATURES_FORMAT_FILES = nnue/crazyhouse_v2_physical.cpp \
 	../tests/crazyhouse_v2_large_network.cpp
 
 CRAZYHOUSE_V2_LARGE_NETWORK_TEST_EXE = crazyhouse-v2-large-network-tests$(suffix $(EXE))
-CRAZYHOUSE_V2_LARGE_NETWORK_TEST_SRCS = nnue/crazyhouse_v2_large_transform.cpp \
-	nnue/crazyhouse_v2_large_network.cpp
+CRAZYHOUSE_V2_LARGE_NETWORK_TEST_SRCS = $(filter-out main.cpp,$(SRCS)) \
+	nnue/crazyhouse_v2_physical.cpp nnue/crazyhouse_v2_features.cpp \
+	nnue/crazyhouse_v2_large_transform.cpp nnue/crazyhouse_v2_large_network.cpp
 CRAZYHOUSE_V2_LARGE_NETWORK_TEST_OBJS = crazyhouse_v2_large_network_tests.o \
 	$(addprefix .v2-large-network-obj/,$(notdir $(CRAZYHOUSE_V2_LARGE_NETWORK_TEST_SRCS:.cpp=.o)))
 

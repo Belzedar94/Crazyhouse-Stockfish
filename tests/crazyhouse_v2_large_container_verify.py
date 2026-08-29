@@ -6,11 +6,21 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.util
+import json
 import mmap
+import re
 import struct
 import subprocess
 import tempfile
 from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PREREG = ROOT / "tests/crazyhouse/p12-nnue-v2-large-simd-incremental-v1.json"
+PREREG_SHA256 = "f8c944b7d6b519f6272ead4dff46e04dc0fdf7318d2bbc9494fefd729d6788bf"
+TRANSITIONS = ROOT / "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.json"
+TRANSITIONS_SHA256 = "1f93f28118478e46362b4254df7e2fa366b851f698f7c1075676a973f7e80a34"
+HEX16 = re.compile(r"^[0-9a-f]{16}$")
 
 
 def load_reference(path: Path):
@@ -38,6 +48,101 @@ def run(executable: Path, network: Path, expected_error: str | None = None) -> l
     if not lines:
         raise RuntimeError("verifier emitted no stdout")
     return lines
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        while block := stream.read(1024 * 1024):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def authenticate_transition_contract() -> tuple[dict[str, object], str]:
+    if sha256_file(PREREG) != PREREG_SHA256:
+        raise RuntimeError("large SIMD/incremental preregistration pin mismatch")
+    if sha256_file(TRANSITIONS) != TRANSITIONS_SHA256:
+        raise RuntimeError("transition fixture pin mismatch")
+    prereg = json.loads(PREREG.read_text(encoding="utf-8"))
+    transitions = json.loads(TRANSITIONS.read_text(encoding="utf-8"))
+    if prereg.get("status") != "PREREGISTERED_BEFORE_IMPLEMENTATION":
+        raise RuntimeError("large SIMD/incremental preregistration status mismatch")
+    counts = prereg.get("frozen_counts")
+    if not isinstance(counts, dict) or counts.get("cases") != 13:
+        raise RuntimeError("large SIMD/incremental frozen counts mismatch")
+    cases = transitions.get("transition_cases")
+    if not isinstance(cases, list) or len(cases) != 13:
+        raise RuntimeError("transition fixture case count mismatch")
+    lines: list[str] = []
+    for case in cases:
+        if not isinstance(case, dict) or case.get("mode") not in {"walk", "null"}:
+            raise RuntimeError("transition fixture case framing mismatch")
+        moves = case.get("moves")
+        if not isinstance(moves, list):
+            raise RuntimeError("transition fixture moves are not a list")
+        lines.append(
+            "\t".join(
+                (
+                    str(case["id"]),
+                    str(case["mode"]),
+                    str(case["fen"]),
+                    " ".join(str(move) for move in moves),
+                    str(case["expected_final_fen"]),
+                )
+            )
+        )
+    return prereg, "\n".join(lines) + "\n"
+
+
+def run_transition(executable: Path, network: Path, protocol: str) -> str:
+    result = subprocess.run(
+        [str(executable), str(network), "--transition-suite"],
+        input=protocol,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"transition verifier failed: stdout={result.stdout!r} stderr={result.stderr!r}"
+        )
+    if result.stderr:
+        raise RuntimeError(f"transition verifier emitted stderr: {result.stderr!r}")
+    lines = result.stdout.splitlines()
+    if len(lines) != 1 or not lines[0].startswith("TRANSITIONS\t"):
+        raise RuntimeError(f"transition verifier framing mismatch: {lines!r}")
+    return lines[0]
+
+
+def verify_transition_line(line: str, prereg: dict[str, object]) -> None:
+    counts = prereg["frozen_counts"]
+    if not isinstance(counts, dict):
+        raise RuntimeError("frozen counts are not an object")
+    tokens = dict(field.split("=", 1) for field in line.split("\t")[1:] if "=" in field)
+    expected = {
+        "backend": "sse2-x8-int16-to-int32",
+        "cases": str(counts["cases"]),
+        "moves": str(counts["real_moves"]),
+        "undos": str(counts["real_undos"]),
+        "nulls": str(counts["null_moves"]),
+        "null_undos": str(counts["null_undos"]),
+        "refreshes": str(counts["refreshes"]),
+        "updates": str(counts["source_target_updates"]),
+        "checkpoints": str(counts["position_checkpoints"]),
+        "side_to_move_evaluations": str(counts["side_to_move_evaluations"]),
+        "simd_trace_values": str(counts["scalar_simd_trace_values"]),
+        "incremental_trace_values": str(counts["incremental_scalar_trace_values"]),
+        "operation_negatives": str(counts["operation_negatives"]),
+        "evaluation_negatives": str(counts["evaluation_negatives"]),
+        "training_admissible": "false",
+        "g12_closed": "false",
+    }
+    for key, value in expected.items():
+        if tokens.get(key) != value:
+            raise RuntimeError(f"transition token {key}: {tokens.get(key)!r} != {value!r}")
+    if HEX16.fullmatch(tokens.get("digest", "")) is None:
+        raise RuntimeError("transition digest framing mismatch")
 
 
 def parse_csv(text: str) -> list[int]:
@@ -111,6 +216,7 @@ def main() -> int:
     executable = args.executable.resolve()
     if not executable.is_file():
         raise RuntimeError("large-network verifier executable is missing")
+    prereg, transition_protocol = authenticate_transition_contract()
 
     with tempfile.TemporaryDirectory(prefix="crazyhouse-v2-large-") as temporary:
         root = Path(temporary)
@@ -186,10 +292,19 @@ def main() -> int:
                               reference, refinalize=True)
             rejected += 1
 
+        first_transition = run_transition(executable, network, transition_protocol)
+        second_transition = run_transition(executable, network, transition_protocol)
+        if first_transition != second_transition:
+            raise RuntimeError("transition trace digest is not deterministic")
+        verify_transition_line(first_transition, prereg)
+
         print(
             "PASS crazyhouse_v2_large_container"
             f" positive_cases={len(trace_lines)} negative_cases={rejected}"
             f" container_bytes={reference.FILE_BYTES} scalar_reference=independent"
+            " simd_backend=sse2-x8-int16-to-int32 transition_cases=13"
+            " transition_evaluations=98 simd_trace_values=420616"
+            " incremental_trace_values=420616"
             " training_admissible=false g12_closed=false"
         )
     return 0
