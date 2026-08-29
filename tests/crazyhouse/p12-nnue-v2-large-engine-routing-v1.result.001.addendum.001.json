@@ -1,0 +1,109 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-large-engine-routing-result-addendum/v1",
+  "status": "PUBLIC_CI_REJECTED_CORRECTION_PENDING",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "observed_at_utc": "2026-08-29T08:11:23.6090714Z",
+  "amends": {
+    "path": "tests/crazyhouse/p12-nnue-v2-large-engine-routing-v1.result.001.json",
+    "bytes": 5922,
+    "sha256": "c3d77b362ee99bd8f256bd8e69b0a3f6435f9727339672b19728a40aa7762f51",
+    "rewritten": false
+  },
+  "public_ci_observations": [
+    {
+      "run_id": 33241226765,
+      "run_url": "https://github.com/Belzedar94/Crazyhouse-Stockfish/actions/runs/33241226765",
+      "event": "pull_request",
+      "api_head_sha": "515e2aeeb20b52d7bb600f40d8c3909380b808ca",
+      "checked_out_commit": "98aa60ccd56f82929c63171b2b13e166ced030f0",
+      "conclusion": "cancelled_after_correction_push",
+      "sanitizer_undefined_job_id": 99070949837,
+      "sanitizer_undefined_result": "FAIL_ENGINE_EXIT_MINUS_6_STDERR_NOT_PRESERVED",
+      "sanitizer_undefined_artifact": {
+        "id": 9711593052,
+        "name": "crazyhouse-correctness-sanitizer-undefined",
+        "bytes": 11676,
+        "archive_digest": "sha256:49fa225040663227126368808bce506584b31cb7efab5f31752941d2ec518e2c"
+      },
+      "exact_source_authenticated": false,
+      "gate_credit": false
+    },
+    {
+      "run_id": 33242197991,
+      "run_url": "https://github.com/Belzedar94/Crazyhouse-Stockfish/actions/runs/33242197991",
+      "event": "pull_request",
+      "api_head_sha": "d00494809f31e92215ed9128f5029120afa9e39f",
+      "checked_out_commit": "d00494809f31e92215ed9128f5029120afa9e39f",
+      "conclusion": "failure",
+      "failed_job_id": 99073357639,
+      "failed_test": "tests.crazyhouse_ci_artifact_aggregate_unit.ArtifactAggregateTests.test_aggregate_binds_current_official_descendant",
+      "failure": "aggregate compared exact source HEAD with pull-request event GITHUB_SHA",
+      "exact_source_authenticated": true,
+      "complete_required_matrix": false,
+      "gate_credit": false
+    },
+    {
+      "run_id": 33242367614,
+      "run_url": "https://github.com/Belzedar94/Crazyhouse-Stockfish/actions/runs/33242367614",
+      "event": "pull_request",
+      "api_head_sha": "38f596c8fb83e4d1068006f5f1d77cdb50a2fe1a",
+      "checked_out_commit": "38f596c8fb83e4d1068006f5f1d77cdb50a2fe1a",
+      "status_at_observation": "in_progress_with_both_sanitizer_jobs_terminal_failure",
+      "address_sanitizer": {
+        "job_id": 99073915823,
+        "artifact_id": 9711763491,
+        "artifact_name": "crazyhouse-correctness-sanitizer-address",
+        "artifact_bytes": 10280,
+        "archive_digest": "sha256:1592a00eda0e4b6e4de46b8c3d3aff229439bd263a3d78f9da45d4622f13801d"
+      },
+      "undefined_sanitizer": {
+        "job_id": 99073915825,
+        "artifact_id": 9711765945,
+        "artifact_name": "crazyhouse-correctness-sanitizer-undefined",
+        "artifact_bytes": 10284,
+        "archive_digest": "sha256:5f0b75ca01f0c376e72020db382c15d4970c5d73c419ebe81afa251f3f0620b6"
+      },
+      "failure_stage": "positive-1/commit-large",
+      "failure_diagnostic": "ucioption.cpp:128 Option::operator std::string() asserted type == string",
+      "root_cause": "CrazyhouseEvaluator is a combo option but its on-change callback invoked the string-only conversion operator",
+      "exact_source_authenticated": true,
+      "gate_credit": false
+    }
+  ],
+  "downloaded_diagnostic_artifacts": {
+    "root": "D:/Crazyhouse-Stockfish/leases/p12-v2-engine-routing-ci-failure-33242367614",
+    "files": [
+      {"path": "address/build.log", "bytes": 17791, "sha256": "94ada011652a5444ea0d9a78a76a64729d56b7e08f4e7c069b5a02e9ef55a459"},
+      {"path": "address/capability.log", "bytes": 33, "sha256": "bf0297882cd2b20483fe450be03b5ad1de3bb10b49c9afe3d1ade0730e88bb93"},
+      {"path": "address/capability/invalid-uppercase.jsonl", "bytes": 4412, "sha256": "68a03289ea021d893d409db09564f6c195b6c95d1f97be555aac0445165a67aa"},
+      {"path": "address/capability/missing-network.jsonl", "bytes": 4309, "sha256": "54608f4cff44657e65959eec574796276a1f67c3963858fa9194a8806015ed24"},
+      {"path": "address/capability/positive.jsonl", "bytes": 5046, "sha256": "40a0f850968e54b0f273b3d5c6ff2bbae55e90b71028a358516a7caed9b3632f"},
+      {"path": "address/capability/standard-control.jsonl", "bytes": 3740, "sha256": "151eda1fe99fd815b529ce8b698aa7689d8a12a0f3f43f2cbbfe6b77b01fd82c"},
+      {"path": "address/capability/summary.json", "bytes": 4635, "sha256": "238b413662ff5868bdc6477f5c8ab9c474fe1f9359121b762d22180ebe695651"},
+      {"path": "address/conservative-search.json", "bytes": 4673, "sha256": "dc2ab7a97479fc2f0efc89497a0c1fdc39829ffe6cd4ce85d86d8935062b85a7"},
+      {"path": "address/conservative-search.log", "bytes": 144, "sha256": "0be0263b776f54f8f6e258c5b4364571ac9c7951c85d0f2b4f962c302a6f1879"},
+      {"path": "address/large-a0-engine-routing-sanitizer.log", "bytes": 316, "sha256": "cbc41817789a21b6a0a59dddc0ca0f5fc41a39c9b0bab4a503327965491085b4"},
+      {"path": "undefined/build.log", "bytes": 17867, "sha256": "8571d8b35470457bf9c3b6c939cf8f7af47c382e0f9c44c9e6a6ca0e0fe42c3d"},
+      {"path": "undefined/capability.log", "bytes": 33, "sha256": "bf0297882cd2b20483fe450be03b5ad1de3bb10b49c9afe3d1ade0730e88bb93"},
+      {"path": "undefined/capability/invalid-uppercase.jsonl", "bytes": 4412, "sha256": "68a03289ea021d893d409db09564f6c195b6c95d1f97be555aac0445165a67aa"},
+      {"path": "undefined/capability/missing-network.jsonl", "bytes": 4309, "sha256": "54608f4cff44657e65959eec574796276a1f67c3963858fa9194a8806015ed24"},
+      {"path": "undefined/capability/positive.jsonl", "bytes": 5046, "sha256": "40a0f850968e54b0f273b3d5c6ff2bbae55e90b71028a358516a7caed9b3632f"},
+      {"path": "undefined/capability/standard-control.jsonl", "bytes": 3740, "sha256": "151eda1fe99fd815b529ce8b698aa7689d8a12a0f3f43f2cbbfe6b77b01fd82c"},
+      {"path": "undefined/capability/summary.json", "bytes": 4635, "sha256": "cc55171bef847dd3b80e6b6da083983ab98a0a652cafef385920badca4e548f1"},
+      {"path": "undefined/conservative-search.json", "bytes": 4673, "sha256": "d5f62b8a8ecf3541beec12afdb34f5b8a72c3f70e6a73fc1c3e855a67b64882d"},
+      {"path": "undefined/conservative-search.log", "bytes": 144, "sha256": "0be0263b776f54f8f6e258c5b4364571ac9c7951c85d0f2b4f962c302a6f1879"},
+      {"path": "undefined/large-a0-engine-routing-sanitizer.log", "bytes": 316, "sha256": "cbc41817789a21b6a0a59dddc0ca0f5fc41a39c9b0bab4a503327965491085b4"}
+    ]
+  },
+  "incidents": ["CH-V2-010", "CH-V2-011"],
+  "claims": {
+    "public_exact_source_ci_pass": false,
+    "sanitizers_pass": false,
+    "g12_closed": false,
+    "strength_evidence": false,
+    "openbench_evidence": false,
+    "release_evidence": false
+  },
+  "next_required_action": "Replace the combo/string conversion with typed combo equality, rerun the complete exact-source public matrix, and grant no subgate credit until every required job and the independent aggregate are green."
+}

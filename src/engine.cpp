@@ -188,7 +188,12 @@ Engine::Engine(std::optional<std::filesystem::path> path,
       "CrazyhouseEvaluator", Option(
                                "legacy-v1 var legacy-v1 var large-v2-a0", "legacy-v1",
                                [this](const Option& o) {
-                                   stage_crazyhouse_evaluator(std::string(o));
+                                   if (o == "legacy-v1")
+                                       stage_crazyhouse_evaluator("legacy-v1");
+                                   else if (o == "large-v2-a0")
+                                       stage_crazyhouse_evaluator("large-v2-a0");
+                                   else
+                                       std::abort();
                                    return std::nullopt;
                                },
                                [this](std::string_view value) {
