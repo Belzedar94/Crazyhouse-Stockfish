@@ -17,7 +17,7 @@ import uuid
 
 BOOK_BYTES = 39_922
 BOOK_SHA256 = "1371e87ce3bdb875d922ad0061c96c4a123bc571daf4ae2bff24e5176287f0fa"
-CAPABILITY_SHA256 = "96abf35a3a526d3cecdf4a6a3b55ff15b9ce6f1b644fa38375af65242d113357"
+CAPABILITY_SHA256 = "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b"
 FEATURE_SHA256 = "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6"
 NETWORK_BYTES = 58_534_811
 NETWORK_SHA256 = "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
@@ -292,6 +292,7 @@ def authenticate_bundle(
     require(prov["partition"]["split_seed_u64"] == split_seed, "provenance split seed")
     require(prov["partition"]["campaign_set_sha256"] == campaign_set, "provenance campaign set")
     require(prov["partition"]["partition_sha256"] == partition, "provenance partition")
+    require(prov["partition"]["domain"] == PARTITION_DOMAIN.decode("ascii"), "provenance partition domain")
     require(prov["generation_settings"]["training_admissible"] is True, "provenance admission")
     require(prov["generation_settings"]["fixture_only"] is False, "provenance fixture boundary")
     require(prov["official_openbench_origin"] == "https://belzedar.duckdns.org", "provenance origin")
@@ -427,6 +428,10 @@ def main() -> int:
         require(capability.get(key) == value, f"capability exact field {key}")
     require(capability["challenge"] == challenge and capability["artifact_sha256"] == sha256_file(producer), "capability dynamic identity")
     require(capability["production_generation_authorized"] is True, "clean producer authorization")
+    require(
+        capability["trajectory_partition_domain"] == PARTITION_DOMAIN.decode("ascii"),
+        "capability partition domain",
+    )
 
     malformed = capture(
         producer,

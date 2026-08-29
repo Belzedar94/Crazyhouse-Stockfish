@@ -118,7 +118,7 @@ constexpr std::string_view SelfplayG0BookSha256 =
   "f99f8211316813924e52fb13fbb65a5bc27dcd585e2e32a86d90db0d113fd2f6";
 constexpr std::uint64_t SelfplayG0BookBytes = 158;
 constexpr std::string_view ProductionCapabilityContractSha256 =
-  "96abf35a3a526d3cecdf4a6a3b55ff15b9ce6f1b644fa38375af65242d113357";
+  "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b";
 constexpr std::string_view ProductionSelectionPolicySha256 =
   "475fd0fb9a929e964ff32357031a18d33ecc2543e8681cc73068858c10db3014";
 constexpr std::string_view ProductionBookSha256 =
@@ -666,7 +666,7 @@ std::string production_capability_response(const ArtifactIdentity& artifact,
            << ",\"toolchain_identity\":" << json_string(DATAGEN_TOOLCHAIN_IDENTITY)
            << ",\"toolchain_sha256\":" << json_string(DATAGEN_TOOLCHAIN_SHA256)
            << ",\"trajectory_partition_domain\":"
-              "\"Crazyhouse-Stockfish physical trajectory split v1\\\\0\""
+              "\"Crazyhouse-Stockfish physical trajectory split v1\\u0000\""
            << ",\"variant\":\"crazyhouse\"}\n";
     return output.str();
 }
@@ -2392,7 +2392,7 @@ std::string build_production_provenance(const SelfplayOptions&  options,
            << ",\"match_result_selected\":false,\"selection_policy_sha256\":"
            << json_string(options.selectionPolicySha256) << '}'
            << ",\"partition\":{\"campaign_set_sha256\":" << json_string(options.campaignSetSha256)
-           << ",\"domain\":\"Crazyhouse-Stockfish physical trajectory split v1\\\\0\""
+           << ",\"domain\":\"Crazyhouse-Stockfish physical trajectory split v1\\u0000\""
            << ",\"label_free\":true,\"method\":\"content-hash-complete-trajectory-v1\""
            << ",\"partition_sha256\":" << json_string(options.partitionSha256)
            << ",\"posthoc_rebalance\":false,\"role\":" << json_string(options.role)
