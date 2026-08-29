@@ -1,0 +1,73 @@
+{
+  "schema": "crazyhouse-p11-openbench-worker-thread-transport-preregistration/v1",
+  "recorded_utc": "2026-08-29T03:01:59.3171918Z",
+  "status": "EXPECTED_RED_AUTHENTICATED",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "branch": "engineering/openbench-datagen-transport-v1",
+  "base": {
+    "commit": "6b8a6822eb26763c711a5c43720a3994e164f2f6",
+    "tree": "233dd5afb687de96e5b79ce5c0594f29edc0e182",
+    "src_tree": "2cbed40340451781c1cecdc5ac66942802fb4eaf",
+    "postmerge_ci_run": 33229617160,
+    "postmerge_ci_conclusion": "success"
+  },
+  "openbench": {
+    "origin": "https://belzedar.duckdns.org",
+    "source_commit": "8193a13f0bb5022aaed999e14179dbc8933f9a4d",
+    "publication_protocol": 41,
+    "required_placeholder": "{THREADS}",
+    "worker_substitution": "assigned worker thread capacity"
+  },
+  "frozen_decision": {
+    "transport_argument": "--openbench-worker-threads",
+    "transport_domain": "positive uint32",
+    "provenance_path": "openbench_assignment.worker_threads_capacity",
+    "scientific_argument": "--threads",
+    "scientific_value": 1,
+    "scientific_digest_changes": false,
+    "physical_record_changes": false
+  },
+  "expected_red": {
+    "clean_base_producer": {
+      "bytes": 4800143,
+      "sha256": "b10805a3515e044f385524b698e6d7242899c83ed42fd26153928d994329a3a4"
+    },
+    "sanitized_command": "crazyhouse_generate_physical_production_v1 --openbench-worker-threads 12",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR crazyhouse-datagen-v1: unknown self-play argument: --openbench-worker-threads",
+    "classification": "EXPECTED_MISSING_TRANSPORT_SEAM"
+  },
+  "fixture_first": {
+    "path": "tests/crazyhouse_production_datagen_v1.py",
+    "bytes": 23450,
+    "sha256": "b0d2d9fd1d39364c6c3368c05661afb59c69d2333e4bb73ed7847257610aa966",
+    "required_assertions": [
+      "positive twelve-thread assignment is preserved separately in provenance",
+      "scientific generation threads remain exactly one",
+      "missing transport argument aborts",
+      "zero transport capacity aborts"
+    ]
+  },
+  "frozen_non_changes": [
+    "normal play engine",
+    "legacy G0 command and bytes",
+    "physical 256-byte codec",
+    "production search settings and digest",
+    "teacher network and evaluator mode",
+    "official book and selection policy",
+    "partition formula, split threshold and labels",
+    "default evaluator and champion"
+  ],
+  "required_green": [
+    "dedicated production runtime test",
+    "strict production provenance validator",
+    "legacy G0 control",
+    "V2 training admission",
+    "complete public correctness CI",
+    "postmerge public correctness CI"
+  ],
+  "claim_boundary": "This preregistration authorizes only the isolated transport patch. It grants no OpenBench workload, DATAGEN, dataset, training, model, strength or release credit."
+}

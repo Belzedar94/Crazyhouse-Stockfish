@@ -175,6 +175,7 @@ def validate_production_provenance_bytes(
             "invalid_game_policy",
             "network",
             "official_openbench_origin",
+            "openbench_assignment",
             "openbench_publication_protocol",
             "opening_source",
             "partition",
@@ -238,6 +239,14 @@ def validate_production_provenance_bytes(
         document["official_openbench_origin"] == PRODUCTION_OPENBENCH
         and document["openbench_publication_protocol"] == 41,
         "production OpenBench origin/protocol drifted",
+    )
+    assignment = document["openbench_assignment"]
+    require(
+        isinstance(assignment, dict)
+        and set(assignment) == {"worker_threads_capacity"}
+        and type(assignment["worker_threads_capacity"]) is int
+        and 0 < assignment["worker_threads_capacity"] <= 0xFFFFFFFF,
+        "production OpenBench worker assignment drifted",
     )
 
     adjudication = document["adjudication"]
