@@ -1,0 +1,61 @@
+{
+  "schema": "crazyhouse-openbench-production-activation/v1",
+  "created_utc": "2026-08-28T23:59:15.9071797Z",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P10",
+  "gate": "G10",
+  "evidence_class": "E1_ENGINEERING",
+  "effect": "additive_production_activation_receipt",
+  "parent": {
+    "path": "tests/crazyhouse/p10-openbench-onboarding-v1.addendum.007.json",
+    "commit": "ee30a4cbada2f29837f1f5798f70480023354613"
+  },
+  "public_integration": {
+    "repository": "https://github.com/Belzedar94/OpenBench",
+    "pull_request": "https://github.com/Belzedar94/OpenBench/pull/46",
+    "winner_commit": "36a562187eba29c9344e4696e91804018bc7ac2a",
+    "merge_commit": "e9352a970021e9d12a35b891a4daed59ffafc565",
+    "postmerge_run": "https://github.com/Belzedar94/OpenBench/actions/runs/33220998561",
+    "postmerge_conclusion": "success",
+    "client_version": 49,
+    "client_repo_ref": "77b05ecd9c3d77a7934cab4d4406f103241daf4b"
+  },
+  "production": {
+    "server": "https://belzedar.duckdns.org",
+    "activation_method": "minimal_hash_verified_overlay",
+    "production_checkout_head_preserved": "f9410667933ca5b118df2f86c050d0227c2f8dda",
+    "web_service_active_after_activation": true,
+    "local_http_status": 200,
+    "public_https_status": 200,
+    "activated_sha256": {
+      "config": "c14745425fa49e5922e78028ab4873404ff9da656ffd010291bf04072392d6d2",
+      "variant": "23c2c6ae88629b6edce3170908f83cfceb8c59edf7eccfbd022386a39d3a7082",
+      "book_metadata": "a5a3ac7e38c48059938b9f8d86a8a6ae3ed8590af9c948dfa30c85d99453c2ea",
+      "book_archive": "d24bb6d72015af9930f76f9191ba36c016652a6f2708a2cc79e9e2c8ec600d9c",
+      "engine": "ae2ee470dc1beac98521a2d81bfb13838100dbcb682126e158956d0e5567253f"
+    },
+    "foreign_worker_lifecycle_or_priority_mutated": false
+  },
+  "registered_network": {
+    "name": "crazyhouse_run15rl_e190_l03.nnue",
+    "openbench_id": "8EBF8478",
+    "bytes": 58534811,
+    "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "database_rows": 1,
+    "default": true,
+    "storage_bytes_and_sha256_reauthenticated": true
+  },
+  "private_immutable_receipts": {
+    "staging_manifest_addendum_002_sha256": "5971a81be105f3df5621dde4c2aed7e52bcbdd65a5ff56aa35d131168f6543a0",
+    "deployment_result_sha256": "94d21bd555439f0d1ab101c58e6b69ccb12ad8c3aefcc93d7d3747dda192340a",
+    "stc_submission_sha256": "b91147e66725ba717ed3a0fab8878588baed7fb76b7231040bb2d3a02626ac14"
+  },
+  "status": "PASS_PRODUCTION_ACTIVATED",
+  "claims": {
+    "openbench_onboarded": true,
+    "official_strength_result": false,
+    "datagen": false,
+    "model_selection": false,
+    "release": false
+  }
+}
