@@ -3046,6 +3046,11 @@ int generate_selfplay(SelfplayOptions         options,
     ec.clear();
     require(std::filesystem::is_regular_file(options.networkPath, ec) && !ec,
             "self-play network is not a regular file");
+    ec.clear();
+    const auto routedNetworkPath =
+      std::filesystem::absolute(options.networkPath, ec).lexically_normal();
+    require(!ec && routedNetworkPath.is_absolute(),
+            "cannot resolve self-play network path");
     const ByteList    bookBytes     = read_file(options.bookPath);
     const ByteList    networkBytes  = read_file(options.networkPath);
     const Digest      bookDigest    = sha256(bookBytes);
@@ -3078,7 +3083,9 @@ int generate_selfplay(SelfplayOptions         options,
     require(engine.stage_ruleset("crazyhouse"), "cannot stage Crazyhouse self-play route");
     engine.stage_chess960(false);
     engine.stage_crazyhouse_profile(std::string(CrazyhouseProfile::Token));
-    engine.stage_crazyhouse_eval_file(options.networkPath.string());
+    // OpenBench paths are relative to the worker root, while Engine resolves
+    // relative evaluator paths from the producer executable directory.
+    engine.stage_crazyhouse_eval_file(routedNetworkPath.string());
     const EngineRouting::ApplyResult apply = engine.apply_pending_route();
     require(apply.ready && apply.error == EngineRouting::ErrorCode::None,
             "self-play legacy route load failed: "
