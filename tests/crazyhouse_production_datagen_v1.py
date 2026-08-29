@@ -37,6 +37,7 @@ CAMPAIGNS = (
     uuid.UUID("db9b8944-a1e4-5b7d-a237-e6883b9fc43c"),
 )
 BASE_SEED = 7_290_041
+OPENBENCH_WORKER_THREADS = 12
 
 
 class ContractError(RuntimeError):
@@ -188,6 +189,7 @@ def command(
         "--network-sha256": NETWORK_SHA256,
         "--nodes": "16384",
         "--openbench-protocol": "41",
+        "--openbench-worker-threads": str(OPENBENCH_WORKER_THREADS),
         "--output": str(output),
         "--partition-sha256": partition,
         "--producer-sha256": sha256_file(producer),
@@ -295,6 +297,12 @@ def authenticate_bundle(
     require(prov["partition"]["domain"] == PARTITION_DOMAIN.decode("ascii"), "provenance partition domain")
     require(prov["generation_settings"]["training_admissible"] is True, "provenance admission")
     require(prov["generation_settings"]["fixture_only"] is False, "provenance fixture boundary")
+    require(prov["generation_settings"]["threads"] == 1, "scientific thread count drift")
+    require(
+        prov["openbench_assignment"]
+        == {"worker_threads_capacity": OPENBENCH_WORKER_THREADS},
+        "OpenBench worker-thread transport binding",
+    )
     require(prov["official_openbench_origin"] == "https://belzedar.duckdns.org", "provenance origin")
     require(hashlib.sha256(capability).hexdigest() == result["capability_sha256"], "capability result identity")
     require(hashlib.sha256(provenance).hexdigest() == result["provenance_sha256"], "provenance result identity")
@@ -488,6 +496,50 @@ def main() -> int:
         )
         rejected = capture(producer, stdin=render(wrong), timeout=20)
         require(rejected.returncode != 0 and rejected.stdout == b"", "wrong partition digest admitted")
+
+        missing_worker_threads = command(
+            producer=producer,
+            book=book,
+            network=network,
+            output=directory / "missing-worker-threads.bin",
+            campaign=CAMPAIGNS[0],
+            role="train",
+            count=1,
+            split_seed=split_seed,
+            campaign_set=campaign_set,
+            partition=partition,
+        )
+        worker_index = missing_worker_threads.index("--openbench-worker-threads")
+        del missing_worker_threads[worker_index : worker_index + 2]
+        rejected = capture(producer, stdin=render(missing_worker_threads), timeout=20)
+        require(
+            rejected.returncode != 0
+            and rejected.stdout == b""
+            and b"missing self-play argument: --openbench-worker-threads" in rejected.stderr,
+            "missing OpenBench worker-thread transport admitted",
+        )
+
+        zero_worker_threads = command(
+            producer=producer,
+            book=book,
+            network=network,
+            output=directory / "zero-worker-threads.bin",
+            campaign=CAMPAIGNS[0],
+            role="train",
+            count=1,
+            split_seed=split_seed,
+            campaign_set=campaign_set,
+            partition=partition,
+        )
+        worker_index = zero_worker_threads.index("--openbench-worker-threads")
+        zero_worker_threads[worker_index + 1] = "0"
+        rejected = capture(producer, stdin=render(zero_worker_threads), timeout=20)
+        require(
+            rejected.returncode != 0
+            and rejected.stdout == b""
+            and b"OpenBench assigned worker thread capacity" in rejected.stderr,
+            "zero OpenBench worker-thread capacity admitted",
+        )
 
         train_count, train_sha = exercise_role(
             producer=producer,

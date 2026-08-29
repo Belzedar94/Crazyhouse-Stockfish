@@ -1,0 +1,97 @@
+{
+  "schema": "crazyhouse-p11-openbench-worker-thread-transport-result/v1",
+  "recorded_utc": "2026-08-29T03:10:25.8015960Z",
+  "status": "LOCAL_GREEN_AWAITING_PUBLIC_CI",
+  "project": "Crazyhouse-Stockfish",
+  "phase": "P11",
+  "evidence_class": "E1_ENGINEERING",
+  "implementation": {
+    "commit": "69e1a4f073f5906f693af31a18eec45d00a742fb",
+    "tree": "af283f08a989e7543cb77420bf8269ef57741da8",
+    "src_tree": "2e0ba8b66317ef3e899a53e752ef9266fc17ac92",
+    "tracked_status": "clean",
+    "bench": 38919
+  },
+  "expected_red": {
+    "base_commit": "6b8a6822eb26763c711a5c43720a3994e164f2f6",
+    "producer_sha256": "b10805a3515e044f385524b698e6d7242899c83ed42fd26153928d994329a3a4",
+    "exit_code": 1,
+    "diagnostic": "ERROR crazyhouse-datagen-v1: unknown self-play argument: --openbench-worker-threads",
+    "classification": "EXPECTED_MISSING_TRANSPORT_SEAM"
+  },
+  "local_build": {
+    "platform": "windows-mingw64",
+    "arch": "x86-64-avx2",
+    "compiler": "x86_64-w64-mingw32-c++.exe (Rev5, Built by MSYS2 project) 16.1.0",
+    "toolchain_sha256": "9c2d13f47a8690dff907e83ddde127e3ef43599e518973b7542e4ac48edba052",
+    "build_recipe_sha256": "3aa676a0117ee7d0ccc96c4a5d2c0a01f9e36ddd98bed27d6cef31d73f6eeb70",
+    "jobs": 12,
+    "normal_engine_embedding": "disabled for the local non-advertisement control",
+    "producer": {
+      "bytes": 4800655,
+      "sha256": "f8d1a463f13007287ec05f028bd80b4a380fafec81635e60383a1c5540069eea"
+    },
+    "normal_engine": {
+      "bytes": 4570648,
+      "sha256": "1f4dae5cf9c70b8583de35ddce873e959e5aac0bbc11880c0ea49c64dcbf634b"
+    },
+    "registered_network": {
+      "bytes": 58534811,
+      "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+    }
+  },
+  "first_attempt_addendum": {
+    "exit_code": 2,
+    "diagnostic": "Assembler file not found: nn-1a298aa575a0.nnue while linking the normal control engine",
+    "classification": "MISSING_LOCAL_CONTROL_INPUT_NOT_COMPILER_FAILURE",
+    "producer_compilation": "PASS",
+    "correction": "Clean objects and rebuild the normal non-advertisement control with NNUE embedding disabled."
+  },
+  "production_runtime": {
+    "status": "PASS",
+    "schema": "crazyhouse-production-datagen-runtime-test/v1",
+    "campaign_set_sha256": "e5c93dd7ec80d4bf43596965f19da302204c48a14bffc6b5980a1ad7d3b5a854",
+    "partition_sha256": "956c8c4cc3e9759f4ce4aa0060a13bc54840a11bf3669883ed2e4a2434527fba",
+    "split_seed_u64": 1,
+    "g0_control_bundle_sha256": "c1601124db9f796e2f696fabf80ca4ed5577ecd5d6e6a92e701ad9d95b6c1404",
+    "train": {
+      "records": 104,
+      "bundle_sha256": "d298b63c73a2a20949127816653a9d43dd95c2a7809376a075f602757fe28527"
+    },
+    "validation": {
+      "records": 80,
+      "bundle_sha256": "c76149b9b3af38e001ca581ffee40e5dcc1cd2bd86d0b77c2c45618306aa1720"
+    },
+    "negative_transport_cases": [
+      "missing --openbench-worker-threads rejected",
+      "zero --openbench-worker-threads rejected"
+    ],
+    "scientific_threads": 1,
+    "openbench_worker_threads_capacity": 12
+  },
+  "strict_validation": {
+    "physical_unit_tests": 20,
+    "physical_unit_status": "PASS",
+    "independent_physical_status": "PASS",
+    "independent_physical_records": 42,
+    "independent_physical_trajectories": 11,
+    "v2_training_admission_status": "PASS",
+    "v2_training_admission_negative_cases": 41,
+    "production_training_admissible": false
+  },
+  "source_files": {
+    "src/datagen/crazyhouse_datagen_v1.cpp": "5e2594f67ac3545017483162ddcf6edf1f280a50b5a9970db457f88c2c3e519a",
+    "tools/datagen/crazyhouse_production_v1.py": "45470a7948eb7412c902b0983899987a11c5b6ddfa974f98de1cf9edf33a354d",
+    "tests/crazyhouse_production_datagen_v1.py": "b0d2d9fd1d39364c6c3368c05661afb59c69d2333e4bb73ed7847257610aa966",
+    "tests/crazyhouse_v2_training_admission_verify.py": "bd69eb251022ed1f3b544be510036e2ad5e1ba23872edd2bf614c23723dafce4"
+  },
+  "verified_non_changes": [
+    "generation_settings.threads remained one",
+    "OpenBench assignment was separate provenance",
+    "legacy G0 control remained valid",
+    "physical schema and golden bytes remained valid",
+    "normal play engine did not advertise production DATAGEN"
+  ],
+  "next_gate": "Publish a non-draft PR and require exact-head plus postmerge public correctness CI before changing OpenBench configuration.",
+  "claim_boundary": "Local green is engineering evidence only. It grants no official OpenBench DATAGEN, dataset, training, model, strength or release credit."
+}
