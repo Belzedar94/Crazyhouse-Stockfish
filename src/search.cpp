@@ -362,7 +362,7 @@ Search::TrainingSearchResult Search::Worker::training_search(Position&          
             TrainingSearchLine line;
             line.value = rootMoves[i].score;
             line.pv    = rootMoves[i].pv;
-            line.exact = !rootMoves[i].score_is_bound();
+            line.exact = !rootMoves[i].is_inexact();
             result.lines.push_back(std::move(line));
         }
         result.value    = result.lines.front().value;
