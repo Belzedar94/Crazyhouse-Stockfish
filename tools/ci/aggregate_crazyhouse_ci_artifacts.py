@@ -124,8 +124,11 @@ def aggregate(
         check=False,
     )
     require(ancestor.returncode == 0, "official Stockfish baseline is not an ancestor")
+    source_sha = os.environ.get("SOURCE_SHA")
     github_sha = os.environ.get("GITHUB_SHA")
-    if github_sha:
+    if source_sha:
+        require(source_sha == head, "source SHA does not match checked-out HEAD")
+    elif github_sha:
         require(github_sha == head, "GitHub SHA does not match checked-out HEAD")
 
     output_dir.mkdir()
@@ -151,6 +154,9 @@ def aggregate(
             "run_id": os.environ.get("GITHUB_RUN_ID"),
             "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
             "runner_os": os.environ.get("RUNNER_OS"),
+            "event_sha": github_sha,
+            "source_sha": source_sha or head,
+            "exact_source_verified": (source_sha or github_sha or head) == head,
         },
         "required_artifacts": sorted(expected_artifacts),
         "input_file_count": len(files),
