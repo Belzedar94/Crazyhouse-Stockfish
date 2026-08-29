@@ -22,3 +22,6 @@ tsan.supp
 __pycache__/
 tests/syzygy
 tests/bench_tmp.epd
+
+# Generated correctness-CI evidence
+.ci/evidence/
