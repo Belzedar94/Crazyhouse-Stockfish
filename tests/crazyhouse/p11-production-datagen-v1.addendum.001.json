@@ -1,0 +1,26 @@
+{
+  "schema": "crazyhouse-p11-production-datagen-preregistration-addendum/v1",
+  "created_utc": "2026-08-29T00:09:41.3473677Z",
+  "status": "PASS_EXPECTED_RED_IMPLEMENTATION_MAY_BEGIN",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "parent": {
+    "path": "tests/crazyhouse/p11-production-datagen-v1.json",
+    "commit": "5dc2295074467eba3ad90f65aa4ea47640f5f2af",
+    "bytes": 5730,
+    "sha256": "bc27bd50e8ee95024ca2093034a0dc8f96906f01d57b7a90aa788d74c5b70b77"
+  },
+  "source": {
+    "commit": "5dc2295074467eba3ad90f65aa4ea47640f5f2af",
+    "clean_before": true,
+    "clean_after": true
+  },
+  "command": "C:/msys64/usr/bin/make.exe -C src --old-file=.depend crazyhouse_production_datagen_test",
+  "exit_code": 2,
+  "required_diagnostic": "No rule to make target 'crazyhouse_production_datagen_test'.",
+  "required_diagnostic_observed": true,
+  "compiler_or_linker_invoked": false,
+  "generated_source_metadata": false,
+  "gate_effect": "The dedicated production DATAGEN target is causally absent at the preregistered base. Implementation may begin on a descendant commit.",
+  "claim_boundary": "This expected-red result is not a producer PASS, an OpenBench workload, generated data, training admission, model selection, strength or release evidence."
+}

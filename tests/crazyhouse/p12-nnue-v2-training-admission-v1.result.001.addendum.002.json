@@ -1,0 +1,91 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-training-admission-result-addendum/v1",
+  "recorded_utc": "2026-08-29T01:37:09.8566220Z",
+  "status": "PASS_CORRECTED_PRODUCTION_SOURCE_IDENTITY_REAL_DATA_PENDING",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "phase": "P12",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "parent_result_addendum": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.result.001.addendum.001.json",
+    "commit": "95c269c53ab929d082dbcb67863db482643a2cfc",
+    "bytes": 5133,
+    "sha256": "83353b08e8956634e2693e3390f666a5c68d7d77341ed5979431d909ee4c4490",
+    "preserved_as_historical_evidence": true
+  },
+  "reason": {
+    "incident": "CH-348",
+    "gap": "The previous real-producer probe authenticated commit 07c1bdf0, whose public Linux scalar replay later encoded producer_source_dirty=true because the workflow-generated .ci/evidence/ namespace was not ignored.",
+    "scope": "Advance only the stacked production-producer dependency, retain the V2 admission implementation unchanged, and replay both the full fixture matrix and the direct real-bundle structural probe."
+  },
+  "base_sync": {
+    "stacked_base_branch": "engineering/datagen-production-v1",
+    "previous_base_commit": "07c1bdf05b976f400c46f660728cd1869ce42274",
+    "corrected_base_commit": "7735c2e1765b02caa8bd8aa815e4835dd2a96caf",
+    "corrected_base_tree": "fe53e75980ddf9c267c7a232c69d3f4e62961b00",
+    "corrected_base_src_tree": "2cbed40340451781c1cecdc5ac66942802fb4eaf",
+    "merge_commit": "7f8ad0ff36a32cb50485c162189ee9b8f6457902",
+    "merge_tree": "242767b8752b3d4251397b0ee3dc266e32d47b6f",
+    "v2_implementation_commit_preserved": "6a0eadbbd057169011044d8c9987c44af0d9271b"
+  },
+  "production_contract": {
+    "path": "tests/crazyhouse/datagen-production-capability-v1.json",
+    "bytes": 2654,
+    "sha256": "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b",
+    "artifact_role": "crazyhouse-physical-datagen-production-v1",
+    "openbench_publication_protocol": 41,
+    "decoded_partition_domain_terminal_byte_hex": "00",
+    "printable_backslash_zero_negative": "PASS"
+  },
+  "fixture_matrix_replay": {
+    "target": "crazyhouse_v2_training_admission_test",
+    "status": "PASS",
+    "clean_fixture_exports": 2,
+    "records_each": 44,
+    "trajectories_each": 12,
+    "negative_cases": 41,
+    "identity_intersection_cases": 5,
+    "all_required_actual_intersections_zero": true,
+    "cross_profile_normalized": true,
+    "production_training_admissible": false
+  },
+  "real_producer_contract_probe": {
+    "status": "PASS",
+    "producer_commit": "7735c2e1765b02caa8bd8aa815e4835dd2a96caf",
+    "producer_tree": "fe53e75980ddf9c267c7a232c69d3f4e62961b00",
+    "producer_src_tree": "2cbed40340451781c1cecdc5ac66942802fb4eaf",
+    "producer_source_dirty": false,
+    "producer_sha256": "93fa7c91ba9032a82b6465d9f8a8729b7dc4a223946632df59c82ed355d9e647",
+    "role": "train",
+    "records": 104,
+    "bundle_sha256": "bde4e039cfc1c59546e39562e8d742e4ab644a2e4c43b6c2c33eb7b6a4cbb43f",
+    "capability_sha256": "7dcf4e110d02c2c80b649a9216b3b7755b5648a67fee80cfe959639a21a2903a",
+    "provenance_sha256": "b9f6e253866f4de2093a04eca49a16fe88930229f3dd0e3da0f86b370383e90a",
+    "chunk_sha256": "3499eeab79c1fc160fda3ebfb8f352c5869f01c352951067557259bc9f52ba9f",
+    "partition_domain_hex_suffix": "20763100",
+    "observed_rejections": 0,
+    "temporary_bundle_preserved": false,
+    "admitted_as_dataset": false,
+    "purpose": "Direct structural compatibility replay between the corrected dedicated producer and the V2 production capability/provenance validators only."
+  },
+  "gate_effect": {
+    "fixture_loader_and_independent_verifier": "PASS_EXTENDED",
+    "corrected_real_producer_contract_compatibility": "PASS_LOCAL",
+    "public_ci": "PENDING_AT_RECEIPT_TIME",
+    "official_openbench_datagen": "NOT_RUN",
+    "aggregate_chunk_set_receipt": "NOT_AVAILABLE",
+    "semantic_engine_replay": "NOT_RUN_ON_REAL_CORPUS",
+    "real_dataset": "NOT_ADMITTED",
+    "production_training": "NOT_AUTHORIZED",
+    "g12": "OPEN"
+  },
+  "boundaries": {
+    "training_started": false,
+    "model_selected": false,
+    "strength_credit": false,
+    "release_credit": false,
+    "legacy_v1_remains_default": true
+  },
+  "claim_boundary": "This addendum proves corrected local production-contract compatibility only. It is not public-CI acceptance, official OpenBench DATAGEN, real-dataset admission, training, model selection, strength, release or monitoring evidence."
+}

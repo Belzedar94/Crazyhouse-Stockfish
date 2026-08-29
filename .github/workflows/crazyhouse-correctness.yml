@@ -42,6 +42,16 @@ jobs:
           python -m unittest -v tests.crazyhouse_physical_v1_unit
           python tests/crazyhouse_physical_v1_independent_verify.py
 
+      - name: Verify NNUE V2 production admission
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/datagen/crazyhouse_production_v1.py \
+            tools/nnue/crazyhouse_v2_training_admission.py \
+            tests/crazyhouse_v2_training_admission_verify.py
+          python -B tests/crazyhouse_v2_training_admission_verify.py \
+            --loader tools/nnue/crazyhouse_v2_training_admission.py
+
       - name: Test fail-closed network tooling
         run: |
           set -euo pipefail
@@ -204,6 +214,18 @@ jobs:
             --network .ci/network/Crazyhouse_v1.nnue \
             --fixture tests/crazyhouse/legacy-incremental-cases-v1.json \
             2>&1 | tee .ci/evidence/incremental-verify.log
+
+      - name: Run production physical DATAGEN contract
+        if: matrix.backend == 'scalar'
+        run: |
+          set -euo pipefail
+          python -m py_compile tests/crazyhouse_production_datagen_v1.py
+          make -C src -j2 crazyhouse_production_datagen_test \
+            ARCH=x86-64-avx2 COMP=gcc \
+            CRAZYHOUSE_LEGACY_BACKEND=scalar \
+            CRAZYHOUSE_DATAGEN_NETWORK="$PWD/.ci/network/Crazyhouse_v1.nnue" \
+            EXTRACXXFLAGS=-Werror \
+            2>&1 | tee .ci/evidence/production-datagen.log
 
       - name: Run SIMD parity
         if: matrix.backend == 'simd'

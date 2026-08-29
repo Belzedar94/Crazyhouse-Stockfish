@@ -28,10 +28,16 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
 PHYSICAL_CODEC_PATH = ROOT / "tools" / "datagen" / "crazyhouse_physical_v1.py"
+PRODUCTION_CODEC_PATH = ROOT / "tools" / "datagen" / "crazyhouse_production_v1.py"
 PHYSICAL_SCHEMA_PATH = ROOT / "schemas" / "crazyhouse-physical-v1.schema.json"
 FEATURE_CONTRACT_PATH = ROOT / "schemas" / "crazyhouse-nnue-v2-features-v1.json"
 ADMISSION_CONTRACT_PATH = ROOT / "schemas" / "crazyhouse-nnue-v2-training-admission-v1.json"
-CAPABILITY_CONTRACT_PATH = ROOT / "tests" / "crazyhouse" / "datagen-capability-v1.json"
+FIXTURE_CAPABILITY_CONTRACT_PATH = (
+    ROOT / "tests" / "crazyhouse" / "datagen-capability-v1.json"
+)
+PRODUCTION_CAPABILITY_CONTRACT_PATH = (
+    ROOT / "tests" / "crazyhouse" / "datagen-production-capability-v1.json"
+)
 GOLDEN_CAPABILITY_PATH = (
     ROOT / "tests" / "crazyhouse" / "data" / "crazyhouse-physical-v1-golden-capability-response.json"
 )
@@ -45,6 +51,9 @@ RULE_PROFILE_SHA256 = "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e106
 PHYSICAL_SCHEMA_SHA256 = "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55"
 FEATURE_CONTRACT_SHA256 = "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6"
 ADMISSION_CONTRACT_SHA256 = "070ce5232b790506dcfd65e4ddd76a91e16a2e1bd71a1dee198f0eb3c37517f5"
+PRODUCTION_CAPABILITY_CONTRACT_SHA256 = (
+    "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b"
+)
 OFFICIAL_OPENBENCH = "https://belzedar.duckdns.org"
 
 MANIFEST_SCHEMA = "crazyhouse-training-dataset-manifest/v1"
@@ -170,7 +179,8 @@ def _load_module(name: str, path: Path) -> Any:
     return module
 
 
-codec = _load_module("crazyhouse_physical_v1_training_admission", PHYSICAL_CODEC_PATH)
+codec = _load_module("crazyhouse_physical_v1", PHYSICAL_CODEC_PATH)
+production_codec = _load_module("crazyhouse_production_v1", PRODUCTION_CODEC_PATH)
 
 
 class AdmissionError(RuntimeError):
@@ -797,7 +807,11 @@ def validate_production_provenance(
         require(capability["production_generation_authorized"] is False, "FIXTURE_CAPABILITY", "")
         return
     require(capability["production_generation_authorized"] is True, "PRODUCTION_CAPABILITY", "")
-    require(capability["artifact_role"] == "crazyhouse-physical-datagen", "PRODUCTION_CAPABILITY_ROLE", "")
+    require(
+        capability["artifact_role"] == "crazyhouse-physical-datagen-production-v1",
+        "PRODUCTION_CAPABILITY_ROLE",
+        "",
+    )
     require(settings.get("fixture_only") is False, "PRODUCTION_FIXTURE_FORBIDDEN", "")
     require(settings.get("training_admissible") is True, "PRODUCTION_ADMISSION_FLAG", "")
     teacher = provenance["teacher"]
@@ -907,11 +921,18 @@ def scan_chunk(
     capability_bytes = read_artifact(root, entry["capability"], "chunk capability")
     try:
         provenance_preview = parse_strict_json(provenance_bytes, "chunk provenance")
-        capability = codec.validate_capability_response_bytes(
-            capability_bytes,
-            contract_bytes=capability_contract,
-            expected_challenge=provenance_preview["producer_capability"]["challenge"],
-        )
+        if mode == "production":
+            capability = production_codec.validate_production_capability_response_bytes(
+                capability_bytes,
+                contract_bytes=capability_contract,
+                expected_challenge=provenance_preview["producer_capability"]["challenge"],
+            )
+        else:
+            capability = codec.validate_capability_response_bytes(
+                capability_bytes,
+                contract_bytes=capability_contract,
+                expected_challenge=provenance_preview["producer_capability"]["challenge"],
+            )
     except (KeyError, TypeError, ValueError) as exc:
         reject("CAPABILITY_OR_PROVENANCE", str(exc))
     bundle_path = artifact_path(root, entry["bundle"], "chunk bundle")
@@ -964,15 +985,25 @@ def scan_chunk(
             require(header[144:176] == hashlib.sha256(provenance_bytes).digest(), "CHUNK_PROVENANCE_IDENTITY", "")
             require(header[208:240] == hashlib.sha256(capability_bytes).digest(), "CHUNK_CAPABILITY_IDENTITY", "")
             try:
-                provenance = codec.validate_provenance_bytes(
-                    provenance_bytes,
-                    chunk_id=chunk_id,
-                    campaign_id=campaign_id,
-                )
+                if mode == "production":
+                    provenance = production_codec.validate_production_provenance_bytes(
+                        provenance_bytes,
+                        chunk_id=chunk_id,
+                        campaign_id=campaign_id,
+                        capability=capability,
+                    )
+                else:
+                    provenance = codec.validate_provenance_bytes(
+                        provenance_bytes,
+                        chunk_id=chunk_id,
+                        campaign_id=campaign_id,
+                    )
             except ValueError as exc:
                 reject("PROVENANCE", str(exc))
             require(
-                provenance["producer_capability"]["sha256"] == sha256_bytes(capability_bytes),
+                provenance["producer_capability"]["bytes"] == len(capability_bytes)
+                and provenance["producer_capability"]["sha256"]
+                == sha256_bytes(capability_bytes),
                 "PROVENANCE_CAPABILITY_BINDING",
                 "",
             )
@@ -984,14 +1015,48 @@ def scan_chunk(
                 "PROVENANCE_PRODUCER_BINDING",
                 "",
             )
-            require(
-                provenance["source_commit"] == capability["source_commit"]
-                and provenance["source_tree"] == capability["source_tree"]
-                and provenance["src_tree"] == capability["src_tree"]
-                and provenance["source_dirty"] == capability["source_dirty"],
-                "PROVENANCE_SOURCE_BINDING",
-                "",
-            )
+            if mode == "production":
+                require(
+                    provenance["source_commit"] == capability["producer_source_commit"]
+                    and provenance["source_tree"] == capability["producer_source_tree"]
+                    and provenance["src_tree"] == capability["producer_src_tree"]
+                    and provenance["source_dirty"]
+                    == capability["producer_source_dirty"],
+                    "PROVENANCE_SOURCE_BINDING",
+                    "",
+                )
+                partition = provenance["partition"]
+                require(partition["role"] == role, "PROVENANCE_PARTITION_ROLE", role)
+                for provenance_key, config_key in (
+                    ("campaign_set_sha256", "campaign_set_sha256"),
+                    ("domain", "domain"),
+                    ("method", "method"),
+                    ("partition_sha256", "sha256"),
+                    ("split_seed_u64", "split_seed_u64"),
+                    ("validation_threshold_u64", "validation_threshold_u64"),
+                ):
+                    require(
+                        partition[provenance_key] == config[config_key],
+                        "PROVENANCE_PARTITION_BINDING",
+                        provenance_key,
+                    )
+                require(
+                    provenance["generation_settings"]["record_count"]
+                    == entry["record_count"]
+                    and provenance["generation_settings"]["accepted_trajectories"]
+                    == entry["trajectory_count"],
+                    "PROVENANCE_GENERATION_COUNTS",
+                    role,
+                )
+            else:
+                require(
+                    provenance["source_commit"] == capability["source_commit"]
+                    and provenance["source_tree"] == capability["source_tree"]
+                    and provenance["src_tree"] == capability["src_tree"]
+                    and provenance["source_dirty"] == capability["source_dirty"],
+                    "PROVENANCE_SOURCE_BINDING",
+                    "",
+                )
             require(
                 provenance["toolchain"]["build_recipe_sha256"]
                 == capability["build_recipe_sha256"]
@@ -1192,7 +1257,15 @@ def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
         mode,
     )
     validate_semantic_boundary(manifest, mode)
-    capability_contract = read_regular(CAPABILITY_CONTRACT_PATH, "capability contract")
+    capability_contract = read_regular(
+        PRODUCTION_CAPABILITY_CONTRACT_PATH
+        if mode == "production"
+        else FIXTURE_CAPABILITY_CONTRACT_PATH,
+        "capability contract",
+        expected_sha256=(
+            PRODUCTION_CAPABILITY_CONTRACT_SHA256 if mode == "production" else None
+        ),
+    )
     require(
         output.parent.exists() and output.parent.is_dir(),
         "OUTPUT_PARENT",

@@ -1,0 +1,97 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-training-admission-result-addendum/v1",
+  "recorded_utc": "2026-08-29T02:21:21.5779170Z",
+  "status": "PASS_LOCAL_CORRECTION_PUBLIC_CI_PENDING",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "phase": "P12",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "parent_result_addendum": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.result.001.addendum.003.json",
+    "commit": "fe282f017b75983ae864cb2a31f81a18eb20490c",
+    "bytes": 5635,
+    "sha256": "da752b11e02dc26ebe18702f9a0107ca0442b57f62402a0e45296787850c8f5a",
+    "preserved_as_historical_evidence": true
+  },
+  "preregistration_correction": {
+    "path": "tests/crazyhouse/p12-nnue-v2-training-admission-v1.addendum.003.json",
+    "incident": "CH-351"
+  },
+  "failed_public_execution": {
+    "run": 33228335232,
+    "job": 99036330570,
+    "conclusion": "failure",
+    "failed_test": "test_capability_response_and_manifest_bind_exact_bytes",
+    "failure": "AssertionError: 87822 != 66451 : tools/datagen/crazyhouse_physical_v1.py",
+    "preserved_and_not_reclassified": true
+  },
+  "correction": {
+    "physical_codec_restored": {
+      "path": "tools/datagen/crazyhouse_physical_v1.py",
+      "bytes": 66451,
+      "sha256": "04876106c165f29ab6ee511fc02a3b2790cf9030bdfb216dbe7cafc44ce54d98"
+    },
+    "production_policy_created": {
+      "path": "tools/datagen/crazyhouse_production_v1.py",
+      "bytes": 22126,
+      "sha256": "fb4ca0bf13f034c4a418b22dc24955912e17ff51490a0f40c28eaff4ab51fecc"
+    },
+    "v2_loader_updated": {
+      "path": "tools/nnue/crazyhouse_v2_training_admission.py",
+      "bytes": 77014,
+      "sha256": "4538227d222dfbf81d04bc73c75c890d57d1f5fb55d4d5bc68f3eebd431682e5"
+    },
+    "public_workflow_updated": {
+      "path": ".github/workflows/crazyhouse-correctness.yml",
+      "bytes": 21251,
+      "sha256": "cb333bb349e5a6c003f7a2433332905b040c3f0eb43894a882fce29436326a33",
+      "required_step": "Verify NNUE V2 production admission"
+    }
+  },
+  "local_replay": {
+    "python_compile": "PASS",
+    "physical_unit": {
+      "status": "PASS",
+      "tests": 20
+    },
+    "physical_independent": {
+      "status": "PASS",
+      "records": 42,
+      "trajectories": 11,
+      "chunk_sha256": "379f6c7df217cae74c1da075af7d37a82719792fd99a9c9118fe9e7b93ee08aa"
+    },
+    "v2_fixture_admission": {
+      "status": "PASS",
+      "clean_fixture_exports": 2,
+      "records": 44,
+      "trajectories": 12,
+      "negative_cases": 41,
+      "identity_intersection_cases": 5,
+      "all_required_actual_intersections_zero": true,
+      "production_training_admissible": false
+    },
+    "real_producer_structural_probe": {
+      "status": "PASS",
+      "producer_commit": "87e26fd43f874de41f6985ae18fbcf354bbb5a1d",
+      "producer_sha256": "4f97ad87468a77accf6898e96c1095f4717c1257db7ea1f9fe629b6b5549f08a",
+      "records": 104,
+      "bundle_sha256": "3247129ebc6c479e61048b4a214c14a923ec7dddf3ee685f00c9a5b19814737b",
+      "capability_sha256": "7ac74f01798d66e4aef440ed40c8ec5c148686917cedc7ef5b15962d4f6b11a9",
+      "provenance_sha256": "8bd8cdcac7049925d0c6fcbdd647ffa2a90f84b5d7a9f0487e6256cc1bf2b58b",
+      "chunk_sha256": "906b350be1265d1badf80dda6d25aaf132da97df0977ddc385198934d65de285",
+      "partition_domain_hex_suffix": "20763100",
+      "producer_source_dirty": false,
+      "admitted_as_dataset": false
+    }
+  },
+  "gate_effect": {
+    "local_correction": "PASS",
+    "public_stack_ci": "PENDING",
+    "official_openbench_datagen": "NOT_RUN",
+    "real_dataset": "NOT_ADMITTED",
+    "production_training": "NOT_AUTHORIZED",
+    "g12": "OPEN"
+  },
+  "claim_boundary": "This addendum proves only the local CH-351 correction and accepted-producer structural compatibility. It is not public-CI acceptance, official OpenBench DATAGEN, real-dataset admission, semantic replay on a production corpus, training, model selection, strength, release or monitoring evidence."
+}
