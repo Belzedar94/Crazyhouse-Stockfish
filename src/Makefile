@@ -1214,6 +1214,7 @@ endif
 	crazyhouse-v2-large-features-tests crazyhouse-v2-large-network-tests \
 	crazyhouse_v2_large_network_test \
 	crazyhouse_v2_legacy_control_test crazyhouse_v2_training_admission_test \
+	crazyhouse_v2_large_trainer_test \
 	crazyhouse_release_bundle_contract_test \
 	crazyhouse_release_native_package_contract_test \
 	crazyhouse_p15_release_engine_identity_test \
@@ -1664,6 +1665,11 @@ crazyhouse_v2_legacy_control_tests.o: ../tests/crazyhouse_v2_legacy_control.cpp 
 crazyhouse_v2_training_admission_test:
 	$(PYTHON) -B ../tests/crazyhouse_v2_training_admission_verify.py \
 		--loader ../tools/nnue/crazyhouse_v2_training_admission.py
+
+crazyhouse_v2_large_trainer_test:
+	$(PYTHON) -B ../tests/crazyhouse_v2_large_trainer_verify.py \
+		--trainer ../tools/nnue/crazyhouse_v2_large_trainer.py \
+		--admission-loader ../tools/nnue/crazyhouse_v2_training_admission.py
 
 crazyhouse_release_bundle_contract_test:
 	$(PYTHON) -B ../tests/crazyhouse_release_bundle_contract.py

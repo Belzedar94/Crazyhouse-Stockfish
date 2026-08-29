@@ -52,6 +52,32 @@ jobs:
           python -B tests/crazyhouse_v2_training_admission_verify.py \
             --loader tools/nnue/crazyhouse_v2_training_admission.py
 
+      - name: Install pinned NNUE V2 trainer runtime
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check \
+            numpy==2.3.5 \
+            --index-url https://pypi.org/simple
+          python -m pip install --disable-pip-version-check \
+            torch==2.7.1 \
+            --index-url https://download.pytorch.org/whl/cpu
+          python - <<'PY'
+          import numpy
+          import torch
+          assert numpy.__version__ == "2.3.5"
+          assert torch.__version__ == "2.7.1+cpu"
+          assert not torch.cuda.is_available()
+          PY
+
+      - name: Verify NNUE V2 large production trainer boundary
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            tools/nnue/crazyhouse_v2_large_trainer.py \
+            tests/crazyhouse_v2_large_trainer_verify.py
+          make --no-print-directory --old-file=.depend -C src \
+            crazyhouse_v2_large_trainer_test
+
       - name: Test fail-closed network tooling
         run: |
           set -euo pipefail
