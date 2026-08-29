@@ -1,0 +1,8 @@
+Crazyhouse-Stockfish production physical DATAGEN selection policy v1
+Authenticate the exact registered legacy network and official 599-root Crazyhouse EPD before search.
+Derive chunk, game, trajectory, exploration and role decisions only from the frozen campaign, seed and candidate identities.
+Assign complete trajectories with the frozen label-free content-hash partition before search; never inspect labels or results to select a role.
+For the first eight plies, choose deterministically among at most four exact MultiPV lines within 256 internal units of the best line; use the best exact line afterward.
+Reject infrastructure, bound, missing-PV, illegal-move, nonterminal-safety and incomplete trajectories; never encode them as labels.
+Select a deterministic complete-trajectory subset whose record counts sum to the exact OpenBench chunk quota; never truncate or split a trajectory.
+Preserve physical records as canonical source and publish one transactional bundle with capability, provenance, chunk framing and exact hashes.
