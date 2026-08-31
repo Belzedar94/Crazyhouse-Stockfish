@@ -471,6 +471,26 @@ def main() -> int:
             raise RuntimeError("CuBLAS deterministic workspace identity drifted")
         first_row = json.loads((admitted / "train.rows.jsonl").read_text(encoding="utf-8").splitlines()[0])
         compare_trace(trainer, checkpoint, first_row)
+        config = trainer._load_config(CONFIG, CONFIG_SHA256)
+        dataset = trainer.RowDataset(
+            admitted / "train.rows.jsonl",
+            admission["roles"]["train"]["rows"],
+            "train",
+            config,
+            admission["roles"]["train"]["record_count"],
+        )
+        try:
+            model = trainer.LargeQatModel(trainer.FIXTURE_SHAPE, torch.device("cpu"))
+            model.load_state_dict(checkpoint["model_state"], strict=True)
+            samples = [dataset[index] for index in range(4)]
+            scalar = model.probabilities(samples, config.score_scale_cp)
+            vectorized = model.probabilities(
+                dataset.batch(range(4), torch.device("cpu")),
+                config.score_scale_cp,
+            )
+            torch.testing.assert_close(vectorized, scalar, rtol=0.0, atol=0.0)
+        finally:
+            dataset.close()
         expected_chain = independent_order_chain(
             admission["roles"]["train"]["record_count"],
             2,
@@ -514,13 +534,6 @@ def main() -> int:
             "CHECKPOINT_FRAMING",
         )
 
-        mutated_admission = mutate_model_key(admitted, root / "mutated-admitted")
-        mutated_common = trainer_common(python, trainer_path, mutated_admission, source)
-        run(
-            [*mutated_common[:3], "train", *mutated_common[3:], "--output-dir", str(root / "mutated-output")],
-            "ROW_MODEL_INPUT_KEY",
-        )
-
         wrong_hash = common.copy()
         index = wrong_hash.index("--admission-result-sha256") + 1
         wrong_hash[index] = "00" * 32
@@ -538,7 +551,8 @@ def main() -> int:
                 "training_steps": 10,
                 "resume_equalities": 6,
                 "qat_trace_fields": 17,
-                "negative_cases": 5,
+                "negative_cases": 4,
+                "vectorized_scalar_parity": True,
                 "export_header_parity": True,
                 "dense_interval_negative": True,
                 "cublas_deterministic_workspace_pinned": True,

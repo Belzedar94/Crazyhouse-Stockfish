@@ -24,6 +24,8 @@ ADDENDUM_2 = ROOT / "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v
 ADDENDUM_2_SHA256 = "8c9dd55c22664481ad18cb4cb8d38443ecfee81d80368ac56cd257e83005372c"
 ADDENDUM_3 = ROOT / "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.003.json"
 ADDENDUM_3_SHA256 = "a170bd0c3e6919c9fa3c536707c6ca3542ad9168b33853fa80e6d1414e2a8353"
+ADDENDUM_4 = ROOT / "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.004.json"
+ADDENDUM_4_SHA256 = "412c05023f4538482e67f2e23e163895538fe74a4d5d2e6333aff7a497089958"
 LEGACY_TRAINER = ROOT / "tools/nnue/crazyhouse_legacy_v1_trainer.py"
 V2_TRAINER = ROOT / "tools/nnue/crazyhouse_v2_large_trainer.py"
 CONFIG_SCHEMA = "crazyhouse-nnue-v2-large-training-config/v1"
@@ -110,7 +112,7 @@ def validate_static_chain(addendum_path: Path, addendum_sha256: str) -> tuple[Ma
     require(base.get("schema") == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-preregistration/v1", "BASE_SCHEMA")
     require(addendum_2.get("addendum") == 2 and addendum_2.get("status") == "AUTHORIZED_DIAGNOSTIC_OVERLAP_EXCEPTION", "ADDENDUM_2_STATUS")
     number = addendum.get("addendum")
-    require(number in (3, 4), "ADDENDUM_NUMBER")
+    require(number in (3, 4, 5), "ADDENDUM_NUMBER")
     prefix = f"ADDENDUM_{number}"
     require(addendum.get("schema") == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1", f"{prefix}_SCHEMA")
     if number == 3:
@@ -119,13 +121,28 @@ def validate_static_chain(addendum_path: Path, addendum_sha256: str) -> tuple[Ma
             "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.002.json",
             "sha256": ADDENDUM_2_SHA256,
         }
-    else:
+    elif number == 4:
         prior, _ = load_pinned_json(ADDENDUM_3, ADDENDUM_3_SHA256, "ADDENDUM_3")
         require(prior.get("addendum") == 3 and prior.get("status") == "FROZEN_DIAGNOSTIC_PAIRED_TRAINING_IMPLEMENTATION", "ADDENDUM_3_STATUS")
         require(addendum.get("status") == "AUTHORIZED_DETERMINISTIC_CUDA_RUNTIME_REPAIR", "ADDENDUM_4_STATUS")
         predecessor = {
             "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.003.json",
             "sha256": ADDENDUM_3_SHA256,
+        }
+    else:
+        prior, _ = load_pinned_json(ADDENDUM_4, ADDENDUM_4_SHA256, "ADDENDUM_4")
+        require(
+            prior.get("addendum") == 4
+            and prior.get("status") == "AUTHORIZED_DETERMINISTIC_CUDA_RUNTIME_REPAIR",
+            "ADDENDUM_4_STATUS",
+        )
+        require(
+            addendum.get("status") == "AUTHORIZED_VECTORIZED_TRAINER_REPAIR",
+            "ADDENDUM_5_STATUS",
+        )
+        predecessor = {
+            "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.004.json",
+            "sha256": ADDENDUM_4_SHA256,
         }
     require(addendum.get("predecessor") == predecessor, f"{prefix}_PREDECESSOR")
     tooling = addendum.get("tooling")
@@ -381,24 +398,59 @@ def materialize(args: argparse.Namespace) -> Mapping[str, Any]:
         require(legacy_inputs.source_manifest_sha256 == v2_inputs.source_manifest_sha256, "SOURCE_MANIFEST")
         legacy_root = args.legacy_admission.resolve(strict=True).parent
         v2_root = args.v2_admission.resolve(strict=True).parent
-        legacy_train_labels, scores = label_stream(
-            legacy_root / "train.rows.jsonl", legacy_module.shared, legacy_inputs.train_record_count, True
-        )
-        v2_train_labels, _ = label_stream(
-            v2_root / "train.rows.jsonl", v2_module, v2_inputs.train_record_count, False
-        )
-        legacy_validation_labels, _ = label_stream(
-            legacy_root / "validation.rows.jsonl", legacy_module.shared, legacy_inputs.validation_record_count, False
-        )
-        v2_validation_labels, _ = label_stream(
-            v2_root / "validation.rows.jsonl", v2_module, v2_inputs.validation_record_count, False
-        )
-        require(legacy_train_labels == v2_train_labels, "TRAIN_LABEL_STREAM")
-        require(legacy_validation_labels == v2_validation_labels, "VALIDATION_LABEL_STREAM")
         minimum = base["dataset_admission"]["minimum_record_counts"]["train_ongoing_exact_centipawn"]
-        require(len(scores) >= minimum, "SCORE_SAMPLE_MINIMUM")
         derivation = base["score_scale_cp_derivation"]
-        q75, rank, score_scale = derive_score_scale(scores, derivation["ln3_decimal"])
+        if addendum.get("addendum") == 5:
+            pinned = addendum.get("common_sample_identity")
+            require(isinstance(pinned, dict), "ADDENDUM_COMMON_SAMPLE_IDENTITY")
+            require(pinned.get("train_records") == legacy_inputs.train_record_count, "ADDENDUM_TRAIN_COUNT")
+            require(pinned.get("validation_records") == legacy_inputs.validation_record_count, "ADDENDUM_VALIDATION_COUNT")
+            require(
+                pinned.get("train_raw_record_ordered_set_sha256")
+                == legacy_inputs.train_raw_record_ordered_set_sha256,
+                "ADDENDUM_TRAIN_RAW_SET",
+            )
+            require(
+                pinned.get("validation_raw_record_ordered_set_sha256")
+                == legacy_inputs.validation_raw_record_ordered_set_sha256,
+                "ADDENDUM_VALIDATION_RAW_SET",
+            )
+            legacy_train_labels = v2_train_labels = validate_hex(
+                pinned.get("train_label_stream_sha256"), HEX64, "ADDENDUM_TRAIN_LABEL_STREAM"
+            )
+            legacy_validation_labels = v2_validation_labels = validate_hex(
+                pinned.get("validation_label_stream_sha256"), HEX64, "ADDENDUM_VALIDATION_LABEL_STREAM"
+            )
+            scale_pin = pinned.get("score_scale_cp")
+            require(isinstance(scale_pin, dict), "ADDENDUM_SCORE_SCALE")
+            q75 = scale_pin.get("q75_abs_cp")
+            rank = scale_pin.get("nearest_rank_one_based")
+            score_scale = scale_pin.get("value")
+            eligible_train_rows = scale_pin.get("eligible_train_rows")
+            require(
+                (q75, rank, score_scale, eligible_train_rows)
+                == (411, 704_707, 374, 939_609),
+                "ADDENDUM_SCORE_SCALE_VALUES",
+            )
+        else:
+            legacy_train_labels, scores = label_stream(
+                legacy_root / "train.rows.jsonl", legacy_module.shared, legacy_inputs.train_record_count, True
+            )
+            v2_train_labels, _ = label_stream(
+                v2_root / "train.rows.jsonl", v2_module, v2_inputs.train_record_count, False
+            )
+            legacy_validation_labels, _ = label_stream(
+                legacy_root / "validation.rows.jsonl", legacy_module.shared, legacy_inputs.validation_record_count, False
+            )
+            v2_validation_labels, _ = label_stream(
+                v2_root / "validation.rows.jsonl", v2_module, v2_inputs.validation_record_count, False
+            )
+            require(legacy_train_labels == v2_train_labels, "TRAIN_LABEL_STREAM")
+            require(legacy_validation_labels == v2_validation_labels, "VALIDATION_LABEL_STREAM")
+            eligible_train_rows = len(scores)
+            require(eligible_train_rows >= minimum, "SCORE_SAMPLE_MINIMUM")
+            q75, rank, score_scale = derive_score_scale(scores, derivation["ln3_decimal"])
+        require(eligible_train_rows >= minimum, "SCORE_SAMPLE_MINIMUM")
         interval = derivation["allowed_derived_interval_inclusive"]
         require(interval[0] <= score_scale <= interval[1], "SCORE_INTERVAL")
         batches, validation_interval, checkpoint_interval = materialization_intervals(
@@ -494,7 +546,7 @@ def materialize(args: argparse.Namespace) -> Mapping[str, Any]:
                 },
                 "score_scale_cp": {
                     "value": score_scale,
-                    "eligible_train_rows": len(scores),
+                    "eligible_train_rows": eligible_train_rows,
                     "q75_abs_cp": q75,
                     "nearest_rank_one_based": rank,
                     "source_role": "train",

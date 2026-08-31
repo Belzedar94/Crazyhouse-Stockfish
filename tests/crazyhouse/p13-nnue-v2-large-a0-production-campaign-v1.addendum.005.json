@@ -1,0 +1,136 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 5,
+  "status": "AUTHORIZED_VECTORIZED_TRAINER_REPAIR",
+  "evidence_class": "M2_MODEL_SELECTION_DIAGNOSTIC",
+  "frozen_utc": "2026-08-31T10:45:12.1425172Z",
+  "purpose": "Preserve the owner-stopped slow attempt 526 and authorize a fresh paired run with one-time authenticated array caches and vectorized GPU batches. Data, labels, optimization, seed order, selection, strength and release boundaries remain unchanged.",
+  "predecessor": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.004.json",
+    "sha256": "412c05023f4538482e67f2e23e163895538fe74a4d5d2e6333aff7a497089958"
+  },
+  "failed_attempt": {
+    "root": "D:/Crazyhouse-Stockfish/training/p13-a0-paired-diagnostic-526",
+    "manifest_sha256": "b2693d6b462c2a5ed4d706e9ba49c992ca0749ff4e6b41170f6db3adc7cd5523",
+    "supervisor_sha256": "7c9641abc719b33d14951152e0185541eb9f303758ddeba4d0ecb0365dc32133",
+    "pipeline_state_sha256": "0930e5df8e87946dfc5c512478eef4ae783e0f98815012f8cee2bb58aca37549",
+    "pipeline_state_bytes": 949,
+    "trainer_stderr_sha256": "5f404df68c887fcdd361940dac3b834485417361915796e1cd1d369af07a22a2",
+    "trainer_stderr_bytes": 154,
+    "failure_code": "TRAINING_EXIT_4294967295",
+    "owner_stop_reason": "unacceptable throughput before the first epoch checkpoint",
+    "completed_runs": 0,
+    "checkpoint_observed": false,
+    "export_started": false,
+    "preservation": "immutable; never resume or overwrite"
+  },
+  "diagnosis": {
+    "dataset_hot_path": "Every sampled JSON row was reparsed and revalidated on every access.",
+    "model_hot_path": "Each 512-position batch executed 512 independent scalar forwards and thousands of small CUDA kernels.",
+    "observed_gpu_utilization_percent": "approximately 20-25",
+    "observed_epoch_completion": "none after approximately 19 minutes of training",
+    "reference_only_implementation_misused_as_production": true
+  },
+  "repair": {
+    "authenticated_input_policy": "Authenticate the admitted JSONL hash once on cache miss; bind the cache to architecture, role, row hash, byte count, record count and target configuration.",
+    "cache_policy": "Parse and project each admitted row once, persist compact NumPy arrays, and reuse them for all paired seeds.",
+    "training_hot_path": "Gather one tensor batch and execute one vectorized forward/backward per optimizer step.",
+    "scalar_trace_retained": true,
+    "vectorized_scalar_forward_parity": "exact on both fixture suites",
+    "resume_determinism": "PASS on both fixture suites",
+    "data_or_labels_changed": false,
+    "optimizer_or_learning_rate_changed": false,
+    "batch_size_or_epochs_changed": false,
+    "seed_or_sample_order_changed": false
+  },
+  "cuda_throughput_probe": {
+    "kind": "short synthetic production-shape optimizer-step benchmark",
+    "device": "NVIDIA GeForce RTX 3080",
+    "batch_size": 512,
+    "legacy_v1_positions_per_second": 32344.560555576893,
+    "large_v2_positions_per_second": 28618.380604270624,
+    "legacy_v1_milliseconds_per_batch": 15.829554991796613,
+    "large_v2_milliseconds_per_batch": 17.890599998645484,
+    "steps_per_arm": 20,
+    "claim_boundary": "throughput smoke only; not a training, loss, model-selection or strength result"
+  },
+  "admissions": {
+    "legacy_v1": {
+      "path": "D:/Crazyhouse-Stockfish/datasets/p13-a0-admission-legacy-diagnostic-524/admission-result.json",
+      "sha256": "8923a58c30eb53b60555e60bb2de685b8495eab157fe033a1cbe95f24c5413ba",
+      "train_rows_sha256": "0529711ac0d0badc0cbd7f04e02c2d054dcfaa796f24f5aac039344abf6739e6",
+      "validation_rows_sha256": "472b4f34ba6ab36c2db7ba2f6cc7374fd1c182029b32fc2349f6db202f25688c"
+    },
+    "large_v2": {
+      "path": "D:/Crazyhouse-Stockfish/datasets/p13-a0-admission-v2-large-diagnostic-524/admission-result.json",
+      "sha256": "ddc319aecb585a7e49c5c9714f12b8256ee3b19ad128f94b5f4c26a55e603768",
+      "train_rows_sha256": "40b47682f9538e43b26d1cff51b8645d3144a85ddc37450fc9db1dc520571fee",
+      "validation_rows_sha256": "31cd6978c6633dfd332ad65e765d9329a8c26bc276db859ce982cbd17f5b8cec"
+    }
+  },
+  "common_sample_identity": {
+    "train_records": 1048576,
+    "validation_records": 131072,
+    "train_raw_record_ordered_set_sha256": "fb0a63adfa3edf69e917b9749e8f3679882a95fd7fa36975b5303b0dd56a5569",
+    "validation_raw_record_ordered_set_sha256": "ef440670aba5e74d1e62b75f6c1349db8bc632c0148889750afe0666356d9ca4",
+    "train_label_stream_sha256": "16173bae8563abbe60f541af057197752c2a3f25a822afd428e9844d4db1e5e3",
+    "validation_label_stream_sha256": "5e981a65ec4828f493afff06b8bb0655d124417c73e2c982f9247cad57e5b35c",
+    "score_scale_cp": {
+      "value": 374,
+      "eligible_train_rows": 939609,
+      "q75_abs_cp": 411,
+      "nearest_rank_one_based": 704707,
+      "source_role": "train",
+      "validation_rows_used": false
+    }
+  },
+  "tooling": {
+    "planner": {
+      "path": "tools/nnue/crazyhouse_a0_paired_diagnostic_campaign.py",
+      "sha256": "d12b3e89ea937a42e1c4eeade6867db81d657f11e4199098a4803637549d0e73"
+    },
+    "legacy_trainer": {
+      "path": "tools/nnue/crazyhouse_legacy_v1_trainer.py",
+      "sha256": "be7db88357a7386bad5351e673814a857a5b496cde4744319c6c85ce794b4670"
+    },
+    "v2_trainer": {
+      "path": "tools/nnue/crazyhouse_v2_large_trainer.py",
+      "sha256": "96276c043c375487e83e0f974bdc679153c9567a117fa50aaf7553df34fd384a"
+    },
+    "legacy_verifier": {
+      "path": "tests/crazyhouse_legacy_v1_trainer_verify.py",
+      "sha256": "a228df87fb330961c7540605db5f57288c3ddf4d5d3a0b417521712a879bc10a"
+    },
+    "v2_verifier": {
+      "path": "tests/crazyhouse_v2_large_trainer_verify.py",
+      "sha256": "0bbe2052a2a06fbbea9a143475dced29840ec52347d8d9993f311dee8896b9dd"
+    }
+  },
+  "paired_execution": {
+    "arms": ["fresh legacy-V1", "fresh CH-NNUE-V2-LARGE-K64G1-SFNNV16"],
+    "seeds": [617628155675752428, 521232795329550045, 4052246384809050251],
+    "predesignated_playing_seed_index": 0,
+    "fresh_process_per_arm_and_seed": true,
+    "all_six_trainings_required": true,
+    "batch_size": 512,
+    "epochs": 8,
+    "cpu_threads": 1,
+    "device": "cuda",
+    "loss_selects_an_artifact": false,
+    "validation_usage": "forward-only health telemetry"
+  },
+  "release_admissible": false,
+  "strength_testing_started": false,
+  "registered_legacy_remains_default": true,
+  "release_boundary": {
+    "same_data_stage_one_win_is_sufficient_for_release": false,
+    "release_before_valid_stage_two_win_over_registered_best_legacy": "forbidden",
+    "engineering_loss_export_reload_or_parity_is_sufficient_for_release": false
+  },
+  "stopping_rules": [
+    "Attempt 526 remains immutable and provides no training, model-selection, strength or release evidence.",
+    "The fresh attempt must use the unchanged admissions, paired seeds and final-epoch artifact policy.",
+    "No strength test starts during paired training, export authentication, reload or parity.",
+    "No release is allowed unless the unchanged predesignated V2 artifact later obtains the separately preregistered valid win over the registered best legacy network."
+  ]
+}

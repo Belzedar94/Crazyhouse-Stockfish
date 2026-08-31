@@ -10,7 +10,6 @@ explicitly non-admissible and cannot be exported.
 from __future__ import annotations
 
 import argparse
-from array import array
 from dataclasses import asdict, dataclass
 import hashlib
 import io
@@ -67,6 +66,8 @@ K_INPUTS = 81_664
 G_INPUTS = 1_340
 MAXIMUM_ACTIVE = 48
 PRODUCTION_PARAMETER_COUNT = 63_342_088
+FAST_CACHE_SCHEMA = "crazyhouse-nnue-fast-array-cache/v1"
+FAST_CACHE_ENV = "CRAZYHOUSE_TRAINING_CACHE"
 
 FEATURE_WEIGHT_SCALE = 256
 FEATURE_BIAS_SCALE = 256
@@ -249,6 +250,19 @@ class Sample:
 
 
 @dataclass(frozen=True)
+class Batch:
+    stm_k_rows: torch.Tensor
+    stm_g_rows: torch.Tensor
+    opponent_k_rows: torch.Tensor
+    opponent_g_rows: torch.Tensor
+    total_pocket_units: torch.Tensor
+    targets: torch.Tensor
+
+    def __len__(self) -> int:
+        return int(self.targets.shape[0])
+
+
+@dataclass(frozen=True)
 class AdmissionInputs:
     result_sha256: str
     source_manifest_sha256: str
@@ -267,7 +281,7 @@ class AdmissionInputs:
 
 
 class RowDataset(Sequence[Sample]):
-    """Authenticated memory-mapped JSONL with compact random-access offsets."""
+    """Authenticated rows parsed once into a reusable vectorized array cache."""
 
     def __init__(
         self,
@@ -275,6 +289,7 @@ class RowDataset(Sequence[Sample]):
         descriptor: Mapping[str, Any],
         role: str,
         config: TrainingConfig,
+        expected_count: int,
     ) -> None:
         _require(set(descriptor) == {"bytes", "path", "sha256"}, f"{role.upper()}_ROWS_DESCRIPTOR")
         _require(descriptor.get("path") == f"{role}.rows.jsonl", f"{role.upper()}_ROWS_PATH")
@@ -282,32 +297,171 @@ class RowDataset(Sequence[Sample]):
         size = path.stat().st_size
         _require(size > 0 and size == descriptor.get("bytes"), f"{role.upper()}_ROWS_BYTES")
         _validate_hex(descriptor.get("sha256"), HEX64, f"{role.upper()}_ROWS_SHA256_FORMAT")
-        _require(_sha256_file(path) == descriptor["sha256"], f"{role.upper()}_ROWS_SHA256")
+        _require(_is_int(expected_count) and expected_count > 0, f"{role.upper()}_ROWS_COUNT")
         self.path = path
         self.role = role
         self.config = config
         self._stream = path.open("rb")
         self._mapping = mmap.mmap(self._stream.fileno(), 0, access=mmap.ACCESS_READ)
-        self._offsets = array("Q")
-        raw_keys: set[bytes] = set()
+        cache_identity = {
+            "schema": FAST_CACHE_SCHEMA,
+            "architecture": "large-v2",
+            "role": role,
+            "rows_sha256": descriptor["sha256"],
+            "rows_bytes": size,
+            "record_count": expected_count,
+            "score_scale_cp_hex": config.score_scale_cp.hex(),
+            "lambda_hex": config.lambda_.hex(),
+        }
+        self.cache_identity_sha256 = hashlib.sha256(_canonical_json(cache_identity)).hexdigest()
+        configured_root = os.environ.get(FAST_CACHE_ENV)
+        cache_root = (
+            Path(configured_root)
+            if configured_root
+            else path.parent / ".fast-training-cache"
+        )
+        self.cache_path = cache_root / f"large-v2-{role}-{self.cache_identity_sha256}.npz"
+        self.cache_hit = self.cache_path.is_file()
         try:
-            start = 0
-            while start < size:
-                end = self._mapping.find(b"\n", start)
-                _require(end >= start, f"{role.upper()}_ROW_NEWLINE")
-                line = self._mapping[start : end + 1]
-                _require(line.count(b"\n") == 1, f"{role.upper()}_ROW_NEWLINE")
-                document = _strict_json_bytes(line, f"{role.upper()}_ROW_JSON")
-                sample = _validate_row(document, role, config)
-                raw_key = bytes.fromhex(sample.raw_record_key)
-                _require(raw_key not in raw_keys, f"{role.upper()}_RAW_RECORD_DUPLICATE")
-                raw_keys.add(raw_key)
-                self._offsets.append(start)
-                start = end + 1
-            _require(start == size and len(self._offsets) > 0, f"{role.upper()}_ROWS_FRAMING")
+            if self.cache_hit:
+                self._load_cache(expected_count)
+            else:
+                _require(_sha256_file(path) == descriptor["sha256"], f"{role.upper()}_ROWS_SHA256")
+                self._build_cache(expected_count, size)
         except BaseException:
             self.close()
             raise
+
+    def _load_cache(self, expected_count: int) -> None:
+        try:
+            with np.load(self.cache_path, allow_pickle=False) as cached:
+                identity = str(cached["identity_sha256"].item())
+                arrays = {name: cached[name] for name in (
+                    "offsets",
+                    "stm_k_rows",
+                    "stm_g_rows",
+                    "opponent_k_rows",
+                    "opponent_g_rows",
+                    "total_pocket_units",
+                    "targets",
+                )}
+        except (OSError, ValueError, KeyError) as error:
+            raise TrainerError(f"{self.role.upper()}_FAST_CACHE_LOAD") from error
+        _require(identity == self.cache_identity_sha256, f"{self.role.upper()}_FAST_CACHE_IDENTITY")
+        maximum_active = arrays["stm_k_rows"].shape[1]
+        _require(
+            0 < maximum_active <= MAXIMUM_ACTIVE,
+            f"{self.role.upper()}_FAST_CACHE_MAXIMUM_ACTIVE",
+        )
+        expected = {
+            "offsets": ((expected_count,), np.dtype("uint64")),
+            "stm_k_rows": ((expected_count, maximum_active), np.dtype("int32")),
+            "stm_g_rows": ((expected_count, maximum_active), np.dtype("int32")),
+            "opponent_k_rows": ((expected_count, maximum_active), np.dtype("int32")),
+            "opponent_g_rows": ((expected_count, maximum_active), np.dtype("int32")),
+            "total_pocket_units": ((expected_count,), np.dtype("int16")),
+            "targets": ((expected_count,), np.dtype("float32")),
+        }
+        for name, (shape, dtype) in expected.items():
+            _require(arrays[name].shape == shape and arrays[name].dtype == dtype, f"{self.role.upper()}_FAST_CACHE_{name.upper()}")
+            setattr(self, f"_{name}", arrays[name])
+
+    def _build_cache(self, expected_count: int, size: int) -> None:
+        offsets = np.empty(expected_count, dtype=np.uint64)
+        stm_k_rows = np.full((expected_count, MAXIMUM_ACTIVE), -1, dtype=np.int32)
+        stm_g_rows = np.full((expected_count, MAXIMUM_ACTIVE), -1, dtype=np.int32)
+        opponent_k_rows = np.full((expected_count, MAXIMUM_ACTIVE), -1, dtype=np.int32)
+        opponent_g_rows = np.full((expected_count, MAXIMUM_ACTIVE), -1, dtype=np.int32)
+        total_pocket_units = np.empty(expected_count, dtype=np.int16)
+        targets = np.empty(expected_count, dtype=np.float32)
+        start = 0
+        index = 0
+        maximum_active = 0
+        while start < size:
+            _require(index < expected_count, f"{self.role.upper()}_ROWS_COUNT")
+            end = self._mapping.find(b"\n", start)
+            _require(end >= start, f"{self.role.upper()}_ROW_NEWLINE")
+            try:
+                document = json.loads(self._mapping[start:end])
+            except (UnicodeDecodeError, json.JSONDecodeError) as error:
+                raise TrainerError(f"{self.role.upper()}_ROW_JSON") from error
+            offsets[index] = start
+            for key, output in (
+                ("stm_k64_rows", stm_k_rows),
+                ("stm_g1_rows", stm_g_rows),
+                ("opponent_k64_rows", opponent_k_rows),
+                ("opponent_g1_rows", opponent_g_rows),
+            ):
+                rows = document[key]
+                _require(isinstance(rows, list) and 0 < len(rows) <= MAXIMUM_ACTIVE, f"{self.role.upper()}_CACHE_ROWS")
+                output[index, : len(rows)] = rows
+                maximum_active = max(maximum_active, len(rows))
+            total_pocket_units[index] = document["total_pocket_units"]
+            targets[index] = _target_probability(document, self.config)
+            index += 1
+            start = end + 1
+        _require(start == size and index == expected_count, f"{self.role.upper()}_ROWS_FRAMING")
+        stm_k_rows = stm_k_rows[:, :maximum_active]
+        stm_g_rows = stm_g_rows[:, :maximum_active]
+        opponent_k_rows = opponent_k_rows[:, :maximum_active]
+        opponent_g_rows = opponent_g_rows[:, :maximum_active]
+        self.cache_path.parent.mkdir(parents=True, exist_ok=True)
+        partial = self.cache_path.with_name(self.cache_path.stem + ".partial.npz")
+        _require(not partial.exists(), f"{self.role.upper()}_FAST_CACHE_PARTIAL")
+        try:
+            np.savez(
+                partial,
+                identity_sha256=np.asarray(self.cache_identity_sha256),
+                offsets=offsets,
+                stm_k_rows=stm_k_rows,
+                stm_g_rows=stm_g_rows,
+                opponent_k_rows=opponent_k_rows,
+                opponent_g_rows=opponent_g_rows,
+                total_pocket_units=total_pocket_units,
+                targets=targets,
+            )
+            os.replace(partial, self.cache_path)
+        except BaseException:
+            try:
+                partial.unlink()
+            except FileNotFoundError:
+                pass
+            raise
+        self._offsets = offsets
+        self._stm_k_rows = stm_k_rows
+        self._stm_g_rows = stm_g_rows
+        self._opponent_k_rows = opponent_k_rows
+        self._opponent_g_rows = opponent_g_rows
+        self._total_pocket_units = total_pocket_units
+        self._targets = targets
+
+    @staticmethod
+    def _tensor(values: np.ndarray, device: torch.device, dtype: torch.dtype) -> torch.Tensor:
+        return torch.as_tensor(np.ascontiguousarray(values), dtype=dtype, device=device)
+
+    def batch(self, indices: Sequence[int], device: torch.device) -> Batch:
+        selected = np.asarray(indices, dtype=np.int64)
+        _require(selected.ndim == 1 and selected.size > 0, f"{self.role.upper()}_BATCH_INDICES")
+        return Batch(
+            stm_k_rows=self._tensor(self._stm_k_rows[selected], device, torch.int64),
+            stm_g_rows=self._tensor(self._stm_g_rows[selected], device, torch.int64),
+            opponent_k_rows=self._tensor(self._opponent_k_rows[selected], device, torch.int64),
+            opponent_g_rows=self._tensor(self._opponent_g_rows[selected], device, torch.int64),
+            total_pocket_units=self._tensor(self._total_pocket_units[selected], device, torch.int64),
+            targets=self._tensor(self._targets[selected], device, torch.float32),
+        )
+
+    def batch_slice(self, start: int, stop: int, device: torch.device) -> Batch:
+        _require(0 <= start < stop <= len(self), f"{self.role.upper()}_BATCH_SLICE")
+        selected = slice(start, stop)
+        return Batch(
+            stm_k_rows=self._tensor(self._stm_k_rows[selected], device, torch.int64),
+            stm_g_rows=self._tensor(self._stm_g_rows[selected], device, torch.int64),
+            opponent_k_rows=self._tensor(self._opponent_k_rows[selected], device, torch.int64),
+            opponent_g_rows=self._tensor(self._opponent_g_rows[selected], device, torch.int64),
+            total_pocket_units=self._tensor(self._total_pocket_units[selected], device, torch.int64),
+            targets=self._tensor(self._targets[selected], device, torch.float32),
+        )
 
     @overload
     def __getitem__(self, index: int) -> Sample: ...
@@ -322,7 +476,7 @@ class RowDataset(Sequence[Sample]):
             index += len(self)
         if not 0 <= index < len(self):
             raise IndexError(index)
-        start = self._offsets[index]
+        start = int(self._offsets[index])
         end = self._mapping.find(b"\n", start)
         _require(end >= start, f"{self.role.upper()}_ROW_RUNTIME_NEWLINE")
         document = _strict_json_bytes(
@@ -744,7 +898,13 @@ def _load_admission(
             _require(set(summary) == {"chunk_count", "record_count", "rows", "trajectory_count"}, f"ADMISSION_{role.upper()}_KEYS")
             _require(_is_int(summary.get("record_count")) and summary["record_count"] > 0, f"ADMISSION_{role.upper()}_COUNT")
             rows_path = root / f"{role}.rows.jsonl"
-            samples = RowDataset(rows_path, summary["rows"], role, config)
+            samples = RowDataset(
+                rows_path,
+                summary["rows"],
+                role,
+                config,
+                summary["record_count"],
+            )
             loaded[role] = samples
             _require(len(samples) == summary["record_count"], f"ADMISSION_{role.upper()}_RECORD_COUNT")
     except BaseException:
@@ -862,10 +1022,29 @@ class LargeQatModel(nn.Module):
         values = values + self._quantized_integer(bias, FEATURE_BIAS_SCALE)
         return torch.clamp(values, 0.0, float(TRANSFORMER_MAXIMUM))
 
+    def _transform_batch(
+        self,
+        rows: torch.Tensor,
+        embedding: nn.Embedding,
+        bias: torch.Tensor,
+    ) -> torch.Tensor:
+        mask = rows.ge(0)
+        selected = F.embedding(rows.clamp_min(0), embedding.weight, sparse=True)
+        values = self._quantized_integer(selected, FEATURE_WEIGHT_SCALE)
+        values = values * mask.unsqueeze(-1)
+        values = values.sum(dim=1)
+        values = values + self._quantized_integer(bias, FEATURE_BIAS_SCALE)
+        return torch.clamp(values, 0.0, float(TRANSFORMER_MAXIMUM))
+
     @staticmethod
     def _pair(values: torch.Tensor) -> torch.Tensor:
         half = values.shape[0] // 2
         return _ste_floor(values[:half] * values[half:] / PAIR_DIVISOR)
+
+    @staticmethod
+    def _pair_batch(values: torch.Tensor) -> torch.Tensor:
+        half = values.shape[1] // 2
+        return _ste_floor(values[:, :half] * values[:, half:] / PAIR_DIVISOR)
 
     @staticmethod
     def _squared(values: torch.Tensor, shift: int) -> torch.Tensor:
@@ -924,8 +1103,63 @@ class LargeQatModel(nn.Module):
             "output_value": output_value,
         }
 
-    def probabilities(self, samples: Sequence[Sample], score_scale_cp: float) -> torch.Tensor:
-        centipawns = torch.stack([cast(torch.Tensor, self.forward_sample(sample)) for sample in samples])
+    def forward_batch(self, batch: Batch) -> torch.Tensor:
+        stm_k = self._transform_batch(batch.stm_k_rows, self.k, self.k_bias)
+        stm_g = self._transform_batch(batch.stm_g_rows, self.g, self.g_bias)
+        opponent_k = self._transform_batch(
+            batch.opponent_k_rows, self.k, self.k_bias
+        )
+        opponent_g = self._transform_batch(
+            batch.opponent_g_rows, self.g, self.g_bias
+        )
+        stm = torch.cat((self._pair_batch(stm_k), self._pair_batch(stm_g)), dim=1)
+        opponent = torch.cat(
+            (self._pair_batch(opponent_k), self._pair_batch(opponent_g)), dim=1
+        )
+        dense = torch.cat((stm, opponent), dim=1)
+        buckets = torch.clamp(
+            torch.div(batch.total_pocket_units, 4, rounding_mode="floor"),
+            max=self.shape.buckets - 1,
+        )
+
+        fc0_weight = self._quantized_integer(
+            self.fc0_weight[buckets], FC0_WEIGHT_SCALE
+        )
+        fc0_bias = self._quantized_integer(self.fc0_bias[buckets], FC0_BIAS_SCALE)
+        fc0 = torch.bmm(fc0_weight, dense.unsqueeze(2)).squeeze(2) + fc0_bias
+        fc0_squared = self._squared(fc0, 7)
+        fc0_clipped = self._clipped(fc0, 7)
+        fc1_input = torch.cat((fc0_squared, fc0_clipped), dim=1)
+
+        fc1_weight = self._quantized_integer(
+            self.fc1_weight[buckets], FC1_WEIGHT_SCALE
+        )
+        fc1_bias = self._quantized_integer(self.fc1_bias[buckets], FC1_BIAS_SCALE)
+        fc1 = torch.bmm(fc1_weight, fc1_input.unsqueeze(2)).squeeze(2) + fc1_bias
+        fc1_squared = self._squared(fc1, 6)
+        fc1_clipped = self._clipped(fc1, 6)
+        fc2_input = torch.cat(
+            (fc0_squared, fc0_clipped, fc1_squared, fc1_clipped), dim=1
+        )
+
+        fc2_weight = self._quantized_integer(
+            self.fc2_weight[buckets], FC2_WEIGHT_SCALE
+        )
+        fc2_bias = self._quantized_integer(self.fc2_bias[buckets], FC2_BIAS_SCALE)
+        fc2 = torch.sum(fc2_input * fc2_weight, dim=1) + fc2_bias
+        fwd = fc2 + fc0[:, 30] - fc0[:, 31]
+        output_value = _ste_trunc(fwd * OUTPUT_NUMERATOR / OUTPUT_DENOMINATOR)
+        return output_value / ENGINE_UNITS_PER_CP
+
+    def probabilities(
+        self, samples: Batch | Sequence[Sample], score_scale_cp: float
+    ) -> torch.Tensor:
+        if isinstance(samples, Batch):
+            centipawns = self.forward_batch(samples)
+        else:
+            centipawns = torch.stack(
+                [cast(torch.Tensor, self.forward_sample(sample)) for sample in samples]
+            )
         return torch.sigmoid(centipawns / score_scale_cp)
 
 
@@ -1201,9 +1435,22 @@ def _identity(
     }
 
 
-def _loss(model: LargeQatModel, samples: Sequence[Sample], config: TrainingConfig, device: torch.device) -> torch.Tensor:
+def _loss(
+    model: LargeQatModel,
+    samples: Batch | Sequence[Sample],
+    config: TrainingConfig,
+    device: torch.device,
+) -> torch.Tensor:
     probabilities = model.probabilities(samples, config.score_scale_cp)
-    targets = torch.tensor([sample.target_probability for sample in samples], dtype=torch.float32, device=device)
+    targets = (
+        samples.targets
+        if isinstance(samples, Batch)
+        else torch.tensor(
+            [sample.target_probability for sample in samples],
+            dtype=torch.float32,
+            device=device,
+        )
+    )
     return torch.mean(torch.abs(probabilities - targets).pow(config.loss_exponent))
 
 
@@ -1217,7 +1464,12 @@ def _validation_metric(
     total = 0.0
     with torch.no_grad():
         for offset in range(0, len(samples), config.batch_size):
-            batch = samples[offset : offset + config.batch_size]
+            stop = min(offset + config.batch_size, len(samples))
+            batch = (
+                samples.batch_slice(offset, stop, device)
+                if isinstance(samples, RowDataset)
+                else samples[offset:stop]
+            )
             total += float(_loss(model, batch, config, device).cpu()) * len(batch)
     model.train()
     return total / len(samples)
@@ -1412,7 +1664,11 @@ def _run_training(
         while batch_cursor < batch_count:
             start = batch_cursor * config.batch_size
             indices = current_order[start : start + config.batch_size]
-            batch = [train_samples[index] for index in indices]
+            batch = (
+                train_samples.batch(indices, device)
+                if isinstance(train_samples, RowDataset)
+                else [train_samples[index] for index in indices]
+            )
             sparse.zero_grad(set_to_none=True)
             dense.zero_grad(set_to_none=True)
             loss = _loss(model, batch, config, device)

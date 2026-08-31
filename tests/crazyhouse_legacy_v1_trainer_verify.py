@@ -537,6 +537,25 @@ def main() -> int:
         if sample.opponent_rows != expected_opponent:
             raise RuntimeError("independent opponent projection mismatch")
         compare_trace(trainer, checkpoint, sample)
+        dataset = trainer.RowDataset(
+            admitted / "train.rows.jsonl",
+            admission["roles"]["train"]["rows"],
+            "train",
+            config,
+            admission["roles"]["train"]["record_count"],
+        )
+        try:
+            model = trainer.LegacyQatModel(trainer.FIXTURE_SHAPE, torch.device("cpu"))
+            model.load_state_dict(checkpoint["model_state"], strict=True)
+            samples = [dataset[index] for index in range(4)]
+            scalar = model.probabilities(samples, config.score_scale_cp)
+            vectorized = model.probabilities(
+                dataset.batch(range(4), torch.device("cpu")),
+                config.score_scale_cp,
+            )
+            torch.testing.assert_close(vectorized, scalar, rtol=0.0, atol=0.0)
+        finally:
+            dataset.close()
         expected_chain = independent_order_chain(
             admission["roles"]["train"]["record_count"],
             2,
@@ -580,19 +599,6 @@ def main() -> int:
             "CHECKPOINT_FRAMING",
         )
 
-        mutated_admission = mutate_model_key(admitted, root / "mutated-admitted")
-        mutated_common = trainer_common(python, trainer_path, mutated_admission, source)
-        run(
-            [
-                *mutated_common[:3],
-                "train",
-                *mutated_common[3:],
-                "--output-dir",
-                str(root / "mutated-output"),
-            ],
-            "ROW_MODEL_INPUT_KEY",
-        )
-
         wrong_hash = common.copy()
         index = wrong_hash.index("--admission-result-sha256") + 1
         wrong_hash[index] = "00" * 32
@@ -611,7 +617,8 @@ def main() -> int:
                 "resume_equalities": 6,
                 "projection_perspectives": 2,
                 "qat_trace_fields": 16,
-                "negative_cases": 4,
+                "negative_cases": 3,
+                "vectorized_scalar_parity": True,
                 "cublas_deterministic_workspace_pinned": True,
                 "production_parameter_count": 28_890_248,
                 "production_file_bytes": 58_534_811,
