@@ -239,38 +239,17 @@ def compare_trace(trainer: Any, checkpoint: Mapping[str, Any], row: Mapping[str,
             raise RuntimeError(f"QAT trace mismatch at {key}")
 
 
-def feistel(value: int, bits: int, key: bytes) -> int:
-    half_bits = bits // 2
-    mask = (1 << half_bits) - 1
-    left, right = value >> half_bits, value & mask
-    for round_index in range(8):
-        round_value = int.from_bytes(
-            hashlib.sha256(key + bytes((round_index,)) + right.to_bytes((half_bits + 7) // 8, "little")).digest()[:8],
-            "little",
-        ) & mask
-        left, right = right, left ^ round_value
-    return (left << half_bits) | right
-
-
 def independent_order(count: int, seed: int, epoch: int, dataset_identity: str) -> list[int]:
-    bits = max(2, (count - 1).bit_length())
-    if bits % 2:
-        bits += 1
-    key = hashlib.sha256(
-        b"Crazyhouse-Stockfish NNUE V2 large Feistel v1\0"
-        + seed.to_bytes(8, "little")
-        + epoch.to_bytes(8, "little")
-        + bytes.fromhex(dataset_identity)
-    ).digest()
-    output: list[int] = []
-    for source in range(count):
-        value = feistel(source, bits, key)
-        while value >= count:
-            value = feistel(value, bits, key)
-        output.append(value)
-    if sorted(output) != list(range(count)):
-        raise RuntimeError("independent order is not a permutation")
-    return output
+    permutation_seed = int.from_bytes(
+        hashlib.sha256(
+            b"Crazyhouse-Stockfish NNUE paired NumPy PCG64 sample order v1\0"
+            + seed.to_bytes(8, "little")
+            + epoch.to_bytes(8, "little")
+            + bytes.fromhex(dataset_identity)
+        ).digest(),
+        "little",
+    )
+    return np.random.Generator(np.random.PCG64(permutation_seed)).permutation(count).tolist()
 
 
 def independent_order_chain(count: int, epochs: int, batch_size: int, seed: int, dataset_identity: str) -> str:

@@ -26,6 +26,8 @@ ADDENDUM_3 = ROOT / "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v
 ADDENDUM_3_SHA256 = "a170bd0c3e6919c9fa3c536707c6ca3542ad9168b33853fa80e6d1414e2a8353"
 ADDENDUM_4 = ROOT / "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.004.json"
 ADDENDUM_4_SHA256 = "412c05023f4538482e67f2e23e163895538fe74a4d5d2e6333aff7a497089958"
+ADDENDUM_5 = ROOT / "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.005.json"
+ADDENDUM_5_SHA256 = "e12db1d1671dc5a5f252b0a764d05c5ef24eae7145d7998871088a67d651f76e"
 LEGACY_TRAINER = ROOT / "tools/nnue/crazyhouse_legacy_v1_trainer.py"
 V2_TRAINER = ROOT / "tools/nnue/crazyhouse_v2_large_trainer.py"
 CONFIG_SCHEMA = "crazyhouse-nnue-v2-large-training-config/v1"
@@ -112,7 +114,7 @@ def validate_static_chain(addendum_path: Path, addendum_sha256: str) -> tuple[Ma
     require(base.get("schema") == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-preregistration/v1", "BASE_SCHEMA")
     require(addendum_2.get("addendum") == 2 and addendum_2.get("status") == "AUTHORIZED_DIAGNOSTIC_OVERLAP_EXCEPTION", "ADDENDUM_2_STATUS")
     number = addendum.get("addendum")
-    require(number in (3, 4, 5), "ADDENDUM_NUMBER")
+    require(number in (3, 4, 5, 6), "ADDENDUM_NUMBER")
     prefix = f"ADDENDUM_{number}"
     require(addendum.get("schema") == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1", f"{prefix}_SCHEMA")
     if number == 3:
@@ -129,7 +131,7 @@ def validate_static_chain(addendum_path: Path, addendum_sha256: str) -> tuple[Ma
             "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.003.json",
             "sha256": ADDENDUM_3_SHA256,
         }
-    else:
+    elif number == 5:
         prior, _ = load_pinned_json(ADDENDUM_4, ADDENDUM_4_SHA256, "ADDENDUM_4")
         require(
             prior.get("addendum") == 4
@@ -143,6 +145,21 @@ def validate_static_chain(addendum_path: Path, addendum_sha256: str) -> tuple[Ma
         predecessor = {
             "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.004.json",
             "sha256": ADDENDUM_4_SHA256,
+        }
+    else:
+        prior, _ = load_pinned_json(ADDENDUM_5, ADDENDUM_5_SHA256, "ADDENDUM_5")
+        require(
+            prior.get("addendum") == 5
+            and prior.get("status") == "AUTHORIZED_VECTORIZED_TRAINER_REPAIR",
+            "ADDENDUM_5_STATUS",
+        )
+        require(
+            addendum.get("status") == "AUTHORIZED_FAST_SAMPLE_ORDER_REPAIR",
+            "ADDENDUM_6_STATUS",
+        )
+        predecessor = {
+            "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.005.json",
+            "sha256": ADDENDUM_5_SHA256,
         }
     require(addendum.get("predecessor") == predecessor, f"{prefix}_PREDECESSOR")
     tooling = addendum.get("tooling")
@@ -400,7 +417,7 @@ def materialize(args: argparse.Namespace) -> Mapping[str, Any]:
         v2_root = args.v2_admission.resolve(strict=True).parent
         minimum = base["dataset_admission"]["minimum_record_counts"]["train_ongoing_exact_centipawn"]
         derivation = base["score_scale_cp_derivation"]
-        if addendum.get("addendum") == 5:
+        if addendum.get("addendum") in (5, 6):
             pinned = addendum.get("common_sample_identity")
             require(isinstance(pinned, dict), "ADDENDUM_COMMON_SAMPLE_IDENTITY")
             require(pinned.get("train_records") == legacy_inputs.train_record_count, "ADDENDUM_TRAIN_COUNT")

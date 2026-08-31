@@ -1163,44 +1163,19 @@ class LargeQatModel(nn.Module):
         return torch.sigmoid(centipawns / score_scale_cp)
 
 
-def _feistel_value(value: int, bits: int, key: bytes) -> int:
-    half_bits = bits // 2
-    mask = (1 << half_bits) - 1
-    left = value >> half_bits
-    right = value & mask
-    for round_index in range(8):
-        round_value = int.from_bytes(
-            hashlib.sha256(key + bytes((round_index,)) + right.to_bytes((half_bits + 7) // 8, "little")).digest()[:8],
-            "little",
-        ) & mask
-        left, right = right, left ^ round_value
-    return (left << half_bits) | right
-
-
 def sample_order(count: int, seed: int, epoch: int, dataset_identity: str) -> list[int]:
     _require(count > 0, "ORDER_COUNT")
     _validate_hex(dataset_identity, HEX64, "ORDER_DATASET_IDENTITY")
-    bits = max(2, (count - 1).bit_length())
-    if bits % 2:
-        bits += 1
-    domain = 1 << bits
-    key = hashlib.sha256(
-        b"Crazyhouse-Stockfish NNUE V2 large Feistel v1\0"
-        + seed.to_bytes(8, "little")
-        + epoch.to_bytes(8, "little")
-        + bytes.fromhex(dataset_identity)
-    ).digest()
-    order: list[int] = []
-    for source in range(count):
-        value = _feistel_value(source, bits, key)
-        attempts = 1
-        while value >= count:
-            value = _feistel_value(value, bits, key)
-            attempts += 1
-            _require(attempts <= domain + 1, "ORDER_CYCLE_WALK")
-        order.append(value)
-    _require(sorted(order) == list(range(count)), "ORDER_PERMUTATION")
-    return order
+    permutation_seed = int.from_bytes(
+        hashlib.sha256(
+            b"Crazyhouse-Stockfish NNUE paired NumPy PCG64 sample order v1\0"
+            + seed.to_bytes(8, "little")
+            + epoch.to_bytes(8, "little")
+            + bytes.fromhex(dataset_identity)
+        ).digest(),
+        "little",
+    )
+    return np.random.Generator(np.random.PCG64(permutation_seed)).permutation(count).tolist()
 
 
 def _order_chain(previous: bytes, epoch: int, batch: int, indices: Sequence[int]) -> bytes:

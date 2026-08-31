@@ -1,0 +1,117 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 6,
+  "status": "AUTHORIZED_FAST_SAMPLE_ORDER_REPAIR",
+  "evidence_class": "M2_MODEL_SELECTION_DIAGNOSTIC",
+  "frozen_utc": "2026-08-31T11:11:56.8996403Z",
+  "purpose": "Preserve the owner-stopped attempt 527 and authorize a fresh paired run after replacing the per-row Python Feistel shuffle with a deterministic NumPy PCG64 permutation. Data, labels, optimization, paired seeds, selection, strength and release boundaries remain unchanged.",
+  "predecessor": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.005.json",
+    "sha256": "e12db1d1671dc5a5f252b0a764d05c5ef24eae7145d7998871088a67d651f76e"
+  },
+  "failed_attempt": {
+    "root": "D:/Crazyhouse-Stockfish/training/p13-a0-paired-diagnostic-527",
+    "manifest_sha256": "e34cb5a24a72fd4db17d8ec9556a7172eeec5f0fa4f6c26b07a01b8bcdcc9e82",
+    "supervisor_sha256": "dc998cca164188b5695563d83af95ca5ec59da90170b316222fbfeb313056a91",
+    "pipeline_state_sha256": "cc409a8eb8d4dff06a5b58ee694bc26eecd2809ec549b3cda48827f5fc89306a",
+    "pipeline_state_bytes": 1049,
+    "trainer_event_log_sha256": "8f3397547afac32b068bc938aa8277638f6c1296e57d1682b79a29020d4a196b",
+    "trainer_event_log_bytes": 1698,
+    "failure_code": "TRAINING_EXIT_4294967295",
+    "owner_stop_reason": "sample-order generation dominated otherwise fast vectorized epochs",
+    "completed_runs": 0,
+    "completed_epoch_checkpoints": 4,
+    "export_started": false,
+    "preservation": "immutable; never resume or overwrite"
+  },
+  "diagnosis": {
+    "measured_sample_order_before": "approximately one minute per production epoch in the integrated run",
+    "measured_sample_order_after_seconds_for_1048576_rows": 0.0414,
+    "gpu_batch_path_changed": false,
+    "dataset_or_label_path_changed": false
+  },
+  "repair": {
+    "algorithm": "NumPy Generator with PCG64 seeded by SHA-256 of the fixed domain, paired seed, epoch and shared raw-record identity",
+    "same_order_for_paired_arms": true,
+    "resume_determinism": "PASS on both fixture suites",
+    "vectorized_scalar_forward_parity": "PASS on both fixture suites",
+    "data_or_labels_changed": false,
+    "optimizer_or_learning_rate_changed": false,
+    "batch_size_or_epochs_changed": false,
+    "paired_seed_values_changed": false,
+    "sample_order_algorithm_changed": true
+  },
+  "admissions": {
+    "legacy_v1": {
+      "path": "D:/Crazyhouse-Stockfish/datasets/p13-a0-admission-legacy-diagnostic-524/admission-result.json",
+      "sha256": "8923a58c30eb53b60555e60bb2de685b8495eab157fe033a1cbe95f24c5413ba",
+      "train_rows_sha256": "0529711ac0d0badc0cbd7f04e02c2d054dcfaa796f24f5aac039344abf6739e6",
+      "validation_rows_sha256": "472b4f34ba6ab36c2db7ba2f6cc7374fd1c182029b32fc2349f6db202f25688c"
+    },
+    "large_v2": {
+      "path": "D:/Crazyhouse-Stockfish/datasets/p13-a0-admission-v2-large-diagnostic-524/admission-result.json",
+      "sha256": "ddc319aecb585a7e49c5c9714f12b8256ee3b19ad128f94b5f4c26a55e603768",
+      "train_rows_sha256": "40b47682f9538e43b26d1cff51b8645d3144a85ddc37450fc9db1dc520571fee",
+      "validation_rows_sha256": "31cd6978c6633dfd332ad65e765d9329a8c26bc276db859ce982cbd17f5b8cec"
+    }
+  },
+  "common_sample_identity": {
+    "train_records": 1048576,
+    "validation_records": 131072,
+    "train_raw_record_ordered_set_sha256": "fb0a63adfa3edf69e917b9749e8f3679882a95fd7fa36975b5303b0dd56a5569",
+    "validation_raw_record_ordered_set_sha256": "ef440670aba5e74d1e62b75f6c1349db8bc632c0148889750afe0666356d9ca4",
+    "train_label_stream_sha256": "16173bae8563abbe60f541af057197752c2a3f25a822afd428e9844d4db1e5e3",
+    "validation_label_stream_sha256": "5e981a65ec4828f493afff06b8bb0655d124417c73e2c982f9247cad57e5b35c",
+    "score_scale_cp": {
+      "value": 374,
+      "eligible_train_rows": 939609,
+      "q75_abs_cp": 411,
+      "nearest_rank_one_based": 704707,
+      "source_role": "train",
+      "validation_rows_used": false
+    }
+  },
+  "tooling": {
+    "planner": {
+      "path": "tools/nnue/crazyhouse_a0_paired_diagnostic_campaign.py",
+      "sha256": "ba17e39991f2e2a18839017367cc54a22ec2f138e5384e370c92372f9d442a52"
+    },
+    "legacy_trainer": {
+      "path": "tools/nnue/crazyhouse_legacy_v1_trainer.py",
+      "sha256": "8a5fb74906fa1bfabbe7d3dd88b17a8a16f089c220883259400a3ff6d65ac84c"
+    },
+    "v2_trainer": {
+      "path": "tools/nnue/crazyhouse_v2_large_trainer.py",
+      "sha256": "971cc0d5b3ad062d3de8baa32ccd25a2176050f029debcf26772a482bfdc57a4"
+    },
+    "legacy_verifier": {
+      "path": "tests/crazyhouse_legacy_v1_trainer_verify.py",
+      "sha256": "00ccf1ad921e075fb11114d99e47b36d2c57a31aa6a09a8db5a87c5fd34ce1db"
+    },
+    "v2_verifier": {
+      "path": "tests/crazyhouse_v2_large_trainer_verify.py",
+      "sha256": "927055149d2414b215baefa1721b0d6b856a669ca9ef5b177824c5c11ca8edde"
+    }
+  },
+  "paired_execution": {
+    "arms": ["fresh legacy-V1", "fresh CH-NNUE-V2-LARGE-K64G1-SFNNV16"],
+    "seeds": [617628155675752428, 521232795329550045, 4052246384809050251],
+    "predesignated_playing_seed_index": 0,
+    "fresh_process_per_arm_and_seed": true,
+    "all_six_trainings_required": true,
+    "batch_size": 512,
+    "epochs": 8,
+    "cpu_threads": 1,
+    "device": "cuda",
+    "loss_selects_an_artifact": false,
+    "validation_usage": "forward-only health telemetry"
+  },
+  "release_admissible": false,
+  "strength_testing_started": false,
+  "registered_legacy_remains_default": true,
+  "release_boundary": {
+    "same_data_stage_one_win_is_sufficient_for_release": false,
+    "release_before_valid_stage_two_win_over_registered_best_legacy": "forbidden",
+    "engineering_loss_export_reload_or_parity_is_sufficient_for_release": false
+  }
+}

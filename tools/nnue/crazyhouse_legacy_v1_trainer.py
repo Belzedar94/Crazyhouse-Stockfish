@@ -47,7 +47,7 @@ TRAINING_CONTRACT_SHA256 = (
 )
 SHARED_TRAINER_PATH = ROOT / "tools" / "nnue" / "crazyhouse_v2_large_trainer.py"
 SHARED_TRAINER_SHA256 = (
-    "96276c043c375487e83e0f974bdc679153c9567a117fa50aaf7553df34fd384a"
+    "971cc0d5b3ad062d3de8baa32ccd25a2176050f029debcf26772a482bfdc57a4"
 )
 PHYSICAL_FEATURE_PATH = ROOT / "schemas" / "crazyhouse-nnue-v2-features-v1.json"
 PHYSICAL_FEATURE_SHA256 = (
