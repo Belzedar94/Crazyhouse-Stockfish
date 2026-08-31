@@ -516,6 +516,9 @@ def main() -> int:
             raise RuntimeError("legacy resume lineage did not record the interruption")
 
         checkpoint = load_checkpoint(uninterrupted / "checkpoint.chleg")
+        runtime = checkpoint["identity"]["runtime"]
+        if runtime.get("cublas_workspace_config") != trainer.CUBLAS_WORKSPACE_CONFIG:
+            raise RuntimeError("legacy CuBLAS deterministic workspace identity drifted")
         first_row = json.loads(
             (admitted / "train.rows.jsonl").read_text(encoding="utf-8").splitlines()[0]
         )
@@ -609,6 +612,7 @@ def main() -> int:
                 "projection_perspectives": 2,
                 "qat_trace_fields": 16,
                 "negative_cases": 4,
+                "cublas_deterministic_workspace_pinned": True,
                 "production_parameter_count": 28_890_248,
                 "production_file_bytes": 58_534_811,
                 "training_admissible": False,

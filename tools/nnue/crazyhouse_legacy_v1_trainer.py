@@ -24,12 +24,18 @@ import struct
 import sys
 from typing import Any, Mapping, Sequence, cast, overload
 
+CUBLAS_WORKSPACE_CONFIG = ":4096:8"
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", CUBLAS_WORKSPACE_CONFIG)
+
 import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
 
 import crazyhouse_v2_large_trainer as shared
+
+if CUBLAS_WORKSPACE_CONFIG != shared.CUBLAS_WORKSPACE_CONFIG:
+    raise RuntimeError("CUBLAS_WORKSPACE_CONFIG_DRIFT")
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -41,7 +47,7 @@ TRAINING_CONTRACT_SHA256 = (
 )
 SHARED_TRAINER_PATH = ROOT / "tools" / "nnue" / "crazyhouse_v2_large_trainer.py"
 SHARED_TRAINER_SHA256 = (
-    "bcb7b376fe90c09e763bc118b5b38f3af683a883370006bea095ecd32986fc1e"
+    "de9fb58bc6aea2214000bd71d2e1e3478a946635a3e33c8da7524b9b60009cc0"
 )
 PHYSICAL_FEATURE_PATH = ROOT / "schemas" / "crazyhouse-nnue-v2-features-v1.json"
 PHYSICAL_FEATURE_SHA256 = (

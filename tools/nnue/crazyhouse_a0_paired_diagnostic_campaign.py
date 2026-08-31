@@ -23,6 +23,7 @@ BASE_CAMPAIGN_SHA256 = "1636986a62d08d73e295f354659cfe5bdcccba0ea4133ea08793c9d0
 ADDENDUM_2 = ROOT / "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.002.json"
 ADDENDUM_2_SHA256 = "8c9dd55c22664481ad18cb4cb8d38443ecfee81d80368ac56cd257e83005372c"
 ADDENDUM_3 = ROOT / "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.003.json"
+ADDENDUM_3_SHA256 = "a170bd0c3e6919c9fa3c536707c6ca3542ad9168b33853fa80e6d1414e2a8353"
 LEGACY_TRAINER = ROOT / "tools/nnue/crazyhouse_legacy_v1_trainer.py"
 V2_TRAINER = ROOT / "tools/nnue/crazyhouse_v2_large_trainer.py"
 CONFIG_SCHEMA = "crazyhouse-nnue-v2-large-training-config/v1"
@@ -105,17 +106,30 @@ def descriptor(path: Path, relative_to: Path | None = None) -> Mapping[str, Any]
 def validate_static_chain(addendum_path: Path, addendum_sha256: str) -> tuple[Mapping[str, Any], bytes, Mapping[str, Any]]:
     base, base_payload = load_pinned_json(BASE_CAMPAIGN, BASE_CAMPAIGN_SHA256, "BASE_CAMPAIGN")
     addendum_2, _ = load_pinned_json(ADDENDUM_2, ADDENDUM_2_SHA256, "ADDENDUM_2")
-    addendum, addendum_payload = load_pinned_json(addendum_path, addendum_sha256, "ADDENDUM_3")
+    addendum, addendum_payload = load_pinned_json(addendum_path, addendum_sha256, "ADDENDUM_CURRENT")
     require(base.get("schema") == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-preregistration/v1", "BASE_SCHEMA")
     require(addendum_2.get("addendum") == 2 and addendum_2.get("status") == "AUTHORIZED_DIAGNOSTIC_OVERLAP_EXCEPTION", "ADDENDUM_2_STATUS")
-    require(addendum.get("schema") == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1", "ADDENDUM_3_SCHEMA")
-    require(addendum.get("addendum") == 3 and addendum.get("status") == "FROZEN_DIAGNOSTIC_PAIRED_TRAINING_IMPLEMENTATION", "ADDENDUM_3_STATUS")
-    require(addendum.get("predecessor") == {
-        "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.002.json",
-        "sha256": ADDENDUM_2_SHA256,
-    }, "ADDENDUM_3_PREDECESSOR")
+    number = addendum.get("addendum")
+    require(number in (3, 4), "ADDENDUM_NUMBER")
+    prefix = f"ADDENDUM_{number}"
+    require(addendum.get("schema") == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1", f"{prefix}_SCHEMA")
+    if number == 3:
+        require(addendum.get("status") == "FROZEN_DIAGNOSTIC_PAIRED_TRAINING_IMPLEMENTATION", "ADDENDUM_3_STATUS")
+        predecessor = {
+            "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.002.json",
+            "sha256": ADDENDUM_2_SHA256,
+        }
+    else:
+        prior, _ = load_pinned_json(ADDENDUM_3, ADDENDUM_3_SHA256, "ADDENDUM_3")
+        require(prior.get("addendum") == 3 and prior.get("status") == "FROZEN_DIAGNOSTIC_PAIRED_TRAINING_IMPLEMENTATION", "ADDENDUM_3_STATUS")
+        require(addendum.get("status") == "AUTHORIZED_DETERMINISTIC_CUDA_RUNTIME_REPAIR", "ADDENDUM_4_STATUS")
+        predecessor = {
+            "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.003.json",
+            "sha256": ADDENDUM_3_SHA256,
+        }
+    require(addendum.get("predecessor") == predecessor, f"{prefix}_PREDECESSOR")
     tooling = addendum.get("tooling")
-    require(isinstance(tooling, dict), "ADDENDUM_3_TOOLING")
+    require(isinstance(tooling, dict), f"{prefix}_TOOLING")
     expected = {
         "planner": Path(__file__).resolve(),
         "legacy_trainer": LEGACY_TRAINER,
@@ -123,12 +137,12 @@ def validate_static_chain(addendum_path: Path, addendum_sha256: str) -> tuple[Ma
     }
     for key, path in expected.items():
         entry = tooling.get(key)
-        require(isinstance(entry, dict), f"ADDENDUM_3_{key.upper()}")
-        require(entry.get("path") == path.relative_to(ROOT).as_posix(), f"ADDENDUM_3_{key.upper()}_PATH")
-        require(entry.get("sha256") == sha256_file(path), f"ADDENDUM_3_{key.upper()}_SHA256")
-    require(addendum.get("release_admissible") is False, "ADDENDUM_3_RELEASE")
-    require(addendum.get("strength_testing_started") is False, "ADDENDUM_3_STRENGTH")
-    require(addendum.get("registered_legacy_remains_default") is True, "ADDENDUM_3_DEFAULT")
+        require(isinstance(entry, dict), f"{prefix}_{key.upper()}")
+        require(entry.get("path") == path.relative_to(ROOT).as_posix(), f"{prefix}_{key.upper()}_PATH")
+        require(entry.get("sha256") == sha256_file(path), f"{prefix}_{key.upper()}_SHA256")
+    require(addendum.get("release_admissible") is False, f"{prefix}_RELEASE")
+    require(addendum.get("strength_testing_started") is False, f"{prefix}_STRENGTH")
+    require(addendum.get("registered_legacy_remains_default") is True, f"{prefix}_DEFAULT")
     return addendum, addendum_payload, {"document": base, "payload": base_payload}
 
 

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
 import hashlib
 import importlib.util
 import io
@@ -341,6 +342,21 @@ def main() -> int:
     if sha256_file(CONFIG) != CONFIG_SHA256:
         raise RuntimeError("fixture configuration pin mismatch")
     trainer = load_trainer(trainer_path)
+    fixture_config = trainer._load_config(CONFIG, CONFIG_SHA256)
+    prior_workspace = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
+    try:
+        trainer._configure_runtime(replace(fixture_config, device="cuda"))
+    except trainer.TrainerError as error:
+        if str(error) != "CUBLAS_WORKSPACE_CONFIG":
+            raise RuntimeError(f"wrong CuBLAS workspace rejection: {error}") from error
+    else:
+        raise RuntimeError("conflicting CuBLAS workspace configuration was accepted")
+    finally:
+        if prior_workspace is None:
+            os.environ.pop("CUBLAS_WORKSPACE_CONFIG", None)
+        else:
+            os.environ["CUBLAS_WORKSPACE_CONFIG"] = prior_workspace
     meta = run([str(python), "-B", str(trainer_path), "meta-check"])
     if meta.get("parameter_count") != 63_342_088 or meta.get("allocated_production_storage") is not False:
         raise RuntimeError(f"meta check drifted: {meta!r}")
@@ -450,6 +466,9 @@ def main() -> int:
             raise RuntimeError("resume lineage did not record the interruption")
 
         checkpoint = load_checkpoint(uninterrupted / "checkpoint.chv2")
+        runtime = checkpoint["identity"]["runtime"]
+        if runtime.get("cublas_workspace_config") != trainer.CUBLAS_WORKSPACE_CONFIG:
+            raise RuntimeError("CuBLAS deterministic workspace identity drifted")
         first_row = json.loads((admitted / "train.rows.jsonl").read_text(encoding="utf-8").splitlines()[0])
         compare_trace(trainer, checkpoint, first_row)
         expected_chain = independent_order_chain(
@@ -519,9 +538,11 @@ def main() -> int:
                 "training_steps": 10,
                 "resume_equalities": 6,
                 "qat_trace_fields": 17,
-                "negative_cases": 4,
+                "negative_cases": 5,
                 "export_header_parity": True,
                 "dense_interval_negative": True,
+                "cublas_deterministic_workspace_pinned": True,
+                "cublas_workspace_conflict_negative": True,
                 "production_parameter_count": 63_342_088,
                 "training_admissible": False,
                 "model_selection_credit": False,

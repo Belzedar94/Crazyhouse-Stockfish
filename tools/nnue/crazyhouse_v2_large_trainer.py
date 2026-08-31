@@ -27,6 +27,9 @@ import subprocess
 import sys
 from typing import Any, Mapping, Sequence, cast, overload
 
+CUBLAS_WORKSPACE_CONFIG = ":4096:8"
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", CUBLAS_WORKSPACE_CONFIG)
+
 import numpy as np
 import torch
 from torch import nn
@@ -506,6 +509,10 @@ def _configure_runtime(config: TrainingConfig) -> torch.device:
     _require(torch.get_num_threads() == config.cpu_threads, "TORCH_THREADS")
     _require(torch.get_num_interop_threads() == 1, "TORCH_INTEROP_THREADS")
     if config.device == "cuda":
+        _require(
+            os.environ.get("CUBLAS_WORKSPACE_CONFIG") == CUBLAS_WORKSPACE_CONFIG,
+            "CUBLAS_WORKSPACE_CONFIG",
+        )
         _require(torch.cuda.is_available(), "CUDA_UNAVAILABLE")
         torch.backends.cudnn.benchmark = False
         torch.backends.cudnn.deterministic = True
@@ -536,6 +543,7 @@ def _runtime_identity(device: torch.device) -> dict[str, Any]:
         "torch_threads": torch.get_num_threads(),
         "torch_interop_threads": torch.get_num_interop_threads(),
         "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+        "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
     }
 
 
