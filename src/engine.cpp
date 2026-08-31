@@ -409,6 +409,10 @@ EngineRouting::ApplyResult Engine::apply_pending_route() {
             {
                 legacyCandidate =
                   std::make_unique<NN::LegacyCrazyhouseNetworkV1>(legacyExecutionBackend);
+                const std::string_view expectedSha256 =
+                  requested.crazyhouseEvalSha256.empty()
+                    ? NN::LegacyCrazyhouseNetworkV1::RegisteredSha256
+                    : std::string_view(requested.crazyhouseEvalSha256);
                 NN::LegacyCrazyhouseNetworkV1::LoadResult result{
                   NN::LegacyCrazyhouseNetworkV1::LoadStatus::MissingFile, "network not loaded"};
                 if (std::string_view(requested.crazyhouseEvalFile)
@@ -420,7 +424,7 @@ EngineRouting::ApplyResult Engine::apply_pending_route() {
                     if (path.is_relative())
                         path = binaryDirectory / path;
                     path   = path.lexically_normal();
-                    result = legacyCandidate->load_file(path);
+                    result = legacyCandidate->load_file(path, expectedSha256);
                 }
                 loadError = legacy_load_error(result.status);
 
@@ -431,8 +435,7 @@ EngineRouting::ApplyResult Engine::apply_pending_route() {
                          != NN::LegacyCrazyhouseNetworkV1::RegisteredDescription)
                     loadError = ErrorCode::LegacyDescriptionMismatch;
                 if (loadError == ErrorCode::None
-                    && legacyCandidate->artifact_sha256()
-                         != NN::LegacyCrazyhouseNetworkV1::RegisteredSha256)
+                    && legacyCandidate->artifact_sha256() != expectedSha256)
                     loadError = ErrorCode::LegacyDigestMismatch;
                 if (loadError == ErrorCode::None
                     && legacyCandidate->execution_backend()
@@ -443,7 +446,7 @@ EngineRouting::ApplyResult Engine::apply_pending_route() {
                 if (loadError == ErrorCode::None)
                 {
                     backendKind     = BackendKind::LegacyCrazyhouseV1;
-                    backendIdentity = NN::LegacyCrazyhouseNetworkV1::RegisteredSha256;
+                    backendIdentity = std::string(legacyCandidate->artifact_sha256());
                 }
             }
         }

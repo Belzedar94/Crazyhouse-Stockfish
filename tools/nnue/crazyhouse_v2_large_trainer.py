@@ -251,12 +251,16 @@ class AdmissionInputs:
     source_manifest_sha256: str
     train_rows_sha256: str
     validation_rows_sha256: str
+    train_raw_record_ordered_set_sha256: str
+    validation_raw_record_ordered_set_sha256: str
     train_rows_bytes: int
     validation_rows_bytes: int
     train_record_count: int
     validation_record_count: int
     status: str
     training_admissible: bool
+    diagnostic_only: bool
+    release_admissible: bool
 
 
 class RowDataset(Sequence[Sample]):
@@ -661,19 +665,68 @@ def _load_admission(
     }
     for key, expected in expected_static.items():
         _require(result.get(key) == expected, f"ADMISSION_{key.upper()}")
+    diagnostic = result.get("status") == "PASS_PRODUCTION_DIAGNOSTIC_ADMISSION"
     if config.mode == "production":
-        _require(result.get("status") == "PASS_PRODUCTION_ADMISSION", "ADMISSION_PRODUCTION_STATUS")
+        _require(
+            result.get("status")
+            in {"PASS_PRODUCTION_ADMISSION", "PASS_PRODUCTION_DIAGNOSTIC_ADMISSION"},
+            "ADMISSION_PRODUCTION_STATUS",
+        )
         _require(result.get("training_admissible") is True, "ADMISSION_PRODUCTION_CREDIT")
         _require(result.get("fixture_mode") is False, "ADMISSION_PRODUCTION_FIXTURE")
+        if diagnostic:
+            _require(result.get("diagnostic_only") is True, "ADMISSION_DIAGNOSTIC_ONLY")
+            _require(result.get("release_admissible") is False, "ADMISSION_RELEASE_BOUNDARY")
+            exception = result.get("diagnostic_exception")
+            _require(isinstance(exception, dict), "ADMISSION_DIAGNOSTIC_EXCEPTION")
+            _require(
+                exception
+                == {
+                    "campaign_addendum_sha256": "8c9dd55c22664481ad18cb4cb8d38443ecfee81d80368ac56cd257e83005372c",
+                    "frozen_intersections": {
+                        "game_id": 0,
+                        "large_model_input_key": 17_262,
+                        "model_input_key": 17_262,
+                        "position_identity": 17_127,
+                        "raw_record_key": 0,
+                        "trajectory_id": 0,
+                    },
+                    "owner_waiver_sha256": "a67fe2ec5b2058b665c20da8dc158af8e91560b4de05a64824dbbdbfe72c5e2c",
+                    "validation_checkpoint_or_seed_selection": False,
+                    "validation_gradients": False,
+                    "validation_usage": "forward-only health telemetry",
+                },
+                "ADMISSION_DIAGNOSTIC_BINDING",
+            )
+        else:
+            _require(result.get("diagnostic_only") is not True, "ADMISSION_UNDECLARED_DIAGNOSTIC")
+            _require(result.get("release_admissible") is not False, "ADMISSION_RELEASE_BOUNDARY")
     else:
         _require(result.get("status") == "PASS_FIXTURE_NONADMISSIBLE", "ADMISSION_FIXTURE_STATUS")
         _require(result.get("training_admissible") is False, "ADMISSION_FIXTURE_CREDIT")
         _require(result.get("fixture_mode") is True, "ADMISSION_FIXTURE_MODE")
+        _require(not diagnostic, "ADMISSION_FIXTURE_DIAGNOSTIC")
     roles = result.get("roles")
     _require(isinstance(roles, dict) and set(roles) == {"train", "validation"}, "ADMISSION_ROLES")
     intersections = result.get("intersections")
     _require(isinstance(intersections, dict), "ADMISSION_INTERSECTIONS")
-    _require(all(value == 0 for value in intersections.values()), "ADMISSION_INTERSECTION_NONZERO")
+    if diagnostic:
+        _require(
+            intersections
+            == {
+                "game_id": 0,
+                "large_model_input_key": 17_262,
+                "model_input_key": 17_262,
+                "position_identity": 17_127,
+                "raw_record_key": 0,
+                "trajectory_id": 0,
+            },
+            "ADMISSION_DIAGNOSTIC_INTERSECTIONS",
+        )
+    else:
+        _require(all(value == 0 for value in intersections.values()), "ADMISSION_INTERSECTION_NONZERO")
+    sets = result.get("sets")
+    _require(isinstance(sets, dict) and set(sets) == {"train", "validation"}, "ADMISSION_SETS")
     root = result_path.resolve(strict=True).parent
     loaded: dict[str, RowDataset] = {}
     try:
@@ -692,6 +745,23 @@ def _load_admission(
         raise
     train_summary = roles["train"]
     validation_summary = roles["validation"]
+    raw_set_sha256: dict[str, str] = {}
+    for role, summary in (("train", train_summary), ("validation", validation_summary)):
+        role_sets = sets.get(role)
+        _require(isinstance(role_sets, dict), f"ADMISSION_{role.upper()}_SETS")
+        raw_set = role_sets.get("raw_record_key")
+        _require(isinstance(raw_set, dict), f"ADMISSION_{role.upper()}_RAW_SET")
+        _require(
+            raw_set.get("observations") == summary["record_count"]
+            and raw_set.get("unique_keys") == summary["record_count"]
+            and raw_set.get("duplicate_observations") == 0,
+            f"ADMISSION_{role.upper()}_RAW_SET_COUNTS",
+        )
+        raw_set_sha256[role] = _validate_hex(
+            raw_set.get("ordered_set_sha256"),
+            HEX64,
+            f"ADMISSION_{role.upper()}_RAW_SET_SHA256",
+        )
     return (
         loaded["train"],
         loaded["validation"],
@@ -700,12 +770,16 @@ def _load_admission(
             source_manifest_sha256=_validate_hex(result.get("source_manifest_sha256"), HEX64, "ADMISSION_SOURCE_MANIFEST"),
             train_rows_sha256=train_summary["rows"]["sha256"],
             validation_rows_sha256=validation_summary["rows"]["sha256"],
+            train_raw_record_ordered_set_sha256=raw_set_sha256["train"],
+            validation_raw_record_ordered_set_sha256=raw_set_sha256["validation"],
             train_rows_bytes=train_summary["rows"]["bytes"],
             validation_rows_bytes=validation_summary["rows"]["bytes"],
             train_record_count=train_summary["record_count"],
             validation_record_count=validation_summary["record_count"],
             status=result["status"],
             training_admissible=result["training_admissible"],
+            diagnostic_only=diagnostic,
+            release_admissible=bool(result.get("release_admissible", not diagnostic)),
         ),
     )
 
@@ -1093,6 +1167,14 @@ def _identity(
         "schema": RUN_IDENTITY_SCHEMA,
         "mode": config.mode,
         "training_admissible": admission.training_admissible,
+        "diagnostic_only": admission.diagnostic_only,
+        "release_admissible": admission.release_admissible,
+        "validation_policy": {
+            "usage": "forward-only health telemetry",
+            "gradients": False,
+            "early_stopping": False,
+            "checkpoint_or_seed_selection": False,
+        },
         "source": asdict(source),
         "admission": asdict(admission),
         "configuration_sha256": config.sha256,
@@ -1247,6 +1329,8 @@ def _result_document(
         "status": status,
         "mode": identity["mode"],
         "training_admissible": identity["training_admissible"],
+        "diagnostic_only": identity["diagnostic_only"],
+        "release_admissible": identity["release_admissible"],
         "model_selection_credit": False,
         "strength_credit": False,
         "legacy_v1_remains_default": True,
@@ -1275,7 +1359,9 @@ def _run_training(
     prior_checkpoint_sha256: str | None,
 ) -> dict[str, Any]:
     model, sparse, dense = _initialize(config, device)
-    dataset_identity = cast(str, identity["admission"]["train_rows_sha256"])
+    dataset_identity = cast(
+        str, identity["admission"]["train_raw_record_ordered_set_sha256"]
+    )
     if checkpoint is None:
         epoch = batch_cursor = global_step = 0
         current_order: list[int] | None = None
@@ -1408,10 +1494,14 @@ def _run_training(
     )
     checkpoint_sha256 = _save_checkpoint(checkpoint_path, document)
     status = (
-        "PASS_PRODUCTION_TRAINING_COMPLETE"
+        "PASS_PRODUCTION_DIAGNOSTIC_TRAINING_COMPLETE"
+        if complete and config.mode == "production" and identity["diagnostic_only"]
+        else "PASS_PRODUCTION_TRAINING_COMPLETE"
         if complete and config.mode == "production"
         else "PASS_FIXTURE_TRAINING_COMPLETE_NONADMISSIBLE"
         if complete
+        else "INTERRUPTED_PRODUCTION_DIAGNOSTIC_CHECKPOINT"
+        if config.mode == "production" and identity["diagnostic_only"]
         else "INTERRUPTED_PRODUCTION_CHECKPOINT"
         if config.mode == "production"
         else "INTERRUPTED_FIXTURE_CHECKPOINT_NONADMISSIBLE"
@@ -1503,9 +1593,14 @@ def crc32c(data: bytes | bytearray | memoryview) -> int:
     return crc ^ 0xFFFFFFFF
 
 
-def _quantized_numpy(tensor: torch.Tensor, scale: int, minimum: int, maximum: int, dtype: str) -> np.ndarray:
-    values = tensor.detach().cpu().numpy().astype(np.float64, copy=False)
-    rounded = np.sign(values) * np.floor(np.abs(values * scale) + 0.5)
+def _quantized_numpy(tensor: torch.Tensor, scale: float, minimum: int, maximum: int, dtype: str) -> np.ndarray:
+    values = tensor.detach().cpu().numpy().astype(np.float32, copy=False)
+    # QAT multiplies float32 parameters by a scalar cast to float32.  Preserve
+    # that exact pre-rounding value here so the serialized integer cannot
+    # diverge at a half-integer boundary.
+    scaled = values * np.float32(scale)
+    widened = scaled.astype(np.float64, copy=False)
+    rounded = np.sign(widened) * np.floor(np.abs(widened) + 0.5)
     _require(np.isfinite(rounded).all(), "EXPORT_NONFINITE")
     _require(bool((rounded >= minimum).all() and (rounded <= maximum).all()), "EXPORT_QUANTIZATION_RANGE")
     return rounded.astype(dtype, casting="unsafe", copy=False)
@@ -1604,6 +1699,11 @@ def export_checkpoint(args: argparse.Namespace) -> Mapping[str, Any]:
     identity = document.get("identity")
     _require(isinstance(identity, dict), "EXPORT_IDENTITY")
     _require(identity.get("mode") == "production" and identity.get("training_admissible") is True, "EXPORT_FIXTURE_FORBIDDEN")
+    diagnostic = identity.get("diagnostic_only") is True
+    _require(
+        identity.get("release_admissible") is (not diagnostic),
+        "EXPORT_RELEASE_BOUNDARY",
+    )
     _require(document.get("complete") is True, "EXPORT_INCOMPLETE")
     config_document = identity.get("configuration")
     _require(isinstance(config_document, dict), "EXPORT_CONFIGURATION")
@@ -1688,11 +1788,17 @@ def export_checkpoint(args: argparse.Namespace) -> Mapping[str, Any]:
     _reauth_export(args.output)
     result = {
         "schema": EXPORT_RESULT_SCHEMA,
-        "status": "PASS_PRODUCTION_EXPORT_REAUTHENTICATED",
+        "status": (
+            "PASS_PRODUCTION_DIAGNOSTIC_EXPORT_REAUTHENTICATED"
+            if diagnostic
+            else "PASS_PRODUCTION_EXPORT_REAUTHENTICATED"
+        ),
         "path": args.output.name,
         "bytes": args.output.stat().st_size,
         "sha256": _sha256_file(args.output),
         "training_admissible": True,
+        "diagnostic_only": diagnostic,
+        "release_admissible": not diagnostic,
         "model_selection_credit": False,
         "strength_credit": False,
         "legacy_v1_remains_default": True,

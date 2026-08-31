@@ -366,8 +366,14 @@ bool crazyhouse_search_ready(const Snapshot& snapshot) noexcept {
         || snapshot.active->chess960 || !backend_matches_epoch(snapshot))
         return false;
     if (snapshot.backend.kind == BackendKind::LegacyCrazyhouseV1)
+    {
+        const std::string_view expectedSha256 =
+          snapshot.active->crazyhouseEvalSha256.empty()
+            ? Eval::NNUE::LegacyCrazyhouseNetworkV1::RegisteredSha256
+            : std::string_view(snapshot.active->crazyhouseEvalSha256);
         return snapshot.active->crazyhouseEvaluator == "legacy-v1"
-            && snapshot.backend.identity == Eval::NNUE::LegacyCrazyhouseNetworkV1::RegisteredSha256;
+            && snapshot.backend.identity == expectedSha256;
+    }
     if (snapshot.backend.kind == BackendKind::LargeCrazyhouseV2A0)
         return snapshot.active->crazyhouseEvaluator == "large-v2-a0"
             && snapshot.backend.identity == snapshot.active->crazyhouseEvalSha256;

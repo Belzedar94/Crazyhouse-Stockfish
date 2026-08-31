@@ -1,0 +1,157 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 1,
+  "status": "PREREGISTERED_BEFORE_DATA_DOWNLOAD",
+  "evidence_class": "M2_MODEL_SELECTION",
+  "owner_decision_utc": "2026-08-30T20:25:24.8827431Z",
+  "purpose": "Add a same-data legacy-V1 architecture arm, freeze a two-stage strength comparison, and make a valid win over the registered best legacy network a hard prerequisite for any release.",
+  "base_campaign": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.json",
+    "sha256": "1636986a62d08d73e295f354659cfe5bdcccba0ea4133ea08793c9d02df567ce"
+  },
+  "terminal_datagen_authentication": {
+    "path": "receipts/private/p13-crazyhouse-a0-production-datagen-terminal-auth-522.json",
+    "sha256": "2d3902f58bb5a51c3a86dfc8f3b3578a4c0931fa9600d1aa0b52d1df22b5e01a",
+    "train_test_id": 413,
+    "validation_test_id": 414,
+    "train_records": 1048576,
+    "validation_records": 131072,
+    "unique_chunks": 2304
+  },
+  "decision_baseline": {
+    "commit": "4e013d023ffe59b779953dce3c24659a2ba43ff5",
+    "tree": "023f1426d7617a79121d2d3e1a8ae533cef88437",
+    "src_tree": "90b8e8d5ab1fbd47eece1226493d940460ca0de4",
+    "clean_before_addendum": true
+  },
+  "pipeline_override": {
+    "remote_workload_416_is_a_pipeline_dependency": false,
+    "remote_workload_416_may_be_mutated": false,
+    "remote_workload_416_may_supply_evidence_or_data": false,
+    "action": "Proceed directly with authenticated download of only DATAGEN 413 and 414, materialization, and production admission. Leave workload 416 and every foreign process untouched."
+  },
+  "architecture_experiment": {
+    "question": "Under the same authenticated A0 records, targets, score scale, sample-order rule, update budget and engine binary, does NNUE V2 outperform the legacy-V1 architecture?",
+    "arms": [
+      {
+        "id": "A0_LEGACY_V1_ARCH",
+        "architecture": "registered Crazyhouse legacy-V1 HalfKAv2Variants architecture",
+        "initialization": "fresh deterministic initialization for each paired seed",
+        "training_data": "exact admitted A0 train role",
+        "validation_data": "exact admitted A0 validation role",
+        "existing_8ebf_network_may_substitute_for_this_arm": false
+      },
+      {
+        "id": "A0_V2_LARGE",
+        "architecture": "CH-NNUE-V2-LARGE-K64G1-SFNNV16",
+        "initialization": "fresh deterministic initialization for each paired seed",
+        "training_data": "exact admitted A0 train role",
+        "validation_data": "exact admitted A0 validation role"
+      }
+    ],
+    "shared_controls": {
+      "same_raw_records": true,
+      "same_targets_and_lambda": true,
+      "same_train_derived_score_scale_cp": true,
+      "same_batch_size": true,
+      "same_epochs": true,
+      "same_update_count": true,
+      "same_sample_order_rule": true,
+      "same_sparse_and_dense_learning_rates": true,
+      "same_device_class": true,
+      "architecture_specific_feature_projection_is_the_only_intended_scientific_difference": true
+    },
+    "paired_seeds": [
+      617628155675752428,
+      521232795329550045,
+      4052246384809050251
+    ],
+    "predesignated_playing_seed_index_for_each_arm": 0,
+    "all_three_seeds_required_for_each_arm": true,
+    "loss_may_select_an_artifact": false,
+    "fresh_process_per_arm_and_seed": true
+  },
+  "legacy_training_gap": {
+    "observed_at_decision_time": true,
+    "existing_tool": "tools/nnue/crazyhouse_v2_legacy_control.py",
+    "existing_tool_is_training_admissible": false,
+    "existing_tool_purpose": "authenticated conversion of the registered historical legacy network only",
+    "required_before_legacy_training": [
+      "a production legacy-V1 QAT trainer bound to the admitted A0 row format",
+      "a strict legacy .nnue exporter accepted by the current engine loader",
+      "checkpoint authentication and exact resume semantics",
+      "fresh-process reload and scalar/incremental parity evidence",
+      "negative tests proving that V2 features, canaries and historical artifacts cannot enter the A0 legacy arm"
+    ],
+    "shortcut_to_historical_network_for_stage_one": "forbidden"
+  },
+  "same_binary_rule": {
+    "binary": "one exact fresh Crazyhouse-Stockfish binary built after both trained-artifact routes are supported",
+    "binary_identity_must_be_frozen_before_games": true,
+    "same_binary_bytes_for_both_sides": true,
+    "same_search_options_except_network_route_and_artifact": true,
+    "legacy_or_v2_fallback": "forbidden",
+    "route_telemetry_and_artifact_digest_required": true
+  },
+  "strength_sequence": [
+    {
+      "stage": 1,
+      "id": "A0_V2_VS_A0_LEGACY_ARCH",
+      "candidate": "A0_V2_LARGE seed index 0",
+      "comparator": "A0_LEGACY_V1_ARCH seed index 0",
+      "purpose": "isolate the architecture effect under the same small A0 dataset and training budget",
+      "advance_condition": "V2 obtains a valid preregistered statistical win",
+      "release_authority": false
+    },
+    {
+      "stage": 2,
+      "id": "A0_V2_VS_REGISTERED_BEST_LEGACY",
+      "run_only_if_stage_1_passes": true,
+      "candidate": "the unchanged A0_V2_LARGE seed-index-0 artifact from stage 1",
+      "comparator": {
+        "basename": "crazyhouse_run15rl_e190_l03.nnue",
+        "bytes": 58534811,
+        "sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"
+      },
+      "purpose": "test whether the new network is actually stronger than the best registered legacy network despite the approximately 1M versus multi-billion-record data disadvantage",
+      "release_authority": "only a valid win at this stage may satisfy the network-strength release prerequisite"
+    }
+  ],
+  "strength_preregistration_requirements": {
+    "must_be_frozen_before_first_game": true,
+    "same_opening_book_and_opening_order": true,
+    "reversed_color_pairs": true,
+    "complete_pairs_only": true,
+    "same_threads_hash_time_control_and_concurrency": true,
+    "fixed_work_before_equal_time": true,
+    "equal_time_stc_then_gated_ltc": true,
+    "no_result_based_extension_or_replacement": true,
+    "no_strength_test_starts_in_this_addendum": true
+  },
+  "release_gate": {
+    "release_before_stage_2_valid_win": "forbidden",
+    "candidate_release_before_stage_2_valid_win": "forbidden",
+    "stage_1_win_is_sufficient_for_release": false,
+    "engineering_admission_reload_parity_or_loss_is_sufficient_for_release": false,
+    "if_stage_1_fails": "retain evidence and continue data, recipe or architecture research without release",
+    "if_stage_2_fails": "retain evidence and continue scaling or ablation work without release",
+    "legacy_v1_default_remains_unchanged_until_release_gate_passes": true
+  },
+  "stopping_rules": [
+    "Any DATAGEN 413 or 414 manifest, chunk, receipt, CAS, role, count, hash or publication-contract mismatch stops fail-closed without substitution or retry under changed evidence.",
+    "Any cross-role raw-record, position, trajectory or large-model-input intersection stops before training.",
+    "Any legacy trainer shortcut, historical-network substitution, feature-route mismatch, fallback, seed replacement, nonfinite metric, export rejection, reload failure or parity mismatch rejects the affected architecture arm.",
+    "Both architecture arms must complete all three paired seeds before stage 1 may start.",
+    "No loss value may change the predesignated playing artifact or strength sequence.",
+    "No release or candidate release is authorized until the unchanged stage-1 V2 artifact obtains a valid stage-2 win over the registered best legacy network in the same exact binary."
+  ],
+  "boundary": {
+    "data_download_started": false,
+    "production_admission_passed": false,
+    "legacy_trainer_exists": false,
+    "legacy_arm_started": false,
+    "v2_arm_started": false,
+    "strength_started": false,
+    "release_authorized": false
+  }
+}

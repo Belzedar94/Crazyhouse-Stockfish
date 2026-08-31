@@ -131,8 +131,9 @@ def load_checkpoint(path: Path) -> Mapping[str, Any]:
 
 
 def round_away(values: np.ndarray, scale: int) -> np.ndarray:
-    scaled = values.astype(np.float64, copy=False) * scale
-    return (np.sign(scaled) * np.floor(np.abs(scaled) + 0.5)).astype(np.int64)
+    scaled = values.astype(np.float32, copy=False) * np.float32(scale)
+    widened = scaled.astype(np.float64, copy=False)
+    return (np.sign(widened) * np.floor(np.abs(widened) + 0.5)).astype(np.int64)
 
 
 def pair(values: np.ndarray) -> np.ndarray:
@@ -456,7 +457,7 @@ def main() -> int:
             2,
             7,
             2026082901,
-            admission["roles"]["train"]["rows"]["sha256"],
+            admission["sets"]["train"]["raw_record_key"]["ordered_set_sha256"],
         )
         if complete["order_chain_sha256"] != expected_chain:
             raise RuntimeError("independent order chain mismatch")

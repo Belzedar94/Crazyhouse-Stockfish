@@ -77,6 +77,20 @@ PRODUCTION_CAPABILITY_CONTRACT_SHA256 = (
     "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b"
 )
 OFFICIAL_OPENBENCH = "https://belzedar.duckdns.org"
+DIAGNOSTIC_ADDENDUM_SHA256 = (
+    "8c9dd55c22664481ad18cb4cb8d38443ecfee81d80368ac56cd257e83005372c"
+)
+DIAGNOSTIC_OWNER_WAIVER_SHA256 = (
+    "a67fe2ec5b2058b665c20da8dc158af8e91560b4de05a64824dbbdbfe72c5e2c"
+)
+DIAGNOSTIC_INTERSECTIONS = {
+    "raw_record_key": 0,
+    "position_identity": 17_127,
+    "model_input_key": 17_262,
+    "game_id": 0,
+    "trajectory_id": 0,
+    "large_model_input_key": 17_262,
+}
 
 MANIFEST_SCHEMA = "crazyhouse-training-dataset-manifest/v1"
 RESULT_SCHEMA = "crazyhouse-nnue-v2-training-admission-result/v1"
@@ -130,6 +144,18 @@ MANIFEST_KEYS = {
     "aggregate_chunk_set_receipt",
     "admission_tool",
     "created_utc",
+}
+DIAGNOSTIC_EXCEPTION_KEYS = {
+    "schema",
+    "status",
+    "campaign_addendum",
+    "owner_waiver",
+    "intersections",
+    "validation_usage",
+    "validation_gradients",
+    "validation_early_stopping",
+    "validation_checkpoint_or_seed_selection",
+    "release_admissible",
 }
 ROLE_KEYS = {
     "role",
@@ -266,6 +292,19 @@ def parse_strict_json(payload: bytes, label: str, *, maximum_bytes: int = 16 * 1
         reject("JSON_PARSE", f"{label}: {exc}")
     require(isinstance(document, dict), "JSON_ROOT", label)
     require(payload == canonical_json(document), "JSON_NONCANONICAL", label)
+    return document
+
+
+def parse_pinned_json(payload: bytes, label: str) -> Mapping[str, Any]:
+    """Parse an exact-digest document without imposing canonical formatting."""
+
+    try:
+        document = json.loads(payload.decode("utf-8"), object_pairs_hook=_strict_object)
+    except AdmissionError:
+        raise
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        reject("JSON_PARSE", f"{label}: {exc}")
+    require(isinstance(document, dict), "JSON_ROOT", label)
     return document
 
 
@@ -729,7 +768,14 @@ def validate_partition_config(value: Any, campaigns: Sequence[bytes]) -> Mapping
 
 
 def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str, Mapping[str, Any]]:
-    require(set(document) == MANIFEST_KEYS, "MANIFEST_KEYS", "")
+    keys = set(document)
+    diagnostic = "diagnostic_exception" in document
+    require(
+        keys == MANIFEST_KEYS or keys == MANIFEST_KEYS | {"diagnostic_exception"},
+        "MANIFEST_KEYS",
+        "",
+    )
+    require(not diagnostic or mode == "production", "DIAGNOSTIC_MODE", mode)
     require(document["schema"] == MANIFEST_SCHEMA, "MANIFEST_SCHEMA", "")
     require(
         document["project"] == "Crazyhouse-Stockfish" and document["variant"] == "crazyhouse",
@@ -743,11 +789,16 @@ def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str,
         "MANIFEST_TRAINING_ADMISSIBLE",
         "",
     )
-    require(
-        document["status"] == ("FIXTURE_ONLY" if fixture else "READY_FOR_TRAINING"),
-        "MANIFEST_STATUS",
-        "",
+    expected_status = (
+        "FIXTURE_ONLY"
+        if fixture
+        else (
+            "READY_FOR_DIAGNOSTIC_TRAINING"
+            if diagnostic
+            else "READY_FOR_TRAINING"
+        )
     )
+    require(document["status"] == expected_status, "MANIFEST_STATUS", "")
     rule = document["rule_profile"]
     require(
         rule == {"id": RULE_PROFILE_ID, "sha256": RULE_PROFILE_SHA256},
@@ -757,7 +808,6 @@ def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str,
     roles = document["roles"]
     require(isinstance(roles, dict) and set(roles) == set(ROLE_IDS), "MANIFEST_ROLES", "")
     result: dict[str, Mapping[str, Any]] = {}
-    global_indices: list[int] = []
     chunk_ids: set[str] = set()
     chunk_paths: set[str] = set()
     campaigns: list[bytes] = []
@@ -778,6 +828,7 @@ def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str,
             "ROLE_CHUNK_SET_DIGEST",
             role_name,
         )
+        role_indices: list[int] = []
         for chunk in chunks:
             require(isinstance(chunk, dict) and set(chunk) == CHUNK_KEYS, "CHUNK_KEYS", role_name)
             for artifact_name in ("bundle", "provenance", "capability", "completion_receipt"):
@@ -790,14 +841,108 @@ def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str,
             require(bundle_path not in chunk_paths, "CHUNK_PATH_DUPLICATE", bundle_path)
             chunk_paths.add(bundle_path)
             index = validate_u64(chunk["chunk_index"], "CHUNK_INDEX", role_name)
-            global_indices.append(index)
+            role_indices.append(index)
             campaigns.append(campaign.bytes)
             validate_u64(chunk["record_count"], "CHUNK_RECORD_COUNT", role_name)
             validate_u64(chunk["trajectory_count"], "CHUNK_TRAJECTORY_COUNT", role_name)
+        require(
+            role_indices == list(range(len(role_indices))),
+            "CHUNK_ORDER",
+            f"{role_name}:{role_indices}",
+        )
         result[role_name] = role
-    require(global_indices == list(range(len(global_indices))), "CHUNK_ORDER", str(global_indices))
     validate_partition_config(document["partition_config"], campaigns)
     return result
+
+
+def validate_diagnostic_exception(
+    root: Path,
+    document: Mapping[str, Any],
+    mode: str,
+) -> Mapping[str, Any] | None:
+    value = document.get("diagnostic_exception")
+    if value is None:
+        return None
+    require(mode == "production", "DIAGNOSTIC_MODE", mode)
+    require(
+        isinstance(value, dict) and set(value) == DIAGNOSTIC_EXCEPTION_KEYS,
+        "DIAGNOSTIC_EXCEPTION_KEYS",
+        "",
+    )
+    require(
+        value["schema"]
+        == "crazyhouse-a0-diagnostic-overlap-exception-binding/v1"
+        and value["status"] == "AUTHORIZED_DIAGNOSTIC_ONLY",
+        "DIAGNOSTIC_EXCEPTION_STATUS",
+        "",
+    )
+    require(
+        value["intersections"] == DIAGNOSTIC_INTERSECTIONS,
+        "DIAGNOSTIC_INTERSECTIONS",
+        "binding",
+    )
+    require(
+        value["validation_usage"] == "forward-only health telemetry"
+        and value["validation_gradients"] is False
+        and value["validation_early_stopping"] is False
+        and value["validation_checkpoint_or_seed_selection"] is False
+        and value["release_admissible"] is False,
+        "DIAGNOSTIC_BOUNDARY",
+        "",
+    )
+
+    addendum_descriptor = validate_artifact(
+        value["campaign_addendum"], "diagnostic campaign addendum"
+    )
+    waiver_descriptor = validate_artifact(
+        value["owner_waiver"], "diagnostic owner waiver"
+    )
+    require(
+        addendum_descriptor["sha256"] == DIAGNOSTIC_ADDENDUM_SHA256,
+        "DIAGNOSTIC_ADDENDUM_IDENTITY",
+        "",
+    )
+    require(
+        waiver_descriptor["sha256"] == DIAGNOSTIC_OWNER_WAIVER_SHA256,
+        "DIAGNOSTIC_WAIVER_IDENTITY",
+        "",
+    )
+    addendum = parse_pinned_json(
+        read_artifact(root, addendum_descriptor, "diagnostic campaign addendum"),
+        "diagnostic campaign addendum",
+    )
+    waiver = parse_pinned_json(
+        read_artifact(root, waiver_descriptor, "diagnostic owner waiver"),
+        "diagnostic owner waiver",
+    )
+    require(
+        addendum.get("schema")
+        == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1"
+        and addendum.get("addendum") == 2
+        and addendum.get("status")
+        == "AUTHORIZED_DIAGNOSTIC_OVERLAP_EXCEPTION"
+        and addendum.get("measured_cross_role_intersections")
+        == DIAGNOSTIC_INTERSECTIONS,
+        "DIAGNOSTIC_ADDENDUM_CONTENT",
+        "",
+    )
+    require(
+        waiver.get("schema")
+        == "crazyhouse-a0-diagnostic-overlap-owner-waiver/v1"
+        and waiver.get("status") == "AUTHORIZED_DIAGNOSTIC_ONLY"
+        and waiver.get("authenticated_failure_evidence", {}).get(
+            "cross_role_unique_intersections"
+        )
+        == DIAGNOSTIC_INTERSECTIONS
+        and waiver.get("authority_boundary", {}).get(
+            "training_authorized_under_exception"
+        )
+        is True
+        and waiver.get("authority_boundary", {}).get("release_authorized") is False,
+        "DIAGNOSTIC_WAIVER_CONTENT",
+        "",
+    )
+    return value
 
 
 def validate_static_artifacts(
@@ -1382,6 +1527,7 @@ def scan_chunk(
 def validate_split_audit(
     document: Mapping[str, Any],
     index: IdentityIndex,
+    diagnostic_exception: Mapping[str, Any] | None = None,
 ) -> tuple[dict[str, int], dict[str, dict[str, int]], dict[str, dict[str, dict[str, Any]]]]:
     audit = document["split_audit"]
     require(isinstance(audit, dict), "SPLIT_AUDIT", "")
@@ -1392,17 +1538,54 @@ def validate_split_audit(
         "within_role_duplicate_observations",
     }
     require(set(audit) == required, "SPLIT_AUDIT_KEYS", "")
-    require(audit["status"] == "FROZEN_EXPECTATIONS", "SPLIT_AUDIT_STATUS", "")
+    require(
+        audit["status"]
+        == (
+            "FROZEN_DIAGNOSTIC_EXCEPTION"
+            if diagnostic_exception is not None
+            else "FROZEN_EXPECTATIONS"
+        ),
+        "SPLIT_AUDIT_STATUS",
+        "",
+    )
+    expected_declaration_kinds = (
+        LARGE_IDENTITY_KINDS
+        if diagnostic_exception is not None
+        else IDENTITY_KINDS
+    )
     require(
         isinstance(audit["intersections"], dict)
-        and set(audit["intersections"]) == set(IDENTITY_KINDS),
+        and set(audit["intersections"]) == set(expected_declaration_kinds),
         "SPLIT_AUDIT_INTERSECTIONS",
         "",
     )
     intersections = {kind: index.intersection_count(kind) for kind in index.kinds}
-    require(all(value == 0 for value in audit["intersections"].values()), "SPLIT_AUDIT_DECLARATION", "")
-    overlapping = [kind for kind, value in intersections.items() if value]
-    require(not overlapping, "CROSS_ROLE_INTERSECTION", ",".join(overlapping))
+    if diagnostic_exception is None:
+        require(
+            all(value == 0 for value in audit["intersections"].values()),
+            "SPLIT_AUDIT_DECLARATION",
+            "",
+        )
+        overlapping = [kind for kind, value in intersections.items() if value]
+        require(not overlapping, "CROSS_ROLE_INTERSECTION", ",".join(overlapping))
+    else:
+        require(
+            audit["intersections"] == DIAGNOSTIC_INTERSECTIONS,
+            "SPLIT_AUDIT_DECLARATION",
+            "diagnostic",
+        )
+        require(
+            all(
+                intersections[kind] == DIAGNOSTIC_INTERSECTIONS[kind]
+                for kind in index.kinds
+            ),
+            "CROSS_ROLE_DIAGNOSTIC_DRIFT",
+            ",".join(
+                kind
+                for kind in index.kinds
+                if intersections[kind] != DIAGNOSTIC_INTERSECTIONS[kind]
+            ),
+        )
     maxima = audit["within_role_duplicate_maximum"]
     declared = audit["within_role_duplicate_observations"]
     require(isinstance(maxima, dict) and set(maxima) == set(ROLE_IDS), "SPLIT_DUPLICATE_MAXIMUM", "")
@@ -1446,6 +1629,9 @@ def admit(
     manifest = parse_strict_json(manifest_bytes, "training dataset manifest")
     manifest_root = manifest_path.resolve(strict=True).parent
     roles = validate_manifest_shape(manifest, mode)
+    diagnostic_exception = validate_diagnostic_exception(
+        manifest_root, manifest, mode
+    )
     physical_schema, _feature_contract = validate_static_artifacts(
         manifest_root,
         manifest,
@@ -1542,7 +1728,9 @@ def admit(
                 "trajectory_count": trajectories_seen,
             }
         identity_index.finish()
-        intersections, duplicates, sets = validate_split_audit(manifest, identity_index)
+        intersections, duplicates, sets = validate_split_audit(
+            manifest, identity_index, diagnostic_exception
+        )
         for role_name in ROLE_IDS:
             trajectory_unique = sets[role_name]["trajectory_id"]["unique_keys"]
             require(
@@ -1567,7 +1755,11 @@ def admit(
                 "production data, training, model selection, timing, Elo, OpenBench, "
                 "Fairy-Stockfish, release or monitoring evidence."
                 if mode == "fixture"
-                else "Production admission does not itself select or train a model and grants no strength or release credit."
+                else (
+                    "Diagnostic production admission permits paired training only. Validation is forward-only telemetry, and the exception grants no strength or release credit."
+                    if diagnostic_exception is not None
+                    else "Production admission does not itself select or train a model and grants no strength or release credit."
+                )
             ),
             "feature_contract_sha256": FEATURE_CONTRACT_SHA256,
             "fixture_mode": mode == "fixture",
@@ -1578,11 +1770,34 @@ def admit(
             "schema": RESULT_SCHEMA,
             "sets": sets,
             "source_manifest_sha256": sha256_bytes(manifest_bytes),
-            "status": "PASS_FIXTURE_NONADMISSIBLE" if mode == "fixture" else "PASS_PRODUCTION_ADMISSION",
+            "status": (
+                "PASS_FIXTURE_NONADMISSIBLE"
+                if mode == "fixture"
+                else (
+                    "PASS_PRODUCTION_DIAGNOSTIC_ADMISSION"
+                    if diagnostic_exception is not None
+                    else "PASS_PRODUCTION_ADMISSION"
+                )
+            ),
             "training_admissible": mode == "production",
             "transactional_output": True,
             "within_role_duplicates": duplicates,
         }
+        if diagnostic_exception is not None:
+            result.update(
+                {
+                    "diagnostic_only": True,
+                    "diagnostic_exception": {
+                        "campaign_addendum_sha256": DIAGNOSTIC_ADDENDUM_SHA256,
+                        "frozen_intersections": DIAGNOSTIC_INTERSECTIONS,
+                        "owner_waiver_sha256": DIAGNOSTIC_OWNER_WAIVER_SHA256,
+                        "validation_checkpoint_or_seed_selection": False,
+                        "validation_gradients": False,
+                        "validation_usage": "forward-only health telemetry",
+                    },
+                    "release_admissible": False,
+                }
+            )
         if projection == "large-k64g1-v1":
             result.update(
                 {
@@ -1770,24 +1985,24 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
         raw_by_role: dict[str, list[bytes]] = {"train": [], "validation": []}
         trajectory_keys_by_role: dict[str, list[bytes]] = {"train": [], "validation": []}
         identity_rows: dict[str, list[tuple[bytes, Any, bytes]]] = {"train": [], "validation": []}
-        chunk_index = 0
+        chunk_ordinal = 0
         for role in ("train", "validation"):
             groups = by_role[role]
             split_at = len(groups) // 2
             chunk_groups = (groups[:split_at], groups[split_at:])
-            for grouped_trajectories in chunk_groups:
+            for role_chunk_index, grouped_trajectories in enumerate(chunk_groups):
                 chunk_uuid = uuid.UUID(
-                    f"60000000-0000-4000-8000-{chunk_index + 1:012d}"
+                    f"60000000-0000-4000-8000-{chunk_ordinal + 1:012d}"
                 )
                 provenance = dict(base_provenance)
                 provenance["campaign_id"] = str(campaign)
                 provenance["chunk_id"] = str(chunk_uuid)
-                provenance["chunk_index"] = chunk_index
+                provenance["chunk_index"] = role_chunk_index
                 provenance["generation_settings"] = dict(provenance["generation_settings"])
                 provenance["generation_settings"]["fixture_only"] = True
                 provenance["generation_settings"]["training_admissible"] = False
                 provenance_payload = canonical_json(provenance)
-                provenance_relative = f"chunks/chunk-{chunk_index:02d}.provenance.json"
+                provenance_relative = f"chunks/chunk-{chunk_ordinal:02d}.provenance.json"
                 provenance_descriptor = _fixture_artifact(
                     partial,
                     provenance_relative,
@@ -1807,7 +2022,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                     chunk_id=chunk_uuid.bytes,
                     campaign_id=campaign.bytes,
                 )
-                bundle_relative = f"chunks/chunk-{chunk_index:02d}.chp"
+                bundle_relative = f"chunks/chunk-{chunk_ordinal:02d}.chp"
                 bundle_descriptor = _fixture_artifact(partial, bundle_relative, chunk_payload)
                 raw_records = [
                     chunk_payload[
@@ -1826,7 +2041,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                     "capability": capability_descriptor,
                     "campaign_id": str(campaign),
                     "chunk_id": str(chunk_uuid),
-                    "chunk_index": chunk_index,
+                    "chunk_index": role_chunk_index,
                     "provenance": provenance_descriptor,
                     "record_count": len(rebound),
                     "trajectory_count": len(grouped_trajectories),
@@ -1836,7 +2051,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                     "campaign_id": str(campaign),
                     "capability": capability_descriptor,
                     "chunk_id": str(chunk_uuid),
-                    "chunk_index": chunk_index,
+                    "chunk_index": role_chunk_index,
                     "fixture_only": True,
                     "official_openbench_origin": None,
                     "project": "Crazyhouse-Stockfish",
@@ -1848,7 +2063,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                     "trajectory_count": len(grouped_trajectories),
                     "variant": "crazyhouse",
                 }
-                receipt_relative = f"receipts/chunk-{chunk_index:02d}.json"
+                receipt_relative = f"receipts/chunk-{chunk_ordinal:02d}.json"
                 receipt_payload = canonical_json(receipt)
                 receipt_descriptor = _fixture_artifact(
                     partial,
@@ -1858,7 +2073,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                 entry = dict(entry_without_receipt)
                 entry["completion_receipt"] = receipt_descriptor
                 chunks_by_role[role].append(entry)
-                chunk_index += 1
+                chunk_ordinal += 1
         role_documents: dict[str, Any] = {}
         for role in ("train", "validation"):
             role_documents[role] = {

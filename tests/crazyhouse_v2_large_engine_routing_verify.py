@@ -179,6 +179,8 @@ def positive_run(engine: Path, network: Path, legacy_network: Path | None,
             stage = "commit-legacy-restore"
             setoption(proc, "CrazyhouseEvaluator", "legacy-v1")
             setoption(proc, "CrazyhouseEvalFile", str(legacy_network))
+            setoption(proc, "CrazyhouseEvalSHA256", "")
+            setoption(proc, "CrazyhouseEvalProvenance", "")
             proc.send("isready")
             lines = proc.wait_for(
                 lambda line: line == "readyok" or "READY state=failed" in line,

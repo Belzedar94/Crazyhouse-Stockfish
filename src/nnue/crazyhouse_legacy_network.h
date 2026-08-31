@@ -177,8 +177,13 @@ class LegacyCrazyhouseNetworkV1 {
     LegacyCrazyhouseNetworkV1& operator=(const LegacyCrazyhouseNetworkV1&) = delete;
 
     LoadResult       load_file(const std::filesystem::path& path);
+    LoadResult       load_file(const std::filesystem::path& path,
+                               std::string_view             expectedSha256);
     LoadResult       load_embedded();
     LoadResult       load_bytes(const unsigned char* data, std::size_t size);
+    LoadResult       load_bytes(const unsigned char* data,
+                                std::size_t          size,
+                                std::string_view     expectedSha256);
     EvalResult       evaluate_full_refresh(const Position& position) const;
     EvalResult       evaluate_incremental(const Position&                     position,
                                           LegacyCrazyhouseAccumulatorStackV1& stack) const;
@@ -206,6 +211,7 @@ class LegacyCrazyhouseNetworkV1 {
     struct Parameters;
     std::unique_ptr<Parameters> parameters_;
     std::string                 description_;
+    std::string                 artifactSha256_;
     ExecutionBackend            backend_ = ExecutionBackend::Scalar;
 
     void       reset() noexcept;

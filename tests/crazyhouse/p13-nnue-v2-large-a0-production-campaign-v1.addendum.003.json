@@ -1,0 +1,116 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 3,
+  "status": "FROZEN_DIAGNOSTIC_PAIRED_TRAINING_IMPLEMENTATION",
+  "evidence_class": "M2_MODEL_SELECTION_DIAGNOSTIC",
+  "frozen_utc": "2026-08-31T08:17:16.1062809Z",
+  "purpose": "Freeze the verified implementation and exact paired materialization boundary before any same-data legacy-V1 or large-V2 A0 training process starts.",
+  "predecessor": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.002.json",
+    "sha256": "8c9dd55c22664481ad18cb4cb8d38443ecfee81d80368ac56cd257e83005372c"
+  },
+  "admissions": {
+    "legacy_v1": {
+      "path": "D:/Crazyhouse-Stockfish/datasets/p13-a0-admission-legacy-diagnostic-524/admission-result.json",
+      "sha256": "8923a58c30eb53b60555e60bb2de685b8495eab157fe033a1cbe95f24c5413ba",
+      "train_rows_sha256": "0529711ac0d0badc0cbd7f04e02c2d054dcfaa796f24f5aac039344abf6739e6",
+      "validation_rows_sha256": "472b4f34ba6ab36c2db7ba2f6cc7374fd1c182029b32fc2349f6db202f25688c"
+    },
+    "large_v2": {
+      "path": "D:/Crazyhouse-Stockfish/datasets/p13-a0-admission-v2-large-diagnostic-524/admission-result.json",
+      "sha256": "ddc319aecb585a7e49c5c9714f12b8256ee3b19ad128f94b5f4c26a55e603768",
+      "train_rows_sha256": "40b47682f9538e43b26d1cff51b8645d3144a85ddc37450fc9db1dc520571fee",
+      "validation_rows_sha256": "31cd6978c6633dfd332ad65e765d9329a8c26bc276db859ce982cbd17f5b8cec"
+    }
+  },
+  "common_sample_identity": {
+    "train_records": 1048576,
+    "validation_records": 131072,
+    "train_raw_record_ordered_set_sha256": "fb0a63adfa3edf69e917b9749e8f3679882a95fd7fa36975b5303b0dd56a5569",
+    "validation_raw_record_ordered_set_sha256": "ef440670aba5e74d1e62b75f6c1349db8bc632c0148889750afe0666356d9ca4",
+    "paired_materializer_must_recompute_and_match_label_streams": true,
+    "score_scale_cp_source": "train only"
+  },
+  "tooling": {
+    "planner": {
+      "path": "tools/nnue/crazyhouse_a0_paired_diagnostic_campaign.py",
+      "sha256": "4015ac4a7afe86453a24009ac67f85dc56d0453bf2f61b83794d53fb4efd0347"
+    },
+    "legacy_trainer": {
+      "path": "tools/nnue/crazyhouse_legacy_v1_trainer.py",
+      "sha256": "1d4a1e7ff1e79c0788ca9f04ca3e53c7f7fa09ea4c854443df47c32dc7f152b4"
+    },
+    "v2_trainer": {
+      "path": "tools/nnue/crazyhouse_v2_large_trainer.py",
+      "sha256": "bcb7b376fe90c09e763bc118b5b38f3af683a883370006bea095ecd32986fc1e"
+    },
+    "legacy_training_contract": {
+      "path": "schemas/crazyhouse-nnue-legacy-v1-diagnostic-training-v1.json",
+      "sha256": "f679b50152aff593b2d7fb1af70de5750309680fefbd0f615a47a63bb696831e"
+    },
+    "legacy_verifier": {
+      "path": "tests/crazyhouse_legacy_v1_trainer_verify.py",
+      "sha256": "69f07db38d3c59b594db9786166a293e1ad4379cc35889bdd903037f2cfa1dd3"
+    },
+    "v2_verifier": {
+      "path": "tests/crazyhouse_v2_large_trainer_verify.py",
+      "sha256": "3b2045132a87d7f2130117b8366a0dac9414747bbb36fff1d5e21413dc63c02d"
+    }
+  },
+  "legacy_runtime_route": {
+    "fresh_legacy_sha256_must_be_explicit": true,
+    "registered_default_sha256": "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43",
+    "fresh_artifact_may_replace_registered_default_implicitly": false,
+    "same_binary_rule_unchanged": true
+  },
+  "verified_engineering": {
+    "legacy_meta_parameter_count": 28890248,
+    "legacy_file_bytes": 58534811,
+    "large_v2_parameter_count": 63342088,
+    "legacy_projection_perspectives": 2,
+    "legacy_qat_trace_fields": 16,
+    "large_v2_qat_trace_fields": 17,
+    "resume_equalities_per_arm": 6,
+    "trainer_negative_cases": {
+      "legacy_v1": 4,
+      "large_v2": 4
+    },
+    "engine_build_with_werror": "PASS",
+    "registered_legacy_parser_explicit_digest": "PASS",
+    "fresh_legacy_route_snapshot": "PASS",
+    "large_v2_engine_routing_regression": "PASS"
+  },
+  "quantization_correction": {
+    "issue_found_before_training": "The QAT path and exporter could disagree at a half-integer boundary because one scale multiplication was float32 and the other was float64.",
+    "resolution": "Both arms now serialize the exact float32 pre-rounding value used by QAT before nearest-half-away-from-zero conversion.",
+    "legacy_signed_wrap_resolution": "Detached modulo wrapping is computed in float64 so subtracting INT32_MIN cannot destroy low bits in an otherwise small integer accumulator.",
+    "production_training_started_before_resolution": false
+  },
+  "paired_execution": {
+    "arms": ["fresh legacy-V1", "fresh CH-NNUE-V2-LARGE-K64G1-SFNNV16"],
+    "seeds": [617628155675752428, 521232795329550045, 4052246384809050251],
+    "predesignated_playing_seed_index": 0,
+    "fresh_process_per_arm_and_seed": true,
+    "all_six_trainings_required": true,
+    "batch_size": 512,
+    "epochs": 8,
+    "cpu_threads": 1,
+    "device": "cuda",
+    "loss_selects_an_artifact": false,
+    "validation_usage": "forward-only health telemetry"
+  },
+  "release_admissible": false,
+  "strength_testing_started": false,
+  "registered_legacy_remains_default": true,
+  "release_boundary": {
+    "same_data_stage_one_win_is_sufficient_for_release": false,
+    "release_before_valid_stage_two_win_over_registered_best_legacy": "forbidden",
+    "engineering_loss_export_reload_or_parity_is_sufficient_for_release": false
+  },
+  "stopping_rules": [
+    "Any tooling, admission, row, raw-record-set or label-stream digest mismatch stops before training.",
+    "Any CUDA ownership conflict, nonfinite metric, checkpoint failure, export rejection, reload failure or parity mismatch stops fail-closed without replacing a seed.",
+    "No strength test starts during paired training or export authentication.",
+    "No release is allowed unless the unchanged predesignated V2 artifact later obtains the separately preregistered valid win over the registered best legacy network."
+  ]
+}

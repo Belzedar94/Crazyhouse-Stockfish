@@ -1367,6 +1367,13 @@ def adversarial_matrix(loader: Path, base: Path, root: Path) -> list[str]:
             lambda manifest: manifest["roles"]["train"]["chunks"].reverse(),
             "ROLE_CHUNK_SET_DIGEST",
         ),
+        (
+            "noncontiguous-role-index",
+            lambda manifest: manifest["roles"]["train"]["chunks"][1].__setitem__(
+                "chunk_index", 2
+            ),
+            "CHUNK_ORDER",
+        ),
     ):
         fixture = copied_fixture(base, root, label)
         manifest = load_manifest(fixture)

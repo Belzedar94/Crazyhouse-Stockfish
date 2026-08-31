@@ -217,6 +217,16 @@ Network::LoadResult failure(Network::LoadStatus status, std::string message) {
     return {status, std::move(message)};
 }
 
+bool valid_sha256(std::string_view value) noexcept {
+    if (value.size() != 64)
+        return false;
+    for (const char character : value)
+        if (!((character >= '0' && character <= '9')
+              || (character >= 'a' && character <= 'f')))
+            return false;
+    return true;
+}
+
 std::int16_t signed16_from_bits(std::uint16_t bits) noexcept {
     std::int16_t value;
     std::memcpy(&value, &bits, sizeof(value));
@@ -571,11 +581,22 @@ bool LegacyCrazyhouseAccumulatorStackV1::pop() noexcept {
 void LegacyCrazyhouseNetworkV1::reset() noexcept {
     parameters_.reset();
     description_.clear();
+    artifactSha256_.clear();
 }
 
 LegacyCrazyhouseNetworkV1::LoadResult
 LegacyCrazyhouseNetworkV1::load_file(const std::filesystem::path& path) {
+    return load_file(path, RegisteredSha256);
+}
+
+LegacyCrazyhouseNetworkV1::LoadResult
+LegacyCrazyhouseNetworkV1::load_file(const std::filesystem::path& path,
+                                     std::string_view             expectedSha256) {
     reset();
+
+    if (!valid_sha256(expectedSha256))
+        return failure(LoadStatus::DigestMismatch,
+                       "legacy Crazyhouse expected SHA-256 is not lowercase hexadecimal");
 
     std::error_code error;
     const auto      fileStatus = std::filesystem::status(path, error);
@@ -619,7 +640,7 @@ LegacyCrazyhouseNetworkV1::load_file(const std::filesystem::path& path) {
           LoadStatus::OversizedFile,
           "legacy Crazyhouse network grew beyond the registered artifact while reading");
 
-    return load_bytes(bytes.data(), bytes.size());
+    return load_bytes(bytes.data(), bytes.size(), expectedSha256);
 }
 
 LegacyCrazyhouseNetworkV1::LoadResult LegacyCrazyhouseNetworkV1::load_embedded() {
@@ -642,7 +663,18 @@ bool LegacyCrazyhouseNetworkV1::embedded_available() noexcept {
 
 LegacyCrazyhouseNetworkV1::LoadResult
 LegacyCrazyhouseNetworkV1::load_bytes(const unsigned char* data, std::size_t size) {
+    return load_bytes(data, size, RegisteredSha256);
+}
+
+LegacyCrazyhouseNetworkV1::LoadResult
+LegacyCrazyhouseNetworkV1::load_bytes(const unsigned char* data,
+                                      std::size_t          size,
+                                      std::string_view     expectedSha256) {
     reset();
+
+    if (!valid_sha256(expectedSha256))
+        return failure(LoadStatus::DigestMismatch,
+                       "legacy Crazyhouse expected SHA-256 is not lowercase hexadecimal");
 
     if (size < FileBytes)
         return failure(LoadStatus::TruncatedFile,
@@ -716,13 +748,15 @@ LegacyCrazyhouseNetworkV1::load_bytes(const unsigned char* data, std::size_t siz
         return failure(LoadStatus::TensorLayoutMismatch,
                        "legacy Crazyhouse network has trailing bytes after the registered layout");
     const std::string digest = digest_text(sha256(data, size));
-    if (digest != RegisteredSha256)
+    if (digest != expectedSha256)
         return failure(LoadStatus::DigestMismatch,
-                       "legacy Crazyhouse network SHA-256 is not registered (got " + digest + ")");
+                       "legacy Crazyhouse network SHA-256 does not match the requested digest (got "
+                         + digest + ")");
 
-    parameters_  = std::move(candidate);
-    description_ = std::move(candidateDescription);
-    return {LoadStatus::Success, "registered legacy Crazyhouse network loaded"};
+    parameters_     = std::move(candidate);
+    description_    = std::move(candidateDescription);
+    artifactSha256_ = std::move(digest);
+    return {LoadStatus::Success, "authenticated legacy Crazyhouse network loaded"};
 }
 
 bool LegacyCrazyhouseNetworkV1::loaded() const noexcept { return bool(parameters_); }
@@ -1407,7 +1441,7 @@ LegacyCrazyhouseNetworkV1::evaluate_legacy_search_incremental(
 std::string_view LegacyCrazyhouseNetworkV1::description() const noexcept { return description_; }
 
 std::string_view LegacyCrazyhouseNetworkV1::artifact_sha256() const noexcept {
-    return loaded() ? RegisteredSha256 : std::string_view{};
+    return artifactSha256_;
 }
 
 std::string_view LegacyCrazyhouseNetworkV1::status_name(LoadStatus status) noexcept {

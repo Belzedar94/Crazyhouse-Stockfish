@@ -1,0 +1,130 @@
+{
+  "schema": "crazyhouse-nnue-legacy-v1-diagnostic-training-contract/v1",
+  "status": "frozen-before-paired-a0-training",
+  "evidence_class": "M2_MODEL_SELECTION_DIAGNOSTIC",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "purpose": "Train a fresh legacy-V1 architecture as the same-data control arm for the A0 paired architecture experiment.",
+  "source_anchors": {
+    "legacy_runtime": [
+      "src/nnue/crazyhouse_legacy_features.h",
+      "src/nnue/crazyhouse_legacy_features.cpp",
+      "src/nnue/crazyhouse_legacy_network.h",
+      "src/nnue/crazyhouse_legacy_network.cpp"
+    ],
+    "fairy_nnue_pytorch_crazyhouse_commit": "3f388a17d24094f427a376334e41d9f00e207e4c",
+    "fairy_nnue_pytorch_branch": "origin/crazyhouse",
+    "upstream_format_files": ["halfka_v2.py", "model.py", "serialize.py", "variant.py"]
+  },
+  "diagnostic_admission": {
+    "result_schema": "crazyhouse-nnue-v2-training-admission-result/v1",
+    "required_status": "PASS_PRODUCTION_DIAGNOSTIC_ADMISSION",
+    "campaign_addendum_sha256": "8c9dd55c22664481ad18cb4cb8d38443ecfee81d80368ac56cd257e83005372c",
+    "owner_waiver_sha256": "a67fe2ec5b2058b665c20da8dc158af8e91560b4de05a64824dbbdbfe72c5e2c",
+    "train_raw_record_ordered_set_sha256": "fb0a63adfa3edf69e917b9749e8f3679882a95fd7fa36975b5303b0dd56a5569",
+    "validation_raw_record_ordered_set_sha256": "ef440670aba5e74d1e62b75f6c1349db8bc632c0148889750afe0666356d9ca4",
+    "validation_usage": "forward-only health telemetry",
+    "validation_gradients": false,
+    "validation_early_stopping": false,
+    "validation_checkpoint_or_seed_selection": false,
+    "release_admissible": false
+  },
+  "physical_to_legacy_projection": {
+    "physical_dimensions": 902,
+    "legacy_dimensions": 55296,
+    "king_stride": 864,
+    "board_planes": 11,
+    "board_square_rows": 704,
+    "pocket_rows_per_king": 160,
+    "own_king_physical_plane": 10,
+    "opponent_king_physical_plane": 11,
+    "legacy_king_plane": 10,
+    "black_orientation": "square XOR 56 is already applied by admission",
+    "board_formula": "oriented_own_king_square*864 + min(physical_plane,10)*64 + oriented_square",
+    "pocket_formula": "oriented_own_king_square*864 + 704 + (2*piece_type_ordinal+relative_owner)*16 + slot",
+    "pocket_activation": "activate slots 0 through exact_count-1",
+    "promoted_origin_rows": "ignored by legacy-V1",
+    "layer_bucket": "min(7,(board_piece_count-1)*8//32)"
+  },
+  "model": {
+    "feature_rows": 55296,
+    "transformer_lanes": 512,
+    "psqt_buckets": 8,
+    "shared_between_perspectives": true,
+    "perspective_order": ["side-to-move", "opponent"],
+    "dense_input_lanes": 1024,
+    "layer_stacks": 8,
+    "fc0": {"inputs": 1024, "outputs": 16},
+    "fc1": {"serialized_inputs": 32, "active_inputs": 16, "outputs": 32},
+    "fc2": {"inputs": 32, "outputs": 1},
+    "parameter_count": 28890248
+  },
+  "integer_qat": {
+    "rounding": "nearest-with-half-away-from-zero",
+    "transformer_weight_scale": 127,
+    "transformer_bias_scale": 127,
+    "transformer_accumulator": "wrapping uint16 interpreted as int16, then clipped to [0,127]",
+    "psqt_weight_scale": 9600,
+    "psqt_accumulator": "wrapping uint32 interpreted as int32; side-to-move minus opponent then truncating divide by 2",
+    "fc0_weight_scale": 64,
+    "fc0_bias_scale": 8128,
+    "fc1_weight_scale": 64,
+    "fc1_bias_scale": 8128,
+    "fc2_weight_scale": "9600/127",
+    "fc2_bias_scale": 9600,
+    "dense_accumulator": "wrapping uint32 interpreted as int32",
+    "hidden_activation": "positive truncating divide by 64 clipped to [0,127]",
+    "silent_export_clipping": false
+  },
+  "legacy_outer_adapter": {
+    "entertainment": "7 when absolute board-only nonpawn material difference is at most 44, otherwise 0",
+    "blend": "trunc(trunc(((128-e)*psqt+(128+e)*positional)/128)/16)",
+    "scale": "903 + 32*board_pawns + trunc(32*total_board_nonpawn_material/1024)",
+    "outer": "clamp(trunc(adjusted*scale/1024),-31507,31507)",
+    "prediction": "sigmoid(outer/score_scale_cp)"
+  },
+  "paired_recipe": {
+    "configuration_schema": "crazyhouse-nnue-v2-large-training-config/v1",
+    "same_as_v2": [
+      "train rows and labels",
+      "train-derived score_scale_cp",
+      "lambda and loss exponent",
+      "batch size and epochs",
+      "sparse and dense learning rates",
+      "raw-record-keyed sample order",
+      "seeds, device class and CPU threads"
+    ],
+    "feature_optimizer": "torch.optim.SparseAdam",
+    "dense_optimizer": "torch.optim.AdamW with zero weight decay",
+    "loss": "mean(abs(predicted_probability-target_probability)^loss_exponent)",
+    "validation_selects_nothing": true
+  },
+  "fresh_initialization": {
+    "transformer_weights": "uniform[-4/127,4/127]",
+    "transformer_bias": "64/127",
+    "psqt_weights": 0,
+    "dense_weights": "uniform[-2/quantization_scale,2/quantization_scale]",
+    "dense_biases": 0,
+    "historical_registered_weights_or_material_priors_imported": false
+  },
+  "export": {
+    "file_version_hex": "7af32f20",
+    "network_hash_hex": "3c103e72",
+    "transformer_hash_hex": "5f2348b8",
+    "architecture_hash_hex": "633376ca",
+    "description": "Network trained with the https://github.com/glinscott/nnue-pytorch trainer.",
+    "bytes": 58534811,
+    "transactional": true,
+    "strict_eof": true,
+    "parser_reauthentication_required": true,
+    "engine_reload_requires_explicit_sha256": true
+  },
+  "selection_and_release_boundary": {
+    "all_three_paired_seeds_required": true,
+    "predesignated_playing_seed_index": 0,
+    "loss_selects_artifact": false,
+    "same_data_legacy_vs_v2_strength_test_starts_here": false,
+    "registered_best_legacy_remains_default": true,
+    "release_before_valid_win_over_registered_best_legacy": "forbidden"
+  }
+}
