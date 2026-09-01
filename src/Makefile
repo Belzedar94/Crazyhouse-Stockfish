@@ -1235,7 +1235,8 @@ ifeq ($(OPENBENCH_DATAGEN),1)
 else
 	+$(MAKE) ARCH=$(ARCH) COMP=$(COMP) openbench-network-sanity
 	+$(MAKE) ARCH=$(OPENBENCH_ARCH) COMP=$(OPENBENCH_COMP) \
-		CRAZYHOUSE_LEGACY_BACKEND=simd OPENBENCH_PLAY_BUILD=1 all
+		CRAZYHOUSE_LEGACY_BACKEND=simd OPENBENCH_PLAY_BUILD=1 \
+		mingw_reproducible=yes all
 endif
 
 openbench-identity-sanity:
