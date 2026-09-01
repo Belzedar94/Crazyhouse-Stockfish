@@ -589,10 +589,7 @@ DEPENDFLAGS = $(ENV_DEPENDFLAGS) -std=c++17
 LDFLAGS = $(ENV_LDFLAGS) $(EXTRALDFLAGS)
 
 ifeq ($(OPENBENCH_PLAY_BUILD),1)
-empty :=
-space := $(empty) $(empty)
-CRAZYHOUSE_LEGACY_EMBED_DEP := $(subst $(space),\$(space),$(EVALFILE))
-CXXFLAGS += -DNNUE_EMBEDDING_OFF '-DCRAZYHOUSE_LEGACY_EMBED_FILE="$(EVALFILE)"'
+CXXFLAGS += -DNNUE_EMBEDDING_OFF -DOPENBENCH_CRAZYHOUSE_EXTERNAL_NETWORKS
 endif
 
 ifeq ($(CRAZYHOUSE_LEGACY_BACKEND),simd)
@@ -1238,7 +1235,7 @@ ifeq ($(OPENBENCH_DATAGEN),1)
 else
 	+$(MAKE) ARCH=$(ARCH) COMP=$(COMP) openbench-network-sanity
 	+$(MAKE) ARCH=$(OPENBENCH_ARCH) COMP=$(OPENBENCH_COMP) \
-		CRAZYHOUSE_LEGACY_BACKEND=scalar OPENBENCH_PLAY_BUILD=1 all
+		CRAZYHOUSE_LEGACY_BACKEND=simd OPENBENCH_PLAY_BUILD=1 all
 endif
 
 openbench-identity-sanity:
@@ -1252,8 +1249,14 @@ openbench-identity-sanity:
 openbench-network-sanity:
 	@test -n '$(EVALFILE)'
 	@test -f '$(EVALFILE)'
-	@test "$$(wc -c < '$(EVALFILE)' | tr -d '[:space:]')" = 58534811
-	@test "$$(sha256sum '$(EVALFILE)' | cut -d ' ' -f 1 | tr 'A-F' 'a-f')" = 8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43
+	@bytes="$$(wc -c < '$(EVALFILE)' | tr -d '[:space:]')"; \
+	sha="$$(sha256sum '$(EVALFILE)' | cut -d ' ' -f 1 | tr 'A-F' 'a-f')"; \
+	case "$$sha:$$bytes" in \
+		f1d0cd5a974e02a9c51dbeb37c64c7d97ca78399693a378e221c430fcb9e0a11:58534811|\
+		2b082017acca0a19b284345b98aad58b4abe44fd564906673db9f9a8b8d46e24:126406688|\
+		8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43:58534811) ;; \
+		*) echo "Unsupported Crazyhouse OpenBench network" >&2; exit 1 ;; \
+	esac
 
 ifeq ($(UNIVERSAL_BUILD),false)
 build: net config-sanity
@@ -1687,10 +1690,6 @@ crazyhouse_p16_monitoring_contract_test:
 .v2-legacy-control-obj/%.o: %.cpp
 	@mkdir -p $(@D)
 	$(strip $(CXX) $(CPPFLAGS) $(CXXFLAGS) -DNNUE_EMBEDDING_OFF) -I. -c -o $@ $<
-
-ifeq ($(OPENBENCH_PLAY_BUILD),1)
-crazyhouse_legacy_network.o: $(CRAZYHOUSE_LEGACY_EMBED_DEP)
-endif
 
 crazyhouse-datagen: datagen-identity-sanity $(CRAZYHOUSE_DATAGEN_EXE)
 

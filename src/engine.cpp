@@ -19,6 +19,7 @@
 #include "engine.h"
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <filesystem>
@@ -74,11 +75,39 @@ Engine::Engine(std::optional<std::filesystem::path> path,
 
     positionSlot->position.set(StartFEN, false, &positionSlot->states->back());
 
-    const std::string crazyhouseEvalDefault =
-      NN::LegacyCrazyhouseNetworkV1::embedded_available()
-        ? std::string(NN::LegacyCrazyhouseNetworkV1::EmbeddedFileToken)
-        : std::string{};
-    routing.pending.crazyhouseEvalFile = crazyhouseEvalDefault;
+    std::string crazyhouseEvalDefault;
+    std::string crazyhouseEvalShaDefault;
+#ifdef OPENBENCH_CRAZYHOUSE_EXTERNAL_NETWORKS
+    // Public OpenBench invokes bench without workload UCI options. Both
+    // branch networks have already been downloaded at that point, so bind the
+    // benchmark to a known Legacy artifact common to both engine copies.
+    // Game play still supplies an explicit file and digest per side.
+    constexpr std::array<std::pair<std::string_view, std::string_view>, 2>
+      OpenBenchBenchNetworks{{
+        {"../Networks/F1D0CD5A",
+         "f1d0cd5a974e02a9c51dbeb37c64c7d97ca78399693a378e221c430fcb9e0a11"},
+        {"../Networks/8EBF8478",
+         "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"},
+      }};
+    for (const auto& [file, sha256] : OpenBenchBenchNetworks)
+    {
+        std::error_code error;
+        const auto candidate =
+          (binaryDirectory / path_from_utf8(std::string(file))).lexically_normal();
+        if (std::filesystem::is_regular_file(candidate, error) && !error)
+        {
+            crazyhouseEvalDefault    = std::string(file);
+            crazyhouseEvalShaDefault = std::string(sha256);
+            break;
+        }
+    }
+#else
+    crazyhouseEvalDefault = NN::LegacyCrazyhouseNetworkV1::embedded_available()
+                              ? std::string(NN::LegacyCrazyhouseNetworkV1::EmbeddedFileToken)
+                              : std::string{};
+#endif
+    routing.pending.crazyhouseEvalFile   = crazyhouseEvalDefault;
+    routing.pending.crazyhouseEvalSha256 = crazyhouseEvalShaDefault;
 
     options.add(  //
       "Debug Log File", Option("", [](const Option& o) {
@@ -208,7 +237,7 @@ Engine::Engine(std::optional<std::filesystem::path> path,
       }));
 
     options.add(  //
-      "CrazyhouseEvalSHA256", Option("", [this](const Option& o) {
+      "CrazyhouseEvalSHA256", Option(crazyhouseEvalShaDefault.c_str(), [this](const Option& o) {
           stage_crazyhouse_eval_sha256(std::string(o));
           return std::nullopt;
       }));
