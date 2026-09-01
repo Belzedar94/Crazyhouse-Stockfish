@@ -1,0 +1,74 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 8,
+  "status": "AUTHORIZED_PREGAME_CAPACITY_RETRY",
+  "evidence_class": "S3_STRENGTH_PENDING",
+  "frozen_utc": "2026-09-01T13:21:38.6377423Z",
+  "purpose": "Preserve official test 418 as a zero-game preflight failure and authorize one exact scientific retry with lower client benchmark concurrency. The engine source, networks, game settings and decision rule remain unchanged.",
+  "predecessor": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.007.json",
+    "sha256": "e684d7436084055a29118462cb63dd547f8fbfcc95cc01bc124c4e6c178bf7c9"
+  },
+  "preserved_attempt": {
+    "official_test_id": 418,
+    "url": "https://belzedar.duckdns.org/test/418/",
+    "candidate_network_id": "2B082017",
+    "base_network_id": "F1D0CD5A",
+    "same_commit": "689a7dee4725e1a256f506fc55613c69ca14dd0e",
+    "games": 0,
+    "result_rows_with_games": 0,
+    "finished": true,
+    "passed": false,
+    "failed": false,
+    "error": false,
+    "strength_credit": false,
+    "may_be_resumed_or_reinterpreted": false
+  },
+  "diagnosis": {
+    "client_exception": "OpenBenchBadBenchException: Non-Deterministic Benches",
+    "parallel_benches": 24,
+    "windows_application_error_code": "0x40000015",
+    "fault_offset": "0x00000000000cac1d",
+    "aborted_bench_processes_observed": 2,
+    "windows_resource_exhaustion_event_id": 2004,
+    "event_time_local": "2026-09-01T15:17:02.6011145+02:00",
+    "event_diagnosis": "low virtual memory",
+    "same_binary_hash_for_dev_and_base_on_worker": "48a991bdaca2d2c63e4d056116f14ee24f3f1af21dd5c36f835fb6dd24c9f30a",
+    "same_binary_bytes_each": 4588823,
+    "sequential_bench_and_fixed_work_preflight_previously_passed": true,
+    "classification": "host commit-capacity failure during concurrent client calibration, not a game result or architecture result"
+  },
+  "operational_repair": {
+    "old_worker_threads": 24,
+    "new_worker_threads": 8,
+    "per_engine_threads_before": 1,
+    "per_engine_threads_after": 1,
+    "game_concurrency_is_symmetric": true,
+    "workload_size": 16,
+    "engine_source_changed": false,
+    "network_artifacts_changed": false,
+    "network_routes_changed": false,
+    "time_control_changed": false,
+    "book_or_pairing_changed": false,
+    "sprt_bounds_changed": false,
+    "decision_rule_changed": false,
+    "foreign_process_or_workload_mutation": false
+  },
+  "retry_contract": {
+    "create_only_after_machine_31_releases_foreign_workload_416_naturally": true,
+    "reuse_official_test_418": false,
+    "create_new_official_test": true,
+    "same_fields_as_addendum_007": true,
+    "new_publication_commit_may_differ_only_outside_src": true,
+    "required_src_tree": "4655d65b8bce774794c1279d5309811870c96eb6",
+    "require_zero_games_before_retry_submission": true,
+    "no_result_based_extension_or_replacement": true
+  },
+  "release_boundary": {
+    "release_admissible": false,
+    "strength_credit": false,
+    "stage_2_authorized": false,
+    "registered_legacy_remains_default": true,
+    "release_before_valid_stage_2_win_over_8EBF8478": "forbidden"
+  }
+}
