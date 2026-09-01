@@ -707,6 +707,18 @@ bool UCIEngine::admit_bench_command() {
     if (!apply_route_for_command("bench", false))
         return false;
 
+    const auto& routed = engine.routing_snapshot();
+    if (routed.active.has_value() && !rule_position_ready(routed))
+    {
+        const auto position =
+          engine.set_routed_position(std::string(start_fen(routed.active->ruleset)), {});
+        if (!position.committed)
+        {
+            report_route_error("bench", position.error, position.moveIndex, position.token);
+            return false;
+        }
+    }
+
     const auto& snapshot = engine.routing_snapshot();
     if (!snapshot.active.has_value())
     {
