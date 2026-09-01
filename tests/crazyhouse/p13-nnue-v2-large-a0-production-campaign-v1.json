@@ -1,0 +1,205 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-preregistration/v1",
+  "status": "PREREGISTERED_DATASET_PENDING",
+  "evidence_class": "M2_MODEL_SELECTION",
+  "gate": "P12_G12_TO_P13_G13",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "frozen_source": {
+    "commit": "97c2bb451dbca2a7d3b83a4b4d8dc092738215d2",
+    "tree": "5f94cf5a43058306c9bea9a4301da077ef1975ca",
+    "src_tree": "80a08aa0395acd72b5ae92a23083d3f94838d836",
+    "official_stockfish_ancestor": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2"
+  },
+  "architecture": {
+    "id": "CH-NNUE-V2-LARGE-K64G1-SFNNV16",
+    "feature_contract_sha256": "6e616c2e090b43daa7710ca39aaedc76b43a90db46e8f093466f45b821f44a79",
+    "architecture_sha256": "2f5efc7cf05f3365bf5e524e636d47a6abdbadcdf5673cc0d260f1e61638341e",
+    "quantization_sha256": "262399c3d1e8f96681f485d8b2d9d6d1c8e783cd1685250317a9c7e244c9386c",
+    "parameter_count": 63342088,
+    "container_bytes": 126406688,
+    "legacy_v1_remains_default": true
+  },
+  "bound_implementation": {
+    "training_contract": {
+      "path": "schemas/crazyhouse-nnue-v2-large-training-v1.json",
+      "sha256": "cae6e1d1f51f2e33e113c5e9c1007131e1b40de1cf0800543aa4829657353d68"
+    },
+    "trainer": {
+      "path": "tools/nnue/crazyhouse_v2_large_trainer.py",
+      "sha256": "95366774d3f69cd4d71edce8c6f068c2dfba0c1ea49162c50251c111d1846a30"
+    },
+    "ablation_roadmap": {
+      "path": "docs/crazyhouse/nnue-v2-large-ablation-roadmap-v1.md",
+      "sha256": "2fc3aadc926618c11564bd484f79ac0deb945f726abb3ba7a76453ed5d3db71c"
+    }
+  },
+  "research_basis": {
+    "official_nnue_pytorch": {
+      "commit": "9f72946529c4187d3679014036cd22c3be419716",
+      "documentation_sha256": "711236c63841364bfd638c768230dde1ee2ee9193a4fa188e22f895f0d8a6e6b",
+      "loss_implementation_sha256": "a2f805924376b422fff06996cfbe362cb239e1063b438e6b2157c84431383851",
+      "method_used": "WDL-space score/result interpolation and quantized-artifact verification",
+      "stockfish_chess_hyperparameters_inherited": false
+    },
+    "atomic_and_horde_references": {
+      "method_used": "paired seeds, frozen sample order, quantized outputs and a predesignated playing seed",
+      "commits_architectures_datasets_labels_hyperparameters_or_results_inherited": false
+    },
+    "local_fairy_vault_snapshot": {
+      "access": "READ_ONLY",
+      "indexed_discord_messages": 0,
+      "indexed_github_entities": 0,
+      "crazyhouse_specific_records": 0,
+      "gap": "NO_CRAZYHOUSE_TRAINING_EVIDENCE_AVAILABLE"
+    }
+  },
+  "dataset_admission": {
+    "official_openbench": "https://belzedar.duckdns.org",
+    "required_status": "PASS_PRODUCTION_ADMISSION",
+    "fixture_mode": false,
+    "training_admissible": true,
+    "required_role_files": [
+      "train.rows.jsonl",
+      "validation.rows.jsonl"
+    ],
+    "minimum_record_counts": {
+      "train": 1048576,
+      "validation": 131072,
+      "train_ongoing_exact_centipawn": 65536
+    },
+    "cross_role_raw_record_intersection": 0,
+    "cross_role_position_intersection": 0,
+    "cross_role_large_model_input_intersection": 0,
+    "opening_root_disjointness_alone_is_sufficient": false,
+    "production_canaries_required_before_scale": true,
+    "safe_openbench_client_deployment_required_before_canaries": true,
+    "openbench_client_merge_commit": "e77e1200c1b5cf6bf4239042fe75bf34e3b444e5"
+  },
+  "score_scale_cp_derivation": {
+    "role": "train",
+    "eligible_rows": "terminal_reason == ongoing and teacher_score_kind == centipawn and teacher_bound == exact",
+    "statistic": "nearest-rank 75th percentile of abs(teacher_score_value)",
+    "rank_formula_one_based": "ceil(3*n/4)",
+    "mapping": "round-half-up(q75_abs_cp / ln(3))",
+    "ln3_decimal": "1.0986122886681096913952452369225257046474905578227",
+    "interpretation": "the training-role 75th percentile maps to probability 0.75 before result interpolation",
+    "allowed_derived_interval_inclusive": [
+      25,
+      800
+    ],
+    "outside_interval": "reject-and-require-preregistered-addendum-before-training",
+    "validation_rows_used": false,
+    "model_output_used": false
+  },
+  "frozen_recipe": {
+    "mode": "production",
+    "device": "cuda",
+    "cpu_threads": 1,
+    "lambda": 0.5,
+    "loss_exponent": 2.0,
+    "batch_size": 512,
+    "epochs": 8,
+    "sparse_learning_rate": 0.001,
+    "dense_learning_rate": 0.00025,
+    "validation_interval_steps": "ceil(ceil(train_records/512)/4)",
+    "checkpoint_interval_steps": "ceil(train_records/512)",
+    "dataloader_workers": 0,
+    "weight_decay": 0.0,
+    "learning_rate_schedule": "constant",
+    "partial_batch": "included-exactly-once",
+    "recipe_rationale": {
+      "lambda": "equal a priori weight to the exact teacher and the physical game result",
+      "loss_exponent": "proper quadratic probability loss without importing the chess-network 2.6 exponent",
+      "batch_size": "bounded update granularity for the 63,342,088-parameter sparse model on the authenticated 10 GiB trainer class",
+      "learning_rates": "sparse rows receive one base step while always-active dense parameters use one quarter of that rate",
+      "epochs": "every admitted record is consumed exactly eight times under the authenticated permutation"
+    }
+  },
+  "paired_seeds": {
+    "namespace": "Crazyhouse-Stockfish NNUE V2 large A0 production campaign v1",
+    "derivation": "clear the most significant bit of the unsigned big-endian integer formed from the first eight bytes of SHA-256(namespace + ':seed:' + decimal_index)",
+    "values": [
+      {
+        "index": 0,
+        "material_sha256": "88924189065537ecf9fed1ede26ba6ee443d2f61aebb345747e0381a09708a9b",
+        "seed": 617628155675752428
+      },
+      {
+        "index": 1,
+        "material_sha256": "873bca773ae6d6dd4ace7e55b3b9c48ae8f96e0fcf3e42985ae9eea01c60a20e",
+        "seed": 521232795329550045
+      },
+      {
+        "index": 2,
+        "material_sha256": "b83c789e04e7808b12891de03d197f7161babe39d0d4c03e816e47e49a7ab71c",
+        "seed": 4052246384809050251
+      }
+    ],
+    "predesignated_playing_seed_index": 0,
+    "replacement_after_observing_metrics": "forbidden"
+  },
+  "materialization": {
+    "output": "three canonical crazyhouse-nnue-v2-large-training-config/v1 documents plus one aggregate manifest",
+    "binds": [
+      "campaign preregistration bytes",
+      "source commit, tree and src tree",
+      "admission result bytes and SHA-256",
+      "train and validation row bytes and SHA-256",
+      "record counts and zero-intersection claims",
+      "derived score_scale_cp inputs and result",
+      "all three training configurations and SHA-256 identities"
+    ],
+    "output_collision": "reject",
+    "partial_output": "quarantine-and-reject",
+    "configuration_may_change_after_first_metric": false
+  },
+  "execution_and_selection": {
+    "same_dataset_for_every_seed": true,
+    "same_sample_order_rule_for_every_seed": true,
+    "fresh_process_per_seed": true,
+    "resume_requires_exact_runtime_and_device_class": true,
+    "all_three_seeds_required": true,
+    "quantized_export_required_for_every_seed": true,
+    "parser_scalar_simd_incremental_parity_required_for_every_seed": true,
+    "training_and_validation_loss_use": "health, convergence and paired stability diagnostics only",
+    "training_or_validation_loss_selects_playing_artifact": false,
+    "playing_artifact": "predesignated seed index 0 if and only if all three seeds pass every engineering gate",
+    "first_strength_comparator": "exact legacy-V1 control through the new datapath",
+    "fixed_work_before_equal_time": true,
+    "equal_time_stc_then_ltc": true,
+    "production_default_change_before_strength_pass": false
+  },
+  "ablation_policy": {
+    "order": [
+      "A0 large K64/G1 control",
+      "A1 parameter-matched dual K384",
+      "A2 virtual drop maps",
+      "A3 forcing and king-zone threat state",
+      "A4 pocket-mass routing",
+      "A5 topology"
+    ],
+    "one_scientific_variable_per_rung": true,
+    "mechanical_refactors_separate": true,
+    "same_dataset_recipe_seeds_and_selection_rule": true,
+    "candidate_quantized_artifacts_decide_playing_progression": true
+  },
+  "stopping_rules": [
+    "Any dataset identity, framing, split, duplicate, projection or minimum-count failure rejects materialization.",
+    "Any seed failure, nondeterministic resume, nonfinite metric, quantization overflow, parser rejection or parity mismatch rejects A0 engineering.",
+    "A failed predesignated playing seed cannot be replaced by another seed after metrics are visible.",
+    "Loss cannot promote A0 or any ablation into production.",
+    "No strength rung starts before the exact quantized artifact and comparator identities are frozen."
+  ],
+  "boundary": {
+    "official_dataset_exists": false,
+    "production_configuration_materialized": false,
+    "production_training_started": false,
+    "trained_large_artifact_exists": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "legacy_v1_default_unchanged": true,
+    "stable_publication_authorized": false,
+    "release_claimed": false
+  }
+}

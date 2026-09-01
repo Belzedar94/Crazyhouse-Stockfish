@@ -32,6 +32,13 @@ PRODUCTION_CODEC_PATH = ROOT / "tools" / "datagen" / "crazyhouse_production_v1.p
 PHYSICAL_SCHEMA_PATH = ROOT / "schemas" / "crazyhouse-physical-v1.schema.json"
 FEATURE_CONTRACT_PATH = ROOT / "schemas" / "crazyhouse-nnue-v2-features-v1.json"
 ADMISSION_CONTRACT_PATH = ROOT / "schemas" / "crazyhouse-nnue-v2-training-admission-v1.json"
+LARGE_FEATURE_REFERENCE_PATH = ROOT / "tools" / "nnue" / "crazyhouse_v2_large_reference.py"
+LARGE_FEATURE_SCHEMA_PATH = (
+    ROOT / "schemas" / "crazyhouse-nnue-v2-large-k64g1-features-v1.json"
+)
+LARGE_TRAINING_CONTRACT_PATH = (
+    ROOT / "schemas" / "crazyhouse-nnue-v2-large-training-v1.json"
+)
 FIXTURE_CAPABILITY_CONTRACT_PATH = (
     ROOT / "tests" / "crazyhouse" / "datagen-capability-v1.json"
 )
@@ -51,20 +58,54 @@ RULE_PROFILE_SHA256 = "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e106
 PHYSICAL_SCHEMA_SHA256 = "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55"
 FEATURE_CONTRACT_SHA256 = "1e2b9afc2be77d2df66e3cdfe22bffafa7f2d926b224d2b01ab244f354c889c6"
 ADMISSION_CONTRACT_SHA256 = "070ce5232b790506dcfd65e4ddd76a91e16a2e1bd71a1dee198f0eb3c37517f5"
+LARGE_FEATURE_REFERENCE_BYTES = 9193
+LARGE_FEATURE_REFERENCE_SHA256 = (
+    "3f61002dd262e24327c8b5fb31a53b773468a3dc336d87ac7572c1418d1a2975"
+)
+LARGE_FEATURE_SCHEMA_BYTES = 6796
+LARGE_FEATURE_SCHEMA_SHA256 = (
+    "837b82eb9af44829bca913a22c3702270b58cc6970e2b36c3d1fe3419945c397"
+)
+LARGE_FEATURE_CONTRACT_SHA256 = (
+    "6e616c2e090b43daa7710ca39aaedc76b43a90db46e8f093466f45b821f44a79"
+)
+LARGE_TRAINING_CONTRACT_BYTES = 7037
+LARGE_TRAINING_CONTRACT_SHA256 = (
+    "cae6e1d1f51f2e33e113c5e9c1007131e1b40de1cf0800543aa4829657353d68"
+)
 PRODUCTION_CAPABILITY_CONTRACT_SHA256 = (
     "23386f8c51307522b08fbe3bef309791c90e40022a62e073eaaaf08a9467397b"
 )
 OFFICIAL_OPENBENCH = "https://belzedar.duckdns.org"
+DIAGNOSTIC_ADDENDUM_SHA256 = (
+    "8c9dd55c22664481ad18cb4cb8d38443ecfee81d80368ac56cd257e83005372c"
+)
+DIAGNOSTIC_OWNER_WAIVER_SHA256 = (
+    "a67fe2ec5b2058b665c20da8dc158af8e91560b4de05a64824dbbdbfe72c5e2c"
+)
+DIAGNOSTIC_INTERSECTIONS = {
+    "raw_record_key": 0,
+    "position_identity": 17_127,
+    "model_input_key": 17_262,
+    "game_id": 0,
+    "trajectory_id": 0,
+    "large_model_input_key": 17_262,
+}
 
 MANIFEST_SCHEMA = "crazyhouse-training-dataset-manifest/v1"
 RESULT_SCHEMA = "crazyhouse-nnue-v2-training-admission-result/v1"
 ROW_SCHEMA = "crazyhouse-nnue-v2-physical-row/v1"
+LARGE_RESULT_SCHEMA = "crazyhouse-nnue-v2-large-training-admission-result/v1"
+LARGE_ROW_SCHEMA = "crazyhouse-nnue-v2-large-physical-row/v1"
 CHUNK_RECEIPT_SCHEMA = "crazyhouse-training-chunk-completion-receipt/v1"
 AGGREGATE_RECEIPT_SCHEMA = "crazyhouse-training-chunk-set-receipt/v1"
 
 SPLIT_DOMAIN = b"Crazyhouse-Stockfish physical trajectory split v1\0"
 RAW_RECORD_DOMAIN = b"Crazyhouse-Stockfish physical record identity v1\0"
 MODEL_INPUT_DOMAIN = b"Crazyhouse-Stockfish NNUE V2 model input identity v1\0"
+LARGE_MODEL_INPUT_DOMAIN = (
+    b"Crazyhouse-Stockfish NNUE V2 large K64G1 model input identity v1\0"
+)
 CAMPAIGN_SET_DOMAIN = b"Crazyhouse-Stockfish campaign set v1\0"
 CHUNK_SET_DOMAIN = b"Crazyhouse-Stockfish ordered chunk set v1\0"
 RECORD_STREAM_DOMAIN = b"Crazyhouse-Stockfish ordered record stream v1\0"
@@ -82,6 +123,8 @@ IDENTITY_KINDS = (
     "game_id",
     "trajectory_id",
 )
+LARGE_IDENTITY_KINDS = IDENTITY_KINDS + ("large_model_input_key",)
+PROJECTIONS = ("legacy-v1", "large-k64g1-v1")
 ROLE_IDS = {"train": 0, "validation": 1}
 
 MANIFEST_KEYS = {
@@ -101,6 +144,18 @@ MANIFEST_KEYS = {
     "aggregate_chunk_set_receipt",
     "admission_tool",
     "created_utc",
+}
+DIAGNOSTIC_EXCEPTION_KEYS = {
+    "schema",
+    "status",
+    "campaign_addendum",
+    "owner_waiver",
+    "intersections",
+    "validation_usage",
+    "validation_gradients",
+    "validation_early_stopping",
+    "validation_checkpoint_or_seed_selection",
+    "release_admissible",
 }
 ROLE_KEYS = {
     "role",
@@ -237,6 +292,19 @@ def parse_strict_json(payload: bytes, label: str, *, maximum_bytes: int = 16 * 1
         reject("JSON_PARSE", f"{label}: {exc}")
     require(isinstance(document, dict), "JSON_ROOT", label)
     require(payload == canonical_json(document), "JSON_NONCANONICAL", label)
+    return document
+
+
+def parse_pinned_json(payload: bytes, label: str) -> Mapping[str, Any]:
+    """Parse an exact-digest document without imposing canonical formatting."""
+
+    try:
+        document = json.loads(payload.decode("utf-8"), object_pairs_hook=_strict_object)
+    except AdmissionError:
+        raise
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        reject("JSON_PARSE", f"{label}: {exc}")
+    require(isinstance(document, dict), "JSON_ROOT", label)
     return document
 
 
@@ -404,6 +472,106 @@ def model_input_key(stm_rows: Sequence[int], opponent_rows: Sequence[int]) -> by
     return hashlib.sha256(payload).digest()
 
 
+def large_model_input_key(
+    stm_k64_rows: Sequence[int],
+    stm_g1_rows: Sequence[int],
+    opponent_k64_rows: Sequence[int],
+    opponent_g1_rows: Sequence[int],
+    total_pocket_units: int,
+) -> bytes:
+    require(
+        type(total_pocket_units) is int and 0 <= total_pocket_units <= 30,
+        "LARGE_POCKET_UNITS",
+        str(total_pocket_units),
+    )
+    payload = bytearray(LARGE_MODEL_INPUT_DOMAIN)
+    payload.extend(bytes.fromhex(LARGE_FEATURE_CONTRACT_SHA256))
+    for rows in (
+        stm_k64_rows,
+        stm_g1_rows,
+        opponent_k64_rows,
+        opponent_g1_rows,
+    ):
+        payload.extend(struct.pack("<I", len(rows)))
+        for row in sorted(rows):
+            payload.extend(struct.pack("<I", row))
+    payload.extend(struct.pack("<I", total_pocket_units))
+    return hashlib.sha256(payload).digest()
+
+
+def validate_large_projection_artifacts() -> Any:
+    reference_payload = read_regular(
+        LARGE_FEATURE_REFERENCE_PATH,
+        "large feature reference",
+        expected_bytes=LARGE_FEATURE_REFERENCE_BYTES,
+        expected_sha256=LARGE_FEATURE_REFERENCE_SHA256,
+    )
+    feature_payload = read_regular(
+        LARGE_FEATURE_SCHEMA_PATH,
+        "large feature schema",
+        expected_bytes=LARGE_FEATURE_SCHEMA_BYTES,
+        expected_sha256=LARGE_FEATURE_SCHEMA_SHA256,
+    )
+    training_payload = read_regular(
+        LARGE_TRAINING_CONTRACT_PATH,
+        "large training contract",
+        expected_bytes=LARGE_TRAINING_CONTRACT_BYTES,
+        expected_sha256=LARGE_TRAINING_CONTRACT_SHA256,
+    )
+    try:
+        feature_document = json.loads(
+            feature_payload.decode("utf-8"), object_pairs_hook=_strict_object
+        )
+        training_document = json.loads(
+            training_payload.decode("utf-8"), object_pairs_hook=_strict_object
+        )
+    except AdmissionError:
+        raise
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        reject("LARGE_CONTRACT_PARSE", str(exc))
+    require(
+        feature_document.get("schema")
+        == "crazyhouse-nnue-v2-large-k64g1-features/v1",
+        "LARGE_FEATURE_SCHEMA",
+        "",
+    )
+    require(
+        training_document.get("schema")
+        == "crazyhouse-nnue-v2-large-training-contract/v1",
+        "LARGE_TRAINING_SCHEMA",
+        "",
+    )
+    require(
+        training_document.get("semantic_identities", {}).get("feature_contract_sha256")
+        == LARGE_FEATURE_CONTRACT_SHA256,
+        "LARGE_FEATURE_SEMANTIC_IDENTITY",
+        "",
+    )
+    input_admission = training_document.get("input_admission", {})
+    require(
+        input_admission.get("projection") == "large-k64g1-v1"
+        and input_admission.get("row_schema") == LARGE_ROW_SCHEMA
+        and input_admission.get("result_schema") == LARGE_RESULT_SCHEMA,
+        "LARGE_TRAINING_ADMISSION_CONTRACT",
+        "",
+    )
+    reference = _load_module(
+        "crazyhouse_v2_large_reference_admission", LARGE_FEATURE_REFERENCE_PATH
+    )
+    require(
+        read_regular(
+            LARGE_FEATURE_REFERENCE_PATH,
+            "large feature reference post-import",
+            expected_bytes=LARGE_FEATURE_REFERENCE_BYTES,
+            expected_sha256=LARGE_FEATURE_REFERENCE_SHA256,
+        )
+        == reference_payload,
+        "LARGE_FEATURE_REFERENCE_CHANGED",
+        "",
+    )
+    return reference
+
+
 def split_role(config: Mapping[str, Any], campaign_id: bytes, trajectory_id: bytes) -> str:
     value = int.from_bytes(
         hashlib.sha256(
@@ -455,7 +623,15 @@ def partition_digest(config: Mapping[str, Any]) -> str:
 class IdentityIndex:
     """Disk-backed exact identity sets; memory use does not scale with records."""
 
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, kinds: Sequence[str] = IDENTITY_KINDS):
+        self.kinds = tuple(kinds)
+        require(
+            bool(self.kinds)
+            and len(self.kinds) == len(set(self.kinds))
+            and all(isinstance(kind, str) and kind for kind in self.kinds),
+            "IDENTITY_KINDS",
+            "",
+        )
         self.connection = sqlite3.connect(str(path))
         self.connection.execute("PRAGMA journal_mode=OFF")
         self.connection.execute("PRAGMA synchronous=OFF")
@@ -470,13 +646,14 @@ class IdentityIndex:
             "key BLOB PRIMARY KEY, chunk_id BLOB NOT NULL) WITHOUT ROWID"
         )
         self.observations = {
-            role: {kind: 0 for kind in IDENTITY_KINDS} for role in ROLE_IDS
+            role: {kind: 0 for kind in self.kinds} for role in ROLE_IDS
         }
         self.duplicates = {
-            role: {kind: 0 for kind in IDENTITY_KINDS} for role in ROLE_IDS
+            role: {kind: 0 for kind in self.kinds} for role in ROLE_IDS
         }
 
     def add(self, role: str, kind: str, key: bytes) -> bool:
+        require(role in ROLE_IDS and kind in self.kinds, "IDENTITY_KIND", f"{role}.{kind}")
         self.observations[role][kind] += 1
         cursor = self.connection.execute(
             "INSERT OR IGNORE INTO identities(kind, role, key) VALUES (?, ?, ?)",
@@ -591,7 +768,14 @@ def validate_partition_config(value: Any, campaigns: Sequence[bytes]) -> Mapping
 
 
 def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str, Mapping[str, Any]]:
-    require(set(document) == MANIFEST_KEYS, "MANIFEST_KEYS", "")
+    keys = set(document)
+    diagnostic = "diagnostic_exception" in document
+    require(
+        keys == MANIFEST_KEYS or keys == MANIFEST_KEYS | {"diagnostic_exception"},
+        "MANIFEST_KEYS",
+        "",
+    )
+    require(not diagnostic or mode == "production", "DIAGNOSTIC_MODE", mode)
     require(document["schema"] == MANIFEST_SCHEMA, "MANIFEST_SCHEMA", "")
     require(
         document["project"] == "Crazyhouse-Stockfish" and document["variant"] == "crazyhouse",
@@ -605,11 +789,16 @@ def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str,
         "MANIFEST_TRAINING_ADMISSIBLE",
         "",
     )
-    require(
-        document["status"] == ("FIXTURE_ONLY" if fixture else "READY_FOR_TRAINING"),
-        "MANIFEST_STATUS",
-        "",
+    expected_status = (
+        "FIXTURE_ONLY"
+        if fixture
+        else (
+            "READY_FOR_DIAGNOSTIC_TRAINING"
+            if diagnostic
+            else "READY_FOR_TRAINING"
+        )
     )
+    require(document["status"] == expected_status, "MANIFEST_STATUS", "")
     rule = document["rule_profile"]
     require(
         rule == {"id": RULE_PROFILE_ID, "sha256": RULE_PROFILE_SHA256},
@@ -619,7 +808,6 @@ def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str,
     roles = document["roles"]
     require(isinstance(roles, dict) and set(roles) == set(ROLE_IDS), "MANIFEST_ROLES", "")
     result: dict[str, Mapping[str, Any]] = {}
-    global_indices: list[int] = []
     chunk_ids: set[str] = set()
     chunk_paths: set[str] = set()
     campaigns: list[bytes] = []
@@ -640,6 +828,7 @@ def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str,
             "ROLE_CHUNK_SET_DIGEST",
             role_name,
         )
+        role_indices: list[int] = []
         for chunk in chunks:
             require(isinstance(chunk, dict) and set(chunk) == CHUNK_KEYS, "CHUNK_KEYS", role_name)
             for artifact_name in ("bundle", "provenance", "capability", "completion_receipt"):
@@ -652,14 +841,108 @@ def validate_manifest_shape(document: Mapping[str, Any], mode: str) -> dict[str,
             require(bundle_path not in chunk_paths, "CHUNK_PATH_DUPLICATE", bundle_path)
             chunk_paths.add(bundle_path)
             index = validate_u64(chunk["chunk_index"], "CHUNK_INDEX", role_name)
-            global_indices.append(index)
+            role_indices.append(index)
             campaigns.append(campaign.bytes)
             validate_u64(chunk["record_count"], "CHUNK_RECORD_COUNT", role_name)
             validate_u64(chunk["trajectory_count"], "CHUNK_TRAJECTORY_COUNT", role_name)
+        require(
+            role_indices == list(range(len(role_indices))),
+            "CHUNK_ORDER",
+            f"{role_name}:{role_indices}",
+        )
         result[role_name] = role
-    require(global_indices == list(range(len(global_indices))), "CHUNK_ORDER", str(global_indices))
     validate_partition_config(document["partition_config"], campaigns)
     return result
+
+
+def validate_diagnostic_exception(
+    root: Path,
+    document: Mapping[str, Any],
+    mode: str,
+) -> Mapping[str, Any] | None:
+    value = document.get("diagnostic_exception")
+    if value is None:
+        return None
+    require(mode == "production", "DIAGNOSTIC_MODE", mode)
+    require(
+        isinstance(value, dict) and set(value) == DIAGNOSTIC_EXCEPTION_KEYS,
+        "DIAGNOSTIC_EXCEPTION_KEYS",
+        "",
+    )
+    require(
+        value["schema"]
+        == "crazyhouse-a0-diagnostic-overlap-exception-binding/v1"
+        and value["status"] == "AUTHORIZED_DIAGNOSTIC_ONLY",
+        "DIAGNOSTIC_EXCEPTION_STATUS",
+        "",
+    )
+    require(
+        value["intersections"] == DIAGNOSTIC_INTERSECTIONS,
+        "DIAGNOSTIC_INTERSECTIONS",
+        "binding",
+    )
+    require(
+        value["validation_usage"] == "forward-only health telemetry"
+        and value["validation_gradients"] is False
+        and value["validation_early_stopping"] is False
+        and value["validation_checkpoint_or_seed_selection"] is False
+        and value["release_admissible"] is False,
+        "DIAGNOSTIC_BOUNDARY",
+        "",
+    )
+
+    addendum_descriptor = validate_artifact(
+        value["campaign_addendum"], "diagnostic campaign addendum"
+    )
+    waiver_descriptor = validate_artifact(
+        value["owner_waiver"], "diagnostic owner waiver"
+    )
+    require(
+        addendum_descriptor["sha256"] == DIAGNOSTIC_ADDENDUM_SHA256,
+        "DIAGNOSTIC_ADDENDUM_IDENTITY",
+        "",
+    )
+    require(
+        waiver_descriptor["sha256"] == DIAGNOSTIC_OWNER_WAIVER_SHA256,
+        "DIAGNOSTIC_WAIVER_IDENTITY",
+        "",
+    )
+    addendum = parse_pinned_json(
+        read_artifact(root, addendum_descriptor, "diagnostic campaign addendum"),
+        "diagnostic campaign addendum",
+    )
+    waiver = parse_pinned_json(
+        read_artifact(root, waiver_descriptor, "diagnostic owner waiver"),
+        "diagnostic owner waiver",
+    )
+    require(
+        addendum.get("schema")
+        == "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1"
+        and addendum.get("addendum") == 2
+        and addendum.get("status")
+        == "AUTHORIZED_DIAGNOSTIC_OVERLAP_EXCEPTION"
+        and addendum.get("measured_cross_role_intersections")
+        == DIAGNOSTIC_INTERSECTIONS,
+        "DIAGNOSTIC_ADDENDUM_CONTENT",
+        "",
+    )
+    require(
+        waiver.get("schema")
+        == "crazyhouse-a0-diagnostic-overlap-owner-waiver/v1"
+        and waiver.get("status") == "AUTHORIZED_DIAGNOSTIC_ONLY"
+        and waiver.get("authenticated_failure_evidence", {}).get(
+            "cross_role_unique_intersections"
+        )
+        == DIAGNOSTIC_INTERSECTIONS
+        and waiver.get("authority_boundary", {}).get(
+            "training_authorized_under_exception"
+        )
+        is True
+        and waiver.get("authority_boundary", {}).get("release_authorized") is False,
+        "DIAGNOSTIC_WAIVER_CONTENT",
+        "",
+    )
+    return value
 
 
 def validate_static_artifacts(
@@ -828,6 +1111,8 @@ def row_document(
     chunk_index: int,
     record_raw: bytes,
     record: Any,
+    projection: str,
+    large_reference: Any | None,
 ) -> tuple[dict[str, Any], dict[str, bytes]]:
     stm_rows = feature_rows(record, record.side_to_move)
     opponent_rows = feature_rows(record, record.side_to_move ^ 1)
@@ -851,33 +1136,85 @@ def row_document(
         "resignation",
         "draw-adjudication",
     )
-    row = {
-        "campaign_id": str(uuid.UUID(bytes=campaign_id)),
-        "chunk_id": str(uuid.UUID(bytes=chunk_id)),
-        "chunk_index": chunk_index,
-        "game_id": str(uuid.UUID(bytes=record.game_id)),
-        "game_result_white": record.game_result_white,
-        "model_input_key": model_key.hex(),
-        "move_time_ms": record.move_time_ms,
-        "opponent_rows": list(opponent_rows),
-        "ply": record.ply,
-        "position_identity_sha256": record.position_identity_sha256.hex(),
-        "raw_record_key": raw_key.hex(),
-        "result_side_to_move": record.result_side_to_move,
-        "role": role,
-        "schema": ROW_SCHEMA,
-        "search_depth": record.search_depth,
-        "search_nodes": record.search_nodes,
-        "search_seldepth": record.search_seldepth,
-        "sequence": record.sequence,
-        "side_to_move": "white" if record.side_to_move == 0 else "black",
-        "stm_rows": list(stm_rows),
-        "teacher_bound": teacher_bounds[record.teacher_bound],
-        "teacher_score_kind": teacher_kinds[record.teacher_score_kind],
-        "teacher_score_value": record.teacher_score_value,
-        "terminal_reason": terminal_reasons[record.terminal_reason],
-        "trajectory_id": str(uuid.UUID(bytes=record.trajectory_id)),
-    }
+    if projection == "legacy-v1":
+        row = {
+            "campaign_id": str(uuid.UUID(bytes=campaign_id)),
+            "chunk_id": str(uuid.UUID(bytes=chunk_id)),
+            "chunk_index": chunk_index,
+            "game_id": str(uuid.UUID(bytes=record.game_id)),
+            "game_result_white": record.game_result_white,
+            "model_input_key": model_key.hex(),
+            "move_time_ms": record.move_time_ms,
+            "opponent_rows": list(opponent_rows),
+            "ply": record.ply,
+            "position_identity_sha256": record.position_identity_sha256.hex(),
+            "raw_record_key": raw_key.hex(),
+            "result_side_to_move": record.result_side_to_move,
+            "role": role,
+            "schema": ROW_SCHEMA,
+            "search_depth": record.search_depth,
+            "search_nodes": record.search_nodes,
+            "search_seldepth": record.search_seldepth,
+            "sequence": record.sequence,
+            "side_to_move": "white" if record.side_to_move == 0 else "black",
+            "stm_rows": list(stm_rows),
+            "teacher_bound": teacher_bounds[record.teacher_bound],
+            "teacher_score_kind": teacher_kinds[record.teacher_score_kind],
+            "teacher_score_value": record.teacher_score_value,
+            "terminal_reason": terminal_reasons[record.terminal_reason],
+            "trajectory_id": str(uuid.UUID(bytes=record.trajectory_id)),
+        }
+    else:
+        require(
+            projection == "large-k64g1-v1" and large_reference is not None,
+            "PROJECTION",
+            projection,
+        )
+        try:
+            state = large_reference.project_physical_record(record)
+            stm_large = large_reference.feature_rows(state, record.side_to_move)
+            opponent_large = large_reference.feature_rows(state, record.side_to_move ^ 1)
+        except large_reference.LargeFeatureError as exc:
+            reject("LARGE_FEATURE_PROJECTION", exc.code)
+        total_pocket_units = sum(state.pockets)
+        large_key = large_model_input_key(
+            stm_large.k64,
+            stm_large.g1,
+            opponent_large.k64,
+            opponent_large.g1,
+            total_pocket_units,
+        )
+        identities["large_model_input_key"] = large_key
+        row = {
+            "campaign_id": str(uuid.UUID(bytes=campaign_id)),
+            "chunk_id": str(uuid.UUID(bytes=chunk_id)),
+            "chunk_index": chunk_index,
+            "game_id": str(uuid.UUID(bytes=record.game_id)),
+            "game_result_white": record.game_result_white,
+            "large_model_input_key": large_key.hex(),
+            "move_time_ms": record.move_time_ms,
+            "opponent_g1_rows": list(opponent_large.g1),
+            "opponent_k64_rows": list(opponent_large.k64),
+            "ply": record.ply,
+            "position_identity_sha256": record.position_identity_sha256.hex(),
+            "raw_record_key": raw_key.hex(),
+            "result_side_to_move": record.result_side_to_move,
+            "role": role,
+            "schema": LARGE_ROW_SCHEMA,
+            "search_depth": record.search_depth,
+            "search_nodes": record.search_nodes,
+            "search_seldepth": record.search_seldepth,
+            "sequence": record.sequence,
+            "side_to_move": "white" if record.side_to_move == 0 else "black",
+            "stm_g1_rows": list(stm_large.g1),
+            "stm_k64_rows": list(stm_large.k64),
+            "teacher_bound": teacher_bounds[record.teacher_bound],
+            "teacher_score_kind": teacher_kinds[record.teacher_score_kind],
+            "teacher_score_value": record.teacher_score_value,
+            "terminal_reason": terminal_reasons[record.terminal_reason],
+            "total_pocket_units": total_pocket_units,
+            "trajectory_id": str(uuid.UUID(bytes=record.trajectory_id)),
+        }
     return row, identities
 
 
@@ -916,6 +1253,8 @@ def scan_chunk(
     row_digest: Any,
     record_stream_digest: Any,
     mode: str,
+    projection: str,
+    large_reference: Any | None,
 ) -> tuple[int, int]:
     provenance_bytes = read_artifact(root, entry["provenance"], "chunk provenance")
     capability_bytes = read_artifact(root, entry["capability"], "chunk capability")
@@ -1140,6 +1479,8 @@ def scan_chunk(
                     entry["chunk_index"],
                     raw,
                     record,
+                    projection,
+                    large_reference,
                 )
                 for kind, key in identities.items():
                     inserted = index.add(role, kind, key)
@@ -1186,6 +1527,7 @@ def scan_chunk(
 def validate_split_audit(
     document: Mapping[str, Any],
     index: IdentityIndex,
+    diagnostic_exception: Mapping[str, Any] | None = None,
 ) -> tuple[dict[str, int], dict[str, dict[str, int]], dict[str, dict[str, dict[str, Any]]]]:
     audit = document["split_audit"]
     require(isinstance(audit, dict), "SPLIT_AUDIT", "")
@@ -1196,17 +1538,54 @@ def validate_split_audit(
         "within_role_duplicate_observations",
     }
     require(set(audit) == required, "SPLIT_AUDIT_KEYS", "")
-    require(audit["status"] == "FROZEN_EXPECTATIONS", "SPLIT_AUDIT_STATUS", "")
+    require(
+        audit["status"]
+        == (
+            "FROZEN_DIAGNOSTIC_EXCEPTION"
+            if diagnostic_exception is not None
+            else "FROZEN_EXPECTATIONS"
+        ),
+        "SPLIT_AUDIT_STATUS",
+        "",
+    )
+    expected_declaration_kinds = (
+        LARGE_IDENTITY_KINDS
+        if diagnostic_exception is not None
+        else IDENTITY_KINDS
+    )
     require(
         isinstance(audit["intersections"], dict)
-        and set(audit["intersections"]) == set(IDENTITY_KINDS),
+        and set(audit["intersections"]) == set(expected_declaration_kinds),
         "SPLIT_AUDIT_INTERSECTIONS",
         "",
     )
-    intersections = {kind: index.intersection_count(kind) for kind in IDENTITY_KINDS}
-    require(all(value == 0 for value in audit["intersections"].values()), "SPLIT_AUDIT_DECLARATION", "")
-    overlapping = [kind for kind, value in intersections.items() if value]
-    require(not overlapping, "CROSS_ROLE_INTERSECTION", ",".join(overlapping))
+    intersections = {kind: index.intersection_count(kind) for kind in index.kinds}
+    if diagnostic_exception is None:
+        require(
+            all(value == 0 for value in audit["intersections"].values()),
+            "SPLIT_AUDIT_DECLARATION",
+            "",
+        )
+        overlapping = [kind for kind, value in intersections.items() if value]
+        require(not overlapping, "CROSS_ROLE_INTERSECTION", ",".join(overlapping))
+    else:
+        require(
+            audit["intersections"] == DIAGNOSTIC_INTERSECTIONS,
+            "SPLIT_AUDIT_DECLARATION",
+            "diagnostic",
+        )
+        require(
+            all(
+                intersections[kind] == DIAGNOSTIC_INTERSECTIONS[kind]
+                for kind in index.kinds
+            ),
+            "CROSS_ROLE_DIAGNOSTIC_DRIFT",
+            ",".join(
+                kind
+                for kind in index.kinds
+                if intersections[kind] != DIAGNOSTIC_INTERSECTIONS[kind]
+            ),
+        )
     maxima = audit["within_role_duplicate_maximum"]
     declared = audit["within_role_duplicate_observations"]
     require(isinstance(maxima, dict) and set(maxima) == set(ROLE_IDS), "SPLIT_DUPLICATE_MAXIMUM", "")
@@ -1223,7 +1602,7 @@ def validate_split_audit(
     sets: dict[str, dict[str, dict[str, Any]]] = {}
     for role in ROLE_IDS:
         sets[role] = {}
-        for kind in IDENTITY_KINDS:
+        for kind in index.kinds:
             unique, digest = index.ordered_summary(role, kind)
             sets[role][kind] = {
                 "duplicate_observations": index.duplicates[role][kind],
@@ -1234,8 +1613,14 @@ def validate_split_audit(
     return intersections, index.duplicates, sets
 
 
-def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
+def admit(
+    manifest_path: Path,
+    output: Path,
+    mode: str,
+    projection: str = "legacy-v1",
+) -> Mapping[str, Any]:
     require(mode in {"fixture", "production"}, "MODE", mode)
+    require(projection in PROJECTIONS, "PROJECTION", projection)
     manifest_bytes = read_regular(
         manifest_path,
         "training dataset manifest",
@@ -1244,6 +1629,9 @@ def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
     manifest = parse_strict_json(manifest_bytes, "training dataset manifest")
     manifest_root = manifest_path.resolve(strict=True).parent
     roles = validate_manifest_shape(manifest, mode)
+    diagnostic_exception = validate_diagnostic_exception(
+        manifest_root, manifest, mode
+    )
     physical_schema, _feature_contract = validate_static_artifacts(
         manifest_root,
         manifest,
@@ -1266,6 +1654,14 @@ def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
             PRODUCTION_CAPABILITY_CONTRACT_SHA256 if mode == "production" else None
         ),
     )
+    large_reference = (
+        validate_large_projection_artifacts()
+        if projection == "large-k64g1-v1"
+        else None
+    )
+    identity_kinds = (
+        LARGE_IDENTITY_KINDS if projection == "large-k64g1-v1" else IDENTITY_KINDS
+    )
     require(
         output.parent.exists() and output.parent.is_dir(),
         "OUTPUT_PARENT",
@@ -1278,7 +1674,7 @@ def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
     identity_index: IdentityIndex | None = None
     streams: dict[str, BinaryIO] = {}
     try:
-        identity_index = IdentityIndex(partial / "identity-index.sqlite3")
+        identity_index = IdentityIndex(partial / "identity-index.sqlite3", identity_kinds)
         role_summaries: dict[str, Any] = {}
         for role_name in ("train", "validation"):
             role = roles[role_name]
@@ -1304,6 +1700,8 @@ def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
                     row_digest=row_digest,
                     record_stream_digest=record_digest,
                     mode=mode,
+                    projection=projection,
+                    large_reference=large_reference,
                 )
                 records_seen += seen_records
                 trajectories_seen += seen_trajectories
@@ -1330,7 +1728,9 @@ def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
                 "trajectory_count": trajectories_seen,
             }
         identity_index.finish()
-        intersections, duplicates, sets = validate_split_audit(manifest, identity_index)
+        intersections, duplicates, sets = validate_split_audit(
+            manifest, identity_index, diagnostic_exception
+        )
         for role_name in ROLE_IDS:
             trajectory_unique = sets[role_name]["trajectory_id"]["unique_keys"]
             require(
@@ -1355,7 +1755,11 @@ def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
                 "production data, training, model selection, timing, Elo, OpenBench, "
                 "Fairy-Stockfish, release or monitoring evidence."
                 if mode == "fixture"
-                else "Production admission does not itself select or train a model and grants no strength or release credit."
+                else (
+                    "Diagnostic production admission permits paired training only. Validation is forward-only telemetry, and the exception grants no strength or release credit."
+                    if diagnostic_exception is not None
+                    else "Production admission does not itself select or train a model and grants no strength or release credit."
+                )
             ),
             "feature_contract_sha256": FEATURE_CONTRACT_SHA256,
             "fixture_mode": mode == "fixture",
@@ -1366,11 +1770,45 @@ def admit(manifest_path: Path, output: Path, mode: str) -> Mapping[str, Any]:
             "schema": RESULT_SCHEMA,
             "sets": sets,
             "source_manifest_sha256": sha256_bytes(manifest_bytes),
-            "status": "PASS_FIXTURE_NONADMISSIBLE" if mode == "fixture" else "PASS_PRODUCTION_ADMISSION",
+            "status": (
+                "PASS_FIXTURE_NONADMISSIBLE"
+                if mode == "fixture"
+                else (
+                    "PASS_PRODUCTION_DIAGNOSTIC_ADMISSION"
+                    if diagnostic_exception is not None
+                    else "PASS_PRODUCTION_ADMISSION"
+                )
+            ),
             "training_admissible": mode == "production",
             "transactional_output": True,
             "within_role_duplicates": duplicates,
         }
+        if diagnostic_exception is not None:
+            result.update(
+                {
+                    "diagnostic_only": True,
+                    "diagnostic_exception": {
+                        "campaign_addendum_sha256": DIAGNOSTIC_ADDENDUM_SHA256,
+                        "frozen_intersections": DIAGNOSTIC_INTERSECTIONS,
+                        "owner_waiver_sha256": DIAGNOSTIC_OWNER_WAIVER_SHA256,
+                        "validation_checkpoint_or_seed_selection": False,
+                        "validation_gradients": False,
+                        "validation_usage": "forward-only health telemetry",
+                    },
+                    "release_admissible": False,
+                }
+            )
+        if projection == "large-k64g1-v1":
+            result.update(
+                {
+                    "large_feature_contract_sha256": LARGE_FEATURE_CONTRACT_SHA256,
+                    "large_feature_reference_sha256": LARGE_FEATURE_REFERENCE_SHA256,
+                    "large_feature_schema_file_sha256": LARGE_FEATURE_SCHEMA_SHA256,
+                    "large_training_contract_sha256": LARGE_TRAINING_CONTRACT_SHA256,
+                    "projection": projection,
+                    "schema": LARGE_RESULT_SCHEMA,
+                }
+            )
         result_bytes = canonical_json(result)
         _write_new(partial / "admission-result.json", result_bytes)
         os.replace(partial, output)
@@ -1475,7 +1913,16 @@ def _fixture_identity_stats(
         sets[role] = {kind: set() for kind in IDENTITY_KINDS}
         duplicates[role] = {kind: 0 for kind in ("position_identity", "model_input_key")}
         for campaign, record, raw in rows:
-            _, identities = row_document(role, campaign, bytes(16), 0, raw, record)
+            _, identities = row_document(
+                role,
+                campaign,
+                bytes(16),
+                0,
+                raw,
+                record,
+                "legacy-v1",
+                None,
+            )
             for kind, key in identities.items():
                 if key in sets[role][kind] and kind in duplicates[role]:
                     duplicates[role][kind] += 1
@@ -1538,24 +1985,24 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
         raw_by_role: dict[str, list[bytes]] = {"train": [], "validation": []}
         trajectory_keys_by_role: dict[str, list[bytes]] = {"train": [], "validation": []}
         identity_rows: dict[str, list[tuple[bytes, Any, bytes]]] = {"train": [], "validation": []}
-        chunk_index = 0
+        chunk_ordinal = 0
         for role in ("train", "validation"):
             groups = by_role[role]
             split_at = len(groups) // 2
             chunk_groups = (groups[:split_at], groups[split_at:])
-            for grouped_trajectories in chunk_groups:
+            for role_chunk_index, grouped_trajectories in enumerate(chunk_groups):
                 chunk_uuid = uuid.UUID(
-                    f"60000000-0000-4000-8000-{chunk_index + 1:012d}"
+                    f"60000000-0000-4000-8000-{chunk_ordinal + 1:012d}"
                 )
                 provenance = dict(base_provenance)
                 provenance["campaign_id"] = str(campaign)
                 provenance["chunk_id"] = str(chunk_uuid)
-                provenance["chunk_index"] = chunk_index
+                provenance["chunk_index"] = role_chunk_index
                 provenance["generation_settings"] = dict(provenance["generation_settings"])
                 provenance["generation_settings"]["fixture_only"] = True
                 provenance["generation_settings"]["training_admissible"] = False
                 provenance_payload = canonical_json(provenance)
-                provenance_relative = f"chunks/chunk-{chunk_index:02d}.provenance.json"
+                provenance_relative = f"chunks/chunk-{chunk_ordinal:02d}.provenance.json"
                 provenance_descriptor = _fixture_artifact(
                     partial,
                     provenance_relative,
@@ -1575,7 +2022,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                     chunk_id=chunk_uuid.bytes,
                     campaign_id=campaign.bytes,
                 )
-                bundle_relative = f"chunks/chunk-{chunk_index:02d}.chp"
+                bundle_relative = f"chunks/chunk-{chunk_ordinal:02d}.chp"
                 bundle_descriptor = _fixture_artifact(partial, bundle_relative, chunk_payload)
                 raw_records = [
                     chunk_payload[
@@ -1594,7 +2041,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                     "capability": capability_descriptor,
                     "campaign_id": str(campaign),
                     "chunk_id": str(chunk_uuid),
-                    "chunk_index": chunk_index,
+                    "chunk_index": role_chunk_index,
                     "provenance": provenance_descriptor,
                     "record_count": len(rebound),
                     "trajectory_count": len(grouped_trajectories),
@@ -1604,7 +2051,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                     "campaign_id": str(campaign),
                     "capability": capability_descriptor,
                     "chunk_id": str(chunk_uuid),
-                    "chunk_index": chunk_index,
+                    "chunk_index": role_chunk_index,
                     "fixture_only": True,
                     "official_openbench_origin": None,
                     "project": "Crazyhouse-Stockfish",
@@ -1616,7 +2063,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                     "trajectory_count": len(grouped_trajectories),
                     "variant": "crazyhouse",
                 }
-                receipt_relative = f"receipts/chunk-{chunk_index:02d}.json"
+                receipt_relative = f"receipts/chunk-{chunk_ordinal:02d}.json"
                 receipt_payload = canonical_json(receipt)
                 receipt_descriptor = _fixture_artifact(
                     partial,
@@ -1626,7 +2073,7 @@ def build_fixture(output: Path) -> Mapping[str, Any]:
                 entry = dict(entry_without_receipt)
                 entry["completion_receipt"] = receipt_descriptor
                 chunks_by_role[role].append(entry)
-                chunk_index += 1
+                chunk_ordinal += 1
         role_documents: dict[str, Any] = {}
         for role in ("train", "validation"):
             role_documents[role] = {
@@ -1770,6 +2217,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     admission.add_argument("--manifest", required=True, type=Path)
     admission.add_argument("--output", required=True, type=Path)
     admission.add_argument("--mode", choices=("fixture", "production"), required=True)
+    admission.add_argument("--projection", choices=PROJECTIONS, default="legacy-v1")
     return parser.parse_args(argv)
 
 
@@ -1781,7 +2229,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif args.command == "self-test-identities":
             result = self_test_identity_intersections()
         else:
-            result = admit(args.manifest, args.output, args.mode)
+            result = admit(args.manifest, args.output, args.mode, args.projection)
     except AdmissionError as exc:
         sys.stderr.buffer.write(
             canonical_json(

@@ -4,13 +4,16 @@
 from __future__ import annotations
 
 import hashlib
+import os
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from tools.ci.aggregate_crazyhouse_ci_artifacts import (
     AggregationError,
     aggregate,
+    git,
     inventory_tree,
     write_fresh,
 )
@@ -50,6 +53,7 @@ class ArtifactAggregateTests(unittest.TestCase):
 
     def test_aggregate_binds_current_official_descendant(self) -> None:
         repository = Path(__file__).resolve().parents[1]
+        head = git(repository, "rev-parse", "HEAD")
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             artifacts = root / "artifacts"
@@ -60,10 +64,18 @@ class ArtifactAggregateTests(unittest.TestCase):
                 lane_root.mkdir()
                 (lane_root / "result.log").write_text(f"PASS {lane}\n", encoding="utf-8")
             output = root / "aggregate"
-            manifest = aggregate(repository, artifacts, output, expected)
+            with patch.dict(
+                os.environ,
+                {"SOURCE_SHA": head, "GITHUB_SHA": "f" * 40},
+                clear=False,
+            ):
+                manifest = aggregate(repository, artifacts, output, expected)
             self.assertEqual(manifest["result"], "PASS_REQUIRED_PUBLIC_CORRECTNESS_JOBS")
             self.assertTrue(manifest["repository"]["official_stockfish_ancestor_verified"])
             self.assertFalse(manifest["repository"]["fairy_stockfish_source_allowed"])
+            self.assertEqual(manifest["workflow"]["source_sha"], head)
+            self.assertEqual(manifest["workflow"]["event_sha"], "f" * 40)
+            self.assertTrue(manifest["workflow"]["exact_source_verified"])
             self.assertTrue((output / "crazyhouse-correctness-manifest.json").is_file())
             self.assertTrue((output / "SHA256SUMS").is_file())
 

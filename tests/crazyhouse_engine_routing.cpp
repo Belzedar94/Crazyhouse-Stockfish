@@ -169,6 +169,18 @@ void verify_admission_invariants() {
     require(Routing::crazyhouse_search_ready(legacy),
             "ready legacy route did not admit Crazyhouse search");
 
+    Routing::Snapshot freshLegacy = legacy;
+    freshLegacy.active->crazyhouseEvalSha256 = std::string(64, '1');
+    freshLegacy.pending                         = *freshLegacy.active;
+    freshLegacy.backend.identity               = freshLegacy.active->crazyhouseEvalSha256;
+    require(Routing::snapshot_contract_valid(freshLegacy),
+            "authenticated fresh legacy snapshot rejected");
+    require(Routing::crazyhouse_search_ready(freshLegacy),
+            "authenticated fresh legacy route did not admit Crazyhouse search");
+    freshLegacy.backend.identity = std::string(64, '2');
+    require(!Routing::crazyhouse_search_ready(freshLegacy),
+            "wrong fresh legacy digest admitted Crazyhouse search");
+
     Routing::Snapshot chess = base_snapshot(Ruleset::CHESS, 9);
     chess.positionEpoch      = chess.configEpoch;
     chess.backend.kind       = Routing::BackendKind::OfficialChess;

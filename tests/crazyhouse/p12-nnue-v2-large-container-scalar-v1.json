@@ -1,0 +1,61 @@
+{
+  "schema": "crazyhouse-p12-large-container-scalar-contract-v1",
+  "status": "PREREGISTERED_NOT_EXECUTED",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "created_utc": "2026-08-29T04:30:00Z",
+  "candidate": {
+    "commit": "12a267465dbe81b9d050ef39c906b26229bd1f9a",
+    "tree": "8a9fdbb66748cfa8636531d41324000ac717a740",
+    "src_tree": "2dbb3178aea1dc2c8ddd588b843cdf1938fb6413",
+    "official_stockfish_ancestor": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2",
+    "public_pr": "https://github.com/Belzedar94/Crazyhouse-Stockfish/pull/9"
+  },
+  "architecture": {
+    "id": "CH-NNUE-V2-LARGE-K64G1-SFNNV16",
+    "container_bytes": 126406688,
+    "payload_bytes": 126405664,
+    "k64": [81664, 768],
+    "g1": [1340, 256],
+    "perspective_output_bytes": 512,
+    "dense_input_bytes": 1024,
+    "layer_stacks": 8,
+    "dense_trunk": [1024, 32, 64, 32, 128, 1],
+    "bucket": "min(7,total_pocket_units/4)",
+    "legacy_v1_default_unchanged": true
+  },
+  "source_files": [
+    {"path": "src/nnue/crazyhouse_v2_large_network.cpp", "bytes": 38810, "sha256": "ebd3980e2e1cd6a60bdb35a0a6d20986bba9c6125032c440ec544715992f61f1"},
+    {"path": "src/nnue/crazyhouse_v2_large_network.h", "bytes": 7129, "sha256": "c2b82177cf4a811ed8b4897ad890314f2fc7faa27bdffc72f4ff7b79c7336ae9"},
+    {"path": "src/nnue/crazyhouse_v2_large_transform.cpp", "bytes": 2228, "sha256": "e1e349793f57ee277a709cd1fb6873faafa089ff68e333039a3396cc84d9d140"},
+    {"path": "src/nnue/crazyhouse_v2_large_transform.h", "bytes": 2200, "sha256": "8d6521c57015259858b6ae1a8f423d727e64d5c1ce0abd63b86d0d32eec4f3aa"},
+    {"path": "src/nnue/crazyhouse_v2_features.cpp", "bytes": 16911, "sha256": "ee0ced5dc563561991df4f0a19cba73024badbe779ff632b39736abf23e2193e"},
+    {"path": "src/nnue/crazyhouse_v2_features.h", "bytes": 6111, "sha256": "b0e8e1fac33626ce11582652766bea828c945dd76c6bd19a5bd0bf8afad7eea6"},
+    {"path": "tests/crazyhouse_v2_large_network.cpp", "bytes": 9131, "sha256": "27498b5af972300f2dbcd8fe45191c77a0580faf9af2032c42c3358706ffa182"},
+    {"path": "tests/crazyhouse_v2_large_container_verify.py", "bytes": 8421, "sha256": "cbec584f1e742bee139e7c2cf448ff852c455b5a5a1a7a0fe6d1c2a446ed0fd0"},
+    {"path": "tools/nnue/crazyhouse_v2_large_container_reference.py", "bytes": 12599, "sha256": "5c0fcad3415916d68d307ba5f44de53d014954e5f62fe46c4163fd648349c056"},
+    {"path": "docs/crazyhouse/adr-0024-nnue-v2-large-container-scalar-v1.md", "bytes": 5995, "sha256": "9a7c8cf275eb88b31da5893f7d47e7bf7367fe3da0e604bcce922dce333b9d66"}
+  ],
+  "formal_recipe": {
+    "export": "git archive --format=tar <candidate> followed by extraction into a fresh lease",
+    "build": "make -C src -j2 ARCH=x86-64-avx2 COMP=mingw EXTRACXXFLAGS=-Werror crazyhouse-v2-large-network-tests",
+    "verify": "python -B tests/crazyhouse_v2_large_container_verify.py --reference tools/nnue/crazyhouse_v2_large_container_reference.py --executable src/crazyhouse-v2-large-network-tests.exe",
+    "expected_stdout": "PASS crazyhouse_v2_large_container positive_cases=6 negative_cases=29 container_bytes=126406688 scalar_reference=independent training_admissible=false g12_closed=false",
+    "expected_stderr": "",
+    "expected_exit": 0,
+    "maximum_build_jobs": 2,
+    "network_access": false,
+    "openbench": false
+  },
+  "required_negative_classes": [
+    "wrong_size",
+    "zero_expected_provenance",
+    "magic_version_dimensions_types",
+    "fixed_and_training_identities",
+    "reserved_and_tensor_directory",
+    "header_crc32c",
+    "payload_sha256_corruption",
+    "fc0_fc1_fc2_integer_intervals"
+  ],
+  "success_boundary": "A pass proves only the owned large-A0 container parser and integer scalar full-refresh parity on the frozen fixture. It does not admit production data, train a network, prove deterministic resume, SIMD or incremental parity, establish Elo, close G12, change the default, authorize OpenBench or support a release."
+}

@@ -35,6 +35,7 @@
 #include "history.h"
 #include "misc.h"
 #include "nnue/crazyhouse_legacy_network.h"
+#include "nnue/crazyhouse_v2_large_runtime.h"
 #include "nnue/nnue_accumulator.h"
 #include "numa.h"
 #include "position.h"
@@ -221,25 +222,28 @@ struct LimitsType {
 // The UCI stores the uci options, thread pool, and transposition table.
 // This struct is used to easily forward data to the Search::Worker class.
 struct SharedState {
-    SharedState(const OptionsMap&                                             optionsMap,
-                ThreadPool&                                                   threadPool,
-                TranspositionTable&                                           transpositionTable,
-                std::map<NumaIndex, SharedHistories>&                         sharedHists,
-                const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&      net,
-                const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>& legacyNet) :
+    SharedState(const OptionsMap&                                                optionsMap,
+                ThreadPool&                                                      threadPool,
+                TranspositionTable&                                              transpositionTable,
+                std::map<NumaIndex, SharedHistories>&                            sharedHists,
+                const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&         net,
+                const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>&    legacyNet,
+                const std::unique_ptr<Eval::NNUE::CrazyhouseV2::LargeRuntimeV1>& largeNet) :
         options(optionsMap),
         threads(threadPool),
         tt(transpositionTable),
         sharedHistories(sharedHists),
         network(net),
-        legacyNetwork(legacyNet) {}
+        legacyNetwork(legacyNet),
+        largeNetwork(largeNet) {}
 
-    const OptionsMap&                                             options;
-    ThreadPool&                                                   threads;
-    TranspositionTable&                                           tt;
-    std::map<NumaIndex, SharedHistories>&                         sharedHistories;
-    const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&      network;
-    const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>& legacyNetwork;
+    const OptionsMap&                                                options;
+    ThreadPool&                                                      threads;
+    TranspositionTable&                                              tt;
+    std::map<NumaIndex, SharedHistories>&                            sharedHistories;
+    const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&         network;
+    const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>&    legacyNetwork;
+    const std::unique_ptr<Eval::NNUE::CrazyhouseV2::LargeRuntimeV1>& largeNetwork;
 };
 
 class Worker;
@@ -451,16 +455,18 @@ class Worker {
 
     Tablebases::Config tbConfig;
 
-    const OptionsMap&                                             options;
-    ThreadPool&                                                   threads;
-    TranspositionTable&                                           tt;
-    const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&      network;
-    const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>& legacyNetwork;
+    const OptionsMap&                                                options;
+    ThreadPool&                                                      threads;
+    TranspositionTable&                                              tt;
+    const LazyNumaReplicatedSystemWide<Eval::NNUE::Network>&         network;
+    const std::unique_ptr<Eval::NNUE::LegacyCrazyhouseNetworkV1>&    legacyNetwork;
+    const std::unique_ptr<Eval::NNUE::CrazyhouseV2::LargeRuntimeV1>& largeNetwork;
 
     // Used by NNUE
-    Eval::NNUE::AccumulatorStack                   accumulatorStack;
-    Eval::NNUE::LegacyCrazyhouseAccumulatorStackV1 legacyAccumulatorStack;
-    Eval::NNUE::AccumulatorCaches                  refreshTable;
+    Eval::NNUE::AccumulatorStack                             accumulatorStack;
+    Eval::NNUE::LegacyCrazyhouseAccumulatorStackV1           legacyAccumulatorStack;
+    Eval::NNUE::CrazyhouseV2::LargeRuntimeAccumulatorStackV1 largeAccumulatorStack;
+    Eval::NNUE::AccumulatorCaches                            refreshTable;
 
     friend class Stockfish::ThreadPool;
     friend class SearchManager;

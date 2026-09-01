@@ -1,0 +1,88 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 2,
+  "status": "AUTHORIZED_DIAGNOSTIC_OVERLAP_EXCEPTION",
+  "evidence_class": "M2_MODEL_SELECTION_DIAGNOSTIC",
+  "owner_decision_utc": "2026-08-31T06:25:13.1964644Z",
+  "purpose": "Authorize the measured A0 train-validation position/input overlap solely for non-selective validation telemetry while preserving every other admission, paired-training, strength and release boundary.",
+  "predecessor": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.001.json",
+    "sha256": "1607e85bd91e4b2c4b52dcd730841140a33f3cce5b93b997d220aa48ae5f59ae"
+  },
+  "private_owner_waiver": {
+    "path": "receipts/private/p13-crazyhouse-a0-diagnostic-overlap-waiver-524.json",
+    "sha256": "a67fe2ec5b2058b665c20da8dc158af8e91560b4de05a64824dbbdbfe72c5e2c"
+  },
+  "dataset": {
+    "train_test_id": 413,
+    "validation_test_id": 414,
+    "train_records": 1048576,
+    "validation_records": 131072,
+    "download_completion_receipt_sha256": "c01ea981674decbb00bef8fdf83cf65a1657f5b8ee4a44f3635ced249a6537cc",
+    "download_manifest_sha256": "b77577c1ca89480d1d0f596baaa9494acf9ea9f4da24e8c79fc358bb76804b1d"
+  },
+  "measured_cross_role_intersections": {
+    "raw_record_key": 0,
+    "position_identity": 17127,
+    "model_input_key": 17262,
+    "large_model_input_key": 17262,
+    "game_id": 0,
+    "trajectory_id": 0
+  },
+  "diagnostic_exception": {
+    "permitted_only_at_exact_measured_counts": [
+      "position_identity",
+      "model_input_key",
+      "large_model_input_key"
+    ],
+    "still_required_zero": [
+      "raw_record_key",
+      "game_id",
+      "trajectory_id"
+    ],
+    "validation_usage": "forward-only health telemetry",
+    "validation_gradients": "forbidden",
+    "early_stopping": "forbidden",
+    "checkpoint_or_seed_selection_from_loss": "forbidden",
+    "training_data": "exact authenticated train role only",
+    "score_scale_cp_source": "train role only",
+    "artifact_selection": "fixed final epoch of predesignated seed index 0 after every paired seed passes engineering gates"
+  },
+  "paired_architecture_experiment": {
+    "arms": [
+      "fresh legacy-V1 architecture",
+      "fresh CH-NNUE-V2-LARGE-K64G1-SFNNV16 architecture"
+    ],
+    "shared_train_records_targets_score_scale_batch_epochs_learning_rates_sample_order_device_class": true,
+    "paired_seeds": [
+      617628155675752428,
+      521232795329550045,
+      4052246384809050251
+    ],
+    "batch_size": 512,
+    "epochs": 8,
+    "cpu_threads": 1,
+    "device": "cuda",
+    "fresh_process_per_arm_and_seed": true,
+    "all_six_trainings_required": true
+  },
+  "release_boundary": {
+    "diagnostic_exception_grants_release_credit": false,
+    "same_data_legacy_vs_v2_win_grants_release_credit": false,
+    "release_before_valid_win_over_registered_best_legacy": "forbidden",
+    "legacy_default_remains_unchanged": true
+  },
+  "strength_boundary": {
+    "strength_testing_starts_in_this_addendum": false,
+    "same_binary_rule_unchanged": true,
+    "predesignated_playing_seed_index": 0,
+    "stage_sequence_unchanged": true
+  },
+  "stopping_rules": [
+    "Any overlap count different from the six frozen measurements rejects materialization and admission.",
+    "Any nonzero raw-record, game-id or trajectory-id cross-role intersection rejects materialization and admission.",
+    "Validation must not contribute gradients, early stopping, checkpoint selection, seed selection or hyperparameter selection.",
+    "No loss metric may select or promote an artifact.",
+    "No strength test or release action is authorized by this exception."
+  ]
+}

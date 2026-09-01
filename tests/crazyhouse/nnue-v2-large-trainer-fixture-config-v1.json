@@ -1,0 +1,1 @@
+{"batch_size":7,"checkpoint_interval_steps":2,"cpu_threads":1,"dense_learning_rate":1e-05,"device":"cpu","epochs":2,"lambda":0.5,"loss_exponent":2.0,"mode":"fixture","schema":"crazyhouse-nnue-v2-large-training-config/v1","score_scale_cp":100.0,"seed":2026082901,"sparse_learning_rate":1e-05,"validation_interval_steps":2}

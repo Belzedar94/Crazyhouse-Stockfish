@@ -1,0 +1,98 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-large-production-trainer-preregistration/v1",
+  "status": "PREREGISTERED_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "frozen_source": {
+    "commit": "0da0d68ff7dfb4f78bbe17097a1a7ba06b8e612f",
+    "tree": "39933ead74b92f6e34c3386a3feb4fb522d82070",
+    "src_tree": "2c99ad2c8440b7f5dcdb0f8167292b1cadc45f33",
+    "official_stockfish_ancestor": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2"
+  },
+  "training_contract": {
+    "path": "schemas/crazyhouse-nnue-v2-large-training-v1.json",
+    "sha256": "cae6e1d1f51f2e33e113c5e9c1007131e1b40de1cf0800543aa4829657353d68"
+  },
+  "bound_references": {
+    "large_feature_reference": {
+      "path": "tools/nnue/crazyhouse_v2_large_reference.py",
+      "sha256": "3f61002dd262e24327c8b5fb31a53b773468a3dc336d87ac7572c1418d1a2975"
+    },
+    "large_feature_schema_file": {
+      "path": "schemas/crazyhouse-nnue-v2-large-k64g1-features-v1.json",
+      "sha256": "837b82eb9af44829bca913a22c3702270b58cc6970e2b36c3d1fe3419945c397"
+    },
+    "large_architecture_schema_file": {
+      "path": "schemas/crazyhouse-nnue-v2-large-k64g1-architecture-v1.json",
+      "sha256": "b2bfaae3616762e4753758a89b663888847c8f02fadba0ee79622fed807c2a35"
+    },
+    "official_nnue_pytorch": {
+      "commit": "9f72946529c4187d3679014036cd22c3be419716",
+      "model_sha256": "29ca27acd59c391d1f5560df304738e44e5615b1b0ca0193cea6648e3c7df62b",
+      "loss_sha256": "a2f805924376b422fff06996cfbe362cb239e1063b438e6b2157c84431383851",
+      "layer_stacks_sha256": "a7b104fb0e2f2047bbd4c24baea32df44143fe66c5efa57fdcaa4e0e23e3b9a7",
+      "quantization_sha256": "c454008107bd7a53fbe372ffe4783e474bc410064fa9c393961c2f97b22ea914"
+    }
+  },
+  "implementation_units": [
+    "additive large-k64g1-v1 admission projection with independent verifier",
+    "strict production trainer with reduced-shape nonadmissible fixture mode",
+    "same-runtime deterministic interruption and resume",
+    "owned large-A0 quantized exporter with fail-closed bounds",
+    "C++ scalar, SIMD and incremental parity on the exported artifact"
+  ],
+  "fixture_execution": {
+    "runtime": {
+      "python": "3.12.0",
+      "python_executable_sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0",
+      "torch": "2.7.1+cu118",
+      "numpy": "2.3.5"
+    },
+    "device": "cpu",
+    "threads": 1,
+    "dataloader_workers": 0,
+    "required_comparisons": [
+      "uninterrupted versus interrupted-resumed model bytes",
+      "uninterrupted versus interrupted-resumed optimizer bytes",
+      "uninterrupted versus interrupted-resumed metrics and order chains",
+      "trainer K64/G1 rows versus independent projection",
+      "float QAT trace versus independent quantized trace"
+    ],
+    "training_admissible": false
+  },
+  "production_admission": {
+    "official_openbench_only": "https://belzedar.duckdns.org",
+    "fixture_or_synthetic_rows": "reject",
+    "missing_or_mismatched_identity": "reject",
+    "missing_explicit_scientific_hyperparameter": "reject",
+    "output_collision_or_partial": "reject",
+    "training_may_begin_before_official_dataset_admission": false
+  },
+  "negative_matrix": [
+    "wrong row schema",
+    "row descriptor digest mismatch",
+    "large model input key mismatch",
+    "K64 or G1 duplicate/out-of-range row",
+    "pocket count and cumulative-row mismatch",
+    "teacher bound or perspective mismatch",
+    "fixture admitted as production",
+    "configuration or runtime mismatch on resume",
+    "checkpoint truncation or trailing data",
+    "quantization overflow",
+    "dense int32 interval overflow",
+    "container parser rejection",
+    "scalar/SIMD/incremental trace mismatch"
+  ],
+  "boundary": {
+    "legacy_v1_default_unchanged": true,
+    "training_loss_is_not_model_selection": true,
+    "fixture_pass_is_not_training": true,
+    "canary_pass_is_not_elo": true,
+    "trained_artifact_exists": false,
+    "model_selected": false,
+    "strength_evidence": false,
+    "g12_closed": false,
+    "release_evidence": false
+  },
+  "stopping_rule": "Any identity, projection, framing, deterministic-resume, QAT, export, parser, integer parity, sanitizer or isolation mismatch rejects this engineering subgate. No loss observation may promote a model or alter the frozen procedure."
+}

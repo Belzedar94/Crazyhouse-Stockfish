@@ -1,0 +1,126 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-result/v1",
+  "status": "PASS_CAMPAIGN_MATERIALIZER_ENGINEERING_ONLY",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P13_G13_SUBGATE_ONLY",
+  "observed_at_utc": "2026-08-29T06:46:57.4389087Z",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "owner_task": "019ff608-f6fe-7792-b0c9-fa6d8be8e6d8",
+  "source": {
+    "implementation_commit": "c1da57f1a68329fd66e5625874ded8d771ce6dd4",
+    "implementation_tree": "d5d5e1421fc29fe0788177691fddd30c6a01e5a0",
+    "src_tree": "80a08aa0395acd72b5ae92a23083d3f94838d836",
+    "preregistration_commit": "67f9a1450bc0db935c6df376b37b520203e8708f",
+    "official_stockfish_ancestor": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2"
+  },
+  "authenticated_files": {
+    "campaign": {
+      "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.json",
+      "bytes": 9106,
+      "sha256": "1636986a62d08d73e295f354659cfe5bdcccba0ea4133ea08793c9d02df567ce"
+    },
+    "campaign_design": {
+      "path": "docs/crazyhouse/nnue-v2-large-production-campaign-v1.md",
+      "bytes": 2645,
+      "sha256": "caaf3f0eede9baf1af044c1892efb8f5b7b5360d474fc0bd43e699e5186612db"
+    },
+    "materializer": {
+      "path": "tools/nnue/crazyhouse_v2_large_campaign.py",
+      "bytes": 20935,
+      "sha256": "d69c90d74d358eb031f5b79f9b2809f8953bdb4010f514223a81c5705ee4ed86"
+    },
+    "independent_verifier": {
+      "path": "tests/crazyhouse_v2_large_campaign_verify.py",
+      "bytes": 4589,
+      "sha256": "e781abe151abcf459abd050a0a07a936a4fe9d58fa63f8e3be1ddff2306f9cb2"
+    },
+    "bound_trainer": {
+      "path": "tools/nnue/crazyhouse_v2_large_trainer.py",
+      "bytes": 73445,
+      "sha256": "95366774d3f69cd4d71edce8c6f068c2dfba0c1ea49162c50251c111d1846a30"
+    },
+    "public_workflow": {
+      "path": ".github/workflows/crazyhouse-correctness.yml",
+      "bytes": 25140,
+      "sha256": "f13e76cd53065faba225c2644b405d5777281c9be97d782b62079b1539323b7f"
+    }
+  },
+  "runtime": {
+    "python": "3.12.0",
+    "python_executable": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+    "python_executable_bytes": 103192,
+    "python_executable_sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0"
+  },
+  "independent_verification": {
+    "command": "python -B tests/crazyhouse_v2_large_campaign_verify.py --planner tools/nnue/crazyhouse_v2_large_campaign.py --campaign tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.json --campaign-sha256 1636986a62d08d73e295f354659cfe5bdcccba0ea4133ea08793c9d02df567ce --trainer tools/nnue/crazyhouse_v2_large_trainer.py",
+    "exit_code": 0,
+    "status": "PASS_INDEPENDENT_CAMPAIGN_VERIFICATION",
+    "authenticated_seeds": [
+      617628155675752428,
+      521232795329550045,
+      4052246384809050251
+    ],
+    "predesignated_playing_seed_index": 0,
+    "negative_cases": 1,
+    "training_started": false
+  },
+  "fixture_negative": {
+    "lease": "D:/Crazyhouse-Stockfish/leases/p13-large-a0-campaign-fixture-negative-507",
+    "source_manifest": {
+      "path": "fixture/training-dataset-manifest.json",
+      "bytes": 5768,
+      "sha256": "b360625835e5d6fe8684f8860b67b22844a0cc7e1b55aed537f7ea16048bdde3"
+    },
+    "admission_result": {
+      "path": "admission/admission-result.json",
+      "bytes": 4184,
+      "sha256": "15ba8c5e05fcf965da4066e5e1cebcca0f1552853bc5ee8ea81b07a98c1903aa",
+      "status": "PASS_FIXTURE_NONADMISSIBLE",
+      "fixture_mode": true,
+      "training_admissible": false
+    },
+    "train_rows": {
+      "path": "admission/train.rows.jsonl",
+      "bytes": 30275,
+      "sha256": "571156472ef31258b0a2d8149be778179bd928848c07a027f19e09aeba2e9863",
+      "records": 31
+    },
+    "validation_rows": {
+      "path": "admission/validation.rows.jsonl",
+      "bytes": 15052,
+      "sha256": "eea834934335132a9c6be16c0a5589bfccef37c1f86c7d1e7d12491d462a71f6",
+      "records": 13
+    },
+    "materializer_exit_code": 2,
+    "materializer_rejection": "BOUND_TRAINER:ADMISSION_PRODUCTION_STATUS",
+    "output_exists": false,
+    "partial_output_exists": false,
+    "result": "PASS_FAIL_CLOSED_FIXTURE_REJECTION"
+  },
+  "orchestration_incident": {
+    "id": "CH-V2-007",
+    "gate_credit": false,
+    "symptom": "The first fixture-negative wrapper expected admission/result.json and stopped after successful admission.",
+    "resolution": "The authenticated admission contract emits admission/admission-result.json; the corrected invocation bound that exact file and produced the expected fail-closed materializer rejection."
+  },
+  "implemented_boundaries": {
+    "source": "clean, ancestry-bound implementation commit, repository tree and src tree",
+    "dataset": "production-only admission status, exact result digest, exact row digests, count minima and zero cross-role intersections",
+    "recipe": "derived train-only score scale plus three preregistered canonical seed configurations",
+    "transaction": "output collision rejection, partial-output rejection and atomic final namespace publication",
+    "selection": "seed 0 is predesignated and loss cannot select or replace the playing artifact"
+  },
+  "scientific_boundary": {
+    "official_openbench_dataset_exists": false,
+    "production_configuration_materialized": false,
+    "production_training_started": false,
+    "trained_large_artifact_exists": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "legacy_v1_remains_default": true,
+    "g13_closed": false,
+    "release_claimed": false
+  },
+  "next_gate": "Deploy the merged OpenBench client only after unrelated active work has ended, execute both official Crazyhouse DATAGEN canaries, admit the exact production aggregate, and then materialize the frozen three-seed campaign."
+}

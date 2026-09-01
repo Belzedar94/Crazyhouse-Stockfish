@@ -111,9 +111,10 @@ Option::Option(int v, int minv, int maxv, OnChange f, OnInvalid invalid) :
     defaultValue = currentValue = std::to_string(v);
 }
 
-Option::Option(const char* v, const char* cur, OnChange f) :
+Option::Option(const char* v, const char* cur, OnChange f, OnInvalid invalid) :
     type("combo"),
-    on_change(std::move(f)) {
+    on_change(std::move(f)),
+    on_invalid(std::move(invalid)) {
     defaultValue = v;
     currentValue = cur;
 }

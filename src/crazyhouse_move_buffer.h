@@ -171,7 +171,7 @@ class CrazyhouseMoveBuffer {
 
     static constexpr size_type inline_capacity() noexcept { return InlineCapacity; }
     static constexpr size_type max_size() noexcept {
-        return std::numeric_limits<size_type>::max() / sizeof(T);
+        return static_cast<size_type>(std::numeric_limits<std::ptrdiff_t>::max()) / sizeof(T);
     }
 
     reference operator[](size_type index) noexcept {

@@ -1,0 +1,189 @@
+{
+  "schema": "crazyhouse-nnue-v2-large-k64g1-features/v1",
+  "status": "frozen-before-implementation",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "source_anchor": {
+    "official_stockfish_commit": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2",
+    "crazyhouse_replay_commit": "25bb7b2088ea329b6c5aa7e0ca482374066bdcb0"
+  },
+  "physical_input": {
+    "schema_id": "crazyhouse-physical-v1",
+    "schema_sha256": "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55",
+    "canonical_source": "physical-state-not-feature-rows"
+  },
+  "perspectives": {
+    "count": 2,
+    "weights_shared": true,
+    "ownership": "relative-to-perspective",
+    "white_square_orientation": "square",
+    "black_square_orientation": "square XOR 56",
+    "file_reflection": false,
+    "rotation": false,
+    "side_to_move_feature": false,
+    "side_to_move_representation": "ordering of transformed perspectives"
+  },
+  "orders": {
+    "droppable_piece_types": ["pawn", "knight", "bishop", "rook", "queen"],
+    "visible_piece_types": ["pawn", "knight", "bishop", "rook", "queen", "king"],
+    "promoted_visible_types": ["knight", "bishop", "rook", "queen"],
+    "relative_owners": ["perspective", "opponent"],
+    "pocket_maxima": [16, 4, 4, 4, 2],
+    "pocket_prefixes": [0, 16, 20, 24, 28],
+    "pocket_slots_per_owner": 30
+  },
+  "index_type": "uint32",
+  "domains": [
+    {
+      "id": "K64",
+      "dimensions": 81664,
+      "conditioning": {
+        "kind": "own-king-oriented-square",
+        "buckets": 64,
+        "formula": "oriented_square(own_king_square)",
+        "range": [0, 63]
+      },
+      "maximum_active_per_perspective": 48,
+      "blocks": [
+        {
+          "id": "board",
+          "offset": 0,
+          "rows": 45056,
+          "planes_per_bucket": 11,
+          "plane_order": [
+            "own-pawn", "opponent-pawn",
+            "own-knight", "opponent-knight",
+            "own-bishop", "opponent-bishop",
+            "own-rook", "opponent-rook",
+            "own-queen", "opponent-queen",
+            "shared-kings"
+          ],
+          "index_formula": "((king_bucket * 11 + plane) * 64) + oriented_square",
+          "range": [0, 45055],
+          "active": "one row per occupied board square"
+        },
+        {
+          "id": "pocket-slots",
+          "offset": 45056,
+          "rows": 3840,
+          "pocket_plane_formula": "relative_owner * 30 + pocket_prefix[piece_type] + slot",
+          "index_formula": "45056 + king_bucket * 60 + pocket_plane",
+          "range": [45056, 48895],
+          "active": "for count n, activate slots 0 through n-1; activate none for zero"
+        },
+        {
+          "id": "promoted-visible-provenance",
+          "offset": 48896,
+          "rows": 32768,
+          "promoted_plane_formula": "relative_owner * 4 + promoted_visible_type",
+          "index_formula": "48896 + ((king_bucket * 8 + promoted_plane) * 64) + oriented_square",
+          "range": [48896, 81663],
+          "active": "one row per promoted-mask bit, retaining visible owner and visible N/B/R/Q type"
+        }
+      ]
+    },
+    {
+      "id": "G1",
+      "dimensions": 1340,
+      "conditioning": {
+        "kind": "none",
+        "buckets": 1
+      },
+      "maximum_active_per_perspective": 48,
+      "blocks": [
+        {
+          "id": "board",
+          "offset": 0,
+          "rows": 768,
+          "planes": 12,
+          "plane_formula": "2 * visible_piece_type + relative_owner",
+          "index_formula": "plane * 64 + oriented_square",
+          "range": [0, 767],
+          "active": "one row per occupied board square"
+        },
+        {
+          "id": "pocket-slots",
+          "offset": 768,
+          "rows": 60,
+          "pocket_plane_formula": "relative_owner * 30 + pocket_prefix[piece_type] + slot",
+          "index_formula": "768 + pocket_plane",
+          "range": [768, 827],
+          "active": "for count n, activate slots 0 through n-1; activate none for zero"
+        },
+        {
+          "id": "promoted-visible-provenance",
+          "offset": 828,
+          "rows": 512,
+          "promoted_plane_formula": "relative_owner * 4 + promoted_visible_type",
+          "index_formula": "828 + promoted_plane * 64 + oriented_square",
+          "range": [828, 1339],
+          "active": "one row per promoted-mask bit, retaining visible owner and visible N/B/R/Q type"
+        }
+      ]
+    }
+  ],
+  "active_capacity": {
+    "board_rows_per_domain": "B",
+    "pocket_rows_per_domain": "P",
+    "promoted_rows_per_domain": "R",
+    "physical_units": "U = B + P <= 32",
+    "promoted_bound": "R <= pawn-origin units <= 16",
+    "per_domain_per_perspective": "B + P + R <= 48",
+    "combined_domains_per_perspective": 96,
+    "both_perspectives_incidence_capacity": 192,
+    "per_domain_bound_is_tight_for_admitted_algebraic_state": true
+  },
+  "incremental_contract": {
+    "separate_domain_deltas": true,
+    "maximum_nonrefresh_removed_per_domain": 4,
+    "maximum_nonrefresh_added_per_domain": 3,
+    "own_king_move": "full K64 refresh for the moving king's perspective only",
+    "opponent_king_move": "incremental board-row delta in K64",
+    "pocket_capture": "count n to n+1 adds slot n",
+    "drop": "count n to n-1 removes slot n-1",
+    "capture_promoted": "remove visible promoted row and add capturer pawn-pocket slot",
+    "move_promoted": "remove owner/type/from row and add owner/type/to row",
+    "promotion": "add owner/promotion-type/to row",
+    "promoted_captures_promoted": "explicit removals and addition; promoted-mask XOR alone is forbidden",
+    "null_move": "no feature delta; swap transformed perspective order",
+    "undo": "pop immutable accumulator frame"
+  },
+  "decoded_but_not_feature_rows_in_v1": [
+    "side to move",
+    "castling rights",
+    "raw and effective en-passant",
+    "halfmove and fullmove counters",
+    "repetition and claim state",
+    "ordered history identity",
+    "move, result, terminal reason and teacher labels"
+  ],
+  "required_goldens": [
+    "maximum pockets",
+    "drop",
+    "promotion",
+    "promotion with capture",
+    "capture of promoted unit",
+    "promoted-on-promoted capture",
+    "en-passant",
+    "castling",
+    "own-king refresh",
+    "null",
+    "make-undo",
+    "rank-reflection plus color-swap symmetry"
+  ],
+  "scientific_boundary": {
+    "legacy_v1_remains_default": true,
+    "topology_frozen_in_separate_schema": true,
+    "container_frozen": false,
+    "quantization_frozen": false,
+    "trained_artifact_exists": false,
+    "strength_claimed": false,
+    "openbench_authorized": false,
+    "release_claimed": false
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-large-engine-routing-preregistration/v1",
+  "status": "PREREGISTERED_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "frozen_source": {
+    "commit": "320adb2a350cdb710275284e1d83541edd26fd03",
+    "tree": "f32ba9f9bb48e7fadea4e2d9ed1041fbbe5c7827",
+    "src_tree": "80a08aa0395acd72b5ae92a23083d3f94838d836",
+    "official_stockfish_ancestor": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2"
+  },
+  "bound_inputs": {
+    "large_container_contract": {
+      "path": "tests/crazyhouse/p12-nnue-v2-large-container-scalar-v1.json",
+      "sha256": "47db07c0bb5247d91f55c86ddbb828f9238cb37757509dfb5cd65d9f70a5e1fc"
+    },
+    "large_container_result": {
+      "path": "tests/crazyhouse/p12-nnue-v2-large-container-scalar-v1.result.001.json",
+      "sha256": "f6757da5c884d194efa90b636fd1c192f9ef1d14b6de7324be41d8ac69c08ae1"
+    },
+    "fixture_generator": {
+      "path": "tools/nnue/crazyhouse_v2_large_container_reference.py",
+      "sha256": "5c0fcad3415916d68d307ba5f44de53d014954e5f62fe46c4163fd648349c056"
+    },
+    "transition_fixture": {
+      "path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.json",
+      "sha256": "1f93f28118478e46362b4254df7e2fa366b851f698f7c1075676a973f7e80a34"
+    },
+    "generated_network_fixture": {
+      "bytes": 126406688,
+      "sha256": "e305c386080c3d802deb23fad322ee04689d360d9b04526f7e5608e9fc055311",
+      "provenance": "1111111111111111111111111111111111111111111111111111111111111111:2222222222222222222222222222222222222222222222222222222222222222:3333333333333333333333333333333333333333333333333333333333333333:4444444444444444444444444444444444444444444444444444444444444444:5555555555555555555555555555555555555555555555555555555555555555:6666666666666666666666666666666666666666666666666666666666666666"
+    }
+  },
+  "architecture": {
+    "id": "CH-NNUE-V2-LARGE-K64G1-SFNNV16",
+    "runtime_backend": "large-v2-a0",
+    "default_backend": "legacy-v1",
+    "large_simd_backend": "sse2-x8-int16-to-int32",
+    "normal_engine_route": "opt-in only"
+  },
+  "uci_contract": {
+    "options": {
+      "CrazyhouseEvaluator": {
+        "type": "combo",
+        "default": "legacy-v1",
+        "values": ["legacy-v1", "large-v2-a0"]
+      },
+      "CrazyhouseEvalFile": {
+        "type": "string",
+        "large_v2_requirement": "non-empty external regular file"
+      },
+      "CrazyhouseEvalSHA256": {
+        "type": "string",
+        "large_v2_requirement": "exact lowercase 64-hex full-file SHA-256"
+      },
+      "CrazyhouseEvalProvenance": {
+        "type": "string",
+        "large_v2_requirement": "six lowercase 64-hex digests separated by colons in dataset, split, config, trainer, runtime, resume order"
+      }
+    },
+    "transaction": "setoption stages state; isready commits one exact backend or withholds readyok",
+    "fallback": "forbidden"
+  },
+  "search_contract": {
+    "normal_commands": ["position", "go", "bench"],
+    "evaluation_dispatch": "the committed Crazyhouse backend only",
+    "incremental_owner": "per-worker, network-bound, position-authenticated stack",
+    "reset_boundaries": ["new search", "training search", "backend epoch change"],
+    "state_transitions": [
+      "quiet",
+      "capture to pocket",
+      "promoted capture",
+      "drop",
+      "successive pocket slots",
+      "en passant",
+      "promotion",
+      "castling",
+      "null move",
+      "make/undo"
+    ],
+    "output": "signed large-V2 quantized value with no legacy evaluation call"
+  },
+  "positive_matrix": [
+    "legacy default remains byte-compatible and search-ready",
+    "large fixture commits with exact file SHA and six exact provenance digests",
+    "large route identity equals the authenticated full-file SHA",
+    "large normal search and bench are deterministic",
+    "large incremental evaluation equals full refresh across the frozen transition corpus",
+    "switching back to legacy advances the routing epoch and restores the legacy backend"
+  ],
+  "negative_matrix": [
+    "unknown evaluator",
+    "empty large file path",
+    "malformed SHA-256",
+    "malformed provenance",
+    "missing file",
+    "non-regular file",
+    "wrong full-file SHA-256",
+    "wrong provenance digest",
+    "truncated container",
+    "corrupt container",
+    "unavailable required SIMD backend"
+  ],
+  "negative_requirements": [
+    "typed route error",
+    "readyok withheld",
+    "no backend commit",
+    "no legacy fallback",
+    "no search admission"
+  ],
+  "build_matrix": [
+    {"os": "ubuntu-24.04", "arch": "x86-64-avx2", "compiler": "gcc", "warnings": "error"},
+    {"os": "ubuntu-24.04", "arch": "x86-64-sse41-popcnt", "compiler": "gcc", "sanitizers": ["address", "undefined"]},
+    {"os": "windows-2025", "arch": "x86-64-avx2", "compiler": "mingw", "warnings": "error"}
+  ],
+  "boundary": {
+    "legacy_v1_default_unchanged": true,
+    "large_v2_normal_engine_opt_in": true,
+    "fixture_only": true,
+    "production_network_available": false,
+    "model_selected": false,
+    "strength_evidence": false,
+    "openbench_evidence": false,
+    "g12_closed": false,
+    "release_evidence": false
+  },
+  "stopping_rule": "Any identity, loader, provenance, route, epoch, search, bench, incremental/full-refresh, transition, negative-control, warning, sanitizer, or platform mismatch rejects this subgate. Corrections are additive and hash-pinned."
+}

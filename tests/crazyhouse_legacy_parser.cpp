@@ -91,7 +91,11 @@ void verify_positive(const std::filesystem::path& path, const std::vector<unsign
     require(result.status == Status::Success, "byte-identical alias did not load: " + result.message);
     require(network.loaded(), "byte-identical alias did not commit the backend");
 
-    result = network.load_bytes(bytes.data(), bytes.size());
+    result = network.load_file(path, Network::RegisteredSha256);
+    require(result.status == Status::Success && network.loaded(),
+            "explicit registered file digest did not load");
+
+    result = network.load_bytes(bytes.data(), bytes.size(), Network::RegisteredSha256);
     require(result.status == Status::Success && network.loaded(), "repeat exact load was not deterministic");
 }
 
@@ -101,6 +105,13 @@ void verify_negative(const std::filesystem::path& path, std::vector<unsigned cha
     auto result = network.load_file(path.string() + ".definitely-missing");
     require(result.status == Status::MissingFile, "missing path was not classified as MissingFile");
     require(!network.loaded() && !result.message.empty(), "missing path did not fail closed");
+
+    result = network.load_file(path, std::string(64, 'A'));
+    require(result.status == Status::DigestMismatch && !network.loaded(),
+            "uppercase expected digest did not fail closed");
+    result = network.load_bytes(bytes.data(), bytes.size(), std::string(64, '0'));
+    require(result.status == Status::DigestMismatch && !network.loaded(),
+            "wrong explicit digest did not fail closed");
 
     std::vector<unsigned char> shortBytes(bytes.begin(), bytes.end() - 1);
     expect_status(network, shortBytes, Status::TruncatedFile, "truncated file");
@@ -160,6 +171,6 @@ int main(int argc, char** argv) {
     verify_negative(path, bytes);
 
     std::cout << "PASS crazyhouse_legacy_parser exact=PASS alias=PASS repeat=PASS "
-                 "negative=11 failure_invalidation=PASS parser_only=PASS\n";
+                 "negative=13 explicit_digest=PASS failure_invalidation=PASS parser_only=PASS\n";
     return EXIT_SUCCESS;
 }

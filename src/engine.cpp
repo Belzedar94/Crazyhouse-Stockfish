@@ -19,6 +19,7 @@
 #include "engine.h"
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <filesystem>
@@ -74,11 +75,39 @@ Engine::Engine(std::optional<std::filesystem::path> path,
 
     positionSlot->position.set(StartFEN, false, &positionSlot->states->back());
 
-    const std::string crazyhouseEvalDefault =
-      NN::LegacyCrazyhouseNetworkV1::embedded_available()
-        ? std::string(NN::LegacyCrazyhouseNetworkV1::EmbeddedFileToken)
-        : std::string{};
-    routing.pending.crazyhouseEvalFile = crazyhouseEvalDefault;
+    std::string crazyhouseEvalDefault;
+    std::string crazyhouseEvalShaDefault;
+#ifdef OPENBENCH_CRAZYHOUSE_EXTERNAL_NETWORKS
+    // Public OpenBench invokes bench without workload UCI options. Both
+    // branch networks have already been downloaded at that point, so bind the
+    // benchmark to a known Legacy artifact common to both engine copies.
+    // Game play still supplies an explicit file and digest per side.
+    constexpr std::array<std::pair<std::string_view, std::string_view>, 2>
+      OpenBenchBenchNetworks{{
+        {"../Networks/F1D0CD5A",
+         "f1d0cd5a974e02a9c51dbeb37c64c7d97ca78399693a378e221c430fcb9e0a11"},
+        {"../Networks/8EBF8478",
+         "8ebf84784ad20fa33df403e60211818a7486db7cb8c3decfc86a80238d254f43"},
+      }};
+    for (const auto& [file, sha256] : OpenBenchBenchNetworks)
+    {
+        std::error_code error;
+        const auto candidate =
+          (binaryDirectory / path_from_utf8(std::string(file))).lexically_normal();
+        if (std::filesystem::is_regular_file(candidate, error) && !error)
+        {
+            crazyhouseEvalDefault    = std::string(file);
+            crazyhouseEvalShaDefault = std::string(sha256);
+            break;
+        }
+    }
+#else
+    crazyhouseEvalDefault = NN::LegacyCrazyhouseNetworkV1::embedded_available()
+                              ? std::string(NN::LegacyCrazyhouseNetworkV1::EmbeddedFileToken)
+                              : std::string{};
+#endif
+    routing.pending.crazyhouseEvalFile   = crazyhouseEvalDefault;
+    routing.pending.crazyhouseEvalSha256 = crazyhouseEvalShaDefault;
 
     options.add(  //
       "Debug Log File", Option("", [](const Option& o) {
@@ -119,17 +148,17 @@ Engine::Engine(std::optional<std::filesystem::path> path,
       "MultiPV", Option(1, 1, MAX_MOVES));
 
     options.add(  //
-      "CrazyhouseMultiPV",
-      Option(0, 0, std::numeric_limits<int>::max(),
-             [this](const Option&) {
-                 crazyhouseMultiPVValid = true;
-                 return std::nullopt;
-             },
-             [this](std::string_view) {
-                 crazyhouseMultiPVValid = false;
-                 return "ERROR setoption code=crazyhouse_multipv_invalid "
-                        "option=CrazyhouseMultiPV";
-             }));
+      "CrazyhouseMultiPV", Option(
+                             0, 0, std::numeric_limits<int>::max(),
+                             [this](const Option&) {
+                                 crazyhouseMultiPVValid = true;
+                                 return std::nullopt;
+                             },
+                             [this](std::string_view) {
+                                 crazyhouseMultiPVValid = false;
+                                 return "ERROR setoption code=crazyhouse_multipv_invalid "
+                                        "option=CrazyhouseMultiPV";
+                             }));
 
     options.add("Skill Level", Option(20, 0, 20));
 
@@ -151,11 +180,10 @@ Engine::Engine(std::optional<std::filesystem::path> path,
       }));
 
     options.add(  //
-      "CrazyhouseProfile", Option(CrazyhouseProfile::Token.data(),
-                                  [this](const Option& o) {
-                                      stage_crazyhouse_profile(std::string(o));
-                                      return std::nullopt;
-                                  }));
+      "CrazyhouseProfile", Option(CrazyhouseProfile::Token.data(), [this](const Option& o) {
+          stage_crazyhouse_profile(std::string(o));
+          return std::nullopt;
+      }));
 
     options.add("CrazyhouseCapabilityNonce", Option(""));
 
@@ -186,8 +214,37 @@ Engine::Engine(std::optional<std::filesystem::path> path,
       }));
 
     options.add(  //
+      "CrazyhouseEvaluator", Option(
+                               "legacy-v1 var legacy-v1 var large-v2-a0", "legacy-v1",
+                               [this](const Option& o) {
+                                   if (o == "legacy-v1")
+                                       stage_crazyhouse_evaluator("legacy-v1");
+                                   else if (o == "large-v2-a0")
+                                       stage_crazyhouse_evaluator("large-v2-a0");
+                                   else
+                                       std::abort();
+                                   return std::nullopt;
+                               },
+                               [this](std::string_view value) {
+                                   stage_crazyhouse_evaluator(std::string(value));
+                                   return std::nullopt;
+                               }));
+
+    options.add(  //
       "CrazyhouseEvalFile", Option(crazyhouseEvalDefault.c_str(), [this](const Option& o) {
           stage_crazyhouse_eval_file(std::string(o));
+          return std::nullopt;
+      }));
+
+    options.add(  //
+      "CrazyhouseEvalSHA256", Option(crazyhouseEvalShaDefault.c_str(), [this](const Option& o) {
+          stage_crazyhouse_eval_sha256(std::string(o));
+          return std::nullopt;
+      }));
+
+    options.add(  //
+      "CrazyhouseEvalProvenance", Option("", [this](const Option& o) {
+          stage_crazyhouse_eval_provenance(std::string(o));
           return std::nullopt;
       }));
 
@@ -237,9 +294,27 @@ void Engine::stage_chess_eval_file(std::string value) {
     refresh_pending_dirty();
 }
 
+void Engine::stage_crazyhouse_evaluator(std::string value) {
+    wait_for_search_finished();
+    routing.pending.crazyhouseEvaluator = std::move(value);
+    refresh_pending_dirty();
+}
+
 void Engine::stage_crazyhouse_eval_file(std::string value) {
     wait_for_search_finished();
     routing.pending.crazyhouseEvalFile = std::move(value);
+    refresh_pending_dirty();
+}
+
+void Engine::stage_crazyhouse_eval_sha256(std::string value) {
+    wait_for_search_finished();
+    routing.pending.crazyhouseEvalSha256 = std::move(value);
+    refresh_pending_dirty();
+}
+
+void Engine::stage_crazyhouse_eval_provenance(std::string value) {
+    wait_for_search_finished();
+    routing.pending.crazyhouseEvalProvenance = std::move(value);
     refresh_pending_dirty();
 }
 
@@ -251,6 +326,7 @@ EngineRouting::Epoch Engine::advance_route_epoch() {
 
 void Engine::clear_routed_backends() {
     legacyNetwork.reset();
+    largeNetwork.reset();
     officialRouteInstalled = false;
     networkFile            = {std::nullopt, ""};
     network                = std::make_unique<NN::Network>();
@@ -285,7 +361,8 @@ EngineRouting::ApplyResult Engine::apply_pending_route() {
 
     if (chess960_only_official_transition(routing))
     {
-        if (!officialRouteInstalled || legacyNetwork || !networkFile.current.has_value())
+        if (!officialRouteInstalled || legacyNetwork || largeNetwork
+            || !networkFile.current.has_value())
             std::abort();
 
         advance_route_epoch();
@@ -343,58 +420,94 @@ EngineRouting::ApplyResult Engine::apply_pending_route() {
 
     clear_routed_backends();
 
-    ErrorCode                                      loadError   = ErrorCode::None;
-    BackendKind                                    backendKind = BackendKind::None;
-    std::string                                    backendIdentity;
-    std::unique_ptr<NN::Network>                   officialCandidate;
-    NN::EvalFile                                   officialCandidateFile{std::nullopt, ""};
-    std::unique_ptr<NN::LegacyCrazyhouseNetworkV1> legacyCandidate;
+    ErrorCode                                         loadError   = ErrorCode::None;
+    BackendKind                                       backendKind = BackendKind::None;
+    std::string                                       backendIdentity;
+    std::unique_ptr<NN::Network>                      officialCandidate;
+    NN::EvalFile                                      officialCandidateFile{std::nullopt, ""};
+    std::unique_ptr<NN::LegacyCrazyhouseNetworkV1>    legacyCandidate;
+    std::unique_ptr<NN::CrazyhouseV2::LargeRuntimeV1> largeCandidate;
 
     if (requested.ruleset == Ruleset::CRAZYHOUSE)
     {
-        if (requested.crazyhouseEvalFile.empty())
-            loadError = ErrorCode::CrazyhouseEvalFileEmpty;
-        else
+        if (requested.crazyhouseEvaluator == "legacy-v1")
         {
-            legacyCandidate =
-              std::make_unique<NN::LegacyCrazyhouseNetworkV1>(legacyExecutionBackend);
-            NN::LegacyCrazyhouseNetworkV1::LoadResult result{
-              NN::LegacyCrazyhouseNetworkV1::LoadStatus::MissingFile, "network not loaded"};
-            if (std::string_view(requested.crazyhouseEvalFile)
-                == NN::LegacyCrazyhouseNetworkV1::EmbeddedFileToken)
-                result = legacyCandidate->load_embedded();
+            if (requested.crazyhouseEvalFile.empty())
+                loadError = ErrorCode::CrazyhouseEvalFileEmpty;
+            else
+            {
+                legacyCandidate =
+                  std::make_unique<NN::LegacyCrazyhouseNetworkV1>(legacyExecutionBackend);
+                const std::string_view expectedSha256 =
+                  requested.crazyhouseEvalSha256.empty()
+                    ? NN::LegacyCrazyhouseNetworkV1::RegisteredSha256
+                    : std::string_view(requested.crazyhouseEvalSha256);
+                NN::LegacyCrazyhouseNetworkV1::LoadResult result{
+                  NN::LegacyCrazyhouseNetworkV1::LoadStatus::MissingFile, "network not loaded"};
+                if (std::string_view(requested.crazyhouseEvalFile)
+                    == NN::LegacyCrazyhouseNetworkV1::EmbeddedFileToken)
+                    result = legacyCandidate->load_embedded();
+                else
+                {
+                    auto path = path_from_utf8(requested.crazyhouseEvalFile);
+                    if (path.is_relative())
+                        path = binaryDirectory / path;
+                    path   = path.lexically_normal();
+                    result = legacyCandidate->load_file(path, expectedSha256);
+                }
+                loadError = legacy_load_error(result.status);
+
+                if (loadError == ErrorCode::None && !legacyCandidate->loaded())
+                    loadError = ErrorCode::LegacyDigestMismatch;
+                if (loadError == ErrorCode::None
+                    && legacyCandidate->description()
+                         != NN::LegacyCrazyhouseNetworkV1::RegisteredDescription)
+                    loadError = ErrorCode::LegacyDescriptionMismatch;
+                if (loadError == ErrorCode::None
+                    && legacyCandidate->artifact_sha256() != expectedSha256)
+                    loadError = ErrorCode::LegacyDigestMismatch;
+                if (loadError == ErrorCode::None
+                    && legacyCandidate->execution_backend()
+                         == NN::LegacyCrazyhouseNetworkV1::ExecutionBackend::Simd
+                    && NN::LegacyCrazyhouseNetworkV1::compiled_simd_backend() == "none")
+                    loadError = ErrorCode::LegacySimdUnavailable;
+
+                if (loadError == ErrorCode::None)
+                {
+                    backendKind     = BackendKind::LegacyCrazyhouseV1;
+                    backendIdentity = std::string(legacyCandidate->artifact_sha256());
+                }
+            }
+        }
+        else if (requested.crazyhouseEvaluator == "large-v2-a0")
+        {
+            if (requested.crazyhouseEvalFile.empty())
+                loadError = ErrorCode::LargeEvalFileEmpty;
             else
             {
                 auto path = path_from_utf8(requested.crazyhouseEvalFile);
                 if (path.is_relative())
                     path = binaryDirectory / path;
-                path   = path.lexically_normal();
-                result = legacyCandidate->load_file(path);
-            }
-            loadError = legacy_load_error(result.status);
+                path = path.lexically_normal();
 
-            if (loadError == ErrorCode::None && !legacyCandidate->loaded())
-                loadError = ErrorCode::LegacyDigestMismatch;
-            if (loadError == ErrorCode::None
-                && legacyCandidate->description()
-                     != NN::LegacyCrazyhouseNetworkV1::RegisteredDescription)
-                loadError = ErrorCode::LegacyDescriptionMismatch;
-            if (loadError == ErrorCode::None
-                && legacyCandidate->artifact_sha256()
-                     != NN::LegacyCrazyhouseNetworkV1::RegisteredSha256)
-                loadError = ErrorCode::LegacyDigestMismatch;
-            if (loadError == ErrorCode::None
-                && legacyCandidate->execution_backend()
-                     == NN::LegacyCrazyhouseNetworkV1::ExecutionBackend::Simd
-                && NN::LegacyCrazyhouseNetworkV1::compiled_simd_backend() == "none")
-                loadError = ErrorCode::LegacySimdUnavailable;
-
-            if (loadError == ErrorCode::None)
-            {
-                backendKind     = BackendKind::LegacyCrazyhouseV1;
-                backendIdentity = NN::LegacyCrazyhouseNetworkV1::RegisteredSha256;
+                largeCandidate    = std::make_unique<NN::CrazyhouseV2::LargeRuntimeV1>();
+                const auto result = largeCandidate->load_file(path, requested.crazyhouseEvalSha256,
+                                                              requested.crazyhouseEvalProvenance);
+                loadError         = large_runtime_load_error(result.status);
+                if (loadError == ErrorCode::None && !largeCandidate->loaded())
+                    loadError = ErrorCode::LargeContainerRejected;
+                if (loadError == ErrorCode::None
+                    && largeCandidate->artifact_sha256() != requested.crazyhouseEvalSha256)
+                    loadError = ErrorCode::LargeSha256Mismatch;
+                if (loadError == ErrorCode::None)
+                {
+                    backendKind     = BackendKind::LargeCrazyhouseV2A0;
+                    backendIdentity = std::string(largeCandidate->artifact_sha256());
+                }
             }
         }
+        else
+            loadError = ErrorCode::CrazyhouseEvaluatorUnknown;
     }
     else
     {
@@ -417,6 +530,7 @@ EngineRouting::ApplyResult Engine::apply_pending_route() {
     if (loadError != ErrorCode::None)
     {
         legacyCandidate.reset();
+        largeCandidate.reset();
         officialCandidate.reset();
         return commit_failure(loadError, requested);
     }
@@ -435,8 +549,12 @@ EngineRouting::ApplyResult Engine::apply_pending_route() {
         officialRouteInstalled = true;
         threads.ensure_network_replicated();
     }
-    else
+    else if (backendKind == BackendKind::LegacyCrazyhouseV1)
         legacyNetwork = std::move(legacyCandidate);
+    else if (backendKind == BackendKind::LargeCrazyhouseV2A0)
+        largeNetwork = std::move(largeCandidate);
+    else
+        std::abort();
 
     routing.backend = {backendKind, BackendReadiness::Ready, routing.configEpoch,
                        std::move(backendIdentity)};
@@ -508,6 +626,10 @@ bool Engine::has_routed_legacy_network() const noexcept {
     return legacyNetwork && legacyNetwork->loaded();
 }
 
+bool Engine::has_routed_large_network() const noexcept {
+    return largeNetwork && largeNetwork->loaded();
+}
+
 std::string_view Engine::routed_legacy_evaluator_mode() const noexcept {
     if (!has_routed_legacy_network())
         return "none";
@@ -521,6 +643,22 @@ std::string_view Engine::routed_legacy_simd_backend() const noexcept {
         || legacyNetwork->execution_backend() != LegacyExecutionBackend::Simd)
         return "none";
     return NN::LegacyCrazyhouseNetworkV1::compiled_simd_backend();
+}
+
+std::string_view Engine::routed_crazyhouse_evaluator_mode() const noexcept {
+    if (has_routed_legacy_network())
+        return routed_legacy_evaluator_mode();
+    if (has_routed_large_network())
+        return "large-v2-a0-incremental";
+    return "none";
+}
+
+std::string_view Engine::routed_crazyhouse_simd_backend() const noexcept {
+    if (has_routed_legacy_network())
+        return routed_legacy_simd_backend();
+    if (has_routed_large_network())
+        return NN::CrazyhouseV2::LargeRuntimeV1::simd_backend_name();
+    return "none";
 }
 
 bool Engine::crazyhouse_multipv_valid() const noexcept { return crazyhouseMultiPVValid; }
@@ -560,7 +698,8 @@ void Engine::go(Search::LimitsType& limits) {
         verify_network();
     else
     {
-        if (!crazyhouseMultiPVValid || !legacyNetwork || !legacyNetwork->loaded())
+        const bool backendLoaded = has_routed_legacy_network() != has_routed_large_network();
+        if (!crazyhouseMultiPVValid || !backendLoaded)
             std::abort();
     }
 
@@ -658,7 +797,8 @@ bool Engine::set_numa_config_from_option(const std::string& o) {
 void Engine::resize_threads() {
     threads.wait_for_search_finished();
     threads.set(numaContext.get_numa_config(),
-                {options, threads, tt, sharedHists, network, legacyNetwork}, updateContext);
+                {options, threads, tt, sharedHists, network, legacyNetwork, largeNetwork},
+                updateContext);
 
     // Reallocate the hash with the new threadpool size
     set_tt_size(options["Hash"]);

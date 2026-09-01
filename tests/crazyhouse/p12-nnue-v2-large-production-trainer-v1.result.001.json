@@ -1,0 +1,113 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-large-production-trainer-result/v1",
+  "status": "PASS_FIXTURE_ENGINEERING_SUBGATE",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "observed_at_utc": "2026-08-29T06:03:57.7722718Z",
+  "source": {
+    "implementation_commit": "d1a7da63059d12edc2412b4f909593845bd6bd3b",
+    "implementation_tree": "e1527f97ff7800609e9522feea48f27e6f41f7cc",
+    "src_tree": "80a08aa0395acd72b5ae92a23083d3f94838d836",
+    "preregistration_commit": "28932b6014a483b6312c0fbbca85c18f40c489e2",
+    "large_admission_projection_commit": "6524f6d81d7bfb3e91c8bb93fd08c13e08a7badb",
+    "public_correctness_ancestor": "0d31c9ebbd24aa862d4b0077ef6aebcab9484de3"
+  },
+  "authenticated_files": {
+    "trainer": {
+      "path": "tools/nnue/crazyhouse_v2_large_trainer.py",
+      "bytes": 73445,
+      "sha256": "95366774d3f69cd4d71edce8c6f068c2dfba0c1ea49162c50251c111d1846a30"
+    },
+    "independent_verifier": {
+      "path": "tests/crazyhouse_v2_large_trainer_verify.py",
+      "bytes": 21078,
+      "sha256": "96dc6c4c824612eefdcd1347792976e2e5c89bcf99f58c6bf440c278ea06415b"
+    },
+    "fixture_configuration": {
+      "path": "tests/crazyhouse/nnue-v2-large-trainer-fixture-config-v1.json",
+      "bytes": 322,
+      "sha256": "33ccbf6e4163a34ed764932c698e46d54b70f36ebcdbb5e3caf35bd4e7640f0c"
+    },
+    "training_contract": {
+      "path": "schemas/crazyhouse-nnue-v2-large-training-v1.json",
+      "sha256": "cae6e1d1f51f2e33e113c5e9c1007131e1b40de1cf0800543aa4829657353d68"
+    },
+    "public_workflow": {
+      "path": ".github/workflows/crazyhouse-correctness.yml",
+      "bytes": 24505,
+      "sha256": "3e3ff02f9f562d9337f6d8d6b3490fcb92876e0987f58b1f3c25824ed884264b"
+    },
+    "makefile": {
+      "path": "src/Makefile",
+      "bytes": 66190,
+      "sha256": "16347d22fe8f7f6cd3663b777818b7a0082adf6350ae9a4eadbc57491d77f88a"
+    }
+  },
+  "runtime": {
+    "python": "3.12.0",
+    "python_executable": "C:/Users/djime/AppData/Local/Programs/Python/Python312/python.exe",
+    "python_executable_bytes": 103192,
+    "python_executable_sha256": "42ac541168e97dedb9aabd8be335539fc41c682e414b9e8d137b164fb68683b0",
+    "torch": "2.7.1+cu118",
+    "numpy": "2.3.5",
+    "execution_device": "cpu",
+    "cuda_available_but_unused": true,
+    "threads": 1,
+    "dataloader_workers": 0
+  },
+  "verification": {
+    "command": "python -B tests/crazyhouse_v2_large_trainer_verify.py --trainer tools/nnue/crazyhouse_v2_large_trainer.py --admission-loader tools/nnue/crazyhouse_v2_training_admission.py",
+    "exit_code": 0,
+    "fixture_records": 44,
+    "training_steps": 10,
+    "resume_equalities": [
+      "model canonical bytes",
+      "SparseAdam canonical optimizer bytes",
+      "AdamW canonical optimizer bytes",
+      "sample-order chain",
+      "metric chain",
+      "metric-list bytes"
+    ],
+    "independent_qat_trace_fields": 17,
+    "production_parameter_count_meta_only": 63342088,
+    "production_storage_allocated": false,
+    "export_header_matches_owned_large_a0_reference": true,
+    "dense_interval_overflow_rejected": true,
+    "negative_cases": [
+      "fixture checkpoint export rejected",
+      "checkpoint trailing bytes rejected after caller rehash",
+      "wrong large model input key rejected after descriptor rebind",
+      "wrong admission digest rejected"
+    ],
+    "large_admission_independent_fixture_scan": {
+      "records": 44,
+      "trajectories": 12,
+      "identity_intersections": 0,
+      "negative_cases": 41
+    }
+  },
+  "implemented_boundaries": {
+    "input": "strict authenticated large-k64g1-v1 admission rows",
+    "scalability": "single authenticated scan plus compact uint64 offsets and memory-mapped random access",
+    "feature_optimizers": "SparseAdam with observed sparse K64 and G1 gradients",
+    "dense_optimizer": "AdamW with zero weight decay and deterministic flags",
+    "order": "keyed cycle-walk Feistel over every complete epoch",
+    "resume": "length-framed and SHA-256-authenticated checkpoint with exact model, optimizer, RNG, cursor, metric, order and lineage state",
+    "export": "production-only owned large-A0 container with fail-closed quantization ranges, dense int32 intervals, payload SHA-256, header CRC32C and reauthentication",
+    "fixture_export": "forbidden"
+  },
+  "scientific_boundary": {
+    "fixture_training_admissible": false,
+    "production_dataset_exists": false,
+    "production_training_executed": false,
+    "trained_large_artifact_exists": false,
+    "production_export_executed": false,
+    "scalar_simd_incremental_parity_on_trained_artifact": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "legacy_v1_remains_default": true,
+    "g12_closed": false,
+    "release_claimed": false
+  },
+  "next_gate": "Official production DATAGEN admission, then explicit production configuration freeze before any training run."
+}

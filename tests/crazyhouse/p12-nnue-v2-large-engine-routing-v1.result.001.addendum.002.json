@@ -1,0 +1,107 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-large-engine-routing-result-addendum/v1",
+  "status": "PASS_ENGINE_ROUTING_SUBGATE_PUBLIC_CI",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "observed_at_utc": "2026-08-29T08:57:10.8480636Z",
+  "amends": {
+    "path": "tests/crazyhouse/p12-nnue-v2-large-engine-routing-v1.result.001.addendum.001.json",
+    "bytes": 7013,
+    "sha256": "fb0d1be34522a765496e56c1f7bd7e17d6bd00b62c18e6265d7ad2e0fc1b827d",
+    "rewritten": false
+  },
+  "tested_source": {
+    "commit": "6722e1067651d35ccf95a646b3aeaeca477fd0f0",
+    "tree": "e1582fe6de27ecf8c4328da16c87c8d9718ef92c",
+    "src_tree": "90b8e8d5ab1fbd47eece1226493d940460ca0de4",
+    "official_stockfish_ancestor": "229f6339e537a097a79831cd06dbfdb3e623d4ac",
+    "official_stockfish_ancestor_verified": true,
+    "fairy_stockfish_source_allowed": false
+  },
+  "public_ci": {
+    "repository": "Belzedar94/Crazyhouse-Stockfish",
+    "workflow": "Crazyhouse correctness",
+    "run_id": 33242626499,
+    "run_attempt": 1,
+    "run_url": "https://github.com/Belzedar94/Crazyhouse-Stockfish/actions/runs/33242626499",
+    "event": "pull_request",
+    "api_head_sha": "6722e1067651d35ccf95a646b3aeaeca477fd0f0",
+    "event_merge_sha": "f043793e86b0c4ad40a1f151fb65813e7ab0c37a",
+    "explicit_source_sha": "6722e1067651d35ccf95a646b3aeaeca477fd0f0",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {"id": 99074441344, "name": "Frozen Crazyhouse core rules", "conclusion": "success"},
+      {"id": 99074441408, "name": "Large V2 A0 scalar, SIMD and incremental parity", "conclusion": "success"},
+      {"id": 99074441412, "name": "Network identity and tooling", "conclusion": "success"},
+      {"id": 99074590394, "name": "Windows scalar correctness", "conclusion": "success"},
+      {"id": 99074590404, "name": "Linux undefined sanitizer", "conclusion": "success"},
+      {"id": 99074590421, "name": "Linux address sanitizer", "conclusion": "success"},
+      {"id": 99074590425, "name": "Linux scalar correctness", "conclusion": "success"},
+      {"id": 99074590499, "name": "Linux simd correctness", "conclusion": "success"},
+      {"id": 99078466860, "name": "Aggregate required evidence", "conclusion": "success"}
+    ],
+    "required_job_count": 9,
+    "required_jobs_success": 9,
+    "required_jobs_failure": 0,
+    "required_jobs_skipped": 0
+  },
+  "published_artifacts": [
+    {"id": 9712280961, "name": "crazyhouse-correctness-aggregate-6722e1067651d35ccf95a646b3aeaeca477fd0f0", "bytes": 415693545, "archive_digest": "sha256:c94ea19452e1f1bb96ea2e163a885aa10c7c8bbaa206c280d0f9ca1336f1f8bb"},
+    {"id": 9712271030, "name": "crazyhouse-correctness-sanitizer-address", "bytes": 87629852, "archive_digest": "sha256:9c686d00f5cf2c6382b570e7e42f71093aa6391c8a71f12411616de3f9482cd5"},
+    {"id": 9712009529, "name": "crazyhouse-correctness-sanitizer-undefined", "bytes": 90165386, "archive_digest": "sha256:b91f83c8873482fdd881c532a6c6c6fa5d53b0ab64190021c521fb5c9f20fe38"},
+    {"id": 9711868351, "name": "crazyhouse-correctness-windows-scalar", "bytes": 79868773, "archive_digest": "sha256:b24a70752d2b968f574701de24d192bf0c38832dab171e5ec7c3735bebcf6595"},
+    {"id": 9711849880, "name": "crazyhouse-correctness-linux-scalar", "bytes": 79000432, "archive_digest": "sha256:a1ae14d2cbb2fffd72cd43cd3926f7c23c25805170350669696bc62f596e5bc4"},
+    {"id": 9711837394, "name": "crazyhouse-correctness-linux-simd", "bytes": 78997327, "archive_digest": "sha256:7a7af8308c03ffac5d3dc688e286a7ee8e517144d335a955b099428c292a60e7"},
+    {"id": 9711827419, "name": "crazyhouse-correctness-v2-large-a0", "bytes": 4682, "archive_digest": "sha256:54f86a088750c526fb9f16184bed6a9c699097e3cc7512c6a3cec82cd624d6da"},
+    {"id": 9711821107, "name": "crazyhouse-legacy-network-6722e1067651d35ccf95a646b3aeaeca477fd0f0", "bytes": 29780921, "archive_digest": "sha256:68eb90b7e94086199621c0d5fc25e44ca9554e1d06a7364b9d5c4ae7d7123084"},
+    {"id": 9711820770, "name": "crazyhouse-correctness-core-rules", "bytes": 9627, "archive_digest": "sha256:aa375f76f3ae4ac2b2bbb563ad24de8277d765314a03baa87d29716477aa6379"}
+  ],
+  "independent_download_verification": {
+    "root": "D:/Crazyhouse-Stockfish/leases/p12-v2-engine-routing-public-ci-33242626499",
+    "downloaded_artifact_directories": 9,
+    "extracted_file_count": 232,
+    "extracted_total_bytes": 1189469546,
+    "canonical_inventory_encoding": "UTF-8 LF; sorted relative path; lowercase SHA-256, two spaces, path, LF",
+    "canonical_inventory_sha256": "c6064b065a483ef24e910adb2d912b32d2f797e996fbbcaee2c3f9e32a0e9f3b",
+    "internal_sum_lines_verified": 114,
+    "git_commit_files_verified": 14,
+    "git_commit_file_mismatches": 0,
+    "exact_commit": "6722e1067651d35ccf95a646b3aeaeca477fd0f0",
+    "aggregate_manifest": {
+      "bytes": 23140,
+      "sha256": "dfac9c92802e5b67c08a2a0c640ed3650fb757be25dea562cfdd4d7c96cbb93d",
+      "schema": "crazyhouse-public-correctness-ci-aggregate/v1",
+      "result": "PASS_REQUIRED_PUBLIC_CORRECTNESS_JOBS",
+      "input_file_count": 113,
+      "exact_source_verified": true
+    },
+    "aggregate_sha256sums": {
+      "bytes": 15245,
+      "sha256": "b7326c72afcf5c42fa90fe86d71f7f42519ea615af3c34704dcc1cc4a8cd5883"
+    },
+    "result": "PASS_REAUTHENTICATED_ALL_EXTRACTED_ARTIFACTS"
+  },
+  "incident_resolution": [
+    {"id": "CH-V2-010", "status": "CLOSED_BY_TYPED_COMBO_ROUTING_AND_GREEN_ASAN_UBSAN"},
+    {"id": "CH-V2-011", "status": "CLOSED_BY_EXPLICIT_SOURCE_CHECKOUT_AND_AGGREGATE_SOURCE_BINDING"}
+  ],
+  "claims": {
+    "large_v2_normal_engine_opt_in": true,
+    "legacy_v1_remains_default": true,
+    "public_exact_source_ci": "PASS",
+    "linux_scalar": "PASS",
+    "linux_simd": "PASS",
+    "windows_scalar": "PASS",
+    "address_sanitizer": "PASS",
+    "undefined_sanitizer": "PASS",
+    "production_network_available": false,
+    "training_admissible": false,
+    "model_selected": false,
+    "strength_evidence": false,
+    "openbench_evidence": false,
+    "g12_closed": false,
+    "release_evidence": false
+  },
+  "next_required_action": "Keep V1 as the default and G12 open; admit an authorized production physical dataset, run deterministic production training, select the actual quantized artifact through frozen M2 gates, and only then begin V2 strength testing."
+}

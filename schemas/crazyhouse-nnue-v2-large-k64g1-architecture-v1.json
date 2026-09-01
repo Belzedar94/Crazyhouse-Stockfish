@@ -1,0 +1,180 @@
+{
+  "schema": "crazyhouse-nnue-v2-large-k64g1-architecture/v1",
+  "status": "frozen-before-implementation",
+  "evidence_class": "E1_ENGINEERING",
+  "project": "Crazyhouse-Stockfish",
+  "variant": "crazyhouse",
+  "architecture_id": "CH-NNUE-V2-LARGE-K64G1-SFNNV16",
+  "rule_profile": {
+    "id": "LICHESS_CRAZYHOUSE_2026_08_12",
+    "sha256": "d0602bc32877639f2d9a70741614882512083431b48b9f4e98a88e1067eb4d68"
+  },
+  "source_anchor": {
+    "official_stockfish_commit": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2",
+    "official_nnue_generation": "SFNNv16",
+    "sfnnv16_introduction_commit": "f4bcd40409f94bd397a083c5d6243bac6dcc6d85",
+    "crazyhouse_replay_commit": "25bb7b2088ea329b6c5aa7e0ca482374066bdcb0"
+  },
+  "physical_schema": {
+    "id": "crazyhouse-physical-v1",
+    "sha256": "c72a1fac41e311ed09a2167c56887d64b18293149291f6505f4021f348c1ef55",
+    "canonical_source": "physical-records-not-feature-rows"
+  },
+  "feature_contract": {
+    "id": "crazyhouse-nnue-v2-large-k64g1-features/v1",
+    "path": "schemas/crazyhouse-nnue-v2-large-k64g1-features-v1.json",
+    "bytes": 6796,
+    "sha256": "837b82eb9af44829bca913a22c3702270b58cc6970e2b36c3d1fe3419945c397",
+    "domains": [
+      {"id": "K64", "input_rows": 81664, "maximum_active_per_perspective": 48},
+      {"id": "G1", "input_rows": 1340, "maximum_active_per_perspective": 48}
+    ],
+    "combined_active_capacity_per_perspective": 96,
+    "perspectives": 2
+  },
+  "feature_transformer": {
+    "weights_shared_between_perspectives": true,
+    "domains": [
+      {
+        "id": "K64",
+        "input_rows": 81664,
+        "output_lanes": 768,
+        "pair_halves": [384, 384],
+        "weight_type": "int16",
+        "bias_type": "int16",
+        "accumulator_type": "int32",
+        "weight_parameters": 62717952,
+        "bias_parameters": 768
+      },
+      {
+        "id": "G1",
+        "input_rows": 1340,
+        "output_lanes": 256,
+        "pair_halves": [128, 128],
+        "weight_type": "int16",
+        "bias_type": "int16",
+        "accumulator_type": "int32",
+        "weight_parameters": 343040,
+        "bias_parameters": 256
+      }
+    ],
+    "total_accumulator_lanes_per_perspective": 1024,
+    "conservative_absolute_lane_bound": 1605632,
+    "int16_accumulator_admitted": false,
+    "pair_product": {
+      "clip_min": 0,
+      "clip_max": 255,
+      "divisor": 512,
+      "quotient": "floor for nonnegative product",
+      "K64_output_bytes_per_perspective": 384,
+      "G1_output_bytes_per_perspective": 128,
+      "total_output_bytes_per_perspective": 512
+    },
+    "transformed_perspective_order": ["side-to-move", "opponent"],
+    "dense_input_bytes": 1024
+  },
+  "bucket_selector": {
+    "count": 8,
+    "input": "sum of both sides' pocket unit counts",
+    "input_range": [0, 30],
+    "formula": "min(7, total_pocket_units / 4) using integer division",
+    "ranges": [
+      {"bucket": 0, "pocket_units": [0, 3]},
+      {"bucket": 1, "pocket_units": [4, 7]},
+      {"bucket": 2, "pocket_units": [8, 11]},
+      {"bucket": 3, "pocket_units": [12, 15]},
+      {"bucket": 4, "pocket_units": [16, 19]},
+      {"bucket": 5, "pocket_units": [20, 23]},
+      {"bucket": 6, "pocket_units": [24, 27]},
+      {"bucket": 7, "pocket_units": [28, 30]}
+    ]
+  },
+  "dense_trunks": {
+    "count": 8,
+    "semantics": "current SFNNv16 trunk at the official source anchor",
+    "layers": [
+      {"id": "fc0", "input_lanes": 1024, "output_lanes": 32, "kind": "sparse affine"},
+      {
+        "id": "ac0",
+        "input_lanes": 32,
+        "outputs": ["squared-clipped-relu", "clipped-relu"],
+        "concatenated_lanes": 64
+      },
+      {"id": "fc1", "input_lanes": 64, "output_lanes": 32, "kind": "affine"},
+      {
+        "id": "ac1",
+        "input_lanes": 32,
+        "outputs": ["squared-clipped-relu", "clipped-relu"],
+        "concatenated_lanes": 64
+      },
+      {
+        "id": "fc2",
+        "input": "concatenated ac0 and ac1 outputs",
+        "input_lanes": 128,
+        "output_lanes": 1,
+        "kind": "affine"
+      }
+    ],
+    "skip": "fc0[30] - fc0[31] is added to fc2 output",
+    "normalized_output_centipawns": 600,
+    "psqt_head": false
+  },
+  "parameter_budget": {
+    "feature_transformer_parameters_including_bias": 63062016,
+    "dense_parameters_including_bias_all_buckets": 280072,
+    "total_parameters": 63342088,
+    "candidate_integer_tensor_bytes": {
+      "feature_transformer": 126124032,
+      "dense_trunks": 281632,
+      "total_without_container": 126405664,
+      "approximate_mebibytes": 120.55
+    }
+  },
+  "control_rung_exclusions": [
+    "PSQT head",
+    "FullThreats rows",
+    "PP_3Wide rows",
+    "exact-count pocket one-hot rows",
+    "horizontal king mirror buckets",
+    "alternate CReLU trunk",
+    "castling rows",
+    "raw or effective en-passant rows",
+    "move-counter rows",
+    "repetition or ordered-history rows",
+    "int16 accumulator",
+    "fallback to Legacy V1 on V2 load failure"
+  ],
+  "implementation_order": [
+    "scalar physical projection and full refresh",
+    "trainer and C++ index parity",
+    "versioned fail-closed container and adversarial parser",
+    "integer scalar evaluator parity",
+    "incremental versus full-refresh parity through all Crazyhouse transitions",
+    "SIMD versus scalar parity",
+    "legacy-control routing through the new evaluator datapath",
+    "deterministic trainer resume",
+    "frozen-split paired-seed model-selection rungs",
+    "fixed-work, fixed-node, speed and equal-time strength gates"
+  ],
+  "container_boundary": {
+    "container_schema_frozen_here": false,
+    "quantizer_schema_frozen_here": false,
+    "required_properties": [
+      "Crazyhouse-specific magic and version",
+      "feature and architecture identities",
+      "tensor type, dimensions, byte lengths and hashes",
+      "dataset, trainer, configuration and quantizer provenance",
+      "no trailing bytes",
+      "no incompatible fallback"
+    ]
+  },
+  "scientific_boundary": {
+    "legacy_v1_remains_productive_default": true,
+    "architecture_not_selected_by_loss": true,
+    "trained_artifact_exists": false,
+    "model_selected": false,
+    "strength_claimed": false,
+    "openbench_authorized": false,
+    "release_claimed": false
+  }
+}

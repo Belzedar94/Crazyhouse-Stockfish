@@ -1,0 +1,59 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 9,
+  "status": "AUTHORIZED_ISOLATED_T4_RETRY",
+  "evidence_class": "S3_STRENGTH_PENDING",
+  "frozen_utc": "2026-09-01T13:29:03.0978865Z",
+  "purpose": "Proceed with the unchanged Stage 1 scientific contract on a fresh four-thread client while leaving the focus-leaked, idle foreign workload on machine 31 untouched.",
+  "predecessor": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.008.json",
+    "sha256": "cd37a03999fe4c184d2e864746577a83f0a0c7ad9639e118ece01c22dec25e92"
+  },
+  "preserved_foreign_lease": {
+    "machine_id": 31,
+    "workload_id": 416,
+    "source": "Terachess-Stockfish",
+    "assignment_cause": "server focus leak after test 418 pregame benchmark failure",
+    "reported_games_from_machine": 0,
+    "observed_idle_engine_processes": 7,
+    "engine_cpu_delta_seconds_over_three_seconds": 0.0,
+    "openbench_exit_already_present_on_owned_worker_root": true,
+    "processes_killed_suspended_reprioritized_or_reconfigured": false,
+    "remote_workload_mutated": false,
+    "policy": "wait for natural release; never use this lease as Stage 1 evidence"
+  },
+  "t4_capacity_preflight": {
+    "official_worker_binary": "Crazyhouse-Stockfish-689A7DEE-2B082017.exe",
+    "binary_bytes": 4588823,
+    "binary_sha256": "48a991bdaca2d2c63e4d056116f14ee24f3f1af21dd5c36f835fb6dd24c9f30a",
+    "parallel_benches": 4,
+    "expected_nodes": 38880,
+    "observed_nodes": 38880,
+    "result": "PASS",
+    "new_resource_exhaustion_events": 0,
+    "free_virtual_bytes_after_preflight": 3569733632,
+    "strength_credit": false
+  },
+  "retry_contract": {
+    "fresh_client_account": true,
+    "fresh_worker_root": true,
+    "client_threads": 4,
+    "client_sockets": 1,
+    "per_engine_threads": 1,
+    "scientific_game_concurrency_is_symmetric": true,
+    "new_machine_must_receive_only_the_new_Crazyhouse_test": true,
+    "source_commit_may_differ_only_outside_src": true,
+    "required_src_tree": "4655d65b8bce774794c1279d5309811870c96eb6",
+    "networks_options_book_time_control_sprt_and_decision_rule": "unchanged from addendum 007",
+    "test_418_may_be_reused": false,
+    "create_one_new_zero-game_retry": true,
+    "no_result_based_extension_or_replacement": true
+  },
+  "release_boundary": {
+    "release_admissible": false,
+    "strength_credit": false,
+    "stage_2_authorized": false,
+    "registered_legacy_remains_default": true,
+    "release_before_valid_stage_2_win_over_8EBF8478": "forbidden"
+  }
+}

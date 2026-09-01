@@ -1,0 +1,114 @@
+{
+  "schema": "crazyhouse-p12-nnue-v2-large-simd-incremental-preregistration/v1",
+  "status": "PREREGISTERED_BEFORE_IMPLEMENTATION",
+  "evidence_class": "E1_ENGINEERING",
+  "gate": "P12_G12_SUBGATE_ONLY",
+  "frozen_source": {
+    "commit": "73b789e7cb5c27aa6cd1972c48f89de610cc9292",
+    "tree": "6672bc7faf10489371dd9c7dbe120c60335c4ce0",
+    "src_tree": "2dbb3178aea1dc2c8ddd588b843cdf1938fb6413",
+    "official_stockfish_ancestor": "2edd935bbb3ea6e484a1700f582a95e0ee773ec2"
+  },
+  "bound_inputs": {
+    "scalar_container_contract": {
+      "path": "tests/crazyhouse/p12-nnue-v2-large-container-scalar-v1.json",
+      "sha256": "47db07c0bb5247d91f55c86ddbb828f9238cb37757509dfb5cd65d9f70a5e1fc"
+    },
+    "scalar_container_result": {
+      "path": "tests/crazyhouse/p12-nnue-v2-large-container-scalar-v1.result.001.json",
+      "commit": "73b789e7cb5c27aa6cd1972c48f89de610cc9292"
+    },
+    "transition_fixture": {
+      "path": "tests/crazyhouse/p12-nnue-v2-simd-incremental-probe-v1.json",
+      "sha256": "1f93f28118478e46362b4254df7e2fa366b851f698f7c1075676a973f7e80a34",
+      "inheritance": "fixture cases and method only; no prior architecture or result is inherited"
+    }
+  },
+  "architecture": {
+    "id": "CH-NNUE-V2-LARGE-K64G1-SFNNV16",
+    "k64_dimensions": 81664,
+    "k64_lanes": 768,
+    "g1_dimensions": 1340,
+    "g1_lanes": 256,
+    "perspectives": 2,
+    "maximum_active_per_domain": 48,
+    "feature_contract_sha256": "6e616c2e090b43daa7710ca39aaedc76b43a90db46e8f093466f45b821f44a79",
+    "architecture_sha256": "2f5efc7cf05f3365bf5e524e636d47a6abdbadcdf5673cc0d260f1e61638341e",
+    "quantization_sha256": "262399c3d1e8f96681f485d8b2d9d6d1c8e783cd1685250317a9c7e244c9386c"
+  },
+  "simd_contract": {
+    "required_backend": "sse2-x8-int16-to-int32",
+    "fallback": "forbidden",
+    "domains": ["K64", "G1"],
+    "comparator": "scalar full refresh",
+    "criterion": "identical complete trace and status for both side-to-move orders",
+    "speed_gate": false
+  },
+  "incremental_contract": {
+    "owner": "network-bound transactional accumulator",
+    "source_authentication": "exact K64 and G1 membership for both perspectives plus total pocket units",
+    "delta": "complete source/target inventory set difference",
+    "arithmetic": "signed int64 candidate followed by checked int32 commit",
+    "commit": "only after complete target validation and range checks",
+    "failure": "no committed state mutation",
+    "comparators": ["scalar full refresh", "SIMD full refresh"],
+    "transitions": [
+      "quiet",
+      "king move",
+      "capture to pocket",
+      "promoted capture",
+      "white drop",
+      "black drop",
+      "successive pocket slots",
+      "en passant",
+      "promotion",
+      "promoted move",
+      "castling",
+      "capture/drop chain",
+      "null move",
+      "make/undo"
+    ]
+  },
+  "frozen_counts": {
+    "cases": 13,
+    "real_moves": 17,
+    "real_undos": 17,
+    "null_moves": 1,
+    "null_undos": 1,
+    "refreshes": 13,
+    "source_target_updates": 36,
+    "position_checkpoints": 49,
+    "side_to_move_evaluations": 98,
+    "trace_values_per_evaluation": 4292,
+    "scalar_simd_trace_values": 420616,
+    "incremental_scalar_trace_values": 420616,
+    "operation_negatives": 12,
+    "evaluation_negatives": 4
+  },
+  "build_matrix": [
+    {"os": "ubuntu-24.04", "arch": "x86-64-avx2", "compiler": "gcc", "warnings": "error"},
+    {"os": "ubuntu-24.04", "arch": "x86-64-sse41-popcnt", "compiler": "gcc", "sanitizers": ["address", "undefined"]},
+    {"os": "windows-2025", "arch": "x86-64-avx2", "compiler": "mingw", "warnings": "error"}
+  ],
+  "negative_matrix": {
+    "operation_failures": 12,
+    "evaluation_failures": 4,
+    "required_properties": [
+      "typed error",
+      "no partial evaluation trace",
+      "no committed accumulator mutation",
+      "no network rebinding"
+    ]
+  },
+  "boundary": {
+    "legacy_v1_default_unchanged": true,
+    "normal_engine_route_enabled": false,
+    "production_training_admissible": false,
+    "deterministic_resume": false,
+    "model_selected": false,
+    "strength_evidence": false,
+    "g12_closed": false,
+    "release_evidence": false
+  },
+  "stopping_rule": "Any identity, build, warning, backend, scalar/SIMD trace, incremental/full trace, transition, make/undo, null, negative-control, sanitizer, or isolation mismatch rejects this subgate. Corrections are additive and hash-pinned."
+}

@@ -39,14 +39,14 @@ class OptionsMap;
 // The Option class implements each option as specified by the UCI protocol
 class Option {
    public:
-    using OnChange = std::function<std::optional<std::string>(const Option&)>;
+    using OnChange  = std::function<std::optional<std::string>(const Option&)>;
     using OnInvalid = std::function<std::optional<std::string>(std::string_view)>;
 
     Option(OnChange = nullptr);
     Option(bool v, OnChange = nullptr);
     Option(const char* v, OnChange = nullptr);
     Option(int v, int minv, int maxv, OnChange = nullptr, OnInvalid = nullptr);
-    Option(const char* v, const char* cur, OnChange = nullptr);
+    Option(const char* v, const char* cur, OnChange = nullptr, OnInvalid = nullptr);
 
     Option& operator=(const std::string&);
     operator int() const;

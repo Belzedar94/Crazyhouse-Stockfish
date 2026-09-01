@@ -1,0 +1,139 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 4,
+  "status": "AUTHORIZED_DETERMINISTIC_CUDA_RUNTIME_REPAIR",
+  "evidence_class": "M2_MODEL_SELECTION_DIAGNOSTIC",
+  "frozen_utc": "2026-08-31T09:13:07.7798740Z",
+  "purpose": "Preserve the first failed paired-training launch, freeze the exact deterministic-CUDA runtime repair, and authorize a fresh materialization without changing data, labels, optimization, seed order, selection, strength, or release boundaries.",
+  "predecessor": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.003.json",
+    "sha256": "a170bd0c3e6919c9fa3c536707c6ca3542ad9168b33853fa80e6d1414e2a8353"
+  },
+  "failed_attempt": {
+    "root": "D:/Crazyhouse-Stockfish/training/p13-a0-paired-diagnostic-525",
+    "source_commit": "d6e7b7075e91349d429f4181ce6c1af49a557c8f",
+    "supervisor_sha256": "568db69703d46558995cc66eac8f745739f27b77c17a6db2318d89653640c5cd",
+    "pipeline_state_sha256": "f78d56d8098d6974d2841e1c386f44fca6ea6e9989e9f2af65ec1bdcc6e444fc",
+    "pipeline_state_bytes": 728,
+    "trainer_stderr_sha256": "6d31a58566952c8dcd9b99444cbbaa83339fa101df7d96727626d583d97f53bf",
+    "trainer_stderr_bytes": 255,
+    "failure_code": "TRAINING_EXIT_2",
+    "failed_utc": "2026-08-31T08:38:11.293264Z",
+    "arm": "legacy_v1",
+    "seed_index": 0,
+    "completed_runs": 0,
+    "checkpoint_observed": false,
+    "export_started": false,
+    "preservation": "immutable; never resume or overwrite"
+  },
+  "diagnosis": {
+    "reproduction_scope": "fresh authenticated production inputs, legacy seed 0, stop after one successful optimizer step",
+    "failing_operation": "first loss.backward()",
+    "exception_type": "RuntimeError",
+    "root_cause": "PyTorch deterministic algorithms were enabled, but CUBLAS_WORKSPACE_CONFIG was absent before the first CUDA cuBLAS backward operation.",
+    "required_value": ":4096:8",
+    "data_corruption_observed": false,
+    "nonfinite_metric_observed": false,
+    "cuda_out_of_memory_observed": false
+  },
+  "repair": {
+    "cublas_workspace_config": ":4096:8",
+    "set_before_torch_cuda_operations": true,
+    "conflicting_environment_rejected_before_cuda_probe": true,
+    "runtime_identity_records_configuration": true,
+    "applies_to": ["fresh legacy-V1", "fresh CH-NNUE-V2-LARGE-K64G1-SFNNV16"],
+    "training_math_changed": false,
+    "data_or_labels_changed": false,
+    "optimizer_or_learning_rate_changed": false,
+    "batch_size_or_epochs_changed": false,
+    "seed_or_sample_order_changed": false
+  },
+  "repair_verification": {
+    "large_v2_fixture_suite": "PASS",
+    "large_v2_fixture_training_steps": 10,
+    "large_v2_negative_cases": 5,
+    "legacy_v1_fixture_suite": "PASS",
+    "legacy_v1_fixture_training_steps": 10,
+    "legacy_v1_negative_cases": 4,
+    "cuda_deterministic_backward_smoke": "PASS",
+    "cuda_device": "NVIDIA GeForce RTX 3080",
+    "finite_loss": true,
+    "production_first_step_replay": "PENDING_NEW_CLEAN_SOURCE_IDENTITY"
+  },
+  "admissions": {
+    "legacy_v1": {
+      "path": "D:/Crazyhouse-Stockfish/datasets/p13-a0-admission-legacy-diagnostic-524/admission-result.json",
+      "sha256": "8923a58c30eb53b60555e60bb2de685b8495eab157fe033a1cbe95f24c5413ba",
+      "train_rows_sha256": "0529711ac0d0badc0cbd7f04e02c2d054dcfaa796f24f5aac039344abf6739e6",
+      "validation_rows_sha256": "472b4f34ba6ab36c2db7ba2f6cc7374fd1c182029b32fc2349f6db202f25688c"
+    },
+    "large_v2": {
+      "path": "D:/Crazyhouse-Stockfish/datasets/p13-a0-admission-v2-large-diagnostic-524/admission-result.json",
+      "sha256": "ddc319aecb585a7e49c5c9714f12b8256ee3b19ad128f94b5f4c26a55e603768",
+      "train_rows_sha256": "40b47682f9538e43b26d1cff51b8645d3144a85ddc37450fc9db1dc520571fee",
+      "validation_rows_sha256": "31cd6978c6633dfd332ad65e765d9329a8c26bc276db859ce982cbd17f5b8cec"
+    }
+  },
+  "common_sample_identity": {
+    "train_records": 1048576,
+    "validation_records": 131072,
+    "train_raw_record_ordered_set_sha256": "fb0a63adfa3edf69e917b9749e8f3679882a95fd7fa36975b5303b0dd56a5569",
+    "validation_raw_record_ordered_set_sha256": "ef440670aba5e74d1e62b75f6c1349db8bc632c0148889750afe0666356d9ca4",
+    "paired_materializer_must_recompute_and_match_label_streams": true,
+    "score_scale_cp_source": "train only"
+  },
+  "tooling": {
+    "planner": {
+      "path": "tools/nnue/crazyhouse_a0_paired_diagnostic_campaign.py",
+      "sha256": "b1a308a88ec4a57f6a582e1173edb8288565127136e0c9a4b9d8844343ddb7c9"
+    },
+    "legacy_trainer": {
+      "path": "tools/nnue/crazyhouse_legacy_v1_trainer.py",
+      "sha256": "f8581cfc5dff16b106fc885c40688679c41a7c338eb2f85a99a29b9c7190ad17"
+    },
+    "v2_trainer": {
+      "path": "tools/nnue/crazyhouse_v2_large_trainer.py",
+      "sha256": "de9fb58bc6aea2214000bd71d2e1e3478a946635a3e33c8da7524b9b60009cc0"
+    },
+    "legacy_training_contract": {
+      "path": "schemas/crazyhouse-nnue-legacy-v1-diagnostic-training-v1.json",
+      "sha256": "f679b50152aff593b2d7fb1af70de5750309680fefbd0f615a47a63bb696831e"
+    },
+    "legacy_verifier": {
+      "path": "tests/crazyhouse_legacy_v1_trainer_verify.py",
+      "sha256": "e5cb325ce1d93a10111b1084c486c99bdcfdb163ad579eabc1ff392581e026ea"
+    },
+    "v2_verifier": {
+      "path": "tests/crazyhouse_v2_large_trainer_verify.py",
+      "sha256": "2f629da73f1878350b2051fe970812a53a820668a921c5514b7fa6e336e3040d"
+    }
+  },
+  "paired_execution": {
+    "arms": ["fresh legacy-V1", "fresh CH-NNUE-V2-LARGE-K64G1-SFNNV16"],
+    "seeds": [617628155675752428, 521232795329550045, 4052246384809050251],
+    "predesignated_playing_seed_index": 0,
+    "fresh_process_per_arm_and_seed": true,
+    "all_six_trainings_required": true,
+    "batch_size": 512,
+    "epochs": 8,
+    "cpu_threads": 1,
+    "device": "cuda",
+    "loss_selects_an_artifact": false,
+    "validation_usage": "forward-only health telemetry"
+  },
+  "release_admissible": false,
+  "strength_testing_started": false,
+  "registered_legacy_remains_default": true,
+  "release_boundary": {
+    "same_data_stage_one_win_is_sufficient_for_release": false,
+    "release_before_valid_stage_two_win_over_registered_best_legacy": "forbidden",
+    "engineering_loss_export_reload_or_parity_is_sufficient_for_release": false
+  },
+  "stopping_rules": [
+    "Attempt 525 remains immutable and provides no training, model-selection, strength, or release evidence.",
+    "The fresh attempt must reauthenticate source, addendum, tooling, admissions, common label streams, CUDA ownership, checkpoints, exports, reload, and parity.",
+    "Any mismatch or runtime failure stops fail-closed without replacing a seed.",
+    "No strength test starts during paired training, export authentication, reload, or parity.",
+    "No release is allowed unless the unchanged predesignated V2 artifact later obtains the separately preregistered valid win over the registered best legacy network."
+  ]
+}
