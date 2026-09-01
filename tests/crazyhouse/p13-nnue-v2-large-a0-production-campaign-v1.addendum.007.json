@@ -1,0 +1,119 @@
+{
+  "schema": "crazyhouse-p13-nnue-v2-large-a0-production-campaign-addendum/v1",
+  "addendum": 7,
+  "status": "PREREGISTERED_STAGE_1_BEFORE_FIRST_GAME",
+  "evidence_class": "S3_STRENGTH_PENDING",
+  "frozen_utc": "2026-09-01T13:05:32.5539620Z",
+  "purpose": "Freeze the official same-data Stage 1 comparison between the predesignated fresh large-V2 and fresh legacy-V1 networks. Both sides use the same exact Crazyhouse-Stockfish source and build contract; only the authenticated network route differs.",
+  "predecessor": {
+    "path": "tests/crazyhouse/p13-nnue-v2-large-a0-production-campaign-v1.addendum.006.json",
+    "sha256": "72faccde86b552940c00922fef426c7fb2f01017edcaa09764853e0e2a25c16c"
+  },
+  "paired_training_terminal": {
+    "root": "D:/Crazyhouse-Stockfish/training/p13-a0-paired-diagnostic-530",
+    "receipt": "terminal-training-export-reload-parity-receipt.json",
+    "receipt_bytes": 14358,
+    "receipt_sha256": "834c356cff57d6a0aabe97a917c4a1284811bab9586677fd33ee69df14d70e73",
+    "status": "PASS_TRAINING_EXPORT_RELOAD_PARITY",
+    "all_six_runs_complete": true,
+    "predesignated_playing_seed_index": 0,
+    "seed": 617628155675752428,
+    "loss_selected_an_artifact": false
+  },
+  "engine_contract": {
+    "repository": "https://github.com/Belzedar94/Crazyhouse-Stockfish",
+    "engine_source_commit": "e870a93f9d3c8bbf313251baa05d0821b1cf2d1a",
+    "engine_source_tree": "fc6fcd42c46e53b054ea49486520f78a9f9d7c4f",
+    "engine_src_tree": "4655d65b8bce774794c1279d5309811870c96eb6",
+    "same_source_commit_for_both_sides": true,
+    "same_build_target_for_both_sides": true,
+    "same_search_options_except_network_route": true,
+    "openbench_external_network_build": true,
+    "local_reproducibility_preflight": {
+      "independent_builds": 2,
+      "legacy_build_network_input": "F1D0CD5A",
+      "v2_build_network_input": "2B082017",
+      "executables_byte_identical": true,
+      "executable_bytes": 4588823,
+      "executable_sha256": "a0236500ae6f02311d956f233b59e420053cfad5c8b399fb5585846465c071ff",
+      "public_bench_nodes_each": 38880
+    }
+  },
+  "stage_1": {
+    "id": "A0_V2_VS_A0_LEGACY_ARCH",
+    "question": "Does large-V2 outperform legacy-V1 when both networks are freshly trained on the same authenticated 1,048,576-row A0 dataset with the same seed and update budget?",
+    "candidate": {
+      "label": "fresh A0 large-V2 seed 0",
+      "architecture": "CH-NNUE-V2-LARGE-K64G1-SFNNV16",
+      "openbench_network_id": "2B082017",
+      "bytes": 126406688,
+      "sha256": "2b082017acca0a19b284345b98aad58b4abe44fd564906673db9f9a8b8d46e24",
+      "uci_options": {
+        "CrazyhouseEvaluator": "large-v2-a0",
+        "CrazyhouseEvalFile": "../Networks/2B082017",
+        "CrazyhouseEvalSHA256": "2b082017acca0a19b284345b98aad58b4abe44fd564906673db9f9a8b8d46e24",
+        "CrazyhouseEvalProvenance": "b7ccfcdca0983c4f82e7ee80b7f0767d61f00f23538f771fb625fc4d37a3f10b:ddc319aecb585a7e49c5c9714f12b8256ee3b19ad128f94b5f4c26a55e603768:2fa982587d42bfa521b253cfb37ce87a079157a92a048675da0a9a946c3dd121:971cc0d5b3ad062d3de8baa32ccd25a2176050f029debcf26772a482bfdc57a4:d4a436744377475928cca1723c3d19c59c021e55de03a7447e7fef5223e4ca65:e6ccffcbdc35d94ea003a062cc9335605118c0ae9296727ab41630cafeaa9ba5"
+      }
+    },
+    "comparator": {
+      "label": "fresh A0 legacy-V1 seed 0",
+      "architecture": "legacy-V1 HalfKAv2Variants",
+      "openbench_network_id": "F1D0CD5A",
+      "bytes": 58534811,
+      "sha256": "f1d0cd5a974e02a9c51dbeb37c64c7d97ca78399693a378e221c430fcb9e0a11",
+      "uci_options": {
+        "CrazyhouseEvaluator": "legacy-v1",
+        "CrazyhouseEvalFile": "../Networks/F1D0CD5A",
+        "CrazyhouseEvalSHA256": "f1d0cd5a974e02a9c51dbeb37c64c7d97ca78399693a378e221c430fcb9e0a11"
+      }
+    },
+    "common_uci_options": {
+      "Threads": 1,
+      "Hash": 32,
+      "UCI_Variant": "crazyhouse"
+    },
+    "fixed_work_preflight": {
+      "status": "PASS",
+      "same_local_binary_sha256": "a0236500ae6f02311d956f233b59e420053cfad5c8b399fb5585846465c071ff",
+      "nodes_per_route": 50000,
+      "legacy_route_identity_confirmed": true,
+      "v2_route_identity_and_provenance_confirmed": true,
+      "both_returned_bestmove": true,
+      "strength_credit": false
+    }
+  },
+  "official_openbench_contract": {
+    "server": "https://belzedar.duckdns.org",
+    "engine": "Crazyhouse-Stockfish",
+    "test_mode": "SPRT",
+    "time_control_submitted": "10.0+0.1",
+    "time_control_expected_persisted": "10.0+0.10",
+    "book": "CRAZYHOUSE_openings.epd",
+    "reversed_color_pairs": true,
+    "complete_pairs_only": true,
+    "elo_bounds": [0.0, 10.0],
+    "confidence": [0.05, 0.05],
+    "max_games": 0,
+    "workload_size": 16,
+    "priority": 500,
+    "upload_pgns": true,
+    "win_adjudication": "None",
+    "draw_adjudication": "None",
+    "syzygy": "DISABLED",
+    "bench_nodes": 38880
+  },
+  "decision_rule": {
+    "stage_1_pass": "The official SPRT reaches its upper boundary with no engine, network, route, book, pairing or workload error.",
+    "stage_1_fail": "The official SPRT reaches its lower boundary, or any authenticated contract defect invalidates the test.",
+    "inconclusive_or_cancelled": "No strength claim and no result-based replacement or extension.",
+    "stage_2": "Create a new preregistration and compare the unchanged Stage 1 V2 artifact against registered legacy network 8EBF8478 only after a valid Stage 1 pass.",
+    "no_selection_by_loss": true
+  },
+  "release_boundary": {
+    "release_admissible": false,
+    "strength_credit_before_terminal_stage_1": false,
+    "stage_1_win_is_sufficient_for_release": false,
+    "release_before_valid_stage_2_win_over_8EBF8478": "forbidden",
+    "registered_legacy_remains_default": true
+  }
+}
